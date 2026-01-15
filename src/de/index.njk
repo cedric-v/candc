@@ -32,25 +32,6 @@ ogImage: assets/img/logo-cc.jpg
     </div>
   </div>
 
-  {% set now = "now" | date("MM") | int %}
-  {% if now >= 10 or now <= 2 %}
-  <div class="section-card p-8 bg-gradient-to-r from-[#9CAF88] to-[#C97D60] text-white mb-12">
-    <h2 class="text-3xl font-bold mb-4">{{ t.businessTitle }}</h2>
-    <p class="text-xl mb-6">{{ t.businessSubtitle }}</p>
-    <ul class="space-y-3 mb-6">
-      <li class="flex items-start gap-2"><span class="text-2xl">✓</span><span>{{ t.businessFeatures.wifi }}</span></li>
-      <li class="flex items-start gap-2"><span class="text-2xl">✓</span><span>{{ t.businessFeatures.quiet }}</span></li>
-      <li class="flex items-start gap-2"><span class="text-2xl">✓</span><span>{{ t.businessFeatures.office }}</span></li>
-      <li class="flex items-start gap-2"><span class="text-2xl">✓</span><span>{{ t.businessFeatures.location }}</span></li>
-      <li class="flex items-start gap-2"><span class="text-2xl">✓</span><span>{{ t.businessFeatures.monthly }}</span></li>
-    </ul>
-    <div class="flex flex-wrap gap-4">
-      <a href="https://www.booking.com" target="_blank" rel="noopener noreferrer" class="btn-primary bg-white text-[#2D5016] hover:bg-white/90">{{ t.bookOnBooking }}</a>
-      <a href="https://www.airbnb.com" target="_blank" rel="noopener noreferrer" class="btn-primary bg-white text-[#2D5016] hover:bg-white/90">{{ t.bookOnAirbnb }}</a>
-    </div>
-  </div>
-  {% endif %}
-
   <div class="section-card p-8 bg-white">
     <h2 class="text-2xl font-bold text-[#2D5016] mb-4">Warum La Sonnaz?</h2>
     <ul class="space-y-3 text-[#1f1f1f]/80">

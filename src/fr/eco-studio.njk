@@ -106,28 +106,28 @@ ogImage: assets/img/logo-cc.jpg
   <!-- Business Section (visible octobre-février) -->
   {% set now = "now" | date("MM") | int %}
   {% if now >= 10 or now <= 2 %}
-  <div class="section-card p-8 bg-gradient-to-r from-[#9CAF88] to-[#C97D60] text-white">
-    <h2 class="text-3xl font-bold mb-4">{{ t.businessTitle }}</h2>
-    <p class="text-xl mb-6">{{ t.businessSubtitle }}</p>
-    <ul class="space-y-3 mb-6">
+  <div class="section-card p-8 bg-white">
+    <h2 class="text-3xl font-bold mb-4 text-[#2D5016]">{{ t.businessTitle }}</h2>
+    <p class="text-xl mb-6 text-[#1f1f1f]/80">{{ t.businessSubtitle }}</p>
+    <ul class="space-y-3 mb-6 text-[#1f1f1f]/80">
       <li class="flex items-start gap-2">
-        <span class="text-2xl">✓</span>
+        <span class="text-2xl text-[#2D5016]">✓</span>
         <span>{{ t.businessFeatures.wifi }}</span>
       </li>
       <li class="flex items-start gap-2">
-        <span class="text-2xl">✓</span>
+        <span class="text-2xl text-[#2D5016]">✓</span>
         <span>{{ t.businessFeatures.quiet }}</span>
       </li>
       <li class="flex items-start gap-2">
-        <span class="text-2xl">✓</span>
+        <span class="text-2xl text-[#2D5016]">✓</span>
         <span>{{ t.businessFeatures.office }}</span>
       </li>
       <li class="flex items-start gap-2">
-        <span class="text-2xl">✓</span>
+        <span class="text-2xl text-[#2D5016]">✓</span>
         <span>{{ t.businessFeatures.location }}</span>
       </li>
       <li class="flex items-start gap-2">
-        <span class="text-2xl">✓</span>
+        <span class="text-2xl text-[#2D5016]">✓</span>
         <span>{{ t.businessFeatures.monthly }}</span>
       </li>
     </ul>
@@ -140,19 +140,100 @@ ogImage: assets/img/logo-cc.jpg
       <h2 class="text-3xl font-bold text-[#2D5016] mb-4">{{ t.testimonials.title }}</h2>
       <p class="text-lg text-[#1f1f1f]/80">{{ t.testimonials.intro }}</p>
     </div>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8" id="testimonials-grid">
       {% set testimonialImages = [
         'assets/img/testimonials/testimonial-01.jpg',
         'assets/img/testimonials/testimonial-02.jpg',
         'assets/img/testimonials/testimonial-04.jpg',
-        'assets/img/testimonials/testimonial-07.jpg'
+        'assets/img/testimonials/testimonial-07.jpg',
+        'assets/img/testimonials/testimonial-13.jpg',
+        'assets/img/testimonials/testimonial-14.jpg',
+        'assets/img/testimonials/testimonial-15.jpg',
+        'assets/img/testimonials/testimonial-16.jpg',
+        'assets/img/testimonials/testimonial-17.jpg',
+        'assets/img/testimonials/testimonial-18.jpg',
+        'assets/img/testimonials/testimonial-19.jpg',
+        'assets/img/testimonials/testimonial-20.jpg',
+        'assets/img/testimonials/testimonial-21.jpg',
+        'assets/img/testimonials/testimonial-22.jpg',
+        'assets/img/testimonials/testimonial-23.jpg',
+        'assets/img/testimonials/testimonial-24.jpg',
+        'assets/img/testimonials/testimonial-25.jpg'
       ] %}
       
       {% for image in testimonialImages %}
-      <div class="section-card overflow-hidden p-0 bg-white shadow-md hover:shadow-lg transition-shadow">
+      <div class="section-card overflow-hidden p-0 bg-white shadow-md hover:shadow-lg transition-shadow cursor-pointer testimonial-item" data-image="/{{ image }}">
         {% image image, "Témoignage client", "w-full h-auto object-cover", "lazy", "", "", "" %}
       </div>
       {% endfor %}
     </div>
   </section>
+
+  <!-- Lightbox -->
+  <div id="testimonial-lightbox" class="fixed inset-0 bg-black/90 z-50 hidden items-center justify-center">
+    <button id="lightbox-close" class="absolute top-4 right-4 text-white text-5xl font-light hover:text-gray-300 transition z-10 w-12 h-12 flex items-center justify-center rounded-full hover:bg-white/10" aria-label="Fermer">×</button>
+    <button id="lightbox-prev" class="absolute left-4 text-white text-6xl font-light hover:text-gray-300 transition z-10 w-16 h-16 flex items-center justify-center rounded-full hover:bg-white/10" aria-label="Précédent">‹</button>
+    <button id="lightbox-next" class="absolute right-4 text-white text-6xl font-light hover:text-gray-300 transition z-10 w-16 h-16 flex items-center justify-center rounded-full hover:bg-white/10" aria-label="Suivant">›</button>
+    <div class="max-w-6xl max-h-[90vh] p-8">
+      <img id="lightbox-image" src="" alt="Témoignage" class="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl">
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      const lightbox = document.getElementById('testimonial-lightbox');
+      const lightboxImage = document.getElementById('lightbox-image');
+      const closeBtn = document.getElementById('lightbox-close');
+      const prevBtn = document.getElementById('lightbox-prev');
+      const nextBtn = document.getElementById('lightbox-next');
+      const items = document.querySelectorAll('.testimonial-item');
+      
+      let currentIndex = 0;
+      const images = Array.from(items).map(item => item.dataset.image);
+      
+      function openLightbox(index) {
+        currentIndex = index;
+        lightboxImage.src = images[currentIndex];
+        lightbox.classList.remove('hidden');
+        lightbox.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+      }
+      
+      function closeLightbox() {
+        lightbox.classList.add('hidden');
+        lightbox.classList.remove('flex');
+        document.body.style.overflow = '';
+      }
+      
+      function showNext() {
+        currentIndex = (currentIndex + 1) % images.length;
+        lightboxImage.src = images[currentIndex];
+      }
+      
+      function showPrev() {
+        currentIndex = (currentIndex - 1 + images.length) % images.length;
+        lightboxImage.src = images[currentIndex];
+      }
+      
+      items.forEach((item, index) => {
+        item.addEventListener('click', () => openLightbox(index));
+      });
+      
+      closeBtn.addEventListener('click', closeLightbox);
+      prevBtn.addEventListener('click', showPrev);
+      nextBtn.addEventListener('click', showNext);
+      
+      lightbox.addEventListener('click', (e) => {
+        if (e.target === lightbox) closeLightbox();
+      });
+      
+      document.addEventListener('keydown', (e) => {
+        if (!lightbox.classList.contains('hidden')) {
+          if (e.key === 'Escape') closeLightbox();
+          if (e.key === 'ArrowLeft') showPrev();
+          if (e.key === 'ArrowRight') showNext();
+        }
+      });
+    })();
+  </script>
 </section>
