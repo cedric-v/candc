@@ -1,0 +1,71 @@
+---
+permalink: /sitemap.xml
+eleventyExcludeFromCollections: true
+---
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+{%- for page in collections.all -%}
+  {%- if page.url -%}
+    {%- if page.url != "/sitemap.xml" -%}
+      {%- if page.url != "/404.html" -%}
+        {%- set hasJson = false -%}
+        {%- if ".json" in page.url -%}
+          {%- set hasJson = true -%}
+        {%- endif -%}
+        {%- if not hasJson -%}
+          {%- set cleanUrl = page.url -%}
+          {%- set fullUrl = "https://candc.ch" + cleanUrl -%}
+          {%- if page.date -%}
+            {%- set lastmod = page.date | date("YYYY-MM-DD") -%}
+          {%- else -%}
+            {%- set lastmod = "now" | date("YYYY-MM-DD") -%}
+          {%- endif -%}
+          {%- set changefreq = "monthly" -%}
+          {%- if cleanUrl == "/fr/" or cleanUrl == "/en/" or cleanUrl == "/de/" or cleanUrl == "/es/" or cleanUrl == "/pt/" -%}
+            {%- set changefreq = "weekly" -%}
+          {%- endif -%}
+          {%- set priority = "0.6" -%}
+          {%- if cleanUrl == "/fr/" or cleanUrl == "/en/" or cleanUrl == "/de/" or cleanUrl == "/es/" or cleanUrl == "/pt/" -%}
+            {%- set priority = "1.0" -%}
+          {%- endif -%}
+  <url>
+    <loc>{{ fullUrl }}</loc>
+    <lastmod>{{ lastmod }}</lastmod>
+    <changefreq>{{ changefreq }}</changefreq>
+    <priority>{{ priority }}</priority>
+    {%- set languages = ['fr', 'en', 'de', 'es', 'pt'] -%}
+    {%- for lang in languages -%}
+      {%- if lang == 'fr' -%}
+        {%- set langUrl = cleanUrl | replace('/en/', '/') | replace('/de/', '/') | replace('/es/', '/') | replace('/pt/', '/') -%}
+        {%- if langUrl == '' %}{% set langUrl = '/' %}{% endif -%}
+      {%- else -%}
+        {%- set langPrefix = '/' + lang + '/' -%}
+        {%- if cleanUrl == '/' -%}
+          {%- set langUrl = langPrefix -%}
+        {%- elif cleanUrl == '/fr/' or cleanUrl == '/en/' or cleanUrl == '/de/' or cleanUrl == '/es/' or cleanUrl == '/pt/' -%}
+          {%- set langUrl = langPrefix -%}
+        {%- elif '/fr/' in cleanUrl -%}
+          {%- set langUrl = cleanUrl | replace('/fr/', langPrefix) -%}
+        {%- elif '/en/' in cleanUrl -%}
+          {%- set langUrl = cleanUrl | replace('/en/', langPrefix) -%}
+        {%- elif '/de/' in cleanUrl -%}
+          {%- set langUrl = cleanUrl | replace('/de/', langPrefix) -%}
+        {%- elif '/es/' in cleanUrl -%}
+          {%- set langUrl = cleanUrl | replace('/es/', langPrefix) -%}
+        {%- elif '/pt/' in cleanUrl -%}
+          {%- set langUrl = cleanUrl | replace('/pt/', langPrefix) -%}
+        {%- else -%}
+          {%- set langUrl = '/' + lang + cleanUrl -%}
+        {%- endif -%}
+      {%- endif -%}
+    <xhtml:link rel="alternate" hreflang="{{ lang }}" href="https://candc.ch{{ langUrl }}" />
+    {%- endfor -%}
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://candc.ch{{ cleanUrl }}" />
+  </url>
+        {%- endif -%}
+      {%- endif -%}
+    {%- endif -%}
+  {%- endif -%}
+{%- endfor -%}
+</urlset>

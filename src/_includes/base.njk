@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="{{ locale }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
+
+    {% set t = translations[locale] or translations['fr'] %}
+    {% if title %}
+    <title>{{ title }} | {{ t.siteName }}</title>
+    {% else %}
+    <title>{{ t.home }} | {{ t.siteName }}</title>
+    {% endif %}
+    <meta name="description" content="{{ description or t.siteDescription }}">
+    
+    {% set originalUrl = (page.url or '/') | canonicalUrl %}
+    {% set canonicalUrl = originalUrl %}
+    {% if originalUrl == '/' or originalUrl == '/index.html' %}
+      {% set canonicalUrl = '/fr/' %}
+    {% endif %}
+    <link rel="canonical" href="https://candc.ch{{ canonicalUrl }}">
+    
+    {# Open Graph / Facebook #}
+    {% set pageTitle = title or t.home %}
+    {% set pageDescription = description or t.siteDescription %}
+    {% set pageUrl = 'https://candc.ch' + canonicalUrl %}
+    {% set ogImagePath = ogImage or 'assets/img/logo-cc.jpg' %}
+    {% set ogImageUrl = ogImagePath | buildOgImageUrl %}
+    
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ pageUrl }}">
+    <meta property="og:title" content="{{ pageTitle }} | {{ t.siteName }}">
+    <meta property="og:description" content="{{ pageDescription }}">
+    <meta property="og:image" content="{{ ogImageUrl }}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:logo" content="https://candc.ch/assets/img/logo-cc.jpg">
+    {%- if locale == 'fr' -%}
+      {%- set ogLocale = 'fr_FR' -%}
+    {%- elif locale == 'en' -%}
+      {%- set ogLocale = 'en_US' -%}
+    {%- elif locale == 'de' -%}
+      {%- set ogLocale = 'de_DE' -%}
+    {%- elif locale == 'es' -%}
+      {%- set ogLocale = 'es_ES' -%}
+    {%- else -%}
+      {%- set ogLocale = 'pt_PT' -%}
+    {%- endif -%}
+    <meta property="og:locale" content="{{ ogLocale }}">
+    <meta property="og:site_name" content="{{ t.siteName }}">
+    
+    {# Twitter Card #}
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="{{ pageUrl }}">
+    <meta name="twitter:title" content="{{ pageTitle }} | {{ t.siteName }}">
+    <meta name="twitter:description" content="{{ pageDescription }}">
+    <meta name="twitter:image" content="{{ ogImageUrl }}">
+    
+    {# Générer les balises hreflang pour les 5 langues #}
+    {% set languages = ['fr', 'en', 'de', 'es', 'pt'] %}
+    {% for lang in languages %}
+      {% if lang == 'fr' %}
+        {% set langUrl = canonicalUrl | replace('/en/', '/') | replace('/de/', '/') | replace('/es/', '/') | replace('/pt/', '/') %}
+        {% if langUrl == '' %}{% set langUrl = '/' %}{% endif %}
+      {% else %}
+        {% set langPrefix = '/' + lang + '/' %}
+        {% if canonicalUrl == '/' %}
+          {% set langUrl = langPrefix %}
+        {% else %}
+          {% set langUrl = canonicalUrl | replace('/fr/', langPrefix) | replace('/en/', langPrefix) | replace('/de/', langPrefix) | replace('/es/', langPrefix) | replace('/pt/', langPrefix) %}
+          {% if langUrl == canonicalUrl %}
+            {% set langUrl = '/' + lang + canonicalUrl %}
+          {% endif %}
+        {% endif %}
+      {% endif %}
+      <link rel="alternate" hreflang="{{ lang }}" href="https://candc.ch{{ langUrl }}">
+    {% endfor %}
+    <link rel="alternate" hreflang="x-default" href="https://candc.ch{{ canonicalUrl }}">
+    
+    <!-- CSS -->
+    <link rel="preload" href="{{ '/assets/css/styles.css' | relativeUrl }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="{{ '/assets/css/styles.css' | relativeUrl }}"></noscript>
+    <script>
+      (function() {
+        var link = document.querySelector('link[rel="preload"][as="style"]');
+        if (link) {
+          setTimeout(function() {
+            if (!link.sheet && link.rel !== 'stylesheet') {
+              link.rel = 'stylesheet';
+            }
+          }, 100);
+        }
+      })();
+    </script>
+    
+    <link rel="icon" type="image/x-icon" href="{{ '/favicon.ico' | relativeUrl }}">
+    
+    {# Schema.org JSON-LD #}
+    {% schemaOrg page, locale %}
+</head>
+<body class="font-[Inter] bg-[#fdfaf6] text-[#1f1f1f] antialiased">
+    {% include "header.njk" %}
+
+    <main class="min-h-screen pt-28">
+        {{ content | safe }}
+    </main>
+    
+    {% include "footer.njk" %}
+
+<script>
+  const toggle = document.querySelector('[data-menu-toggle]');
+  const mobileMenu = document.querySelector('[data-menu-mobile]');
+  if (toggle && mobileMenu) {
+    toggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      mobileMenu.classList.toggle('hidden');
+    });
+  }
+  
+  document.addEventListener('click', (e) => {
+    if (mobileMenu && !mobileMenu.contains(e.target) && !toggle.contains(e.target)) {
+      mobileMenu.classList.add('hidden');
+    }
+  });
+
+  // Effet de menu au scroll
+  (function() {
+    const header = document.getElementById('main-header');
+    if (!header) return;
+    
+    let lastScrollY = window.scrollY;
+    let ticking = false;
+    
+    function updateHeader() {
+      const scrollY = window.scrollY;
+      const isScrolled = scrollY > 50;
+      
+      if (isScrolled) {
+        header.classList.add('header-scrolled');
+      } else {
+        header.classList.remove('header-scrolled');
+      }
+      
+      lastScrollY = scrollY;
+      ticking = false;
+    }
+    
+    function onScroll() {
+      if (!ticking) {
+        window.requestAnimationFrame(updateHeader);
+        ticking = true;
+      }
+    }
+    
+    window.addEventListener('scroll', onScroll, { passive: true });
+    updateHeader();
+  })();
+</script>
+</body>
+</html>

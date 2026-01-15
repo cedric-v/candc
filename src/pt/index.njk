@@ -1,0 +1,62 @@
+---
+layout: base.njk
+title: Eco Studio e Estacionamento em La Sonnaz, Friburgo
+description: Aluguel de apartamento mobiliado e estacionamento seguro em La Sonnaz, Friburgo. Base central ideal para visitar toda a Suíça.
+locale: pt
+permalink: /pt/
+ogImage: assets/img/logo-cc.jpg
+---
+
+{% set t = translations[locale] or translations['pt'] %}
+
+<section class="max-w-6xl mx-auto px-6 md:px-12 py-16">
+  <div class="text-center space-y-6 mb-12">
+    <h1 class="text-4xl md:text-5xl font-bold text-[#2D5016]">{{ t.siteName }}</h1>
+    <p class="text-xl text-[#1f1f1f]/80">{{ t.siteDescription }}</p>
+    <p class="text-lg text-[#1f1f1f]/70">{{ t.seo.baseCentral }}</p>
+  </div>
+
+  <div class="grid md:grid-cols-2 gap-8 mb-12">
+    <div class="section-card p-8 studio-gradient text-white">
+      <h2 class="text-3xl font-bold mb-4">{{ t.studio.title }}</h2>
+      <p class="mb-4 text-white/90">{{ t.studio.subtitle }}</p>
+      <p class="mb-2 text-white/80 text-sm">{{ t.studio.size }} • {{ t.studio.minStay }}</p>
+      <p class="mb-6 text-white/90">{{ t.studio.description }}</p>
+      <a href="{{ '/pt/eco-studio/' | relativeUrl }}" class="btn-primary bg-white text-[#2D5016] hover:bg-white/90 inline-block">{{ t.ecoStudio }}</a>
+    </div>
+    <div class="section-card p-8 parking-gradient text-white">
+      <h2 class="text-3xl font-bold mb-4">{{ t.parking.title }}</h2>
+      <p class="mb-4 text-white/90">{{ t.parking.subtitle }}</p>
+      <p class="mb-6 text-white/90">{{ t.parking.description }}</p>
+      <a href="{{ '/pt/parking/' | relativeUrl }}" class="btn-primary bg-white text-[#5B6E7D] hover:bg-white/90 inline-block">{{ t.menuParking }}</a>
+    </div>
+  </div>
+
+  {% set now = "now" | date("MM") | int %}
+  {% if now >= 10 or now <= 2 %}
+  <div class="section-card p-8 bg-gradient-to-r from-[#9CAF88] to-[#C97D60] text-white mb-12">
+    <h2 class="text-3xl font-bold mb-4">{{ t.businessTitle }}</h2>
+    <p class="text-xl mb-6">{{ t.businessSubtitle }}</p>
+    <ul class="space-y-3 mb-6">
+      <li class="flex items-start gap-2"><span class="text-2xl">✓</span><span>{{ t.businessFeatures.wifi }}</span></li>
+      <li class="flex items-start gap-2"><span class="text-2xl">✓</span><span>{{ t.businessFeatures.quiet }}</span></li>
+      <li class="flex items-start gap-2"><span class="text-2xl">✓</span><span>{{ t.businessFeatures.office }}</span></li>
+      <li class="flex items-start gap-2"><span class="text-2xl">✓</span><span>{{ t.businessFeatures.location }}</span></li>
+      <li class="flex items-start gap-2"><span class="text-2xl">✓</span><span>{{ t.businessFeatures.monthly }}</span></li>
+    </ul>
+    <div class="flex flex-wrap gap-4">
+      <a href="https://www.booking.com" target="_blank" rel="noopener noreferrer" class="btn-primary bg-white text-[#2D5016] hover:bg-white/90">{{ t.bookOnBooking }}</a>
+      <a href="https://www.airbnb.com" target="_blank" rel="noopener noreferrer" class="btn-primary bg-white text-[#2D5016] hover:bg-white/90">{{ t.bookOnAirbnb }}</a>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="section-card p-8 bg-white">
+    <h2 class="text-2xl font-bold text-[#2D5016] mb-4">Por que La Sonnaz?</h2>
+    <ul class="space-y-3 text-[#1f1f1f]/80">
+      <li class="flex items-start gap-2"><span class="text-xl">📍</span><span>{{ t.seo.baseCentral }}</span></li>
+      <li class="flex items-start gap-2"><span class="text-xl">🛣️</span><span>{{ t.seo.highway }}</span></li>
+      <li class="flex items-start gap-2"><span class="text-xl">🚌</span><span>{{ t.seo.publicTransport }}</span></li>
+    </ul>
+  </div>
+</section>

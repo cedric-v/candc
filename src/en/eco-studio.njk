@@ -1,0 +1,142 @@
+---
+layout: base.njk
+title: Eco Studio - Furnished Apartment Rental
+description: 34 m² studio in the countryside near Fribourg. Minimum stay 5 nights. Modern and eco-friendly equipment.
+locale: en
+permalink: /en/eco-studio/
+ogImage: assets/img/logo-cc.jpg
+---
+
+{% set t = translations[locale] or translations['en'] %}
+
+<section class="max-w-4xl mx-auto px-6 md:px-12 py-16 space-y-8">
+  <div class="text-center space-y-4">
+    <h1 class="text-4xl md:text-5xl font-bold text-[#2D5016]">{{ t.studio.title }}</h1>
+    <p class="text-xl text-[#1f1f1f]/80">{{ t.studio.subtitle }}</p>
+    <p class="text-lg text-[#1f1f1f]/70">{{ t.studio.description }}</p>
+    <p class="text-base text-[#1f1f1f]/60 font-semibold">{{ t.studio.minStay }}</p>
+  </div>
+
+  <div class="section-card p-8 bg-white">
+    <h2 class="text-2xl font-bold text-[#2D5016] mb-6">Equipment</h2>
+    
+    <div class="space-y-6">
+      <div>
+        <h3 class="text-lg font-semibold text-[#2D5016] mb-3">Bedroom</h3>
+        <ul class="space-y-2 text-[#1f1f1f]/80">
+          <li class="flex items-start gap-2">
+            <span class="text-xl">🛏️</span>
+            <span>{{ t.studio.bedroom }}</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="text-xl">🛋️</span>
+            <span>{{ t.studio.sofaBed }}</span>
+          </li>
+        </ul>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold text-[#2D5016] mb-3">Kitchen</h3>
+        <p class="text-[#1f1f1f]/80">{{ t.studio.kitchen }}</p>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold text-[#2D5016] mb-3">Bathroom</h3>
+        <p class="text-[#1f1f1f]/80">{{ t.studio.bathroom }}</p>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold text-[#2D5016] mb-3">Laundry</h3>
+        <p class="text-[#1f1f1f]/80">{{ t.studio.laundry }}</p>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold text-[#2D5016] mb-3">Entertainment</h3>
+        <p class="text-[#1f1f1f]/80">{{ t.studio.entertainment }}</p>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold text-[#2D5016] mb-3">Internet</h3>
+        <p class="text-[#1f1f1f]/80">{{ t.studio.internet }}</p>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold text-[#2D5016] mb-3">Outside</h3>
+        <ul class="space-y-2 text-[#1f1f1f]/80">
+          <li class="flex items-start gap-2">
+            <span class="text-xl">🚗</span>
+            <span>{{ t.studio.parking }}</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="text-xl">🌳</span>
+            <span>{{ t.studio.terrace }}</span>
+          </li>
+        </ul>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold text-[#2D5016] mb-3">Ecology</h3>
+        <p class="text-[#1f1f1f]/80">{{ t.studio.eco }}</p>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold text-[#2D5016] mb-3">Family</h3>
+        <p class="text-[#1f1f1f]/80">{{ t.studio.children }}</p>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold text-[#2D5016] mb-3">Location</h3>
+        <p class="text-[#1f1f1f]/80">{{ t.studio.location }}</p>
+      </div>
+    </div>
+
+    <div class="mt-8 flex flex-wrap gap-4 justify-center">
+      <a href="https://www.booking.com" target="_blank" rel="noopener noreferrer" class="btn-primary bg-[#6B8E23] text-white hover:bg-[#5a7a1d]">
+        {{ t.bookOnBooking }}
+      </a>
+      <a href="https://www.airbnb.com" target="_blank" rel="noopener noreferrer" class="btn-primary bg-[#6B8E23] text-white hover:bg-[#5a7a1d]">
+        {{ t.bookOnAirbnb }}
+      </a>
+      <a href="https://share.google/4SQW4ioSzq3wkMAiA" target="_blank" rel="noopener noreferrer" class="btn-secondary bg-white text-[#6B8E23] border-2 border-[#6B8E23] hover:bg-[#6B8E23] hover:text-white">
+        🗺️ {{ t.getDirections }}
+      </a>
+    </div>
+  </div>
+
+  {% set now = "now" | date("MM") | int %}
+  {% if now >= 10 or now <= 2 %}
+  <div class="section-card p-8 bg-gradient-to-r from-[#9CAF88] to-[#C97D60] text-white">
+    <h2 class="text-3xl font-bold mb-4">{{ t.businessTitle }}</h2>
+    <p class="text-xl mb-6">{{ t.businessSubtitle }}</p>
+    <ul class="space-y-3 mb-6">
+      <li class="flex items-start gap-2"><span class="text-2xl">✓</span><span>{{ t.businessFeatures.wifi }}</span></li>
+      <li class="flex items-start gap-2"><span class="text-2xl">✓</span><span>{{ t.businessFeatures.quiet }}</span></li>
+      <li class="flex items-start gap-2"><span class="text-2xl">✓</span><span>{{ t.businessFeatures.office }}</span></li>
+      <li class="flex items-start gap-2"><span class="text-2xl">✓</span><span>{{ t.businessFeatures.location }}</span></li>
+      <li class="flex items-start gap-2"><span class="text-2xl">✓</span><span>{{ t.businessFeatures.monthly }}</span></li>
+    </ul>
+  </div>
+  {% endif %}
+
+  <!-- Testimonials -->
+  <section id="testimonials" class="mt-12">
+    <div class="text-center mb-8">
+      <h2 class="text-3xl font-bold text-[#2D5016] mb-4">{{ t.testimonials.title }}</h2>
+      <p class="text-lg text-[#1f1f1f]/80">{{ t.testimonials.intro }}</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% set testimonialImages = [
+        'assets/img/testimonials/testimonial-01.jpg',
+        'assets/img/testimonials/testimonial-02.jpg',
+        'assets/img/testimonials/testimonial-04.jpg',
+        'assets/img/testimonials/testimonial-07.jpg'
+      ] %}
+      
+      {% for image in testimonialImages %}
+      <div class="section-card overflow-hidden p-0 bg-white shadow-md hover:shadow-lg transition-shadow">
+        {% image image, "Guest testimonial", "w-full h-auto object-cover", "lazy", "", "", "" %}
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+</section>

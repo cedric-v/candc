@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+@theme {
+  --color-studio-sage: #9CAF88;
+  --color-studio-terracotta: #C97D60;
+  --color-parking-slate: #5B6E7D;
+  --color-parking-steel: #8B9AAB;
+  --color-cc-primary: #2D5016;
+  --color-cc-accent: #6B8E23;
+}
+
+:root {
+  --studio-sage: #9CAF88;
+  --studio-terracotta: #C97D60;
+  --parking-slate: #5B6E7D;
+  --parking-steel: #8B9AAB;
+  --cc-primary: #2D5016;
+  --cc-accent: #6B8E23;
+  --cc-cream: #fdfaf6;
+}
+
+body {
+  background: var(--cc-cream);
+  color: #1f1f1f;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.section-card {
+  border-radius: 1.5rem;
+  border: 1px solid rgba(45, 80, 22, 0.15);
+  background: white;
+  box-shadow: 0 25px 60px rgba(15, 23, 42, 0.08);
+}
+
+.btn-primary {
+  background: var(--cc-accent);
+  color: white;
+  border-radius: 9999px;
+  padding: 0.85rem 1.75rem;
+  font-weight: 600;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 15px 30px rgba(107, 142, 35, 0.35);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 25px 40px rgba(107, 142, 35, 0.45);
+}
+
+.studio-gradient {
+  background: linear-gradient(135deg, rgba(156, 175, 136, 0.85), rgba(201, 125, 96, 0.9));
+}
+
+.parking-gradient {
+  background: linear-gradient(135deg, rgba(91, 110, 125, 0.85), rgba(139, 154, 171, 0.9));
+}
+
+#main-header.header-scrolled {
+  background: rgba(45, 80, 22, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}

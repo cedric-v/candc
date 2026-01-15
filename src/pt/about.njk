@@ -1,0 +1,29 @@
+---
+layout: base.njk
+title: Quem somos
+description: Descubra quem somos e a nossa paixão por viajar que nos levou a criar este estúdio.
+locale: pt
+permalink: /pt/about/
+ogImage: assets/img/logo-cc.jpg
+---
+
+{% set t = translations[locale] or translations['pt'] %}
+
+<!-- Hero Section with Background Image -->
+<div class="relative w-full h-[60vh] min-h-[500px] flex items-center justify-center -mt-28">
+  <div class="absolute inset-0 bg-cover bg-center bg-no-repeat" style="background-image: url('{{ '/assets/img/about-background.jpg' | relativeUrl }}');"></div>
+  <div class="absolute inset-0 bg-[#2D5016]/0"></div>
+  <div class="relative z-10 text-center text-white px-6 max-w-4xl mx-auto">
+    <h1 class="text-4xl md:text-6xl font-bold mb-4">{{ t.about.title }}</h1>
+    <p class="text-2xl md:text-3xl font-semibold">{{ t.about.names }}</p>
+  </div>
+</div>
+
+<!-- Content Section -->
+<section class="max-w-4xl mx-auto px-6 md:px-12 py-16 space-y-6">
+  <div class="prose prose-lg max-w-none text-[#1f1f1f]/80 space-y-4">
+    <p class="text-lg leading-relaxed">{{ t.about.text1 }}</p>
+    <p class="text-lg leading-relaxed">{{ t.about.text2 }}</p>
+    <p class="text-lg leading-relaxed">{{ t.about.text3 }}</p>
+  </div>
+</section>
