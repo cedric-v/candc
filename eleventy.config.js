@@ -20,14 +20,33 @@ module.exports = function(eleventyConfig) {
       console.warn(`Image not found: ${fullSrc}`);
       return `<img src="${src}" alt="${alt}" class="${cls}" ${loading ? `loading="${loading}"` : ''} ${fetchpriority ? `fetchpriority="${fetchpriority}"` : ''} ${width ? `width="${width}"` : ''} ${height ? `height="${height}"` : ''}>`;
     }
-    
+
     try {
-      const metadata = await Image(fullSrc, {
-        widths: [300, 600, 900, 1200],
+      // Configuration spécifique pour les témoignages
+      let imageOptions = {
         formats: ["webp", "jpeg"],
         outputDir: path.join(__dirname, "_site", path.dirname(cleanSrc)),
         urlPath: `/${path.dirname(cleanSrc)}/`,
-      });
+        sharpOptions: {
+          quality: 85, // Qualité optimisée
+          progressive: true, // JPEG progressif
+          smartSubsample: true, // Sous-échantillonnage intelligent
+        }
+      };
+
+      // Tailles différentes selon le type d'image
+      if (src.includes('testimonials')) {
+        // Pour les témoignages : tailles optimisées pour la grille
+        imageOptions.widths = [400, 600, 800];
+      } else if (src.includes('about-background')) {
+        // Pour l'image hero : taille large
+        imageOptions.widths = [1200, 1600, 1920];
+      } else {
+        // Taille par défaut
+        imageOptions.widths = [300, 600, 900, 1200];
+      }
+
+      const metadata = await Image(fullSrc, imageOptions);
       
       const loadingAttr = loading ? `loading="${loading}"` : '';
       const fetchpriorityAttr = fetchpriority ? `fetchpriority="${fetchpriority}"` : '';
