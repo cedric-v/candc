@@ -9,50 +9,197 @@ ogImage: assets/img/logo-cc.jpg
 
 {% set t = translations[locale] or translations['fr'] %}
 
-<section class="max-w-6xl mx-auto px-6 md:px-12 py-16">
-  <div class="text-center space-y-6 mb-12">
-    <h1 class="text-4xl md:text-5xl font-bold text-[#2D5016]">{{ t.siteName }}</h1>
-    <p class="text-xl text-[#1f1f1f]/80">{{ t.siteDescription }}</p>
-    <p class="text-lg text-[#1f1f1f]/70">{{ t.seo.baseCentral }}</p>
+<style>
+@layer components {
+  .home-container {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: var(--spacing-3xl) var(--spacing-xl);
+    gap: var(--spacing-3xl);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .hero-content {
+    text-align: center;
+    gap: var(--spacing-xl);
+    margin-bottom: var(--spacing-3xl);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .hero-content h1 {
+    font-size: clamp(2.25rem, 5vw, 3rem);
+    font-weight: 700;
+    color: var(--primary-color);
+  }
+
+  .hero-content p:nth-child(2) {
+    font-size: 1.25rem;
+    color: var(--text-muted);
+  }
+
+  .hero-content p:nth-child(3) {
+    font-size: 1.125rem;
+    color: var(--text-light);
+  }
+
+  .cards-grid {
+    gap: var(--spacing-2xl);
+    margin-bottom: var(--spacing-3xl);
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .service-card {
+    border-radius: var(--border-radius-xl);
+    padding: var(--spacing-2xl);
+    background: linear-gradient(135deg, var(--accent-color), var(--primary-color));
+    color: var(--white);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+  }
+
+  .service-card h2 {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: var(--white);
+  }
+
+  .service-card p {
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0;
+  }
+
+  .service-card .service-meta {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+  }
+
+  .service-card .btn {
+    margin-top: auto;
+    background: var(--white);
+    color: var(--primary-color);
+    align-self: flex-start;
+    padding: var(--spacing-sm) var(--spacing-lg);
+    font-size: 0.875rem;
+    font-weight: 600;
+    border-radius: var(--border-radius-full);
+    text-decoration: none;
+    display: inline-block;
+    transition: all var(--transition-fast);
+  }
+
+  .service-card .btn:hover {
+    background: rgba(255, 255, 255, 0.9);
+  }
+
+  .studio-card {
+    background: linear-gradient(135deg, var(--accent-color), var(--primary-color));
+  }
+
+  .parking-card {
+    background: linear-gradient(135deg, var(--parking-slate), var(--parking-steel));
+  }
+
+  .parking-card .btn {
+    background: var(--white);
+    color: var(--parking-slate);
+  }
+
+  .parking-card .btn:hover {
+    background: rgba(255, 255, 255, 0.9);
+  }
+
+  .info-section {
+    border-radius: var(--border-radius-xl);
+    border: 1px solid rgba(45, 80, 22, 0.15);
+    background: var(--white);
+    padding: var(--spacing-2xl);
+  }
+
+  .info-section h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .info-section ul {
+    gap: var(--spacing-md);
+    display: flex;
+    flex-direction: column;
+    color: var(--text-muted);
+  }
+
+  .info-section li {
+    gap: var(--spacing-sm);
+    display: flex;
+    align-items: flex-start;
+  }
+
+  .info-section li span:first-child {
+    font-size: 1.25rem;
+    flex-shrink: 0;
+  }
+
+  @container (min-width: 768px) {
+    .home-container {
+      padding: var(--spacing-3xl) var(--spacing-3xl);
+    }
+
+    .cards-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+}
+</style>
+
+<section class="home-container">
+  <div class="hero-content">
+    <h1>{{ t.siteName }}</h1>
+    <p>{{ t.siteDescription }}</p>
   </div>
 
-  <div class="grid md:grid-cols-2 gap-8 mb-12">
+  <div class="cards-grid">
     <!-- Eco Studio Card -->
-    <div class="section-card p-8 studio-gradient text-white">
-      <h2 class="text-3xl font-bold mb-4">{{ t.studio.title }}</h2>
-      <p class="mb-4 text-white/90">{{ t.studio.subtitle }}</p>
-      <p class="mb-2 text-white/80 text-sm">{{ t.studio.size }} • {{ t.studio.minStay }}</p>
-      <p class="mb-6 text-white/90">{{ t.studio.description }}</p>
-      <a href="{{ '/fr/eco-studio/' | relativeUrl }}" class="btn-primary bg-white text-[#2D5016] hover:bg-white/90 inline-block">
+    <div class="service-card studio-card">
+      <h2>{{ t.studio.title }}</h2>
+      <p>{{ t.studio.subtitle }}</p>
+      <p class="service-meta">{{ t.studio.size }} • {{ t.studio.minStay }}</p>
+      <p>{{ t.studio.description }}</p>
+      <a href="{{ '/fr/eco-studio/' | relativeUrl }}" class="btn btn-primary">
         {{ t.ecoStudio }}
       </a>
     </div>
 
     <!-- Parking Card -->
-    <div class="section-card p-8 parking-gradient text-white">
-      <h2 class="text-3xl font-bold mb-4">{{ t.parking.title }}</h2>
-      <p class="mb-4 text-white/90">{{ t.parking.subtitle }}</p>
-      <p class="mb-6 text-white/90">{{ t.parking.description }}</p>
-      <a href="{{ '/fr/parking/' | relativeUrl }}" class="btn-primary bg-white text-[#5B6E7D] hover:bg-white/90 inline-block">
+    <div class="service-card parking-card">
+      <h2>{{ t.parking.title }}</h2>
+      <p>{{ t.parking.subtitle }}</p>
+      <p>{{ t.parking.description }}</p>
+      <a href="{{ '/fr/parking/' | relativeUrl }}" class="btn btn-primary">
         {{ t.menuParking }}
       </a>
     </div>
   </div>
 
   <!-- SEO Section -->
-  <div class="section-card p-8 bg-white">
-    <h2 class="text-2xl font-bold text-[#2D5016] mb-4">Pourquoi La Sonnaz ?</h2>
-    <ul class="space-y-3 text-[#1f1f1f]/80">
-      <li class="flex items-start gap-2">
-        <span class="text-xl">📍</span>
+  <div class="info-section">
+    <h2>Pourquoi La Sonnaz ?</h2>
+    <ul>
+      <li>
+        <span>📍</span>
         <span>{{ t.seo.baseCentral }}</span>
       </li>
-      <li class="flex items-start gap-2">
-        <span class="text-xl">🛣️</span>
+      <li>
+        <span>🛣️</span>
         <span>{{ t.seo.highway }}</span>
       </li>
-      <li class="flex items-start gap-2">
-        <span class="text-xl">🚌</span>
+      <li>
+        <span>🚌</span>
         <span>{{ t.seo.publicTransport }}</span>
       </li>
     </ul>

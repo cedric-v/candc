@@ -4,10 +4,51 @@ title: Page non trouvée
 permalink: /404.html
 ---
 
-<section class="max-w-4xl mx-auto px-6 md:px-12 py-16 text-center">
-  <h1 class="text-4xl md:text-5xl font-bold text-[#2D5016] mb-4">404</h1>
-  <p class="text-xl text-[#1f1f1f]/80 mb-8">Page non trouvée</p>
-  <a href="{{ '/fr/' | relativeUrl }}" class="btn-primary bg-[#6B8E23] text-white hover:bg-[#5a7a1d] inline-block">
+<style>
+@layer components {
+  .error-container {
+    max-width: 56rem;
+    margin: 0 auto;
+    padding: var(--spacing-3xl) var(--spacing-xl);
+    text-align: center;
+  }
+
+  .error-container h1 {
+    font-size: clamp(2.25rem, 5vw, 3rem);
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .error-container p {
+    font-size: 1.25rem;
+    color: var(--text-muted);
+    margin-bottom: var(--spacing-2xl);
+  }
+
+  .error-container .btn {
+    background: var(--secondary-color);
+    color: var(--white);
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .error-container .btn:hover {
+    background: color-mix(in srgb, var(--secondary-color), black 10%);
+  }
+
+  @container (min-width: 768px) {
+    .error-container {
+      padding: var(--spacing-3xl) var(--spacing-3xl);
+    }
+  }
+}
+</style>
+
+<section class="error-container">
+  <h1>404</h1>
+  <p>Page non trouvée</p>
+  <a href="{{ '/fr/' | relativeUrl }}" class="btn">
     Retour à l'accueil
   </a>
 </section>

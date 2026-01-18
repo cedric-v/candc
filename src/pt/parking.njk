@@ -9,6 +9,34 @@ ogImage: assets/img/logo-cc.jpg
 
 {% set t = translations[locale] or translations['pt'] %}
 
+<style>
+  .payment-section {
+    margin-top: 3rem;
+    text-align: center;
+  }
+
+  .payment-section h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #5B6E7D;
+    margin-bottom: 1.5rem;
+  }
+
+  .payment-text {
+    font-size: 1rem;
+    color: rgba(31, 31, 31, 0.8);
+    margin-bottom: 2rem;
+    line-height: 1.5;
+  }
+
+  .payment-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.75rem;
+    box-shadow: 0 25px 60px rgba(15, 23, 42, 0.08);
+  }
+</style>
+
 <section class="max-w-4xl mx-auto px-6 md:px-12 py-16 space-y-8">
   <div class="text-center space-y-4">
     <h1 class="text-4xl md:text-5xl font-bold text-[#5B6E7D]">{{ t.parking.title }}</h1>
@@ -48,10 +76,10 @@ ogImage: assets/img/logo-cc.jpg
       </div>
     </div>
 
-    <div class="flex flex-wrap gap-4 justify-center mb-8">
-      <a href="https://www.booking.com" target="_blank" rel="noopener noreferrer" class="btn-primary bg-[#5B6E7D] text-white hover:bg-[#4a5a68]">{{ t.bookOnBooking }}</a>
-      <a href="https://www.airbnb.com" target="_blank" rel="noopener noreferrer" class="btn-primary bg-[#5B6E7D] text-white hover:bg-[#4a5a68]">{{ t.bookOnAirbnb }}</a>
-      <a href="https://share.google/a1QGExomdhBG15St6" target="_blank" rel="noopener noreferrer" class="btn-secondary bg-white text-[#5B6E7D] border-2 border-[#5B6E7D] hover:bg-[#5B6E7D] hover:text-white">
+    <div class="booking-buttons">
+      <a href="https://www.booking.com" target="_blank" rel="noopener noreferrer" class="btn btn-primary">{{ t.bookOnBooking }}</a>
+      <a href="https://www.airbnb.com" target="_blank" rel="noopener noreferrer" class="btn btn-primary">{{ t.bookOnAirbnb }}</a>
+      <a href="https://share.google/a1QGExomdhBG15St6" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
         🗺️ {{ t.getDirections }}
       </a>
     </div>
@@ -66,6 +94,16 @@ ogImage: assets/img/logo-cc.jpg
       <button type="submit" class="btn-primary bg-[#5B6E7D] text-white hover:bg-[#4a5a68] w-full">{{ t.submit }}</button>
     </form>
   </div>
+
+  <!-- Métodos de pagamento / Payment methods -->
+  <section class="payment-section">
+    <h2>Métodos de pagamento / Payment methods</h2>
+    <p class="payment-text">
+      Aceitamos cartões de crédito e dinheiro (CHF ou EUR).<br>
+      We accept credit cards and cash (CHF or EUR).
+    </p>
+    <img src="/assets/img/payment-methods.jpg" alt="Métodos de pagamento aceites / Accepted payment methods" class="payment-image">
+  </section>
 
   <!-- Testimonials (images) -->
   {% set pageTestimonials = testimonials.parking[locale] or testimonials.parking['pt'] or [] %}

@@ -9,9 +9,11 @@
     "ecoStudio": "Eco Studio",
     "parking": "Parking",
     "menuParking": "Parking",
+    "location": "Emplacement",
     "contact": "Contact",
     "about": "Qui sommes-nous ?",
-    "menuAbout": "Qui sommes-nous ?",
+      "location": "Emplacement",
+      "menuAbout": "Qui sommes-nous ?",
     "testimonials": "Témoignages",
     "menuTestimonials": "Témoignages",
     "booking": "Réservation",
@@ -85,6 +87,7 @@
   },
   "en": {
     "siteName": "C & C",
+    "location": "Location",
     "siteDescription": "Eco Studio and Parking in La Sonnaz, Fribourg",
     "businessName": "C & C",
     "businessDescription": "Eco Studio and Parking in La Sonnaz, Fribourg. Furnished apartment rental and secure parking.",
@@ -93,6 +96,7 @@
     "ecoStudio": "Eco Studio",
     "parking": "Parking",
     "menuParking": "Parking",
+    "location": "Emplacement",
     "contact": "Contact",
     "about": "About us",
     "menuAbout": "About us",
@@ -169,6 +173,7 @@
   },
   "de": {
     "siteName": "C & C",
+    "location": "Lage",
     "siteDescription": "Eco Studio und Parkplatz in La Sonnaz, Freiburg",
     "businessName": "C & C",
     "businessDescription": "Eco Studio und Parkplatz in La Sonnaz, Freiburg. Möblierte Wohnung und sicherer Parkplatz.",
@@ -253,6 +258,7 @@
   },
   "es": {
     "siteName": "C & C",
+    "location": "Ubicación",
     "siteDescription": "Eco Studio y Aparcamiento en La Sonnaz, Friburgo",
     "businessName": "C & C",
     "businessDescription": "Eco Studio y Aparcamiento en La Sonnaz, Friburgo. Alquiler de apartamento amueblado y aparcamiento seguro.",
@@ -337,6 +343,7 @@
   },
   "pt": {
     "siteName": "C & C",
+    "location": "Localização",
     "siteDescription": "Eco Studio e Estacionamento em La Sonnaz, Friburgo",
     "businessName": "C & C",
     "businessDescription": "Eco Studio e Estacionamento em La Sonnaz, Friburgo. Aluguel de apartamento mobiliado e estacionamento seguro.",

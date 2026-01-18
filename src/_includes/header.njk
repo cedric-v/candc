@@ -1,42 +1,97 @@
-<header id="main-header" class="bg-[#2D5016] fixed inset-x-0 top-0 z-50 shadow-md overflow-visible transition-all duration-300">
-  <div class="max-w-6xl mx-auto px-4 py-2 flex items-center justify-between relative header-container">
+<header class="site-header">
+  <div class="header-container">
     {% set t = translations[locale] or translations['fr'] %}
     {% if locale == 'fr' %}
-    <a href="{{ '/fr/' | relativeUrl }}" class="flex flex-col items-start gap-0.5">
+    <a href="{{ '/fr/' | relativeUrl }}" class="logo-link">
     {% elif locale == 'en' %}
-    <a href="{{ '/en/' | relativeUrl }}" class="flex flex-col items-start gap-0.5">
+    <a href="{{ '/en/' | relativeUrl }}" class="logo-link">
     {% elif locale == 'de' %}
-    <a href="{{ '/de/' | relativeUrl }}" class="flex flex-col items-start gap-0.5">
+    <a href="{{ '/de/' | relativeUrl }}" class="logo-link">
     {% elif locale == 'es' %}
-    <a href="{{ '/es/' | relativeUrl }}" class="flex flex-col items-start gap-0.5">
+    <a href="{{ '/es/' | relativeUrl }}" class="logo-link">
     {% elif locale == 'pt' %}
-    <a href="{{ '/pt/' | relativeUrl }}" class="flex flex-col items-start gap-0.5">
+    <a href="{{ '/pt/' | relativeUrl }}" class="logo-link">
     {% else %}
-    <a href="{{ '/fr/' | relativeUrl }}" class="flex flex-col items-start gap-0.5">
+    <a href="{{ '/fr/' | relativeUrl }}" class="logo-link">
     {% endif %}
       {% image "assets/img/logo-cc.jpg", "C & C Logo", "h-12 w-auto", "eager", "", "200", "200" %}
-      <span class="text-xs text-[#9CAF88]/80 italic header-slogan -mt-1">{{ t.siteDescription }}</span>
     </a>
 
-    <button class="md:hidden text-[#9CAF88] z-50 relative" data-menu-toggle aria-label="Open menu">
-      <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24">
+    <button class="mobile-menu-toggle" data-menu-toggle aria-label="Open menu">
+      <svg class="hamburger-icon" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M4 12h16M4 17h16" />
       </svg>
     </button>
 
-    <nav class="hidden md:flex items-center gap-6 font-medium text-[#9CAF88]" data-menu>
-      <a href="{{ '/' + locale + '/eco-studio/' | relativeUrl }}" class="hover:opacity-80 transition">{{ t.ecoStudio }}</a>
-      <a href="{{ '/' + locale + '/parking/' | relativeUrl }}" class="hover:opacity-80 transition">{{ t.menuParking }}</a>
-      <a href="{{ '/' + locale + '/about/' | relativeUrl }}" class="hover:opacity-80 transition">{{ t.menuAbout }}</a>
-      <a href="{{ '/' + locale + '/contact/' | relativeUrl }}" class="hover:opacity-80 transition">{{ t.contact }}</a>
-      
-      <div class="flex items-center gap-2 ml-2 pl-4 border-l border-[#9CAF88]/30">
-        {% set languages = ['fr', 'en', 'de', 'es', 'pt'] %}
+    <nav class="main-nav" data-menu>
+      <a href="{{ '/' + locale + '/eco-studio/' | relativeUrl }}" class="nav-link">{{ t.ecoStudio }}</a>
+      <a href="{{ '/' + locale + '/parking/' | relativeUrl }}" class="nav-link">{{ t.menuParking }}</a>
+      <a href="{{ '/' + locale + '/location/' | relativeUrl }}" class="nav-link">{{ t.location }}</a>
+      <a href="{{ '/' + locale + '/about/' | relativeUrl }}" class="nav-link">{{ t.menuAbout }}</a>
+      <a href="{{ '/' + locale + '/contact/' | relativeUrl }}" class="nav-link">{{ t.contact }}</a>
+
+      <div class="language-selector">
+        <button class="lang-toggle" data-lang-toggle aria-label="Changer de langue">
+          {% set langNames = {'fr': 'FR', 'en': 'EN', 'de': 'DE', 'es': 'ES', 'pt': 'PT'} %}
+          {{ langNames[locale] }}
+          <svg class="lang-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+
+        <div class="lang-dropdown">
+          {% set languages = ['fr', 'en', 'de', 'es', 'pt'] %}
+          {% set langFullNames = {'fr': 'Français', 'en': 'English', 'de': 'Deutsch', 'es': 'Español', 'pt': 'Português'} %}
+          {% for lang in languages %}
+            {% if lang != locale %}
+              {% set currentUrl = page.url %}
+              {% if lang == 'fr' %}
+                {% set targetUrl = currentUrl | replace('/en/', '/') | replace('/de/', '/') | replace('/es/', '/') | replace('/pt/', '/') %}
+                {% if targetUrl == '' %}{% set targetUrl = '/' %}{% endif %}
+              {% else %}
+                {% set langPrefix = '/' + lang + '/' %}
+                {% if currentUrl == '/' %}
+                  {% set targetUrl = langPrefix %}
+                {% else %}
+                  {% set targetUrl = currentUrl | replace('/fr/', langPrefix) | replace('/en/', langPrefix) | replace('/de/', langPrefix) | replace('/es/', langPrefix) | replace('/pt/', langPrefix) %}
+                  {% if targetUrl == currentUrl %}
+                    {% set targetUrl = '/' + lang + currentUrl %}
+                  {% endif %}
+                {% endif %}
+              {% endif %}
+              <a href="{{ targetUrl | relativeUrl }}" class="lang-option">
+                <span class="lang-code">{{ langNames[lang] }}</span>
+                <span class="lang-name">{{ langFullNames[lang] }}</span>
+              </a>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+    </nav>
+  </div>
+
+  <!-- Mobile menu -->
+  <nav class="mobile-nav hidden" data-menu-mobile>
+    <a href="{{ '/' + locale + '/eco-studio/' | relativeUrl }}" class="mobile-nav-link">{{ t.ecoStudio }}</a>
+    <a href="{{ '/' + locale + '/parking/' | relativeUrl }}" class="mobile-nav-link">{{ t.menuParking }}</a>
+    <a href="{{ '/' + locale + '/location/' | relativeUrl }}" class="mobile-nav-link">{{ t.location }}</a>
+    <a href="{{ '/' + locale + '/about/' | relativeUrl }}" class="mobile-nav-link">{{ t.menuAbout }}</a>
+    <a href="{{ '/' + locale + '/contact/' | relativeUrl }}" class="mobile-nav-link">{{ t.contact }}</a>
+
+    <div class="mobile-language-selector">
+      <button class="mobile-lang-toggle" data-mobile-lang-toggle>
         {% set langNames = {'fr': 'FR', 'en': 'EN', 'de': 'DE', 'es': 'ES', 'pt': 'PT'} %}
+        <span>{{ langNames[locale] }}</span>
+        <svg class="mobile-lang-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+      <div class="mobile-lang-dropdown">
+        {% set languages = ['fr', 'en', 'de', 'es', 'pt'] %}
+        {% set langFullNames = {'fr': 'Français', 'en': 'English', 'de': 'Deutsch', 'es': 'Español', 'pt': 'Português'} %}
         {% for lang in languages %}
-          {% if lang == locale %}
-            <span class="font-bold text-[#9CAF88]">{{ langNames[lang] }}</span>
-          {% else %}
+          {% if lang != locale %}
             {% set currentUrl = page.url %}
             {% if lang == 'fr' %}
               {% set targetUrl = currentUrl | replace('/en/', '/') | replace('/de/', '/') | replace('/es/', '/') | replace('/pt/', '/') %}
@@ -52,47 +107,13 @@
                 {% endif %}
               {% endif %}
             {% endif %}
-            <a href="{{ targetUrl | relativeUrl }}" class="text-[#9CAF88]/60 hover:text-[#9CAF88] hover:opacity-100 transition">{{ langNames[lang] }}</a>
+            <a href="{{ targetUrl | relativeUrl }}" class="mobile-lang-option">
+              <span class="lang-code">{{ langNames[lang] }}</span>
+              <span class="lang-name">{{ langFullNames[lang] }}</span>
+            </a>
           {% endif %}
-          {% if not loop.last %}<span class="text-[#9CAF88]/40">|</span>{% endif %}
         {% endfor %}
       </div>
-    </nav>
-  </div>
-
-  <!-- Mobile menu -->
-  <nav class="md:hidden hidden absolute top-full left-0 right-0 bg-[#2D5016] flex-col gap-0 px-4 pb-6 font-medium text-[#9CAF88] shadow-lg" data-menu-mobile>
-    <a href="{{ '/' + locale + '/eco-studio/' | relativeUrl }}" class="block py-2 border-b border-[#9CAF88]/20">{{ t.ecoStudio }}</a>
-    <a href="{{ '/' + locale + '/parking/' | relativeUrl }}" class="block py-2 border-b border-[#9CAF88]/20">{{ t.menuParking }}</a>
-    <a href="{{ '/' + locale + '/about/' | relativeUrl }}" class="block py-2 border-b border-[#9CAF88]/20">{{ t.menuAbout }}</a>
-    <a href="{{ '/' + locale + '/contact/' | relativeUrl }}" class="block py-2 border-b border-[#9CAF88]/20">{{ t.contact }}</a>
-    
-    <div class="flex items-center justify-center gap-2 py-2">
-      {% set languages = ['fr', 'en', 'de', 'es', 'pt'] %}
-      {% set langNames = {'fr': 'FR', 'en': 'EN', 'de': 'DE', 'es': 'ES', 'pt': 'PT'} %}
-      {% for lang in languages %}
-        {% if lang == locale %}
-          <span class="font-bold text-[#9CAF88]">{{ langNames[lang] }}</span>
-        {% else %}
-          {% set currentUrl = page.url %}
-          {% if lang == 'fr' %}
-            {% set targetUrl = currentUrl | replace('/en/', '/') | replace('/de/', '/') | replace('/es/', '/') | replace('/pt/', '/') %}
-            {% if targetUrl == '' %}{% set targetUrl = '/' %}{% endif %}
-          {% else %}
-            {% set langPrefix = '/' + lang + '/' %}
-            {% if currentUrl == '/' %}
-              {% set targetUrl = langPrefix %}
-            {% else %}
-              {% set targetUrl = currentUrl | replace('/fr/', langPrefix) | replace('/en/', langPrefix) | replace('/de/', langPrefix) | replace('/es/', langPrefix) | replace('/pt/', langPrefix) %}
-              {% if targetUrl == currentUrl %}
-                {% set targetUrl = '/' + lang + currentUrl %}
-              {% endif %}
-            {% endif %}
-          {% endif %}
-          <a href="{{ targetUrl | relativeUrl }}" class="text-[#9CAF88]/60 hover:text-[#9CAF88] hover:opacity-100 transition">{{ langNames[lang] }}</a>
-        {% endif %}
-        {% if not loop.last %}<span class="text-[#9CAF88]/40">|</span>{% endif %}
-      {% endfor %}
     </div>
   </nav>
 </header>

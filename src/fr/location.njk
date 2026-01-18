@@ -1,0 +1,274 @@
+---
+layout: base.njk
+title: Emplacement - Où nous trouver
+description: Découvrez l'emplacement idéal de C&C Eco Studio près de Fribourg, Suisse. Accès facile en train, voiture et transports publics.
+locale: fr
+permalink: /fr/location/
+ogImage: assets/img/logo-cc.jpg
+---
+
+{% set t = translations[locale] or translations['fr'] %}
+
+<style>
+  .location-hero {
+    text-align: center;
+    gap: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .location-hero h1 {
+    font-size: clamp(2.25rem, 5vw, 3rem);
+    font-weight: 700;
+    color: var(--primary-color);
+  }
+
+  .location-hero p {
+    font-size: 1.125rem;
+    color: var(--text-muted);
+  }
+
+  .location-card {
+    border-radius: var(--border-radius-xl);
+    border: 1px solid rgba(45, 80, 22, 0.15);
+    background: var(--white);
+    box-shadow: var(--shadow);
+    padding: var(--spacing-2xl);
+    gap: var(--spacing-xl);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .location-card h2 {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .address-card {
+    background: rgba(107, 142, 35, 0.1);
+    border: 2px solid var(--secondary-color);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-xl);
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+  }
+
+  .address-card h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-md);
+  }
+
+  .address-card p {
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: var(--text-color);
+    margin: var(--spacing-xs) 0;
+  }
+
+  .maps-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    background: var(--secondary-color);
+    color: var(--white);
+    padding: var(--spacing-md) var(--spacing-xl);
+    border-radius: var(--border-radius-full);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all var(--transition-fast);
+    margin-top: var(--spacing-lg);
+  }
+
+  .maps-link:hover {
+    background: color-mix(in srgb, var(--secondary-color), black 10%);
+    transform: translateY(-2px);
+  }
+
+  .location-content {
+    gap: var(--spacing-xl);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .location-section h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .location-section p {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--text-muted);
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .travel-times {
+    background: rgba(156, 175, 136, 0.1);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-xl);
+    margin-bottom: var(--spacing-xl);
+  }
+
+  .travel-times h4 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-md);
+  }
+
+  .travel-times ul {
+    gap: var(--spacing-sm);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .travel-times li {
+    font-size: 1rem;
+    color: var(--text-color);
+    padding: var(--spacing-xs) 0;
+  }
+
+  .attractions-grid {
+    gap: var(--spacing-lg);
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .attraction-card {
+    background: rgba(201, 125, 96, 0.1);
+    border: 1px solid rgba(201, 125, 96, 0.2);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-lg);
+  }
+
+  .attraction-card h4 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--terracotta-color);
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .attraction-card ul {
+    gap: var(--spacing-xs);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .attraction-card li {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+  }
+
+  @container (min-width: 768px) {
+    .location-container {
+      padding: var(--spacing-3xl) var(--spacing-3xl);
+    }
+
+    .attractions-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>
+
+<section class="location-container">
+  <div class="location-hero">
+    <h1>Où est-ce situé ? / How to find us?</h1>
+    <p>Découvrez l'emplacement idéal de C&C Eco Studio près de Fribourg</p>
+  </div>
+
+  <div class="location-card">
+    <div class="address-card">
+      <h3>C&C Eco Studio est situé à l'adresse suivante :</h3>
+      <p>C&C Eco Studio is located at the following address:</p>
+      <p><strong>Impasse de la Pommeraie 5</strong></p>
+      <p><strong>1782 Formangueires</strong></p>
+      <p><strong>Suisse / Switzerland</strong></p>
+
+      <a href="https://www.google.com/maps/search/?api=1&query=C%26C+Eco+Studio+La+Sonnoz" target="_blank" rel="noopener noreferrer" class="maps-link">
+        🗺️ Sur Google Maps, trouvez-nous facilement en recherchant "C&C Eco Studio"
+      </a>
+    </div>
+
+    <div class="location-content">
+      <div class="location-section">
+        <h3>Notre emplacement</h3>
+        <p>Nous sommes situés dans un petit havre de paix situé à moins de 5 minutes de 2 accès à l'autoroute A12 (Fribourg-Nord et Fribourg-Sud) et à 1 seul kilomètre d'une gare ferroviaire bien desservie (Belfaux-Village, à quelques minutes de la gare de Fribourg) donnant accès aux grandes villes suisses (Genève, Zürich, Bâle) en moins d'1h30.</p>
+
+        <p>Ce studio se trouve dans un village bien situé près de la ville de Fribourg. Si vous voyagez en train, la gare de Belfaux-Village se trouve à moins de 1 km. Cette gare propose des trains toutes les 30 minutes jusqu'au centre de Fribourg (4 minutes de trajet) qui est ensuite bien relié aux autres grandes villes de Suisse (Berne est à 20 minutes, Genève à 1h30m, Zurich à 1h30m, Bâle à 1h30m).</p>
+
+        <p>Si vous avez ou louez une voiture, l'appartement est à moins de 5 minutes de 2 entrées d'autoroute ("Fribourg-Nord" et "Fribourg-Sud").</p>
+      </div>
+
+      <div class="travel-times">
+        <h4>Les grands lieux touristiques suisses sont accessibles rapidement grâce à un emplacement bien centré :</h4>
+        <ul>
+          <li><strong>Berne :</strong> 25 minutes</li>
+          <li><strong>Lucerne :</strong> 1h</li>
+          <li><strong>Zürich :</strong> 1h30</li>
+          <li><strong>Genève :</strong> 1h30</li>
+          <li><strong>Bâle :</strong> 1h30</li>
+        </ul>
+      </div>
+
+      <div class="location-section">
+        <h3>Vous avez également accès facilement à :</h3>
+      </div>
+
+      <div class="attractions-grid">
+        <div class="attraction-card">
+          <h4>Ville et culture</h4>
+          <ul>
+            <li><strong>La ville de Fribourg et sa basse/vieille ville renommée :</strong> 5-10 minutes</li>
+            <li><strong>Forum Fribourg (salle de foire et autres événements) et BCF Arena (salle de concerts et patinoire) :</strong> 5 minutes</li>
+          </ul>
+        </div>
+
+        <div class="attraction-card">
+          <h4>Nature et randonnées</h4>
+          <ul>
+            <li><strong>La vallée du Gottéron :</strong> une balade d'une demi-journée au départ de Fribourg</li>
+          </ul>
+        </div>
+
+        <div class="attraction-card">
+          <h4>Gastronomie</h4>
+          <ul>
+            <li><strong>La chocolaterie Maison Cailler à Broc :</strong> 32 minutes</li>
+          </ul>
+        </div>
+
+        <div class="attraction-card">
+          <h4>Châteaux et patrimoine</h4>
+          <ul>
+            <li><strong>Le château de Gruyères :</strong> 34 minutes</li>
+          </ul>
+        </div>
+
+        <div class="attraction-card">
+          <h4>Sports d'hiver</h4>
+          <ul>
+            <li><strong>Le Lac Noir :</strong> 30 minutes</li>
+            <li><strong>Charmey :</strong> 35 minutes</li>
+            <li><strong>Molèson :</strong> 40 minutes</li>
+            <li><strong>Les Paccots :</strong> 40 minutes</li>
+          </ul>
+        </div>
+
+        <div class="attraction-card">
+          <h4>Bains thermaux</h4>
+          <ul>
+            <li><strong>Les bains de Charmey :</strong> 35 minutes</li>
+            <li><strong>Yverdon-les-Bains :</strong> 35 minutes</li>
+            <li><strong>Lavey-les-Bains :</strong> 45 minutes</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

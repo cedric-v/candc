@@ -9,114 +9,446 @@ ogImage: assets/img/logo-cc.jpg
 
 {% set t = translations[locale] or translations['fr'] %}
 
-<section class="max-w-4xl mx-auto px-6 md:px-12 py-16 space-y-8">
-  <div class="text-center space-y-4">
-    <h1 class="text-4xl md:text-5xl font-bold text-[#5B6E7D]">{{ t.parking.title }}</h1>
-    <p class="text-xl text-[#1f1f1f]/80">{{ t.parking.subtitle }}</p>
-    <p class="text-lg text-[#1f1f1f]/70">{{ t.parking.description }}</p>
+<style>
+@layer components {
+  .parking-container {
+    max-width: 56rem;
+    margin: 0 auto;
+    padding: var(--spacing-xl) var(--spacing-lg);
+    gap: var(--spacing-2xl);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .parking-hero {
+    text-align: center;
+    gap: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .parking-hero h1 {
+    font-size: clamp(2.25rem, 5vw, 3rem);
+    font-weight: 700;
+    color: var(--parking-slate);
+  }
+
+  .parking-hero p:nth-child(2) {
+    font-size: 1.25rem;
+    color: var(--text-muted);
+  }
+
+  .parking-hero p:nth-child(3) {
+    font-size: 1.125rem;
+    color: var(--text-light);
+  }
+
+  .parking-card {
+    border-radius: var(--border-radius-xl);
+    border: 1px solid rgba(45, 80, 22, 0.15);
+    background: var(--white);
+    box-shadow: var(--shadow);
+    padding: var(--spacing-2xl);
+    gap: var(--spacing-xl);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .parking-card h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--parking-slate);
+  }
+
+  .features-list {
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-xl);
+    display: flex;
+    flex-direction: column;
+    color: var(--text-muted);
+  }
+
+  .features-list li {
+    gap: var(--spacing-sm);
+    display: flex;
+    align-items: flex-start;
+  }
+
+  .features-list li span:first-child {
+    font-size: 1.25rem;
+    flex-shrink: 0;
+  }
+
+  .note-box {
+    background: rgba(91, 110, 125, 0.1);
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius-lg);
+    margin-bottom: var(--spacing-xl);
+  }
+
+  .note-box p {
+    color: var(--text-muted);
+  }
+
+  .warning-box {
+    background: #fefce8;
+    border-left: 4px solid #facc15;
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+  }
+
+  .warning-box p {
+    color: var(--text-muted);
+  }
+
+  .services-section {
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-2xl);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .service-box {
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius-lg);
+  }
+
+  .service-box.toilet {
+    background: #eff6ff;
+  }
+
+  .service-box.charging {
+    background: #f0fdf4;
+  }
+
+  .service-box h3 {
+    font-weight: 600;
+    color: var(--parking-slate);
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .service-box p {
+    color: var(--text-muted);
+    margin: 0;
+  }
+
+  .service-box .cable-info {
+    font-size: 0.875rem;
+    color: var(--text-light);
+    margin-top: var(--spacing-sm);
+  }
+
+  .booking-buttons {
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-2xl);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .btn-parking {
+    background: var(--parking-slate);
+    color: var(--white);
+    border-radius: var(--border-radius-full);
+    padding: var(--spacing-md) var(--spacing-xl);
+    font-weight: 600;
+    transition: background-color var(--transition-normal);
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .btn-parking:hover {
+    background: #4a5a68;
+  }
+
+  .btn-parking-secondary {
+    background: var(--white);
+    color: var(--parking-slate);
+    border: 2px solid var(--parking-slate);
+    border-radius: var(--border-radius-full);
+    padding: calc(var(--spacing-md) - 2px) calc(var(--spacing-xl) - 2px);
+    font-weight: 600;
+    transition: all var(--transition-normal);
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .btn-parking-secondary:hover {
+    background: var(--parking-slate);
+    color: var(--white);
+  }
+
+  .form-section {
+    gap: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .form-section h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--parking-slate);
+  }
+
+  .form-group {
+    gap: var(--spacing-sm);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .form-group label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-color);
+  }
+
+  .form-input {
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border: 1px solid rgba(91, 110, 125, 0.3);
+    border-radius: var(--border-radius-lg);
+    font-size: 1rem;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  }
+
+  .form-input:focus {
+    outline: none;
+    border-color: var(--parking-slate);
+    box-shadow: 0 0 0 3px rgba(91, 110, 125, 0.1);
+  }
+
+  .form-textarea {
+    resize: vertical;
+    min-height: 6rem;
+  }
+
+  .form-submit {
+    width: 100%;
+    background: var(--parking-slate);
+    color: var(--white);
+    border: none;
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-md) var(--spacing-lg);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color var(--transition-normal);
+  }
+
+  .form-submit:hover {
+    background: #4a5a68;
+  }
+
+  .testimonials-section {
+    margin-top: var(--spacing-3xl);
+  }
+
+  .testimonials-header {
+    text-align: center;
+    margin-bottom: var(--spacing-2xl);
+    gap: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .testimonials-header h2 {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: var(--parking-slate);
+  }
+
+  .testimonials-header p {
+    font-size: 1.125rem;
+    color: var(--text-muted);
+  }
+
+  .testimonials-grid {
+    gap: var(--spacing-xl);
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .testimonial-card {
+    border-radius: var(--border-radius-xl);
+    border: 1px solid rgba(45, 80, 22, 0.15);
+    background: var(--white);
+    box-shadow: var(--shadow);
+    padding: var(--spacing-lg);
+    overflow: hidden;
+  }
+
+  .testimonial-card img {
+    width: 100%;
+    height: auto;
+    border-radius: var(--border-radius-lg);
+  }
+
+  .payment-section {
+    margin-top: var(--spacing-2xl);
+    text-align: center;
+  }
+
+  .payment-section h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--parking-slate);
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .payment-text {
+    font-size: 1rem;
+    color: var(--text-muted);
+    margin-bottom: var(--spacing-xl);
+    line-height: 1.5;
+  }
+
+  .payment-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow);
+  }
+
+  @container (min-width: 768px) {
+    .parking-container {
+      padding: var(--spacing-3xl) var(--spacing-3xl);
+    }
+
+    .parking-hero h1 {
+      font-size: 3rem;
+    }
+
+    .testimonials-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @container (min-width: 1024px) {
+    .testimonials-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+}
+</style>
+
+<section class="parking-container">
+  <div class="parking-hero">
+    <h1>{{ t.parking.title }}</h1>
+    <p>{{ t.parking.subtitle }}</p>
+    <p>{{ t.parking.description }}</p>
   </div>
 
-  <div class="section-card p-8 bg-white">
-    <h2 class="text-2xl font-bold text-[#5B6E7D] mb-6">Ce que nous fournissons</h2>
-    <ul class="space-y-3 text-[#1f1f1f]/80 mb-6">
-      <li class="flex items-start gap-2">
-        <span class="text-xl">🅿️</span>
+  <div class="parking-card">
+    <h2>Ce que nous fournissons</h2>
+    <ul class="features-list">
+      <li>
+        <span>🅿️</span>
         <span>Place de stationnement</span>
       </li>
-      <li class="flex items-start gap-2">
-        <span class="text-xl">⚡</span>
+      <li>
+        <span>⚡</span>
         <span>Prise électrique</span>
       </li>
-      <li class="flex items-start gap-2">
-        <span class="text-xl">🗑️</span>
+      <li>
+        <span>🗑️</span>
         <span>Gestion des déchets</span>
       </li>
-      <li class="flex items-start gap-2">
-        <span class="text-xl">📶</span>
+      <li>
+        <span>📶</span>
         <span>Wi-Fi rapide</span>
       </li>
-      <li class="flex items-start gap-2">
-        <span class="text-xl">💧</span>
+      <li>
+        <span>💧</span>
         <span>Robinet extérieur avec eau potable</span>
       </li>
-      <li class="flex items-start gap-2">
-        <span class="text-xl">🌄</span>
+      <li>
+        <span>🌄</span>
         <span>Terrasse avec vue</span>
       </li>
     </ul>
 
-    <div class="bg-[#5B6E7D]/10 p-4 rounded-lg mb-6">
-      <p class="text-[#1f1f1f]/80"><strong>Note importante :</strong> {{ t.parking.note }}</p>
+    <div class="note-box">
+      <p><strong>Note importante :</strong> {{ t.parking.note }}</p>
     </div>
 
-    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
-      <p class="text-[#1f1f1f]/80"><strong>⚠️</strong> {{ t.parking.noChemicalToilet }}</p>
+    <div class="warning-box">
+      <p><strong>⚠️</strong> {{ t.parking.noChemicalToilet }}</p>
     </div>
 
-    <div class="space-y-4 mb-8">
-      <div class="bg-blue-50 p-4 rounded-lg">
-        <h3 class="font-semibold text-[#5B6E7D] mb-2">🚿 Accès toilette et douche</h3>
-        <p class="text-[#1f1f1f]/80">{{ t.parking.toilet }}</p>
+    <div class="services-section">
+      <div class="service-box toilet">
+        <h3>🚿 Accès toilette et douche</h3>
+        <p>{{ t.parking.toilet }}</p>
       </div>
 
-      <div class="bg-green-50 p-4 rounded-lg">
-        <h3 class="font-semibold text-[#5B6E7D] mb-2">🔌 Recharge voiture électrique</h3>
-        <p class="text-[#1f1f1f]/80">{{ t.parking.evCharging }}</p>
-        <p class="text-sm text-[#1f1f1f]/70 mt-2">Câble compatible Type 13 (220V, 10A) avec connecteur Type 2</p>
+      <div class="service-box charging">
+        <h3>🔌 Recharge voiture électrique</h3>
+        <p>{{ t.parking.evCharging }}</p>
+        <p class="cable-info">Câble compatible Type 13 (220V, 10A) avec connecteur Type 2</p>
       </div>
     </div>
 
-    <div class="flex flex-wrap gap-4 justify-center mb-8">
-      <a href="https://www.booking.com" target="_blank" rel="noopener noreferrer" class="btn-primary bg-[#5B6E7D] text-white hover:bg-[#4a5a68]">
+    <div class="booking-buttons">
+      <a href="https://www.booking.com" target="_blank" rel="noopener noreferrer" class="btn-parking">
         {{ t.bookOnBooking }}
       </a>
-      <a href="https://www.airbnb.com" target="_blank" rel="noopener noreferrer" class="btn-primary bg-[#5B6E7D] text-white hover:bg-[#4a5a68]">
+      <a href="https://www.airbnb.com" target="_blank" rel="noopener noreferrer" class="btn-parking">
         {{ t.bookOnAirbnb }}
       </a>
-      <a href="https://share.google/a1QGExomdhBG15St6" target="_blank" rel="noopener noreferrer" class="btn-secondary bg-white text-[#5B6E7D] border-2 border-[#5B6E7D] hover:bg-[#5B6E7D] hover:text-white">
+      <a href="https://share.google/a1QGExomdhBG15St6" target="_blank" rel="noopener noreferrer" class="btn-parking-secondary">
         🗺️ {{ t.getDirections }}
       </a>
     </div>
 
-    <h2 class="text-2xl font-bold text-[#5B6E7D] mb-4">Demande de réservation</h2>
-    <form name="parking" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="space-y-4">
+    <div class="form-section">
+      <h2>Demande de réservation</h2>
+      <form name="parking" method="POST" data-netlify="true" netlify-honeypot="bot-field">
       <input type="hidden" name="form-name" value="parking">
       <p class="hidden">
-        <label>Ne remplissez pas ce champ si vous êtes humain: <input name="bot-field" /></label>
-      </p>
-      
-      <div>
-        <label for="name" class="block text-sm font-medium text-[#1f1f1f] mb-2">{{ t.name }}</label>
-        <input type="text" id="name" name="name" required class="w-full px-4 py-2 border border-[#5B6E7D]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5B6E7D]">
+          <label>Ne remplissez pas ce champ si vous êtes humain: <input name="bot-field"></label>
+        </p>
+
+        <div class="form-group">
+          <label for="name">{{ t.name }}</label>
+          <input type="text" id="name" name="name" required class="form-input">
       </div>
       
-      <div>
-        <label for="email" class="block text-sm font-medium text-[#1f1f1f] mb-2">{{ t.email }}</label>
-        <input type="email" id="email" name="email" required class="w-full px-4 py-2 border border-[#5B6E7D]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5B6E7D]">
+        <div class="form-group">
+          <label for="email">{{ t.email }}</label>
+          <input type="email" id="email" name="email" required class="form-input">
       </div>
       
-      <div>
-        <label for="message" class="block text-sm font-medium text-[#1f1f1f] mb-2">{{ t.message }}</label>
-        <textarea id="message" name="message" rows="4" required class="w-full px-4 py-2 border border-[#5B6E7D]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5B6E7D]"></textarea>
+        <div class="form-group">
+          <label for="message">{{ t.message }}</label>
+          <textarea id="message" name="message" rows="4" required class="form-input form-textarea"></textarea>
       </div>
       
-      <button type="submit" class="btn-primary bg-[#5B6E7D] text-white hover:bg-[#4a5a68] w-full">
+        <button type="submit" class="form-submit">
         {{ t.submit }}
       </button>
     </form>
+    </div>
   </div>
+
+  <!-- Moyens de paiement -->
+  <section class="payment-section">
+    <h2>Moyens de paiement / Payment methods</h2>
+    <p class="payment-text">
+      Nous acceptons les cartes de crédit et le liquide (CHF ou EUR).<br>
+    </p>
+    <img src="/assets/img/payment-methods.jpg" alt="Moyens de paiement acceptés" class="payment-image">
+  </section>
 
   <!-- Témoignages (images) -->
   {% set pageTestimonials = testimonials.parking[locale] or testimonials.parking['fr'] or [] %}
   {% if pageTestimonials and pageTestimonials.length > 0 %}
-  <section id="testimonials" class="mt-12">
-    <div class="text-center mb-8">
-      <h2 class="text-3xl font-bold text-[#5B6E7D] mb-4">Témoignages</h2>
-      <p class="text-lg text-[#1f1f1f]/80">Ce que nos hôtes disent</p>
+  <section class="testimonials-section">
+    <div class="testimonials-header">
+      <h2>Témoignages</h2>
+      <p>Ce que nos hôtes disent</p>
     </div>
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="testimonials-grid">
       {% for testimonial in pageTestimonials %}
-      <div class="section-card p-4 bg-white overflow-hidden">
+      <div class="testimonial-card">
         {% if testimonial.image %}
           {% set imagePath = "assets/img/testimonials/" + testimonial.image %}
           {% set imageAlt = testimonial.alt or "Témoignage client" %}

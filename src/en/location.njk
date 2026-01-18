@@ -1,0 +1,274 @@
+---
+layout: base.njk
+title: Location - How to find us
+description: Discover the ideal location of C&C Eco Studio near Fribourg, Switzerland. Easy access by train, car and public transport.
+locale: en
+permalink: /en/location/
+ogImage: assets/img/logo-cc.jpg
+---
+
+{% set t = translations[locale] or translations['en'] %}
+
+<style>
+  .location-hero {
+    text-align: center;
+    gap: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .location-hero h1 {
+    font-size: clamp(2.25rem, 5vw, 3rem);
+    font-weight: 700;
+    color: var(--primary-color);
+  }
+
+  .location-hero p {
+    font-size: 1.125rem;
+    color: var(--text-muted);
+  }
+
+  .location-card {
+    border-radius: var(--border-radius-xl);
+    border: 1px solid rgba(45, 80, 22, 0.15);
+    background: var(--white);
+    box-shadow: var(--shadow);
+    padding: var(--spacing-2xl);
+    gap: var(--spacing-xl);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .location-card h2 {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .address-card {
+    background: rgba(107, 142, 35, 0.1);
+    border: 2px solid var(--secondary-color);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-xl);
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+  }
+
+  .address-card h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-md);
+  }
+
+  .address-card p {
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: var(--text-color);
+    margin: var(--spacing-xs) 0;
+  }
+
+  .maps-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    background: var(--secondary-color);
+    color: var(--white);
+    padding: var(--spacing-md) var(--spacing-xl);
+    border-radius: var(--border-radius-full);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all var(--transition-fast);
+    margin-top: var(--spacing-lg);
+  }
+
+  .maps-link:hover {
+    background: color-mix(in srgb, var(--secondary-color), black 10%);
+    transform: translateY(-2px);
+  }
+
+  .location-content {
+    gap: var(--spacing-xl);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .location-section h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .location-section p {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--text-muted);
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .travel-times {
+    background: rgba(156, 175, 136, 0.1);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-xl);
+    margin-bottom: var(--spacing-xl);
+  }
+
+  .travel-times h4 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-md);
+  }
+
+  .travel-times ul {
+    gap: var(--spacing-sm);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .travel-times li {
+    font-size: 1rem;
+    color: var(--text-color);
+    padding: var(--spacing-xs) 0;
+  }
+
+  .attractions-grid {
+    gap: var(--spacing-lg);
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .attraction-card {
+    background: rgba(201, 125, 96, 0.1);
+    border: 1px solid rgba(201, 125, 96, 0.2);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-lg);
+  }
+
+  .attraction-card h4 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--terracotta-color);
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .attraction-card ul {
+    gap: var(--spacing-xs);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .attraction-card li {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+  }
+
+  @container (min-width: 768px) {
+    .location-container {
+      padding: var(--spacing-3xl) var(--spacing-3xl);
+    }
+
+    .attractions-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>
+
+<section class="location-container">
+  <div class="location-hero">
+    <h1>Où est-ce situé ? / How to find us?</h1>
+    <p>Discover the ideal location of C&C Eco Studio near Fribourg</p>
+  </div>
+
+  <div class="location-card">
+    <div class="address-card">
+      <h3>C&C Eco Studio is located at the following address:</h3>
+      <p>C&C Eco Studio est situé à l'adresse suivante :</p>
+      <p><strong>Impasse de la Pommeraie 5</strong></p>
+      <p><strong>1782 Formangueires</strong></p>
+      <p><strong>Switzerland / Suisse</strong></p>
+
+      <a href="https://www.google.com/maps/search/?api=1&query=C%26C+Eco+Studio+La+Sonnoz" target="_blank" rel="noopener noreferrer" class="maps-link">
+        🗺️ On Google Maps, you can easily find us by searching for "C&C Eco Studio"
+      </a>
+    </div>
+
+    <div class="location-content">
+      <div class="location-section">
+        <h3>Our location</h3>
+        <p>We are located in a small haven of peace less than 5 minutes from 2 accesses to the A12 motorway (Fribourg-Nord and Fribourg-Sud) and only 1 kilometer from a well-served railway station (Belfaux-Village, a few minutes from Fribourg station) giving access to the major Swiss cities (Geneva, Zürich, Basel) in less than 1h30.</p>
+
+        <p>This studio is in a well-located village near the city of Fribourg. If you travel by train, "Belfaux-Village" train station is less than 1 km. This train station has trains every 30 minutes to Fribourg city centre (4 minutes train ride), which is then well connected to other major cities of Switzerland (Bern is at 20 minutes, Geneva at 1h30m, Zurich at 1h30m, Basel at 1h30m).</p>
+
+        <p>If you have or rent a car, the flat is less than 5 minutes from 2 highway entrances ("Fribourg-Nord" and "Fribourg-Sud").</p>
+      </div>
+
+      <div class="travel-times">
+        <h4>The Swiss highlights are easily accessible thanks to a well-centred location:</h4>
+        <ul>
+          <li><strong>Bern (capital city):</strong> 25 minutes</li>
+          <li><strong>Luzern:</strong> 1 hour</li>
+          <li><strong>Zürich:</strong> 1 hour 30 minutes</li>
+          <li><strong>Geneva:</strong> 1 hour 30 minutes</li>
+          <li><strong>Basel:</strong> 1 hour 30 minutes</li>
+        </ul>
+      </div>
+
+      <div class="location-section">
+        <h3>You also have easy access to:</h3>
+      </div>
+
+      <div class="attractions-grid">
+        <div class="attraction-card">
+          <h4>City and culture</h4>
+          <ul>
+            <li><strong>Fribourg city and its well-renowned old town:</strong> 5-10 minutes</li>
+            <li><strong>Forum Fribourg (exhibition hall and other events) and BCF Arena (concert hall and ice rink):</strong> 5 minutes</li>
+          </ul>
+        </div>
+
+        <div class="attraction-card">
+          <h4>Nature and hiking</h4>
+          <ul>
+            <li><strong>The Valley of Gottéron:</strong> a nice walk of half a day starting from Fribourg</li>
+          </ul>
+        </div>
+
+        <div class="attraction-card">
+          <h4>Culinary</h4>
+          <ul>
+            <li><strong>Maison Cailler chocolate factory in Broc:</strong> 32 minutes</li>
+          </ul>
+        </div>
+
+        <div class="attraction-card">
+          <h4>Castles and heritage</h4>
+          <ul>
+            <li><strong>Gruyères Castle:</strong> 34 minutes</li>
+          </ul>
+        </div>
+
+        <div class="attraction-card">
+          <h4>Winter sports</h4>
+          <ul>
+            <li><strong>Le Lac Noir:</strong> 30 minutes</li>
+            <li><strong>Charmey:</strong> 35 minutes</li>
+            <li><strong>Molèson:</strong> 40 minutes</li>
+            <li><strong>Les Paccots:</strong> 40 minutes</li>
+          </ul>
+        </div>
+
+        <div class="attraction-card">
+          <h4>Thermal baths</h4>
+          <ul>
+            <li><strong>Charmey thermal baths:</strong> 35 minutes</li>
+            <li><strong>Yverdon-les-Bains:</strong> 35 minutes</li>
+            <li><strong>Lavey-les-Bains:</strong> 45 minutes</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

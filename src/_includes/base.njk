@@ -101,10 +101,10 @@
     {# Schema.org JSON-LD #}
     {% schemaOrg page, locale %}
 </head>
-<body class="font-[Inter] bg-[#fdfaf6] text-[#1f1f1f] antialiased">
+<body class="page-body">
     {% include "header.njk" %}
 
-    <main class="min-h-screen pt-28">
+    <main class="page-main">
         {{ content | safe }}
     </main>
     
@@ -119,16 +119,56 @@
       mobileMenu.classList.toggle('hidden');
     });
   }
-  
+
   document.addEventListener('click', (e) => {
     if (mobileMenu && !mobileMenu.contains(e.target) && !toggle.contains(e.target)) {
       mobileMenu.classList.add('hidden');
     }
   });
 
+  // Language dropdown functionality
+  const langToggle = document.querySelector('[data-lang-toggle]');
+  const langSelector = document.querySelector('.language-selector');
+  const mobileLangToggle = document.querySelector('[data-mobile-lang-toggle]');
+  const mobileLangSelector = document.querySelector('.mobile-language-selector');
+
+  if (langToggle && langSelector) {
+    langToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      langSelector.classList.toggle('open');
+      // Close mobile menu if open
+      if (mobileMenu) mobileMenu.classList.add('hidden');
+    });
+  }
+
+  if (mobileLangToggle && mobileLangSelector) {
+    mobileLangToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      mobileLangSelector.classList.toggle('open');
+    });
+  }
+
+  // Close dropdowns when clicking outside
+  document.addEventListener('click', (e) => {
+    if (langSelector && !langSelector.contains(e.target)) {
+      langSelector.classList.remove('open');
+    }
+    if (mobileLangSelector && !mobileLangSelector.contains(e.target)) {
+      mobileLangSelector.classList.remove('open');
+    }
+  });
+
+  // Close dropdowns on escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      if (langSelector) langSelector.classList.remove('open');
+      if (mobileLangSelector) mobileLangSelector.classList.remove('open');
+    }
+  });
+
   // Effet de menu au scroll
   (function() {
-    const header = document.getElementById('main-header');
+    const header = document.querySelector('.site-header');
     if (!header) return;
     
     let lastScrollY = window.scrollY;

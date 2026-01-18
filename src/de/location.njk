@@ -1,0 +1,267 @@
+---
+layout: base.njk
+title: Lage - Wie Sie uns finden
+description: Entdecken Sie die ideale Lage von C&C Eco Studio nahe Freiburg, Schweiz. Leichter Zugang mit Zug, Auto und öffentlichen Verkehrsmitteln.
+locale: de
+permalink: /de/location/
+ogImage: assets/img/logo-cc.jpg
+---
+
+{% set t = translations[locale] or translations['de'] %}
+
+<style>
+  .location-hero {
+    text-align: center;
+    gap: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .location-hero h1 {
+    font-size: clamp(2.25rem, 5vw, 3rem);
+    font-weight: 700;
+    color: var(--primary-color);
+  }
+
+  .location-hero p {
+    font-size: 1.125rem;
+    color: var(--text-muted);
+  }
+
+  .location-card {
+    border-radius: var(--border-radius-xl);
+    border: 1px solid rgba(45, 80, 22, 0.15);
+    background: var(--white);
+    box-shadow: var(--shadow);
+    padding: var(--spacing-2xl);
+    gap: var(--spacing-xl);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .address-card {
+    background: rgba(107, 142, 35, 0.1);
+    border: 2px solid var(--secondary-color);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-xl);
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+  }
+
+  .address-card h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-md);
+  }
+
+  .address-card p {
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: var(--text-color);
+    margin: var(--spacing-xs) 0;
+  }
+
+  .maps-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    background: var(--secondary-color);
+    color: var(--white);
+    padding: var(--spacing-md) var(--spacing-xl);
+    border-radius: var(--border-radius-full);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all var(--transition-fast);
+    margin-top: var(--spacing-lg);
+  }
+
+  .maps-link:hover {
+    background: color-mix(in srgb, var(--secondary-color), black 10%);
+    transform: translateY(-2px);
+  }
+
+  .location-content {
+    gap: var(--spacing-xl);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .location-section h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .location-section p {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--text-muted);
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .travel-times {
+    background: rgba(156, 175, 136, 0.1);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-xl);
+    margin-bottom: var(--spacing-xl);
+  }
+
+  .travel-times h4 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-md);
+  }
+
+  .travel-times ul {
+    gap: var(--spacing-sm);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .travel-times li {
+    font-size: 1rem;
+    color: var(--text-color);
+    padding: var(--spacing-xs) 0;
+  }
+
+  .attractions-grid {
+    gap: var(--spacing-lg);
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .attraction-card {
+    background: rgba(201, 125, 96, 0.1);
+    border: 1px solid rgba(201, 125, 96, 0.2);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-lg);
+  }
+
+  .attraction-card h4 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--terracotta-color);
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .attraction-card ul {
+    gap: var(--spacing-xs);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .attraction-card li {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+  }
+
+  @container (min-width: 768px) {
+    .location-container {
+      padding: var(--spacing-3xl) var(--spacing-3xl);
+    }
+
+    .attractions-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>
+
+<section class="location-container">
+  <div class="location-hero">
+    <h1>Wo befinden wir uns? / How to find us?</h1>
+    <p>Entdecken Sie die ideale Lage von C&C Eco Studio nahe Freiburg</p>
+  </div>
+
+  <div class="location-card">
+    <div class="address-card">
+      <h3>C&C Eco Studio befindet sich an folgender Adresse:</h3>
+      <p>C&C Eco Studio is located at the following address:</p>
+      <p><strong>Impasse de la Pommeraie 5</strong></p>
+      <p><strong>1782 Formangueires</strong></p>
+      <p><strong>Schweiz / Switzerland</strong></p>
+
+      <a href="https://www.google.com/maps/search/?api=1&query=C%26C+Eco+Studio+La+Sonnoz" target="_blank" rel="noopener noreferrer" class="maps-link">
+        🗺️ Auf Google Maps finden Sie uns leicht, indem Sie nach "C&C Eco Studio" suchen
+      </a>
+    </div>
+
+    <div class="location-content">
+      <div class="location-section">
+        <h3>Unsere Lage</h3>
+        <p>Wir befinden uns in einem kleinen Ruhepol weniger als 5 Minuten von 2 Zufahrten zur Autobahn A12 (Fribourg-Nord und Fribourg-Sud) und nur 1 Kilometer von einem gut bedienten Bahnhof (Belfaux-Village, wenige Minuten vom Bahnhof Freiburg) entfernt, der Zugang zu den grossen Schweizer Städten (Genf, Zürich, Basel) in weniger als 1h30 bietet.</p>
+
+        <p>Dieses Studio befindet sich in einem gut gelegenen Dorf in der Nähe der Stadt Freiburg. Wenn Sie mit dem Zug reisen, liegt der Bahnhof "Belfaux-Village" weniger als 1 km entfernt. Dieser Bahnhof hat Züge alle 30 Minuten ins Stadtzentrum von Freiburg (4 Minuten Fahrt), das dann gut mit anderen grossen Schweizer Städten verbunden ist (Bern ist bei 20 Minuten, Genf bei 1h30m, Zürich bei 1h30m, Basel bei 1h30m).</p>
+
+        <p>Wenn Sie ein Auto haben oder mieten, liegt die Wohnung weniger als 5 Minuten von 2 Autobahneinfahrten entfernt ("Fribourg-Nord" und "Fribourg-Sud").</p>
+      </div>
+
+      <div class="travel-times">
+        <h4>Die Schweizer Highlights sind dank einer zentralen Lage leicht erreichbar:</h4>
+        <ul>
+          <li><strong>Bern (Hauptstadt):</strong> 25 Minuten</li>
+          <li><strong>Luzern:</strong> 1 Stunde</li>
+          <li><strong>Zürich:</strong> 1 Stunde 30 Minuten</li>
+          <li><strong>Genf:</strong> 1 Stunde 30 Minuten</li>
+          <li><strong>Basel:</strong> 1 Stunde 30 Minuten</li>
+        </ul>
+      </div>
+
+      <div class="location-section">
+        <h3>Sie haben auch einfachen Zugang zu:</h3>
+      </div>
+
+      <div class="attractions-grid">
+        <div class="attraction-card">
+          <h4>Stadt und Kultur</h4>
+          <ul>
+            <li><strong>Die Stadt Freiburg und ihre berühmte Unter-/Altstadt:</strong> 5-10 Minuten</li>
+            <li><strong>Forum Freiburg (Messehalle und andere Veranstaltungen) und BCF Arena (Konzertsaal und Eishalle):</strong> 5 Minuten</li>
+          </ul>
+        </div>
+
+        <div class="attraction-card">
+          <h4>Natur und Wandern</h4>
+          <ul>
+            <li><strong>Das Tal von Gottéron:</strong> ein schöner halbtägiger Spaziergang ab Freiburg</li>
+          </ul>
+        </div>
+
+        <div class="attraction-card">
+          <h4>Kulinarik</h4>
+          <ul>
+            <li><strong>Schokoladenfabrik Maison Cailler in Broc:</strong> 32 Minuten</li>
+          </ul>
+        </div>
+
+        <div class="attraction-card">
+          <h4>Schlösser und Erbe</h4>
+          <ul>
+            <li><strong>Schloss Gruyères:</strong> 34 Minuten</li>
+          </ul>
+        </div>
+
+        <div class="attraction-card">
+          <h4>Wintersport</h4>
+          <ul>
+            <li><strong>Le Lac Noir:</strong> 30 Minuten</li>
+            <li><strong>Charmey:</strong> 35 Minuten</li>
+            <li><strong>Molèson:</strong> 40 Minuten</li>
+            <li><strong>Les Paccots:</strong> 40 Minuten</li>
+          </ul>
+        </div>
+
+        <div class="attraction-card">
+          <h4>Thermalbäder</h4>
+          <ul>
+            <li><strong>Thermalbäder Charmey:</strong> 35 Minuten</li>
+            <li><strong>Yverdon-les-Bains:</strong> 35 Minuten</li>
+            <li><strong>Lavey-les-Bains:</strong> 45 Minuten</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
