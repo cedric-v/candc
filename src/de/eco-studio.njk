@@ -138,8 +138,8 @@ ogImage: assets/img/logo-cc.jpg
       </div>
       <div class="booking-directions">
         <a href="https://share.google/4SQW4ioSzq3wkMAiA" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
-          🗺️ {{ t.getDirections }}
-        </a>
+        🗺️ {{ t.getDirections }}
+      </a>
       </div>
     </div>
   </div>
@@ -278,3 +278,67 @@ ogImage: assets/img/logo-cc.jpg
     })();
   </script>
 </section>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "LodgingBusiness",
+  "name": "C & C Eco Studio La Sonnaz",
+  "description": "34m² möbliertes Studio mit Feldblick, nahe Freiburg",
+  "url": "https://candc.ch/de/eco-studio/",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Impasse de la Pommeraie 5",
+    "addressLocality": "Formangueires",
+    "postalCode": "1782",
+    "addressCountry": "CH"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": "46.695",
+    "longitude": "7.177"
+  },
+  "telephone": "+41-XX-XXX-XX-XX",
+  "priceRange": "€€",
+  "amenityFeature": [
+    {
+      "@type": "LocationFeatureSpecification",
+      "name": "WiFi",
+      "value": true
+    },
+    {
+      "@type": "LocationFeatureSpecification",
+      "name": "Parkplatz",
+      "value": true
+    },
+    {
+      "@type": "LocationFeatureSpecification",
+      "name": "Terrasse",
+      "value": true
+    },
+    {
+      "@type": "LocationFeatureSpecification",
+      "name": "Küche",
+      "value": true
+    },
+    {
+      "@type": "LocationFeatureSpecification",
+      "name": "Waschmaschine",
+      "value": true
+    }
+  ],
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.8",
+    "reviewCount": "25"
+  },
+  "sameAs": [
+    "https://www.booking.com/hotel/ch/cedric-studio.fr.html",
+    "https://fr.airbnb.ch/rooms/4116019"
+  ],
+  "provider": {
+    "@type": "Organization",
+    "name": "C & C Eco Studio"
+  }
+}
+</script>

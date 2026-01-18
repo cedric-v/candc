@@ -46,3 +46,53 @@ ogImage: assets/img/logo-cc.jpg
     </ul>
   </div>
 </section>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "C & C Eco Studio",
+  "description": "Furnished apartment rental and secure parking in La Sonnaz, Fribourg",
+  "url": "https://candc.ch/en/",
+  "logo": "https://candc.ch/assets/img/logo-cc.jpg",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Impasse de la Pommeraie 5",
+    "addressLocality": "Formangueires",
+    "postalCode": "1782",
+    "addressCountry": "CH"
+  },
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "+41-XX-XXX-XX-XX",
+    "contactType": "customer service",
+    "availableLanguage": ["French", "English", "German", "Spanish", "Portuguese"]
+  },
+  "sameAs": [
+    "https://www.booking.com/hotel/ch/cedric-studio.fr.html",
+    "https://www.airbnb.co.uk/rooms/4116019"
+  ],
+  "hasOfferCatalog": {
+    "@type": "OfferCatalog",
+    "name": "Rental services",
+    "itemListElement": [
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "LodgingBusiness",
+          "name": "Eco Studio La Sonnaz",
+          "description": "34m² furnished studio with countryside view"
+        }
+      },
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "AutomotiveBusiness",
+          "name": "Parking La Sonnaz",
+          "description": "RV parking space near Fribourg"
+        }
+      }
+    ]
+  }
+}
+</script>

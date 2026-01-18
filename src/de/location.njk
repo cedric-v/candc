@@ -264,4 +264,62 @@ ogImage: assets/img/logo-cc.jpg
       </div>
     </div>
   </div>
+
+  <!-- Schema.org für die Lage-Seite -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TouristDestination",
+    "name": "La Sonnaz - Freiburg Region",
+    "description": "Entdecken Sie die ideale Lage von C&C Eco Studio nahe Freiburg, Schweiz. Leichter Zugang mit Zug, Auto und öffentlichen Verkehrsmitteln zu den wichtigsten touristischen Attraktionen.",
+    "url": "https://candc.ch/de/location/",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "La Sonnaz",
+      "addressRegion": "Freiburg",
+      "addressCountry": "CH"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": "46.6931",
+      "longitude": "7.1694"
+    },
+    "touristType": "Natur, Kultur, Gastronomie",
+    "includesAttraction": [
+      {
+        "@type": "TouristAttraction",
+        "name": "Freiburg Stadt",
+        "description": "Historische Stadt mit ihrer als UNESCO-Weltkulturerbe eingetragenen Altstadt"
+      },
+      {
+        "@type": "TouristAttraction",
+        "name": "Gottéron Tal",
+        "description": "Schöne halbtägige Wanderung ab Freiburg"
+      },
+      {
+        "@type": "TouristAttraction",
+        "name": "Schloss Gruyères",
+        "description": "Weltberühmte mittelalterliche Burg"
+      },
+      {
+        "@type": "TouristAttraction",
+        "name": "Lac Noir",
+        "description": "Skigebiet und Wanderziel in den Bergen"
+      }
+    ],
+    "provider": {
+      "@type": "Organization",
+      "name": "C&C Eco Studio",
+      "url": "https://candc.ch",
+      "logo": "https://candc.ch/assets/img/logo-cc.jpg",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Impasse de la Pommeraie 5",
+        "addressLocality": "Formangueires",
+        "postalCode": "1782",
+        "addressCountry": "CH"
+      }
+    }
+  }
+  </script>
 </section>

@@ -97,11 +97,11 @@ module.exports = function(eleventyConfig) {
     return 'https://candc.ch/' + imagePath;
   });
 
-  // 8. Shortcode pour générer les schémas Schema.org en JSON-LD (LocalBusiness)
+  // 8. Shortcode pour générer les schémas Schema.org en JSON-LD spécifiques à chaque page
   eleventyConfig.addShortcode("schemaOrg", function(page, locale) {
     const baseUrl = 'https://candc.ch';
     const schemas = [];
-    
+
     // Charger les traductions
     let translations = {};
     try {
@@ -112,15 +112,34 @@ module.exports = function(eleventyConfig) {
     } catch (e) {
       console.error('Error loading translations:', e);
     }
-    
+
     const t = translations[locale] || translations['fr'] || {};
-    
-    // Schema LocalBusiness
-    const localBusiness = {
+
+    // Déterminer le type de page basé sur l'URL
+    const url = page.url || '/';
+    let pageType = 'WebPage';
+
+    if (url.includes('/eco-studio/')) {
+      pageType = 'LodgingBusiness';
+    } else if (url.includes('/parking/')) {
+      pageType = 'AutomotiveBusiness';
+    } else if (url.includes('/contact/')) {
+      pageType = 'ContactPage';
+    } else if (url.includes('/about/')) {
+      pageType = 'AboutPage';
+    } else if (url.includes('/location/')) {
+      pageType = 'Place';
+    } else if (url === '/' || url.includes('/index')) {
+      pageType = 'WebPage';
+    }
+
+    // Base Organization/LocalBusiness schema (présent sur toutes les pages)
+    const organization = {
       "@context": "https://schema.org",
       "@type": "LocalBusiness",
+      "@id": `${baseUrl}#organization`,
       "name": t.businessName || "C & C",
-      "url": baseUrl + (page.url || '/'),
+      "url": baseUrl,
       "logo": `${baseUrl}/assets/img/logo-cc.jpg`,
       "description": t.businessDescription || "Eco Studio et Parking à La Sonnaz, Fribourg",
       "address": {
@@ -129,7 +148,7 @@ module.exports = function(eleventyConfig) {
         "addressLocality": "La Sonnaz",
         "addressRegion": "Fribourg",
         "postalCode": "1782",
-        "streetAddress": t.streetAddress || "La Sonnaz"
+        "streetAddress": "Impasse de la Pommeraie 5"
       },
       "geo": {
         "@type": "GeoCoordinates",
@@ -146,12 +165,242 @@ module.exports = function(eleventyConfig) {
         "@type": "City",
         "name": "Fribourg"
       },
-      "priceRange": "$$"
+      "priceRange": "$$",
+      "sameAs": [
+        "https://www.booking.com/hotel/ch/cedric-studio.fr.html",
+        "https://fr.airbnb.ch/rooms/4116019"
+      ]
     };
-    schemas.push(localBusiness);
-    
+    schemas.push(organization);
+
+    // Schéma spécifique selon le type de page
+    if (pageType === 'LodgingBusiness') {
+      // Page Eco Studio
+      const lodgingBusiness = {
+        "@context": "https://schema.org",
+        "@type": "LodgingBusiness",
+        "name": t.studio?.title || "Eco Studio",
+        "description": t.studio?.description || "Studio meublé éco-responsable en campagne",
+        "url": baseUrl + url,
+        "address": {
+          "@type": "PostalAddress",
+          "addressCountry": "CH",
+          "addressLocality": "Formangueires",
+          "addressRegion": "Fribourg",
+          "postalCode": "1782",
+          "streetAddress": "Impasse de la Pommeraie 5"
+        },
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": "46.8250",
+          "longitude": "7.1030"
+        },
+        "telephone": "+41 XX XXX XX XX",
+        "priceRange": "$$",
+        "amenityFeature": [
+          {
+            "@type": "LocationFeatureSpecification",
+            "name": "WiFi",
+            "value": true
+          },
+          {
+            "@type": "LocationFeatureSpecification",
+            "name": "Parking",
+            "value": true
+          },
+          {
+            "@type": "LocationFeatureSpecification",
+            "name": "Eco-friendly",
+            "value": true
+          }
+        ],
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "4.8",
+          "reviewCount": "25"
+        }
+      };
+      schemas.push(lodgingBusiness);
+
+    } else if (pageType === 'AutomotiveBusiness') {
+      // Page Parking
+      const automotiveBusiness = {
+        "@context": "https://schema.org",
+        "@type": "AutomotiveBusiness",
+        "name": t.parking?.title || "Parking sécurisé",
+        "description": t.parking?.description || "Place de stationnement pour camping-car près de Fribourg",
+        "url": baseUrl + url,
+        "address": {
+          "@type": "PostalAddress",
+          "addressCountry": "CH",
+          "addressLocality": "Formangueires",
+          "addressRegion": "Fribourg",
+          "postalCode": "1782",
+          "streetAddress": "Impasse de la Pommeraie 5"
+        },
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": "46.8250",
+          "longitude": "7.1030"
+        },
+        "amenityFeature": [
+          {
+            "@type": "LocationFeatureSpecification",
+            "name": "Electrical outlet",
+            "value": true
+          },
+          {
+            "@type": "LocationFeatureSpecification",
+            "name": "WiFi",
+            "value": true
+          },
+          {
+            "@type": "LocationFeatureSpecification",
+            "name": "Waste management",
+            "value": true
+          },
+          {
+            "@type": "LocationFeatureSpecification",
+            "name": "RV friendly",
+            "value": true
+          }
+        ]
+      };
+      schemas.push(automotiveBusiness);
+
+    } else if (pageType === 'Place') {
+      // Page Location
+      const place = {
+        "@context": "https://schema.org",
+        "@type": "Place",
+        "name": "C&C Eco Studio Location",
+        "description": "Emplacement stratégique près de Fribourg, Suisse - Accès facile aux villes suisses",
+        "address": {
+          "@type": "PostalAddress",
+          "addressCountry": "CH",
+          "addressLocality": "Formangueires",
+          "addressRegion": "Fribourg",
+          "postalCode": "1782",
+          "streetAddress": "Impasse de la Pommeraie 5"
+        },
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": "46.8250",
+          "longitude": "7.1030"
+        },
+        "hasMap": "https://www.google.com/maps/search/?api=1&query=C%26C+Eco+Studio+La+Sonnoz"
+      };
+      schemas.push(place);
+
+    } else if (pageType === 'ContactPage') {
+      // Page Contact
+      const contactPage = {
+        "@context": "https://schema.org",
+        "@type": "ContactPage",
+        "name": t.contact || "Contact",
+        "description": "Contactez C&C Eco Studio pour vos réservations",
+        "url": baseUrl + url,
+        "mainEntity": {
+          "@type": "Organization",
+          "@id": `${baseUrl}#organization`
+        }
+      };
+      schemas.push(contactPage);
+
+    } else if (pageType === 'AboutPage') {
+      // Page About
+      const aboutPage = {
+        "@context": "https://schema.org",
+        "@type": "AboutPage",
+        "name": t.about?.title || "Qui sommes-nous",
+        "description": "Découvrez l'histoire de C&C Eco Studio - Céline et Cédric",
+        "url": baseUrl + url,
+        "mainEntity": {
+          "@type": "Organization",
+          "@id": `${baseUrl}#organization`
+        }
+      };
+      schemas.push(aboutPage);
+
+    } else {
+      // Page d'accueil ou autres pages WebPage
+      const webPage = {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": page.title || t.siteName,
+        "description": page.description || t.siteDescription,
+        "url": baseUrl + url,
+        "isPartOf": {
+          "@type": "WebSite",
+          "name": t.siteName,
+          "url": baseUrl
+        },
+        "about": {
+          "@type": "Organization",
+          "@id": `${baseUrl}#organization`
+        }
+      };
+      schemas.push(webPage);
+    }
+
+    // BreadcrumbList pour toutes les pages sauf l'accueil
+    if (url !== '/' && !url.includes('/index')) {
+      const breadcrumbList = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": t.home || "Accueil",
+            "item": baseUrl + (locale === 'fr' ? '/' : '/' + locale + '/')
+          }
+        ]
+      };
+
+      // Ajouter l'élément actuel selon la page
+      if (url.includes('/eco-studio/')) {
+        breadcrumbList.itemListElement.push({
+          "@type": "ListItem",
+          "position": 2,
+          "name": t.ecoStudio || "Eco Studio",
+          "item": baseUrl + url
+        });
+      } else if (url.includes('/parking/')) {
+        breadcrumbList.itemListElement.push({
+          "@type": "ListItem",
+          "position": 2,
+          "name": t.menuParking || "Parking",
+          "item": baseUrl + url
+        });
+      } else if (url.includes('/location/')) {
+        breadcrumbList.itemListElement.push({
+          "@type": "ListItem",
+          "position": 2,
+          "name": t.location || "Emplacement",
+          "item": baseUrl + url
+        });
+      } else if (url.includes('/contact/')) {
+        breadcrumbList.itemListElement.push({
+          "@type": "ListItem",
+          "position": 2,
+          "name": t.contact || "Contact",
+          "item": baseUrl + url
+        });
+      } else if (url.includes('/about/')) {
+        breadcrumbList.itemListElement.push({
+          "@type": "ListItem",
+          "position": 2,
+          "name": t.menuAbout || "Qui sommes-nous",
+          "item": baseUrl + url
+        });
+      }
+
+      schemas.push(breadcrumbList);
+    }
+
     // Générer le JSON-LD
-    return schemas.map(schema => 
+    return schemas.map(schema =>
       `<script type="application/ld+json">${JSON.stringify(schema, null, 2)}</script>`
     ).join('\n');
   });

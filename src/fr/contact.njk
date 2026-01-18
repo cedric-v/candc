@@ -186,6 +186,49 @@ ogImage: assets/img/logo-cc.jpg
   </div>
 </section>
 
+<!-- Schema.org pour la page contact -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ContactPage",
+  "name": "Contact - C&C Eco Studio",
+  "description": "Contactez-nous pour réserver votre séjour au C&C Eco Studio près de Fribourg, Suisse.",
+  "url": "https://candc.ch/fr/contact/",
+  "mainEntity": {
+    "@type": "Organization",
+    "name": "C&C Eco Studio",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Impasse de la Pommeraie 5",
+      "addressLocality": "Formangueires",
+      "postalCode": "1782",
+      "addressCountry": "CH"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": "46.6931",
+      "longitude": "7.1694"
+    },
+    "contactPoint": [
+      {
+        "@type": "ContactPoint",
+        "telephone": "+41763456789",
+        "contactType": "Customer Service",
+        "availableLanguage": "French"
+      },
+      {
+        "@type": "ContactPoint",
+        "email": "cedricjourney@gmail.com",
+        "contactType": "Customer Service",
+        "availableLanguage": "French"
+      }
+    ],
+    "url": "https://candc.ch",
+    "logo": "https://candc.ch/assets/img/logo-cc.jpg"
+  }
+}
+</script>
+
 <script>
   // Protection anti-spam : construction dynamique de l'email
   (function() {

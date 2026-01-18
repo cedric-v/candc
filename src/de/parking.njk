@@ -105,6 +105,67 @@ ogImage: assets/img/logo-cc.jpg
     <img src="/assets/img/payment-methods.jpg" alt="Akzeptierte Zahlungsmethoden / Accepted payment methods" class="payment-image">
   </section>
 
+  <!-- Schema.org für den Parkplatz -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ParkingFacility",
+    "name": "C&C Eco Studio - Parkplatz",
+    "description": "Voll ausgestatteter Stellplatz für Van/Camping-Car/Motorhome nahe Freiburg, Schweiz. Steckdose, WiFi, Abfallentsorgung.",
+    "url": "https://candc.ch/de/parking/",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Impasse de la Pommeraie 5",
+      "addressLocality": "Formangueires",
+      "postalCode": "1782",
+      "addressCountry": "CH"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": "46.6931",
+      "longitude": "7.1694"
+    },
+    "telephone": "+41763456789",
+    "email": "cedricjourney@gmail.com",
+    "amenityFeature": [
+      {
+        "@type": "LocationFeatureSpecification",
+        "name": "Stellplatz",
+        "value": "true"
+      },
+      {
+        "@type": "LocationFeatureSpecification",
+        "name": "Steckdose",
+        "value": "true"
+      },
+      {
+        "@type": "LocationFeatureSpecification",
+        "name": "Schnelles WiFi",
+        "value": "true"
+      },
+      {
+        "@type": "LocationFeatureSpecification",
+        "name": "Abfallentsorgung",
+        "value": "true"
+      },
+      {
+        "@type": "LocationFeatureSpecification",
+        "name": "Trinkwasser",
+        "value": "true"
+      }
+    ],
+    "priceRange": "CHF 10-30",
+    "paymentAccepted": "Bargeld, Kreditkarte",
+    "currenciesAccepted": "CHF, EUR",
+    "provider": {
+      "@type": "Organization",
+      "name": "C&C Eco Studio",
+      "url": "https://candc.ch",
+      "logo": "https://candc.ch/assets/img/logo-cc.jpg"
+    }
+  }
+  </script>
+
   <!-- Testimonials (images) -->
   {% set pageTestimonials = testimonials.parking[locale] or testimonials.parking['de'] or [] %}
   {% if pageTestimonials and pageTestimonials.length > 0 %}

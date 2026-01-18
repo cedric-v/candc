@@ -105,6 +105,67 @@ ogImage: assets/img/logo-cc.jpg
     <img src="/assets/img/payment-methods.jpg" alt="Métodos de pago aceptados / Accepted payment methods" class="payment-image">
   </section>
 
+  <!-- Schema.org para el aparcamiento -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ParkingFacility",
+    "name": "C&C Eco Studio - Aparcamiento",
+    "description": "Plaza de aparcamiento totalmente equipada para furgoneta/caravana/autocaravana cerca de Friburgo, Suiza. Toma de corriente, WiFi, gestión de residuos.",
+    "url": "https://candc.ch/es/parking/",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Impasse de la Pommeraie 5",
+      "addressLocality": "Formangueires",
+      "postalCode": "1782",
+      "addressCountry": "CH"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": "46.6931",
+      "longitude": "7.1694"
+    },
+    "telephone": "+41763456789",
+    "email": "cedricjourney@gmail.com",
+    "amenityFeature": [
+      {
+        "@type": "LocationFeatureSpecification",
+        "name": "Plaza de aparcamiento",
+        "value": "true"
+      },
+      {
+        "@type": "LocationFeatureSpecification",
+        "name": "Toma de corriente",
+        "value": "true"
+      },
+      {
+        "@type": "LocationFeatureSpecification",
+        "name": "WiFi rápido",
+        "value": "true"
+      },
+      {
+        "@type": "LocationFeatureSpecification",
+        "name": "Gestión de residuos",
+        "value": "true"
+      },
+      {
+        "@type": "LocationFeatureSpecification",
+        "name": "Agua potable",
+        "value": "true"
+      }
+    ],
+    "priceRange": "CHF 10-30",
+    "paymentAccepted": "Efectivo, Tarjeta de crédito",
+    "currenciesAccepted": "CHF, EUR",
+    "provider": {
+      "@type": "Organization",
+      "name": "C&C Eco Studio",
+      "url": "https://candc.ch",
+      "logo": "https://candc.ch/assets/img/logo-cc.jpg"
+    }
+  }
+  </script>
+
   <!-- Testimonials (images) -->
   {% set pageTestimonials = testimonials.parking[locale] or testimonials.parking['es'] or [] %}
   {% if pageTestimonials and pageTestimonials.length > 0 %}

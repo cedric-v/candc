@@ -27,3 +27,47 @@ ogImage: assets/img/logo-cc.jpg
     <p class="text-lg leading-relaxed">{{ t.about.text3 }}</p>
   </div>
 </section>
+
+<!-- Schema.org für die About-Seite -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "AboutPage",
+  "name": "Über uns",
+  "description": "Entdecken Sie, wer wir sind und unsere Leidenschaft für Reisen, die uns dazu gebracht hat, dieses Studio zu schaffen.",
+  "url": "https://candc.ch/de/about/",
+  "mainEntity": {
+    "@type": "Organization",
+    "name": "C&C Eco Studio",
+    "description": "Eine unserer gemeinsamen Leidenschaften ist das Reisen. Wir haben dieses Studio geschaffen, damit wir auch zu Hause reisen können, dank der Begegnung mit Reisenden wie Ihnen!",
+    "foundingDate": "2024",
+    "founders": [
+      {
+        "@type": "Person",
+        "name": "Céline",
+        "jobTitle": "Mitbegründerin"
+      },
+      {
+        "@type": "Person",
+        "name": "Cédric",
+        "jobTitle": "Mitbegründer"
+      }
+    ],
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Impasse de la Pommeraie 5",
+      "addressLocality": "Formangueires",
+      "postalCode": "1782",
+      "addressCountry": "CH"
+    },
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": "+41763456789",
+      "email": "cedricjourney@gmail.com",
+      "contactType": "Kundenservice"
+    },
+    "url": "https://candc.ch",
+    "logo": "https://candc.ch/assets/img/logo-cc.jpg"
+  }
+}
+</script>

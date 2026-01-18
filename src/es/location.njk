@@ -264,4 +264,62 @@ ogImage: assets/img/logo-cc.jpg
       </div>
     </div>
   </div>
+
+  <!-- Schema.org para la página de ubicación -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TouristDestination",
+    "name": "La Sonnaz - Región de Friburgo",
+    "description": "Descubra la ubicación ideal de C&C Eco Studio cerca de Friburgo, Suiza. Fácil acceso en tren, coche y transporte público a las principales atracciones turísticas.",
+    "url": "https://candc.ch/es/location/",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "La Sonnaz",
+      "addressRegion": "Friburgo",
+      "addressCountry": "CH"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": "46.6931",
+      "longitude": "7.1694"
+    },
+    "touristType": "Naturaleza, Cultura, Gastronomía",
+    "includesAttraction": [
+      {
+        "@type": "TouristAttraction",
+        "name": "Ciudad de Friburgo",
+        "description": "Ciudad histórica con su casco antiguo inscrito en el Patrimonio Mundial de la UNESCO"
+      },
+      {
+        "@type": "TouristAttraction",
+        "name": "Valle de Gottéron",
+        "description": "Hermosa caminata de medio día desde Friburgo"
+      },
+      {
+        "@type": "TouristAttraction",
+        "name": "Castillo de Gruyères",
+        "description": "Famoso castillo medieval en todo el mundo"
+      },
+      {
+        "@type": "TouristAttraction",
+        "name": "Lac Noir",
+        "description": "Estación de esquí y destino de senderismo en la montaña"
+      }
+    ],
+    "provider": {
+      "@type": "Organization",
+      "name": "C&C Eco Studio",
+      "url": "https://candc.ch",
+      "logo": "https://candc.ch/assets/img/logo-cc.jpg",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Impasse de la Pommeraie 5",
+        "addressLocality": "Formangueires",
+        "postalCode": "1782",
+        "addressCountry": "CH"
+      }
+    }
+  }
+  </script>
 </section>
