@@ -81,20 +81,8 @@
     <link rel="alternate" hreflang="x-default" href="https://candc.ch{{ canonicalUrl }}">
     
     <!-- CSS -->
-    <link rel="preload" href="{{ '/assets/css/styles.css' | relativeUrl }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="{{ '/assets/css/styles.css' | relativeUrl }}"></noscript>
-    <script>
-      (function() {
-        var link = document.querySelector('link[rel="preload"][as="style"]');
-        if (link) {
-          setTimeout(function() {
-            if (!link.sheet && link.rel !== 'stylesheet') {
-              link.rel = 'stylesheet';
-            }
-          }, 100);
-        }
-      })();
-    </script>
+    <link rel="stylesheet" href="{{ '/assets/css/styles.css' | relativeUrl }}">
+
     
     <link rel="icon" type="image/x-icon" href="{{ '/favicon.ico' | relativeUrl }}">
     
