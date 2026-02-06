@@ -10,6 +10,15 @@ ogImage: assets/img/logo-cc.jpg
 {% set t = translations[locale] or translations['es'] %}
 
 <style>
+  .location-container {
+    max-width: 56rem;
+    margin: 0 auto;
+    padding: var(--spacing-3xl) var(--spacing-xl);
+    gap: var(--spacing-2xl);
+    display: flex;
+    flex-direction: column;
+  }
+
   .location-hero {
     text-align: center;
     gap: var(--spacing-lg);
