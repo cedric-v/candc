@@ -525,100 +525,400 @@
     "fr": [
       {
         "image": "assets/img/testimonials/parking/temoignage-parking-cc-1.jpg",
-        "alt": "Super place de parc, très calme et bien équipée.",
-        "author": "Marc",
+        "alt": "Avis client : Super endroit, très calme.",
+        "author": "Voyageur",
         "rating": 5
       },
       {
         "image": "assets/img/testimonials/parking/temoignage-parking-cc-2.jpg",
-        "alt": "Tout ce qu'il faut pour une halte reposante. Services au top.",
-        "author": "Sophie",
+        "alt": "Avis client : Services parfaits, eau et électricité.",
+        "author": "Voyageur",
         "rating": 5
       },
       {
         "image": "assets/img/testimonials/parking/temoignage-parking-cc-3.jpg",
-        "alt": "Propriétaires très accueillants, je recommande vivement.",
-        "author": "Thomas",
+        "alt": "Avis client : Accueil chaleureux des propriétaires.",
+        "author": "Voyageur",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-4.jpg",
+        "alt": "Avis client : Cadre magnifique en pleine nature.",
+        "author": "Voyageur",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-5.jpg",
+        "alt": "Avis client : Facile d'accès et sécurisé.",
+        "author": "Voyageur",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-6.jpg",
+        "alt": "Avis client : Une halte reposante sur la route.",
+        "author": "Voyageur",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-7.jpg",
+        "alt": "Avis client : Tout est prévu pour les camping-cars.",
+        "author": "Voyageur",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-8.jpg",
+        "alt": "Avis client : Propre et bien entretenu.",
+        "author": "Voyageur",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-9.jpg",
+        "alt": "Avis client : Excellent rapport qualité-prix.",
+        "author": "Voyageur",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-10.jpg",
+        "alt": "Avis client : Je recommande vivement !",
+        "author": "Voyageur",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-11.jpg",
+        "alt": "Avis client : Merci pour ce séjour agréable.",
+        "author": "Voyageur",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-12.jpg",
+        "alt": "Avis client : Vue imprenable depuis la terrasse.",
+        "author": "Voyageur",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-13.jpg",
+        "alt": "Avis client : Wi-Fi rapide et stable.",
+        "author": "Voyageur",
         "rating": 5
       }
     ],
     "en": [
       {
-        "image": "assets/img/testimonials/parking/temoignage-parking-cc-7-en.jpg",
-        "alt": "Great parking spot, very quiet and well equipped.",
-        "author": "Mark",
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-1.jpg",
+        "alt": "Guest review: Great place, very quiet.",
+        "author": "Guest",
         "rating": 5
       },
       {
         "image": "assets/img/testimonials/parking/temoignage-parking-cc-2.jpg",
-        "alt": "Everything needed for a relaxing stopover. Top services.",
-        "author": "Sophie",
+        "alt": "Guest review: Perfect services, water and electricity.",
+        "author": "Guest",
         "rating": 5
       },
       {
         "image": "assets/img/testimonials/parking/temoignage-parking-cc-3.jpg",
-        "alt": "Very welcoming owners, I highly recommend.",
-        "author": "Thomas",
+        "alt": "Guest review: Warm welcome from the owners.",
+        "author": "Guest",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-4.jpg",
+        "alt": "Guest review: Beautiful setting surrounded by nature.",
+        "author": "Guest",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-5.jpg",
+        "alt": "Guest review: Easy access and secure.",
+        "author": "Guest",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-6.jpg",
+        "alt": "Guest review: A relaxing stop on the road.",
+        "author": "Guest",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-7-en.jpg",
+        "alt": "Guest review: Everything provided for motorhomes.",
+        "author": "Guest",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-8.jpg",
+        "alt": "Guest review: Clean and well maintained.",
+        "author": "Guest",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-9.jpg",
+        "alt": "Guest review: Excellent value for money.",
+        "author": "Guest",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-10.jpg",
+        "alt": "Guest review: I highly recommend!",
+        "author": "Guest",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-11.jpg",
+        "alt": "Guest review: Thanks for this pleasant stay.",
+        "author": "Guest",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-12.jpg",
+        "alt": "Guest review: Stunning view from the terrace.",
+        "author": "Guest",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-13.jpg",
+        "alt": "Guest review: Fast and stable Wi-Fi.",
+        "author": "Guest",
         "rating": 5
       }
     ],
     "de": [
       {
         "image": "assets/img/testimonials/parking/temoignage-parking-cc-1.jpg",
-        "alt": "Toller Stellplatz, sehr ruhig und gut ausgestattet.",
-        "author": "Mark",
+        "alt": "Gästebewertung: Toller Ort, sehr ruhig.",
+        "author": "Gast",
         "rating": 5
       },
       {
         "image": "assets/img/testimonials/parking/temoignage-parking-cc-2.jpg",
-        "alt": "Alles, was man für einen entspannten Zwischenstopp braucht.",
-        "author": "Sophie",
+        "alt": "Gästebewertung: Perfekter Service, Wasser und Strom.",
+        "author": "Gast",
         "rating": 5
       },
       {
         "image": "assets/img/testimonials/parking/temoignage-parking-cc-3.jpg",
-        "alt": "Sehr gastfreundliche Besitzer, ich kann es nur empfehlen.",
-        "author": "Thomas",
+        "alt": "Gästebewertung: Herzlicher Empfang durch die Eigentümer.",
+        "author": "Gast",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-4.jpg",
+        "alt": "Gästebewertung: Wunderschöne Umgebung inmitten der Natur.",
+        "author": "Gast",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-5.jpg",
+        "alt": "Gästebewertung: Leicht zugänglich und sicher.",
+        "author": "Gast",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-6.jpg",
+        "alt": "Gästebewertung: Ein entspannender Zwischenstopp auf der Straße.",
+        "author": "Gast",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-7.jpg",
+        "alt": "Gästebewertung: Alles für Wohnmobile vorgesehen.",
+        "author": "Gast",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-8.jpg",
+        "alt": "Gästebewertung: Sauber und gut gepflegt.",
+        "author": "Gast",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-9.jpg",
+        "alt": "Gästebewertung: Hervorragendes Preis-Leistungs-Verhältnis.",
+        "author": "Gast",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-10.jpg",
+        "alt": "Gästebewertung: Ich kann es nur empfehlen!",
+        "author": "Gast",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-11.jpg",
+        "alt": "Gästebewertung: Danke für den angenehmen Aufenthalt.",
+        "author": "Gast",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-12.jpg",
+        "alt": "Gästebewertung: Atemberaubende Aussicht von der Terrasse.",
+        "author": "Gast",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-13.jpg",
+        "alt": "Gästebewertung: Schnelles und stabiles WLAN.",
+        "author": "Gast",
         "rating": 5
       }
     ],
     "es": [
       {
         "image": "assets/img/testimonials/parking/temoignage-parking-cc-1.jpg",
-        "alt": "Gran plaza de aparcamiento, muy tranquila y bien equipada.",
-        "author": "Mark",
+        "alt": "Opinión de cliente: Gran lugar, muy tranquilo.",
+        "author": "Viajero",
         "rating": 5
       },
       {
         "image": "assets/img/testimonials/parking/temoignage-parking-cc-2.jpg",
-        "alt": "Todo lo necesario para una parada relajante. Servicios excelentes.",
-        "author": "Sophie",
+        "alt": "Opinión de cliente: Servicios perfectos, agua y electricidad.",
+        "author": "Viajero",
         "rating": 5
       },
       {
         "image": "assets/img/testimonials/parking/temoignage-parking-cc-3.jpg",
-        "alt": "Dueños muy acogedores, lo recomiendo encarecidamente.",
-        "author": "Thomas",
+        "alt": "Opinión de cliente: Cálida bienvenida de los propietarios.",
+        "author": "Viajero",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-4.jpg",
+        "alt": "Opinión de cliente: Hermoso entorno en plena naturaleza.",
+        "author": "Viajero",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-5.jpg",
+        "alt": "Opinión de cliente: Fácil acceso y seguro.",
+        "author": "Viajero",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-6.jpg",
+        "alt": "Opinión de cliente: Una parada relajante en el camino.",
+        "author": "Viajero",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-7.jpg",
+        "alt": "Opinión de cliente: Todo previsto para autocaravanas.",
+        "author": "Viajero",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-8.jpg",
+        "alt": "Opinión de cliente: Limpio y bien cuidado.",
+        "author": "Viajero",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-9.jpg",
+        "alt": "Opinión de cliente: Excelente relación calidad-precio.",
+        "author": "Viajero",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-10.jpg",
+        "alt": "Opinión de cliente: ¡Lo recomiendo encarecidamente!",
+        "author": "Viajero",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-11.jpg",
+        "alt": "Opinión de cliente: Gracias por esta estancia agradable.",
+        "author": "Viajero",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-12.jpg",
+        "alt": "Opinión de cliente: Vistas impresionantes desde la terraza.",
+        "author": "Viajero",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-13.jpg",
+        "alt": "Opinión de cliente: Wi-Fi rápido y estable.",
+        "author": "Viajero",
         "rating": 5
       }
     ],
     "pt": [
       {
         "image": "assets/img/testimonials/parking/temoignage-parking-cc-1.jpg",
-        "alt": "Ótimo lugar de estacionamento, muito calmo e bem equipado.",
-        "author": "Mark",
+        "alt": "Avaliação de cliente: Ótimo lugar, muito calmo.",
+        "author": "Viajante",
         "rating": 5
       },
       {
         "image": "assets/img/testimonials/parking/temoignage-parking-cc-2.jpg",
-        "alt": "Tudo o que é preciso para uma paragem relaxante. Serviços de topo.",
-        "author": "Sophie",
+        "alt": "Avaliação de cliente: Serviços perfeitos, água e eletricidade.",
+        "author": "Viajante",
         "rating": 5
       },
       {
         "image": "assets/img/testimonials/parking/temoignage-parking-cc-3.jpg",
-        "alt": "Proprietários muito acolhedores, recomendo vivamente.",
-        "author": "Thomas",
+        "alt": "Avaliação de cliente: Acolhimento caloroso dos proprietários.",
+        "author": "Viajante",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-4.jpg",
+        "alt": "Avaliação de cliente: Cenário magnífico no meio da natureza.",
+        "author": "Viajante",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-5.jpg",
+        "alt": "Avaliação de cliente: Fácil acesso e seguro.",
+        "author": "Viajante",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-6.jpg",
+        "alt": "Avaliação de cliente: Uma paragem relaxante na estrada.",
+        "author": "Viajante",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-7.jpg",
+        "alt": "Avaliação de cliente: Tudo previsto para autocaravanas.",
+        "author": "Viajante",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-8.jpg",
+        "alt": "Avaliação de cliente: Limpo e bem conservado.",
+        "author": "Viajante",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-9.jpg",
+        "alt": "Avaliação de cliente: Excelente relação qualidade-preço.",
+        "author": "Viajante",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-10.jpg",
+        "alt": "Avaliação de cliente: Recomendo vivamente!",
+        "author": "Viajante",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-11.jpg",
+        "alt": "Avaliação de cliente: Obrigado por esta estadia agradável.",
+        "author": "Viajante",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-12.jpg",
+        "alt": "Avaliação de cliente: Vistas deslumbrantes do terraço.",
+        "author": "Viajante",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-13.jpg",
+        "alt": "Avaliação de cliente: Wi-Fi rápido e estável.",
+        "author": "Viajante",
         "rating": 5
       }
     ]
