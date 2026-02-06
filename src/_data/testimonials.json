@@ -520,5 +520,107 @@
         "rating": 5
       }
     ]
+  },
+  "parking": {
+    "fr": [
+      {
+        "image": "assets/img/testimonials/testimonial-01.jpg",
+        "alt": "Super place de parc, très calme et bien équipée.",
+        "author": "Marc",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-02.jpg",
+        "alt": "Tout ce qu'il faut pour une halte reposante. Services au top.",
+        "author": "Sophie",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-04.jpg",
+        "alt": "Propriétaires très accueillants, je recommande vivement.",
+        "author": "Thomas",
+        "rating": 5
+      }
+    ],
+    "en": [
+      {
+        "image": "assets/img/testimonials/testimonial-01.jpg",
+        "alt": "Great parking spot, very quiet and well equipped.",
+        "author": "Mark",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-02.jpg",
+        "alt": "Everything needed for a relaxing stopover. Top services.",
+        "author": "Sophie",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-04.jpg",
+        "alt": "Very welcoming owners, I highly recommend.",
+        "author": "Thomas",
+        "rating": 5
+      }
+    ],
+    "de": [
+      {
+        "image": "assets/img/testimonials/testimonial-01.jpg",
+        "alt": "Toller Stellplatz, sehr ruhig und gut ausgestattet.",
+        "author": "Mark",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-02.jpg",
+        "alt": "Alles, was man für einen entspannten Zwischenstopp braucht.",
+        "author": "Sophie",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-04.jpg",
+        "alt": "Sehr gastfreundliche Besitzer, ich kann es nur empfehlen.",
+        "author": "Thomas",
+        "rating": 5
+      }
+    ],
+    "es": [
+      {
+        "image": "assets/img/testimonials/testimonial-01.jpg",
+        "alt": "Gran plaza de aparcamiento, muy tranquila y bien equipada.",
+        "author": "Mark",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-02.jpg",
+        "alt": "Todo lo necesario para una parada relajante. Servicios excelentes.",
+        "author": "Sophie",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-04.jpg",
+        "alt": "Dueños muy acogedores, lo recomiendo encarecidamente.",
+        "author": "Thomas",
+        "rating": 5
+      }
+    ],
+    "pt": [
+      {
+        "image": "assets/img/testimonials/testimonial-01.jpg",
+        "alt": "Ótimo lugar de estacionamento, muito calmo e bem equipado.",
+        "author": "Mark",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-02.jpg",
+        "alt": "Tudo o que é preciso para uma paragem relaxante. Serviços de topo.",
+        "author": "Sophie",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-04.jpg",
+        "alt": "Proprietários muito acolhedores, recomendo vivamente.",
+        "author": "Thomas",
+        "rating": 5
+      }
+    ]
   }
 }
