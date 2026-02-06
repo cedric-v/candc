@@ -142,7 +142,7 @@ ogImage: assets/img/logo-cc.jpg
     <div class="contact-section">
       <h2>{{ t.email }}</h2>
       <p class="contact-info">
-        <a href="#" id="contact-email-link"></a>
+        <a href="#" class="email-obfuscated"></a>
       </p>
     </div>
 
@@ -157,31 +157,15 @@ ogImage: assets/img/logo-cc.jpg
 
     <div class="contact-section">
       <h2>{{ t.sendMessage }}</h2>
-      <form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field">
-        <input type="hidden" name="form-name" value="contact">
-        <p class="hidden">
-          <label>Ne remplissez pas ce champ si vous êtes humain: <input name="bot-field"></label>
-        </p>
-
-        <div class="form-group">
-          <label for="name" class="form-label">{{ t.name }}</label>
-          <input type="text" id="name" name="name" required class="form-input">
-        </div>
-
-        <div class="form-group">
-          <label for="email" class="form-label">{{ t.email }}</label>
-          <input type="email" id="email" name="email" required class="form-input">
-        </div>
-
-        <div class="form-group">
-          <label for="message" class="form-label">{{ t.message }}</label>
-          <textarea id="message" name="message" rows="4" required class="form-input"></textarea>
-        </div>
-
-        <button type="submit" class="form-submit">
-          {{ t.submit }}
-        </button>
-      </form>
+      <div class="contact-actions">
+        <a href="#" class="btn btn-primary email-obfuscated">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+            <polyline points="22,6 12,13 2,6"></polyline>
+          </svg>
+          <span class="email-label">{{ t.sendMessage }}</span>
+        </a>
+      </div>
     </div>
   </div>
 </section>
@@ -232,12 +216,22 @@ ogImage: assets/img/logo-cc.jpg
 <script>
   // Protection anti-spam : construction dynamique de l'email
   (function() {
-    const emailParts = ['bonjour', 'candc', 'ch'];
-    const email = emailParts[0] + '@' + emailParts[1] + '.' + emailParts[2];
-    const emailLink = document.getElementById('contact-email-link');
-    if (emailLink) {
-      emailLink.href = 'mailto:' + email;
-      emailLink.textContent = email;
-    }
+    const user = 'bonjour';
+    const domain = 'candc';
+    const tld = 'ch';
+    const email = user + '@' + domain + '.' + tld;
+    
+    document.querySelectorAll('.email-obfuscated').forEach(el => {
+      el.href = 'mailto:' + email;
+      // Only replace text content if it's empty or doesn't have a specific label span
+      const label = el.querySelector('.email-label');
+      if (label) {
+        // Keep the label but maybe append email if requested?
+        // User asked to "affiche l'e-mail bonjour@candc.ch tout en la protégant"
+        // I will keep the label for the button, and show email in the other links
+      } else {
+        el.textContent = email;
+      }
+    });
   })();
 </script>

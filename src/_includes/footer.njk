@@ -8,7 +8,7 @@
           <ul>
             <li>
               <span>{{ t.email }}: </span>
-              <a href="#" id="footer-email-link"></a>
+              <a href="#" class="email-obfuscated"></a>
             </li>
             <li>
               <a href="https://wa.me/message/J3EROZAQFOSJM1" target="_blank" rel="noopener noreferrer" class="whatsapp-link">
@@ -44,12 +44,17 @@
 <script>
   // Protection anti-spam : construction dynamique de l'email
   (function() {
-    const emailParts = ['bonjour', 'candc', 'ch'];
-    const email = emailParts[0] + '@' + emailParts[1] + '.' + emailParts[2];
-    const emailLink = document.getElementById('footer-email-link');
-    if (emailLink) {
-      emailLink.href = 'mailto:' + email;
-      emailLink.textContent = email;
-    }
+    const user = 'bonjour';
+    const domain = 'candc';
+    const tld = 'ch';
+    const email = user + '@' + domain + '.' + tld;
+    
+    document.querySelectorAll('.email-obfuscated').forEach(el => {
+      el.href = 'mailto:' + email;
+      const label = el.querySelector('.email-label');
+      if (!label) {
+        el.textContent = email;
+      }
+    });
   })();
 </script>

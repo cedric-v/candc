@@ -7,20 +7,20 @@ const path = require("path");
 
 const PATH_PREFIX = process.env.ELEVENTY_ENV === 'prod' ? "" : "";
 
-module.exports = function(eleventyConfig) {
-  
+module.exports = function (eleventyConfig) {
+
   // 1. Gestion des Images avec eleventy-img (WebP responsive)
-  eleventyConfig.addShortcode("image", async function(src, alt, cls = "", loading = "lazy", fetchpriority = "", width = "", height = "") {
+  eleventyConfig.addShortcode("image", async function (src, alt, cls = "", loading = "lazy", fetchpriority = "", width = "", height = "") {
     if (!src) return '';
-    
+
     const cleanSrc = src.startsWith('/') ? src.slice(1) : src;
     const fullSrc = path.join(__dirname, 'src', cleanSrc);
-    
+
     if (!fs.existsSync(fullSrc)) {
       console.warn(`Image not found: ${fullSrc}`);
       return `<img src="${src}" alt="${alt}" class="${cls}" ${loading ? `loading="${loading}"` : ''} ${fetchpriority ? `fetchpriority="${fetchpriority}"` : ''} ${width ? `width="${width}"` : ''} ${height ? `height="${height}"` : ''}>`;
     }
-    
+
     try {
       const metadata = await Image(fullSrc, {
         widths: [300, 600, 900, 1200],
@@ -28,15 +28,15 @@ module.exports = function(eleventyConfig) {
         outputDir: path.join(__dirname, "_site", path.dirname(cleanSrc)),
         urlPath: `/${path.dirname(cleanSrc)}/`,
       });
-      
+
       const loadingAttr = loading ? `loading="${loading}"` : '';
       const fetchpriorityAttr = fetchpriority ? `fetchpriority="${fetchpriority}"` : '';
       const widthAttr = width ? `width="${width}"` : '';
       const heightAttr = height ? `height="${height}"` : '';
-      
+
       const webp = metadata.webp[metadata.webp.length - 1];
       const jpeg = metadata.jpeg[metadata.jpeg.length - 1];
-      
+
       return `<picture>
         <source srcset="${webp.srcset}" type="image/webp">
         <img src="${jpeg.url}" alt="${alt}" class="${cls}" ${loadingAttr} ${fetchpriorityAttr} ${widthAttr} ${heightAttr}>
@@ -54,7 +54,7 @@ module.exports = function(eleventyConfig) {
   });
 
   // 3. Filtres de date
-  eleventyConfig.addFilter("date", function(value, format, locale) {
+  eleventyConfig.addFilter("date", function (value, format, locale) {
     const date = value === "now" || !value ? new Date() : new Date(value);
     if (format === "yyyy") {
       return date.getFullYear().toString();
@@ -63,13 +63,13 @@ module.exports = function(eleventyConfig) {
   });
 
   // 4. Filtre pour tronquer le texte
-  eleventyConfig.addFilter("truncate", function(str, length) {
+  eleventyConfig.addFilter("truncate", function (str, length) {
     if (!str || str.length <= length) return str;
     return str.substring(0, length).trim() + '...';
   });
 
   // 5. Filtre pour ajouter le pathPrefix
-  eleventyConfig.addFilter("relativeUrl", function(url) {
+  eleventyConfig.addFilter("relativeUrl", function (url) {
     const cleanUrl = url.startsWith('/') ? url : '/' + url;
     if (PATH_PREFIX && PATH_PREFIX !== '') {
       const prefix = PATH_PREFIX.endsWith('/') ? PATH_PREFIX.slice(0, -1) : PATH_PREFIX;
@@ -79,7 +79,7 @@ module.exports = function(eleventyConfig) {
   });
 
   // 6. Filtre pour normaliser les URLs canoniques
-  eleventyConfig.addFilter("canonicalUrl", function(url) {
+  eleventyConfig.addFilter("canonicalUrl", function (url) {
     if (!url) return '/';
     let cleanUrl = url.startsWith('/') ? url : '/' + url;
     cleanUrl = cleanUrl.replace(/\/index\.html$/, '/');
@@ -90,7 +90,7 @@ module.exports = function(eleventyConfig) {
   });
 
   // 7. Filtre pour construire l'URL complète de l'image OG
-  eleventyConfig.addFilter("buildOgImageUrl", function(imagePath) {
+  eleventyConfig.addFilter("buildOgImageUrl", function (imagePath) {
     if (!imagePath) imagePath = 'assets/img/logo-cc.jpg';
     if (imagePath.startsWith('http')) return imagePath;
     if (imagePath.startsWith('/')) return 'https://candc.ch' + imagePath;
@@ -98,7 +98,7 @@ module.exports = function(eleventyConfig) {
   });
 
   // 8. Shortcode pour générer les schémas Schema.org en JSON-LD spécifiques à chaque page
-  eleventyConfig.addShortcode("schemaOrg", function(page, locale) {
+  eleventyConfig.addShortcode("schemaOrg", function (page, locale) {
     const baseUrl = 'https://candc.ch';
     const schemas = [];
 
@@ -406,7 +406,7 @@ module.exports = function(eleventyConfig) {
   });
 
   // 9. Minification HTML
-  eleventyConfig.addTransform("htmlmin", function(content, outputPath) {
+  eleventyConfig.addTransform("htmlmin", function (content, outputPath) {
     if (process.env.ELEVENTY_ENV === 'prod' && outputPath && outputPath.endsWith(".html")) {
       return htmlmin.minify(content, {
         removeComments: true,
@@ -421,14 +421,15 @@ module.exports = function(eleventyConfig) {
   // 10. Copie des assets statiques
   eleventyConfig.addPassthroughCopy({ "src/assets/img": "assets/img" });
   eleventyConfig.addPassthroughCopy({ "src/assets/js": "assets/js" });
-  eleventyConfig.addPassthroughCopy("src/robots.txt");
-  eleventyConfig.addPassthroughCopy("src/_redirects");
+  eleventyConfig.addPassthroughCopy({ "src/robots.txt": "robots.txt" });
+  eleventyConfig.addPassthroughCopy({ "src/_redirects": "_redirects" });
+  eleventyConfig.addPassthroughCopy({ "src/_headers": "_headers" });
   eleventyConfig.addPassthroughCopy({ "src/favicon.ico": "favicon.ico" });
   eleventyConfig.addPassthroughCopy("netlify.toml");
-  
+
   // 11. Support XML pour sitemap
   eleventyConfig.setTemplateFormats(["html", "md", "njk", "xml"]);
-  
+
   return {
     dir: { input: "src", output: "_site" },
     markdownTemplateEngine: "njk",

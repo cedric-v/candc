@@ -25,7 +25,7 @@ ogImage: assets/img/logo-cc.jpg
 
     <div class="pt-6 border-t border-[#2D5016]/20">
       <h2 class="text-xl font-semibold text-[#2D5016] mb-3">{{ t.email }}</h2>
-      <p class="text-[#0f172a]/80"><a href="#" id="contact-email-link" class="text-[#2D5016] hover:underline font-medium"></a></p>
+      <p class="text-[#0f172a]/80"><a href="#" class="text-[#2D5016] hover:underline font-medium email-obfuscated"></a></p>
     </div>
 
     <div class="pt-6 border-t border-[#2D5016]/20">
@@ -35,27 +35,34 @@ ogImage: assets/img/logo-cc.jpg
 
     <div class="pt-6 border-t border-[#2D5016]/20">
       <h2 class="text-xl font-semibold text-[#2D5016] mb-3">{{ t.sendMessage }}</h2>
-      <form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="space-y-4">
-        <input type="hidden" name="form-name" value="contact">
-        <p class="hidden"><label>Nicht ausfüllen: <input name="bot-field" /></label></p>
-        <div><label for="name" class="block text-sm font-medium text-[#1f1f1f] mb-2">{{ t.name }}</label><input type="text" id="name" name="name" required class="w-full px-4 py-2 border border-[#2D5016]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D5016]"></div>
-        <div><label for="email" class="block text-sm font-medium text-[#1f1f1f] mb-2">{{ t.email }}</label><input type="email" id="email" name="email" required class="w-full px-4 py-2 border border-[#2D5016]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D5016]"></div>
-        <div><label for="message" class="block text-sm font-medium text-[#1f1f1f] mb-2">{{ t.message }}</label><textarea id="message" name="message" rows="4" required class="w-full px-4 py-2 border border-[#2D5016]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D5016]"></textarea></div>
-        <button type="submit" class="btn-primary bg-[#6B8E23] text-white hover:bg-[#5a7a1d] w-full">{{ t.submit }}</button>
-      </form>
+      <div class="contact-actions">
+        <a href="#" class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#6B8E23] text-white rounded-lg font-semibold hover:bg-[#5a7a1d] transition-colors shadow-md w-full email-obfuscated">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+            <polyline points="22,6 12,13 2,6"></polyline>
+          </svg>
+          <span class="email-label">{{ t.sendMessage }}</span>
+        </a>
+      </div>
     </div>
   </div>
 </section>
 
 <script>
+  // Protection anti-spam : construction dynamique de l'email
   (function() {
-    const emailParts = ['bonjour', 'candc', 'ch'];
-    const email = emailParts[0] + '@' + emailParts[1] + '.' + emailParts[2];
-    const emailLink = document.getElementById('contact-email-link');
-    if (emailLink) {
-      emailLink.href = 'mailto:' + email;
-      emailLink.textContent = email;
-    }
+    const user = 'bonjour';
+    const domain = 'candc';
+    const tld = 'ch';
+    const email = user + '@' + domain + '.' + tld;
+    
+    document.querySelectorAll('.email-obfuscated').forEach(el => {
+      el.href = 'mailto:' + email;
+      const label = el.querySelector('.email-label');
+      if (!label) {
+        el.textContent = email;
+      }
+    });
   })();
 </script>
 
