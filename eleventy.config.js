@@ -426,7 +426,7 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy({ "src/_redirects": "_redirects" });
   eleventyConfig.addPassthroughCopy({ "src/_headers": "_headers" });
   eleventyConfig.addPassthroughCopy({ "src/favicon.ico": "favicon.ico" });
-  eleventyConfig.addPassthroughCopy("netlify.toml");
+
 
   // 11. Support XML pour sitemap
   eleventyConfig.setTemplateFormats(["html", "md", "njk", "xml"]);
