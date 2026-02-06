@@ -1,0 +1,34 @@
+---
+permalink: /parking/
+layout: null
+eleventyExcludeFromCollections: true
+---
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C&C Parking - Redirection...</title>
+    <meta name="robots" content="noindex, follow">
+    <link rel="canonical" href="https://candc.ch/fr/parking/">
+    <script>
+        (function() {
+            var lang = navigator.language || navigator.userLanguage;
+            lang = lang.substring(0, 2).toLowerCase();
+            
+            var target = '/fr/parking/'; // Default
+            
+            if (lang === 'en') target = '/en/parking/';
+            else if (lang === 'de') target = '/de/parking/';
+            else if (lang === 'es') target = '/es/parking/';
+            else if (lang === 'pt') target = '/pt/parking/';
+            
+            window.location.replace(target);
+        })();
+    </script>
+    <meta http-equiv="refresh" content="0;url=/fr/parking/">
+</head>
+<body>
+    <p>Redirection en cours... <a href="/fr/parking/">Cliquez ici si vous n'êtes pas redirigé</a>.</p>
+</body>
+</html>
