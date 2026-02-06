@@ -81,7 +81,10 @@ ogImage: assets/img/logo-cc.jpg
       </div>
     </div>
 
-    <div class="mt-12 text-center" id="reservation">
+    <div class="mt-12 flex flex-wrap justify-center gap-md" id="reservation">
+      <a href="/{{ locale }}/contact/" class="btn btn-primary">
+        Demander une réservation
+      </a>
       <a href="{{ t.googleMapsParkingLink }}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
         🗺️ {{ t.getDirections }}
       </a>
