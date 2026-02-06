@@ -43,8 +43,9 @@
     },
     "seo": {
       "baseCentral": "Base centrale idéale pour visiter toute la Suisse, juste à côté de la ville de Fribourg / Freiburg",
-      "highway": "Proche autoroute A12",
-      "publicTransport": "Transports publics à proximité"
+      "highway": "Proche autoroute A12 : à quelques minutes de 2 entrées d'autoroute (\"Fribourg-Nord\" et \"Fribourg-Sud\")",
+      "publicTransport": "Transports publics à proximité : à 1 km de l'arrêt Belfaux-Village et 1,5 km de Belfaux-CFF",
+      "forum": "Proche du Forum Fribourg (salle de foire et autres événements) et de la BCF Arena (patinoire)"
     },
     "studio": {
       "title": "Joli studio meublé en campagne",
