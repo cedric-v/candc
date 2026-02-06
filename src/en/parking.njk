@@ -82,20 +82,22 @@ ogImage: assets/img/logo-cc.jpg
     </div>
 
     <div class="mt-12 text-center" id="reservation">
+    <div class="mt-12 text-center" id="reservation">
       <a href="{{ t.googleMapsParkingLink }}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
         🗺️ {{ t.getDirections }}
       </a>
     </div>
+    </div>
 
     <div class="mt-12 text-center">
-      <h2 class="text-xl font-bold text-primary mb-6">{{ t.parking.bookingRequest or "Booking request" }}</h2>
+      <h2 class="text-xl font-bold text-primary mb-6">{{ t.bookParking }}</h2>
       <div class="flex justify-center">
         <a href="/{{ locale }}/contact/" class="btn btn-primary">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
             <polyline points="22,6 12,13 2,6"></polyline>
           </svg>
-          <span class="ml-2">{{ t.parking.bookingRequest or "Booking request" }}</span>
+          <span class="ml-2">{{ t.requestReservation }}</span>
         </a>
       </div>
     </div>
@@ -109,11 +111,11 @@ ogImage: assets/img/logo-cc.jpg
     </div>
     <div class="gallery-grid">
       {% set galleryImages = [
-        { src: 'assets/img/gallery/parking/parking-01.jpg', caption: "The parking space (9 meters long) at the end of a dead-end road, in the countryside" },
-        { src: 'assets/img/gallery/parking/parking-02.jpg', caption: "Terrace with view and WiFi" },
-        { src: 'assets/img/gallery/parking/parking-03.jpg', caption: "Access to a drinking water tap" },
-        { src: 'assets/img/gallery/parking/parking-04.jpg', caption: "A Swiss power socket (220V) is also available" },
-        { src: 'assets/img/gallery/parking/parking-05.jpg', caption: "Access to a WC shower on request and when we are on site" }
+        { src: 'assets/img/gallery/parking/parking-01.jpg', caption: t.gallery.parkingFrontView },
+        { src: 'assets/img/gallery/parking/parking-02.jpg', caption: t.gallery.terraceFieldView },
+        { src: 'assets/img/gallery/parking/parking-03.jpg', caption: t.gallery.parkingSpace },
+        { src: 'assets/img/gallery/parking/parking-04.jpg', caption: t.gallery.parkingSpot },
+        { src: 'assets/img/gallery/parking/parking-05.jpg', caption: t.gallery.toilet }
       ] %}
 
       {% for item in galleryImages %}
@@ -139,26 +141,23 @@ ogImage: assets/img/logo-cc.jpg
   </section>
 
   <!-- Témoignages (images) -->
-  {% set pageTestimonials = testimonials.parking[locale] or testimonials.parking['en'] or [] %}
-  {% if pageTestimonials and pageTestimonials.length > 0 %}
   <section class="mt-3xl">
     <div class="section-header">
-      <h2 class="section-title">Testimonials</h2>
-      <p class="text-muted">What our guests say</p>
+      <h2 class="section-title">{{ t.testimonials.title }}</h2>
+      <p class="text-muted">{{ t.testimonials.intro }}</p>
     </div>
     <div class="gallery-grid" id="testimonials-grid">
+      {% set pageTestimonials = testimonials.parking[locale] or testimonials.parking['en'] %}
       {% for testimonial in pageTestimonials %}
-      <div class="gallery-item lightbox-trigger" data-image="/assets/img/testimonials/{{ testimonial.image }}">
-        {% if testimonial.image %}
-          {% set imagePath = "assets/img/testimonials/" + testimonial.image %}
-          {% set imageAlt = testimonial.alt or "Guest review" %}
-          {% image imagePath, imageAlt, "gallery-image", "lazy" %}
-        {% endif %}
+      <div class="gallery-item lightbox-trigger" data-image="/{{ testimonial.image }}" data-caption="{{ testimonial.author }}: {{ testimonial.alt }}">
+        <img src="/{{ testimonial.image }}" alt="{{ testimonial.alt }}" class="gallery-image" loading="lazy">
+        <div class="gallery-caption-overlay">
+          <span>{{ testimonial.author }}</span>
+        </div>
       </div>
       {% endfor %}
     </div>
   </section>
-  {% endif %}
 
   <!-- Lightbox -->
   <div id="parking-lightbox" class="lightbox">
@@ -321,6 +320,23 @@ ogImage: assets/img/logo-cc.jpg
     "name": "C&C Eco Studio",
     "url": "https://candc.ch",
     "logo": "https://candc.ch/assets/img/logo-cc.jpg"
-  }
+  },
+  "review": [
+    {% for testimonial in testimonials.parking[locale] or testimonials.parking['en'] %}
+    {
+      "@type": "Review",
+      "author": {
+        "@type": "Person",
+        "name": "{{ testimonial.author }}"
+      },
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": "{{ testimonial.rating }}",
+        "bestRating": "5"
+      },
+      "reviewBody": "{{ testimonial.alt }}"
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ]
 }
 </script>

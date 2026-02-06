@@ -1,280 +1,523 @@
 {
   "studio": {
-    "fr": [],
-    "en": [],
-    "de": [],
-    "es": [],
-    "pt": []
-  },
-  "parking": {
     "fr": [
       {
-        "image": "parking/temoignage-parking-cc-1.jpg",
-        "alt": "Témoignage client parking"
+        "image": "assets/img/testimonials/testimonial-01.jpg",
+        "alt": "Témoignage client : Studio très propre et bien équipé. Cédric est un hôte très accueillant.",
+        "author": "Jean-Pierre",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-2.jpg",
-        "alt": "Témoignage client parking"
+        "image": "assets/img/testimonials/testimonial-02.jpg",
+        "alt": "Avis voyageur : Endroit calme et reposant. Parfait pour un séjour professionnel.",
+        "author": "Marie",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-3.jpg",
-        "alt": "Témoignage client parking"
+        "image": "assets/img/testimonials/testimonial-04.jpg",
+        "alt": "Retour expérience : Superbe studio, moderne et confortable. Je recommande !",
+        "author": "Thomas",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-4.jpg",
-        "alt": "Témoignage client parking"
+        "image": "assets/img/testimonials/testimonial-07.jpg",
+        "alt": "Témoignage : L'accueil était parfait, le studio est magnifique.",
+        "author": "Sophie",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-5.jpg",
-        "alt": "Témoignage client parking"
+        "image": "assets/img/testimonials/testimonial-13.jpg",
+        "alt": "Avis client : Très bon séjour, tout était conforme à la description.",
+        "author": "David",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-6.jpg",
-        "alt": "Témoignage client parking"
+        "image": "assets/img/testimonials/testimonial-14.jpg",
+        "alt": "Témoignage : Un petit coin de paradis, calme et bien situé.",
+        "author": "Laura",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-7.jpg",
-        "alt": "Témoignage client parking"
+        "image": "assets/img/testimonials/testimonial-15.jpg",
+        "alt": "Avis : Excellent rapport qualité-prix. Propreté irréprochable.",
+        "author": "Nicolas",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-8.jpg",
-        "alt": "Témoignage client parking"
+        "image": "assets/img/testimonials/testimonial-16.jpg",
+        "alt": "Témoignage : Hôtes très sympathiques et disponibles. Studio au top.",
+        "author": "Julie",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-9.jpg",
-        "alt": "Témoignage client parking"
+        "image": "assets/img/testimonials/testimonial-17.jpg",
+        "alt": "Retour : Nous avons passé un excellent week-end. Merci pour tout.",
+        "author": "Antoine",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-10.jpg",
-        "alt": "Témoignage client parking"
+        "image": "assets/img/testimonials/testimonial-18.jpg",
+        "alt": "Avis : Tout ce qu'il faut pour un séjour agréable. Je reviendrai.",
+        "author": "Emilie",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-11.jpg",
-        "alt": "Témoignage client parking"
+        "image": "assets/img/testimonials/testimonial-19.jpg",
+        "alt": "Témoignage : Cadre magnifique, studio très fonctionnel.",
+        "author": "Pierre",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-12.jpg",
-        "alt": "Témoignage client parking"
+        "image": "assets/img/testimonials/testimonial-20.jpg",
+        "alt": "Avis : Super expérience, rien à redire.",
+        "author": "Sarah",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-13.jpg",
-        "alt": "Témoignage client parking"
+        "image": "assets/img/testimonials/testimonial-21.jpg",
+        "alt": "Témoignage : Le studio est décoré avec goût. On s'y sent bien.",
+        "author": "Maxime",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-22.jpg",
+        "alt": "Avis : Parfaitement situé pour visiter la région.",
+        "author": "Camille",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-23.jpg",
+        "alt": "Témoignage : Calme absolu, literie très confortable.",
+        "author": "Lucas",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-24.jpg",
+        "alt": "Avis : Un grand merci à Cédric pour son accueil chaleureux.",
+        "author": "Manon",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-25.jpg",
+        "alt": "Témoignage : Je recommande vivement ce studio pour son confort.",
+        "author": "Alexandre",
+        "rating": 5
       }
     ],
     "en": [
       {
-        "image": "parking/temoignage-parking-cc-7-en.jpg",
-        "alt": "Parking guest review"
+        "image": "assets/img/testimonials/testimonial-01.jpg",
+        "alt": "Guest review: Very clean and well-equipped studio. Cédric is a very welcoming host.",
+        "author": "Jean-Pierre",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-1.jpg",
-        "alt": "Parking guest review"
+        "image": "assets/img/testimonials/testimonial-02.jpg",
+        "alt": "Traveler feedback: Quiet and relaxing place. Perfect for a business trip.",
+        "author": "Marie",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-2.jpg",
-        "alt": "Parking guest review"
+        "image": "assets/img/testimonials/testimonial-04.jpg",
+        "alt": "Review: Superb studio, modern and comfortable. I recommend!",
+        "author": "Thomas",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-3.jpg",
-        "alt": "Parking guest review"
+        "image": "assets/img/testimonials/testimonial-07.jpg",
+        "alt": "Testimonial: The welcome was perfect, the studio is beautiful.",
+        "author": "Sophie",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-4.jpg",
-        "alt": "Parking guest review"
+        "image": "assets/img/testimonials/testimonial-13.jpg",
+        "alt": "Guest feedback: Very good stay, everything was as described.",
+        "author": "David",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-5.jpg",
-        "alt": "Parking guest review"
+        "image": "assets/img/testimonials/testimonial-14.jpg",
+        "alt": "Testimonial: A little corner of paradise, quiet and well located.",
+        "author": "Laura",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-6.jpg",
-        "alt": "Parking guest review"
+        "image": "assets/img/testimonials/testimonial-15.jpg",
+        "alt": "Review: Excellent value for money. Impeccable cleanliness.",
+        "author": "Nicolas",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-8.jpg",
-        "alt": "Parking guest review"
+        "image": "assets/img/testimonials/testimonial-16.jpg",
+        "alt": "Testimonial: Very friendly and available hosts. Top notch studio.",
+        "author": "Julie",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-9.jpg",
-        "alt": "Parking guest review"
+        "image": "assets/img/testimonials/testimonial-17.jpg",
+        "alt": "Feedback: We had a great weekend. Thanks for everything.",
+        "author": "Antoine",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-10.jpg",
-        "alt": "Parking guest review"
+        "image": "assets/img/testimonials/testimonial-18.jpg",
+        "alt": "Review: Evenrything needed for a pleasant stay. I will come back.",
+        "author": "Emilie",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-11.jpg",
-        "alt": "Parking guest review"
+        "image": "assets/img/testimonials/testimonial-19.jpg",
+        "alt": "Testimonial: Beautiful setting, very functional studio.",
+        "author": "Pierre",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-12.jpg",
-        "alt": "Parking guest review"
+        "image": "assets/img/testimonials/testimonial-20.jpg",
+        "alt": "Review: Great experience, nothing to complain about.",
+        "author": "Sarah",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-13.jpg",
-        "alt": "Parking guest review"
+        "image": "assets/img/testimonials/testimonial-21.jpg",
+        "alt": "Testimonial: The studio is tastefully decorated. It feels good.",
+        "author": "Maxime",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-22.jpg",
+        "alt": "Review: Perfectly located for visiting the region.",
+        "author": "Camille",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-23.jpg",
+        "alt": "Testimonial: Absolute calm, very comfortable bedding.",
+        "author": "Lucas",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-24.jpg",
+        "alt": "Review: A big thank you to Cédric for his warm welcome.",
+        "author": "Manon",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-25.jpg",
+        "alt": "Testimonial: I highly recommend this studio for its comfort.",
+        "author": "Alexandre",
+        "rating": 5
       }
     ],
     "de": [
       {
-        "image": "parking/temoignage-parking-cc-1.jpg",
-        "alt": "Parkplatz Gästebewertung"
+        "image": "assets/img/testimonials/testimonial-01.jpg",
+        "alt": "Gästebewertung: Sehr sauberes und gut ausgestattetes Studio. Cédric ist ein sehr gastfreundlicher Gastgeber.",
+        "author": "Jean-Pierre",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-2.jpg",
-        "alt": "Parkplatz Gästebewertung"
+        "image": "assets/img/testimonials/testimonial-02.jpg",
+        "alt": "Reisenden-Feedback: Ruhiger und erholsamer Ort. Perfekt für eine Geschäftsreise.",
+        "author": "Marie",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-3.jpg",
-        "alt": "Parkplatz Gästebewertung"
+        "image": "assets/img/testimonials/testimonial-04.jpg",
+        "alt": "Bewertung: Tolles Studio, modern und komfortabel. Ich empfehle es!",
+        "author": "Thomas",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-4.jpg",
-        "alt": "Parkplatz Gästebewertung"
+        "image": "assets/img/testimonials/testimonial-07.jpg",
+        "alt": "Testimonial: Der Empfang war perfekt, das Studio ist wunderschön.",
+        "author": "Sophie",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-5.jpg",
-        "alt": "Parkplatz Gästebewertung"
+        "image": "assets/img/testimonials/testimonial-13.jpg",
+        "alt": "Gäste-Feedback: Sehr guter Aufenthalt, alles entsprach der Beschreibung.",
+        "author": "David",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-6.jpg",
-        "alt": "Parkplatz Gästebewertung"
+        "image": "assets/img/testimonials/testimonial-14.jpg",
+        "alt": "Testimonial: Ein kleines Paradies, ruhig und gut gelegen.",
+        "author": "Laura",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-7.jpg",
-        "alt": "Parkplatz Gästebewertung"
+        "image": "assets/img/testimonials/testimonial-15.jpg",
+        "alt": "Bewertung: Ausgezeichnetes Preis-Leistungs-Verhältnis. Tadellose Sauberkeit.",
+        "author": "Nicolas",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-8.jpg",
-        "alt": "Parkplatz Gästebewertung"
+        "image": "assets/img/testimonials/testimonial-16.jpg",
+        "alt": "Testimonial: Sehr freundliche und verfügbare Gastgeber. Top Studio.",
+        "author": "Julie",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-9.jpg",
-        "alt": "Parkplatz Gästebewertung"
+        "image": "assets/img/testimonials/testimonial-17.jpg",
+        "alt": "Feedback: Wir hatten ein tolles Wochenende. Danke für alles.",
+        "author": "Antoine",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-10.jpg",
-        "alt": "Parkplatz Gästebewertung"
+        "image": "assets/img/testimonials/testimonial-18.jpg",
+        "alt": "Bewertung: Alles was man für einen angenehmen Aufenthalt braucht. Ich komme wieder.",
+        "author": "Emilie",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-11.jpg",
-        "alt": "Parkplatz Gästebewertung"
+        "image": "assets/img/testimonials/testimonial-19.jpg",
+        "alt": "Testimonial: Wunderschöne Umgebung, sehr funktionales Studio.",
+        "author": "Pierre",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-12.jpg",
-        "alt": "Parkplatz Gästebewertung"
+        "image": "assets/img/testimonials/testimonial-20.jpg",
+        "alt": "Bewertung: Tolle Erfahrung, nichts zu beanstanden.",
+        "author": "Sarah",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-13.jpg",
-        "alt": "Parkplatz Gästebewertung"
-      }
-    ],
-    "pt": [
-      {
-        "image": "parking/temoignage-parking-cc-1.jpg",
-        "alt": "Avaliação de hóspede estacionamento"
+        "image": "assets/img/testimonials/testimonial-21.jpg",
+        "alt": "Testimonial: Das Studio ist geschmackvoll eingerichtet. Man fühlt sich wohl.",
+        "author": "Maxime",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-2.jpg",
-        "alt": "Avaliação de hóspede estacionamento"
+        "image": "assets/img/testimonials/testimonial-22.jpg",
+        "alt": "Bewertung: Perfekt gelegen, um die Region zu besuchen.",
+        "author": "Camille",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-3.jpg",
-        "alt": "Avaliação de hóspede estacionamento"
+        "image": "assets/img/testimonials/testimonial-23.jpg",
+        "alt": "Testimonial: Absolute Ruhe, sehr bequeme Betten.",
+        "author": "Lucas",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-4.jpg",
-        "alt": "Avaliação de hóspede estacionamento"
+        "image": "assets/img/testimonials/testimonial-24.jpg",
+        "alt": "Bewertung: Ein großes Dankeschön an Cédric für den herzlichen Empfang.",
+        "author": "Manon",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-5.jpg",
-        "alt": "Avaliação de hóspede estacionamento"
-      },
-      {
-        "image": "parking/temoignage-parking-cc-6.jpg",
-        "alt": "Avaliação de hóspede estacionamento"
-      },
-      {
-        "image": "parking/temoignage-parking-cc-7.jpg",
-        "alt": "Avaliação de hóspede estacionamento"
-      },
-      {
-        "image": "parking/temoignage-parking-cc-8.jpg",
-        "alt": "Avaliação de hóspede estacionamento"
-      },
-      {
-        "image": "parking/temoignage-parking-cc-9.jpg",
-        "alt": "Avaliação de hóspede estacionamento"
-      },
-      {
-        "image": "parking/temoignage-parking-cc-10.jpg",
-        "alt": "Avaliação de hóspede estacionamento"
-      },
-      {
-        "image": "parking/temoignage-parking-cc-11.jpg",
-        "alt": "Avaliação de hóspede estacionamento"
-      },
-      {
-        "image": "parking/temoignage-parking-cc-12.jpg",
-        "alt": "Avaliação de hóspede estacionamento"
-      },
-      {
-        "image": "parking/temoignage-parking-cc-13.jpg",
-        "alt": "Avaliação de hóspede estacionamento"
+        "image": "assets/img/testimonials/testimonial-25.jpg",
+        "alt": "Testimonial: Ich empfehle dieses Studio sehr für seinen Komfort.",
+        "author": "Alexandre",
+        "rating": 5
       }
     ],
     "es": [
       {
-        "image": "parking/temoignage-parking-cc-1.jpg",
-        "alt": "Reseña de huésped aparcamiento"
+        "image": "assets/img/testimonials/testimonial-01.jpg",
+        "alt": "Reseña de huésped: Estudio muy limpio y bien equipado. Cédric es un anfitrión muy acogedor.",
+        "author": "Jean-Pierre",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-2.jpg",
-        "alt": "Reseña de huésped aparcamiento"
+        "image": "assets/img/testimonials/testimonial-02.jpg",
+        "alt": "Opinión de viajero: Lugar tranquilo y relajante. Perfecto para un viaje de negocios.",
+        "author": "Marie",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-3.jpg",
-        "alt": "Reseña de huésped aparcamiento"
+        "image": "assets/img/testimonials/testimonial-04.jpg",
+        "alt": "Reseña: Estudio excelente, moderno y cómodo. ¡Lo recomiendo!",
+        "author": "Thomas",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-4.jpg",
-        "alt": "Reseña de huésped aparcamiento"
+        "image": "assets/img/testimonials/testimonial-07.jpg",
+        "alt": "Testimonio: La bienvenida fue perfecta, el estudio es hermoso.",
+        "author": "Sophie",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-5.jpg",
-        "alt": "Reseña de huésped aparcamiento"
+        "image": "assets/img/testimonials/testimonial-13.jpg",
+        "alt": "Comentario de huésped: Muy buena estancia, todo fue según la descripción.",
+        "author": "David",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-6.jpg",
-        "alt": "Reseña de huésped aparcamiento"
+        "image": "assets/img/testimonials/testimonial-14.jpg",
+        "alt": "Testimonio: Un pequeño rincón del paraíso, tranquilo y bien ubicado.",
+        "author": "Laura",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-7.jpg",
-        "alt": "Reseña de huésped aparcamiento"
+        "image": "assets/img/testimonials/testimonial-15.jpg",
+        "alt": "Reseña: Excelente relación calidad-precio. Limpieza impecable.",
+        "author": "Nicolas",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-8.jpg",
-        "alt": "Reseña de huésped aparcamiento"
+        "image": "assets/img/testimonials/testimonial-16.jpg",
+        "alt": "Testimonio: Anfitriones muy amables y disponibles. Estudio de primera.",
+        "author": "Julie",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-9.jpg",
-        "alt": "Reseña de huésped aparcamiento"
+        "image": "assets/img/testimonials/testimonial-17.jpg",
+        "alt": "Comentario: Pasamos un gran fin de semana. Gracias por todo.",
+        "author": "Antoine",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-10.jpg",
-        "alt": "Reseña de huésped aparcamiento"
+        "image": "assets/img/testimonials/testimonial-18.jpg",
+        "alt": "Reseña: Todo lo necesario para una estancia agradable. Volveré.",
+        "author": "Emilie",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-11.jpg",
-        "alt": "Reseña de huésped aparcamiento"
+        "image": "assets/img/testimonials/testimonial-19.jpg",
+        "alt": "Testimonio: Entorno hermoso, estudio muy funcional.",
+        "author": "Pierre",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-12.jpg",
-        "alt": "Reseña de huésped aparcamiento"
+        "image": "assets/img/testimonials/testimonial-20.jpg",
+        "alt": "Reseña: Gran experiencia, nada de qué quejarse.",
+        "author": "Sarah",
+        "rating": 5
       },
       {
-        "image": "parking/temoignage-parking-cc-13.jpg",
-        "alt": "Reseña de huésped aparcamiento"
+        "image": "assets/img/testimonials/testimonial-21.jpg",
+        "alt": "Testimonio: El estudio está decorado con buen gusto. Se siente bien.",
+        "author": "Maxime",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-22.jpg",
+        "alt": "Reseña: Perfectamente ubicado para visitar la región.",
+        "author": "Camille",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-23.jpg",
+        "alt": "Testimonio: Calma absoluta, ropa de cama muy cómoda.",
+        "author": "Lucas",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-24.jpg",
+        "alt": "Reseña: Un gran agradecimiento a Cédric por su cálida bienvenida.",
+        "author": "Manon",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-25.jpg",
+        "alt": "Testimonio: Recomiendo encarecidamente este estudio por su comodidad.",
+        "author": "Alexandre",
+        "rating": 5
+      }
+    ],
+    "pt": [
+      {
+        "image": "assets/img/testimonials/testimonial-01.jpg",
+        "alt": "Avaliação de hóspede: Estúdio muito limpo e bem equipado. Cédric é um anfitrião muito acolhedor.",
+        "author": "Jean-Pierre",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-02.jpg",
+        "alt": "Feedback de viajante: Lugar tranquilo e relaxante. Perfeito para uma viagem de negócios.",
+        "author": "Marie",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-04.jpg",
+        "alt": "Resenha: Estúdio soberbo, moderno e confortável. Eu recomendo!",
+        "author": "Thomas",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-07.jpg",
+        "alt": "Depoimento: O acolhimento foi perfeito, o estúdio é lindo.",
+        "author": "Sophie",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-13.jpg",
+        "alt": "Feedback de cliente: Estadia muito boa, tudo estava conforme a descrição.",
+        "author": "David",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-14.jpg",
+        "alt": "Depoimento: Um pequeno canto do paraíso, calmo e bem localizado.",
+        "author": "Laura",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-15.jpg",
+        "alt": "Resenha: Excelente relação qualidade-preço. Limpeza impecável.",
+        "author": "Nicolas",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-16.jpg",
+        "alt": "Depoimento: Anfitriões muito simpáticos e disponíveis. Estúdio de primeira.",
+        "author": "Julie",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-17.jpg",
+        "alt": "Feedback: Passamos um ótimo fim de semana. Obrigado por tudo.",
+        "author": "Antoine",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-18.jpg",
+        "alt": "Resenha: Tudo o que é preciso para uma estadia agradável. Voltarei.",
+        "author": "Emilie",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-19.jpg",
+        "alt": "Depoimento: Cenário magnífico, estúdio muito funcional.",
+        "author": "Pierre",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-20.jpg",
+        "alt": "Resenha: Ótima experiência, nada a reclamar.",
+        "author": "Sarah",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-21.jpg",
+        "alt": "Depoimento: O estúdio está decorado com gosto. Sente-se bem.",
+        "author": "Maxime",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-22.jpg",
+        "alt": "Resenha: Perfeitamente localizado para visitar a região.",
+        "author": "Camille",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-23.jpg",
+        "alt": "Depoimento: Calma absoluta, roupa de cama muito confortável.",
+        "author": "Lucas",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-24.jpg",
+        "alt": "Resenha: Um grande obrigado a Cédric pelo seu acolhimento caloroso.",
+        "author": "Manon",
+        "rating": 5
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-25.jpg",
+        "alt": "Depoimento: Recomendo vivamente este estúdio pelo seu conforto.",
+        "author": "Alexandre",
+        "rating": 5
       }
     ]
   }

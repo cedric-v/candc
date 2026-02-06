@@ -160,15 +160,14 @@ ogImage: assets/img/logo-cc.jpg
     </div>
     <div class="gallery-grid">
       {% set galleryImages = [
-        { src: 'assets/img/gallery/studio/gallerie-studio-bed.jpg', caption: "Lit double confortable de 180 cm de large (2 pers.)" },
-        { src: 'assets/img/gallery/studio/gallerie-studio-living-room.jpg', caption: "Canapé-lit et lit double" },
-        { src: 'assets/img/gallery/studio/gallerie-studio-kitchen.jpg', caption: "Cuisine toute équipée" },
-
-        { src: 'assets/img/gallery/studio/gallerie-studio-outside-terrace.jpg', caption: "Terrasse de gazon" },
-        { src: 'assets/img/gallery/studio/gallerie-studio-outside-parking.jpg', caption: "Place de stationnement sans supplément" },
-        { src: 'assets/img/gallery/studio/gallerie-studio-1.jpg', caption: "Wifi haut débit (fibre optique 10 GB symétrique)" },
-        { src: 'assets/img/gallery/studio/gallerie-studio-2.jpg', caption: "Canapé-lit et lit double" },
-        { src: 'assets/img/gallery/studio/gallerie-studio-3.jpg', caption: "WC douche et colonne de lavage-séchage" }
+        { src: 'assets/img/gallery/studio/gallerie-studio-bed.jpg', caption: t.gallery.doubleBed },
+        { src: 'assets/img/gallery/studio/gallerie-studio-living-room.jpg', caption: t.gallery.independentEntry },
+        { src: 'assets/img/gallery/studio/gallerie-studio-kitchen.jpg', caption: t.gallery.kitchen },
+        { src: 'assets/img/gallery/studio/gallerie-studio-outside-terrace.jpg', caption: t.gallery.outsideTerrace },
+        { src: 'assets/img/gallery/studio/gallerie-studio-outside-parking.jpg', caption: t.gallery.parkingSpace },
+        { src: 'assets/img/gallery/studio/gallerie-studio-1.jpg', caption: t.gallery.highSpeedWifi },
+        { src: 'assets/img/gallery/studio/gallerie-studio-2.jpg', caption: t.gallery.independentEntry },
+        { src: 'assets/img/gallery/studio/gallerie-studio-3.jpg', caption: t.gallery.clearView }
       ] %}
 
       {% for item in galleryImages %}
@@ -189,31 +188,17 @@ ogImage: assets/img/logo-cc.jpg
       <p class="text-muted">{{ t.testimonials.intro }}</p>
     </div>
     <div class="gallery-grid" id="testimonials-grid">
-      {% set testimonialImages = [
-        'assets/img/testimonials/testimonial-01.jpg',
-        'assets/img/testimonials/testimonial-02.jpg',
-        'assets/img/testimonials/testimonial-04.jpg',
-        'assets/img/testimonials/testimonial-07.jpg',
-        'assets/img/testimonials/testimonial-13.jpg',
-        'assets/img/testimonials/testimonial-14.jpg',
-        'assets/img/testimonials/testimonial-15.jpg',
-        'assets/img/testimonials/testimonial-16.jpg',
-        'assets/img/testimonials/testimonial-17.jpg',
-        'assets/img/testimonials/testimonial-18.jpg',
-        'assets/img/testimonials/testimonial-19.jpg',
-        'assets/img/testimonials/testimonial-20.jpg',
-        'assets/img/testimonials/testimonial-21.jpg',
-        'assets/img/testimonials/testimonial-22.jpg',
-        'assets/img/testimonials/testimonial-23.jpg',
-        'assets/img/testimonials/testimonial-24.jpg',
-        'assets/img/testimonials/testimonial-25.jpg'
-      ] %}
-
-      {% for image in testimonialImages %}
-      <div class="gallery-item lightbox-trigger" data-image="/{{ image }}">
-        <img src="/{{ image }}" alt="Témoignage client" class="gallery-image" loading="lazy">
+      {% set localTestimonials = testimonials.studio[locale] or testimonials.studio['fr'] %}
+      {% for testimonial in localTestimonials %}
+      <div class="gallery-item lightbox-trigger" data-image="/{{ testimonial.image }}" data-caption="{{ testimonial.author }}: {{ testimonial.alt }}">
+        <img src="/{{ testimonial.image }}" alt="{{ testimonial.alt }}" class="gallery-image" loading="lazy">
+        <div class="gallery-caption-overlay">
+          <span>{{ testimonial.author }}</span>
+        </div>
       </div>
       {% endfor %}
+
+
     </div>
   </section>
 
@@ -315,10 +300,10 @@ ogImage: assets/img/logo-cc.jpg
     })();
   </script>
   <div class="mt-12 text-center pb-12">
-    <h2 class="text-xl font-bold text-primary mb-6">Réserver votre séjour</h2>
+    <h2 class="text-xl font-bold text-primary mb-6">{{ t.bookNow }}</h2>
     <div class="flex justify-center">
       <a href="#reservation" class="btn btn-primary">
-        Vérifier les disponibilités et les tarifs
+        {{ t.checkAvailability }}
       </a>
     </div>
   </div>
@@ -381,9 +366,24 @@ ogImage: assets/img/logo-cc.jpg
     "https://www.booking.com/hotel/ch/cedric-studio.fr.html",
     "https://fr.airbnb.ch/rooms/4116019"
   ],
-  "provider": {
-    "@type": "Organization",
     "name": "C & C Eco Studio"
-  }
+  },
+  "review": [
+    {% for testimonial in testimonials.studio[locale] or testimonials.studio['fr'] %}
+    {
+      "@type": "Review",
+      "author": {
+        "@type": "Person",
+        "name": "{{ testimonial.author }}"
+      },
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": "{{ testimonial.rating }}",
+        "bestRating": "5"
+      },
+      "reviewBody": "{{ testimonial.alt }}"
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ]
 }
 </script>

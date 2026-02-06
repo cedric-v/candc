@@ -102,10 +102,14 @@ ogImage: assets/img/logo-cc.jpg
       </div>
     </div>
 
-    <div class="section-header align-center mt-12">
+    <div class="section-header align-center mt-12" id="reservation">
       <div class="flex flex-wrap justify-center gap-lg">
-        <a href="https://www.booking.com/hotel/ch/cedric-studio.fr.html" target="_blank" rel="noopener noreferrer" class="btn-primary">{{ t.bookOnBooking }}</a>
-        <a href="https://www.airbnb.co.uk/rooms/4116019" target="_blank" rel="noopener noreferrer" class="btn-primary">{{ t.bookOnAirbnb }}</a>
+        <a href="https://www.booking.com/hotel/ch/cedric-studio.fr.html" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
+          {{ t.bookOnBooking }}
+        </a>
+        <a href="https://www.airbnb.co.uk/rooms/4116019" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
+          {{ t.bookOnAirbnb }}
+        </a>
       </div>
       <div class="mt-6">
         <a href="{{ t.googleMapsStudioLink }}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
@@ -155,9 +159,8 @@ ogImage: assets/img/logo-cc.jpg
     <div class="gallery-grid">
       {% set galleryImages = [
         { src: 'assets/img/gallery/studio/gallerie-studio-bed.jpg', caption: t.gallery.doubleBed },
-        { src: 'assets/img/gallery/studio/gallerie-studio-living-room.jpg', caption: t.gallery.livingArea },
+        { src: 'assets/img/gallery/studio/gallerie-studio-living-room.jpg', caption: t.gallery.independentEntry },
         { src: 'assets/img/gallery/studio/gallerie-studio-kitchen.jpg', caption: t.gallery.kitchen },
-        { src: 'assets/img/gallery/studio/gallerie-studio-toilet-tumbler.jpg', caption: t.gallery.bathroom },
         { src: 'assets/img/gallery/studio/gallerie-studio-outside-terrace.jpg', caption: t.gallery.outsideTerrace },
         { src: 'assets/img/gallery/studio/gallerie-studio-outside-parking.jpg', caption: t.gallery.parkingSpace },
         { src: 'assets/img/gallery/studio/gallerie-studio-1.jpg', caption: t.gallery.highSpeedWifi },
@@ -167,7 +170,10 @@ ogImage: assets/img/logo-cc.jpg
 
       {% for item in galleryImages %}
       <div class="gallery-item lightbox-trigger" data-image="/{{ item.src }}" data-caption="{{ item.caption }}">
-        {% image item.src, "Photo Eco Studio", "gallery-image", "lazy" %}
+        {% image item.src, item.caption, "gallery-image", "lazy" %}
+        <div class="gallery-caption-overlay">
+          <span>{{ item.caption }}</span>
+        </div>
       </div>
       {% endfor %}
     </div>
@@ -180,31 +186,17 @@ ogImage: assets/img/logo-cc.jpg
       <p class="text-muted">{{ t.testimonials.intro }}</p>
     </div>
     <div class="gallery-grid" id="testimonials-grid">
-      {% set testimonialImages = [
-        'assets/img/testimonials/testimonial-01.jpg',
-        'assets/img/testimonials/testimonial-02.jpg',
-        'assets/img/testimonials/testimonial-04.jpg',
-        'assets/img/testimonials/testimonial-07.jpg',
-        'assets/img/testimonials/testimonial-13.jpg',
-        'assets/img/testimonials/testimonial-14.jpg',
-        'assets/img/testimonials/testimonial-15.jpg',
-        'assets/img/testimonials/testimonial-16.jpg',
-        'assets/img/testimonials/testimonial-17.jpg',
-        'assets/img/testimonials/testimonial-18.jpg',
-        'assets/img/testimonials/testimonial-19.jpg',
-        'assets/img/testimonials/testimonial-20.jpg',
-        'assets/img/testimonials/testimonial-21.jpg',
-        'assets/img/testimonials/testimonial-22.jpg',
-        'assets/img/testimonials/testimonial-23.jpg',
-        'assets/img/testimonials/testimonial-24.jpg',
-        'assets/img/testimonials/testimonial-25.jpg'
-      ] %}
-      
-      {% for image in testimonialImages %}
-      <div class="gallery-item lightbox-trigger" data-image="/{{ image }}">
-        <img src="/{{ image }}" alt="Guest testimonial" class="gallery-image" loading="lazy">
+      {% set localTestimonials = testimonials.studio[locale] or testimonials.studio['en'] %}
+      {% for testimonial in localTestimonials %}
+      <div class="gallery-item lightbox-trigger" data-image="/{{ testimonial.image }}" data-caption="{{ testimonial.author }}: {{ testimonial.alt }}">
+        <img src="/{{ testimonial.image }}" alt="{{ testimonial.alt }}" class="gallery-image" loading="lazy">
+        <div class="gallery-caption-overlay">
+          <span>{{ testimonial.author }}</span>
+        </div>
       </div>
       {% endfor %}
+      
+
     </div>
   </section>
 
@@ -231,16 +223,43 @@ ogImage: assets/img/logo-cc.jpg
       let activeTriggers = [];
       
       function openLightbox(trigger) {
-        const container = trigger.closest('.gallery-grid');
+        // Find all triggers in the same container (gallery or testimonials)
+        const container = trigger.closest('.gallery-grid, .testimonials-grid');
         activeTriggers = Array.from(container.querySelectorAll('.lightbox-trigger'));
         currentIndex = activeTriggers.indexOf(trigger);
+        
         updateLightbox();
+        lightbox.classList.remove('hidden');
         lightbox.classList.add('flex');
         document.body.style.overflow = 'hidden';
       }
       
       function updateLightbox() {
-        lightboxImage.src = activeTriggers[currentIndex].dataset.image;
+        const trigger = activeTriggers[currentIndex];
+        lightboxImage.src = trigger.dataset.image;
+        
+        const caption = trigger.dataset.caption;
+        let lightboxCaption = document.getElementById('lightbox-caption');
+        
+        if (!lightboxCaption) {
+          lightboxCaption = document.createElement('div');
+          lightboxCaption.id = 'lightbox-caption';
+          lightboxCaption.className = 'lightbox-caption';
+          document.querySelector('.lightbox-container').appendChild(lightboxCaption);
+        }
+        
+        if (caption) {
+          lightboxCaption.textContent = caption;
+          lightboxCaption.style.display = 'block';
+        } else {
+          lightboxCaption.style.display = 'none';
+        }
+      }
+      
+      function closeLightbox() {
+        lightbox.classList.add('hidden');
+        lightbox.classList.remove('flex');
+        document.body.style.overflow = '';
       }
       
       function next() {
@@ -255,10 +274,7 @@ ogImage: assets/img/logo-cc.jpg
       
       triggers.forEach(t => t.addEventListener('click', () => openLightbox(t)));
       
-      closeBtn.onclick = () => {
-        lightbox.classList.remove('flex');
-        document.body.style.overflow = '';
-      };
+      closeBtn.onclick = closeLightbox;
       
       nextBtn.onclick = next;
       prevBtn.onclick = prev;
@@ -269,14 +285,23 @@ ogImage: assets/img/logo-cc.jpg
         }
       };
       
-      document.onkeydown = (e) => {
-        if (!lightbox.classList.contains('flex')) return;
-        if (e.key === 'Escape') closeBtn.onclick();
-        if (e.key === 'ArrowRight') next();
-        if (e.key === 'ArrowLeft') prev();
-      };
+      document.addEventListener('keydown', (e) => {
+        if (!lightbox.classList.contains('hidden')) {
+          if (e.key === 'Escape') closeLightbox();
+          if (e.key === 'ArrowLeft') showPrev();
+          if (e.key === 'ArrowRight') showNext();
+        }
+      });
     })();
   </script>
+  <div class="mt-12 text-center pb-12">
+    <h2 class="text-xl font-bold text-primary mb-6">{{ t.bookNow }}</h2>
+    <div class="flex justify-center">
+      <a href="#reservation" class="btn btn-primary">
+        {{ t.checkAvailability }}
+      </a>
+    </div>
+  </div>
 </section>
 
 <script type="application/ld+json">
@@ -336,9 +361,24 @@ ogImage: assets/img/logo-cc.jpg
     "https://www.booking.com/hotel/ch/cedric-studio.fr.html",
     "https://www.airbnb.co.uk/rooms/4116019"
   ],
-  "provider": {
-    "@type": "Organization",
     "name": "C & C Eco Studio"
-  }
+  },
+  "review": [
+    {% for testimonial in testimonials.studio[locale] or testimonials.studio['en'] %}
+    {
+      "@type": "Review",
+      "author": {
+        "@type": "Person",
+        "name": "{{ testimonial.author }}"
+      },
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": "{{ testimonial.rating }}",
+        "bestRating": "5"
+      },
+      "reviewBody": "{{ testimonial.alt }}"
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ]
 }
 </script>

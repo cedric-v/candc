@@ -83,7 +83,7 @@ ogImage: assets/img/logo-cc.jpg
 
     <div class="mt-12 flex flex-wrap justify-center gap-md" id="reservation">
       <a href="/{{ locale }}/contact/" class="btn btn-primary">
-        Demander une réservation
+        {{ t.requestReservation }}
       </a>
       <a href="{{ t.googleMapsParkingLink }}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
         🗺️ {{ t.getDirections }}
@@ -100,11 +100,11 @@ ogImage: assets/img/logo-cc.jpg
     </div>
     <div class="gallery-grid">
       {% set galleryImages = [
-        { src: 'assets/img/gallery/parking/parking-01.jpg', caption: "The parking space (9 meters long) au bord d'une impasse, à la campagne" },
-        { src: 'assets/img/gallery/parking/parking-02.jpg', caption: "Terrace avec vue et Wifi" },
-        { src: 'assets/img/gallery/parking/parking-03.jpg', caption: "Accès à un robinet d'eau potable" },
-        { src: 'assets/img/gallery/parking/parking-04.jpg', caption: "Une prise électrique suisse (220V) est aussi à disposition" },
-        { src: 'assets/img/gallery/parking/parking-05.jpg', caption: "Accès à un WC douche sur demande et quand nous sommes sur place" }
+        { src: 'assets/img/gallery/parking/parking-01.jpg', caption: t.gallery.parkingFrontView },
+        { src: 'assets/img/gallery/parking/parking-02.jpg', caption: t.gallery.terraceFieldView },
+        { src: 'assets/img/gallery/parking/parking-03.jpg', caption: t.gallery.parkingSpace },
+        { src: 'assets/img/gallery/parking/parking-04.jpg', caption: t.gallery.parkingSpot },
+        { src: 'assets/img/gallery/parking/parking-05.jpg', caption: t.gallery.toilet }
       ] %}
 
       {% for item in galleryImages %}
@@ -120,26 +120,23 @@ ogImage: assets/img/logo-cc.jpg
 
 
   <!-- Témoignages (images) -->
-  {% set pageTestimonials = testimonials.parking[locale] or testimonials.parking['fr'] or [] %}
-  {% if pageTestimonials and pageTestimonials.length > 0 %}
   <section class="mt-3xl">
     <div class="section-header">
-      <h2 class="section-title">Témoignages</h2>
-      <p class="text-muted">Ce que nos hôtes disent</p>
+      <h2 class="section-title">{{ t.testimonials.title }}</h2>
+      <p class="text-muted">{{ t.testimonials.intro }}</p>
     </div>
     <div class="gallery-grid" id="testimonials-grid">
+      {% set pageTestimonials = testimonials.parking[locale] or testimonials.parking['fr'] %}
       {% for testimonial in pageTestimonials %}
-      <div class="gallery-item lightbox-trigger" data-image="/{{ 'assets/img/testimonials/' + testimonial.image }}">
-        {% if testimonial.image %}
-          {% set imagePath = "assets/img/testimonials/" + testimonial.image %}
-          {% set imageAlt = testimonial.alt or "Témoignage client" %}
-          {% image imagePath, imageAlt, "gallery-image", "lazy" %}
-        {% endif %}
+      <div class="gallery-item lightbox-trigger" data-image="/{{ testimonial.image }}" data-caption="{{ testimonial.author }}: {{ testimonial.alt }}">
+        <img src="/{{ testimonial.image }}" alt="{{ testimonial.alt }}" class="gallery-image" loading="lazy">
+        <div class="gallery-caption-overlay">
+          <span>{{ testimonial.author }}</span>
+        </div>
       </div>
       {% endfor %}
     </div>
   </section>
-  {% endif %}
 
   <!-- Moyens de paiement -->
   <section class="mt-3xl text-center">
@@ -153,14 +150,14 @@ ogImage: assets/img/logo-cc.jpg
   </section>
 
   <div class="mt-12 text-center pb-12">
-    <h2 class="text-xl font-bold text-primary mb-6">Demande de réservation</h2>
+    <h2 class="text-xl font-bold text-primary mb-6">{{ t.bookParking }}</h2>
     <div class="flex justify-center">
       <a href="/{{ locale }}/contact/" class="btn btn-primary">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
           <polyline points="22,6 12,13 2,6"></polyline>
         </svg>
-        <span class="ml-2">Demander une réservation</span>
+        <span class="ml-2">{{ t.requestReservation }}</span>
       </a>
     </div>
   </div>
