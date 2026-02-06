@@ -9,457 +9,114 @@ ogImage: assets/img/logo-cc.jpg
 
 {% set t = translations[locale] or translations['fr'] %}
 
-<style>
-@layer components {
-  :root {
-    --primary-color: #2D5016;
-    --secondary-color: #6B8E23;
-    --text-color: #1f1f1f;
-    --text-muted: #1f1f1f/80;
-    --text-light: #1f1f1f/70;
-    --text-lighter: #1f1f1f/60;
-    --white: #ffffff;
-    --background: #fdfaf6;
-    --border-radius: 1.5rem;
-    --shadow: 0 25px 60px rgba(15, 23, 42, 0.08);
-    --shadow-hover: 0 25px 60px rgba(15, 23, 42, 0.12);
-    --spacing-sm: 0.5rem;
-    --spacing-md: 1rem;
-    --spacing-lg: 1.5rem;
-    --spacing-xl: 2rem;
-    --spacing-2xl: 3rem;
-  }
 
-  .business-card {
-    border-radius: var(--border-radius);
-    border: 1px solid rgba(45, 80, 22, 0.15);
-    background: var(--white);
-    box-shadow: var(--shadow);
-    padding: var(--spacing-2xl);
-    margin-top: var(--spacing-xl);
-  }
 
-  .business-card h2 {
-    font-size: 1.875rem;
-    font-weight: 700;
-    color: var(--primary-color);
-    margin-bottom: var(--spacing-lg);
-  }
-
-  .business-card p {
-    font-size: 1.25rem;
-    color: var(--text-muted);
-    margin-bottom: var(--spacing-xl);
-  }
-
-  .business-card ul {
-    gap: var(--spacing-md);
-    display: flex;
-    flex-direction: column;
-    color: var(--text-muted);
-    margin-bottom: var(--spacing-xl);
-  }
-
-  .business-card li {
-    gap: var(--spacing-sm);
-    display: flex;
-    align-items: flex-start;
-  }
-
-  .business-card li span:first-child {
-    font-size: 1.5rem;
-    color: var(--primary-color);
-    flex-shrink: 0;
-  }
-
-  .testimonials-section {
-    margin-top: var(--spacing-2xl);
-  }
-
-  .testimonials-header {
-    text-align: center;
-    margin-bottom: var(--spacing-2xl);
-    gap: var(--spacing-lg);
-    display: flex;
-    flex-direction: column;
-  }
-
-  .testimonials-header h2 {
-    font-size: 1.875rem;
-    font-weight: 700;
-    color: var(--primary-color);
-  }
-
-  .testimonials-header p {
-    font-size: 1.125rem;
-    color: var(--text-muted);
-  }
-
-  .testimonials-grid {
-    gap: var(--spacing-2xl);
-    display: grid;
-    grid-template-columns: 1fr;
-  }
-
-  .testimonial-item {
-    border-radius: var(--border-radius);
-    border: 1px solid rgba(45, 80, 22, 0.15);
-    background: var(--white);
-    box-shadow: var(--shadow);
-    overflow: hidden;
-    cursor: pointer;
-    transition: box-shadow 0.2s ease;
-  }
-
-  .testimonial-item:hover {
-    box-shadow: var(--shadow-hover);
-  }
-
-  .testimonial-image {
-    width: 100%;
-    height: auto;
-    object-fit: cover;
-    display: block;
-  }
-
-  .lightbox {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.9);
-    z-index: 50;
-    display: none;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .lightbox.flex {
-    display: flex;
-  }
-
-  .lightbox.hidden {
-    display: none;
-  }
-
-  .lightbox-close,
-  .lightbox-prev,
-  .lightbox-next {
-    position: absolute;
-    color: var(--white);
-    font-weight: 300;
-    transition: color 0.2s ease;
-    z-index: 10;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(255, 255, 255, 0.1);
-    transition: all 0.2s ease;
-  }
-
-  .lightbox-close:hover,
-  .lightbox-prev:hover,
-  .lightbox-next:hover {
-    color: #d1d5db;
-    background: rgba(255, 255, 255, 0.2);
-  }
-
-  .lightbox-close {
-    top: var(--spacing-lg);
-    right: var(--spacing-lg);
-    width: 3rem;
-    height: 3rem;
-    font-size: 3rem;
-  }
-
-  .lightbox-prev {
-    left: var(--spacing-lg);
-    font-size: 4rem;
-    width: 4rem;
-    height: 4rem;
-  }
-
-  .lightbox-next {
-    right: var(--spacing-lg);
-    font-size: 4rem;
-    width: 4rem;
-    height: 4rem;
-  }
-
-  .lightbox-container {
-    max-width: 72rem;
-    max-height: 90vh;
-    padding: var(--spacing-2xl);
-  }
-
-  .lightbox-container img {
-    max-width: 100%;
-    max-height: 90vh;
-    object-fit: contain;
-    border-radius: var(--border-radius);
-    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
-  }
-
-  @container (min-width: 48rem) {
-    .testimonials-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  .eco-studio-container {
-    container-type: inline-size;
-    max-width: 56rem;
-    margin: 0 auto;
-    padding: var(--spacing-xl) var(--spacing-lg);
-    gap: var(--spacing-2xl);
-    display: flex;
-    flex-direction: column;
-  }
-
-  .hero-section {
-    text-align: center;
-    gap: var(--spacing-lg);
-    display: flex;
-    flex-direction: column;
-  }
-
-  .hero-section h1 {
-    font-size: clamp(2.25rem, 5vw, 3rem);
-    font-weight: 700;
-    color: var(--primary-color);
-  }
-
-  .hero-section p:nth-child(2) {
-    font-size: 1.25rem;
-    color: var(--text-muted);
-  }
-
-  .hero-section p:nth-child(3) {
-    font-size: 1.125rem;
-    color: var(--text-light);
-  }
-
-  .hero-section p:nth-child(4) {
-    font-size: 1rem;
-    color: var(--text-lighter);
-    font-weight: 600;
-  }
-
-  .equipment-card {
-    border-radius: var(--border-radius);
-    border: 1px solid rgba(45, 80, 22, 0.15);
-    background: var(--white);
-    box-shadow: var(--shadow);
-    padding: var(--spacing-2xl);
-  }
-
-  .equipment-card h2 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--primary-color);
-    margin-bottom: var(--spacing-xl);
-  }
-
-  .equipment-sections {
-    gap: var(--spacing-xl);
-    display: flex;
-    flex-direction: column;
-  }
-
-  .equipment-section h3 {
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: var(--primary-color);
-    margin-bottom: var(--spacing-md);
-  }
-
-  .equipment-section p {
-    color: var(--text-muted);
-  }
-
-  .equipment-section ul {
-    gap: var(--spacing-sm);
-    display: flex;
-    flex-direction: column;
-    color: var(--text-muted);
-  }
-
-  .equipment-section li {
-    gap: var(--spacing-sm);
-    display: flex;
-    align-items: flex-start;
-  }
-
-  .equipment-section li span:first-child {
-    font-size: 1.25rem;
-    flex-shrink: 0;
-  }
-
-  .booking-buttons {
-    margin-top: var(--spacing-2xl);
-    gap: var(--spacing-lg);
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .btn-primary {
-    background: var(--secondary-color);
-    color: var(--white);
-    border-radius: 9999px;
-    padding: 0.85rem 1.75rem;
-    font-weight: 600;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    box-shadow: 0 15px 30px rgba(107, 142, 35, 0.35);
-    text-decoration: none;
-    display: inline-block;
-  }
-
-  .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 25px 40px rgba(107, 142, 35, 0.45);
-  }
-
-  .btn-secondary {
-    background: var(--white);
-    color: var(--secondary-color);
-    border: 2px solid var(--secondary-color);
-    border-radius: 9999px;
-    padding: calc(0.85rem - 2px) calc(1.75rem - 2px);
-    font-weight: 600;
-    transition: all 0.2s ease;
-    text-decoration: none;
-    display: inline-block;
-  }
-
-  .btn-secondary:hover {
-    background: var(--secondary-color);
-    color: var(--white);
-  }
-
-  .booking-section {
-    gap: var(--spacing-lg);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .booking-main-buttons {
-    gap: var(--spacing-lg);
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .booking-directions {
-    margin-top: var(--spacing-md);
-  }
-
-  @container (max-width: 48rem) {
-    .eco-studio-container {
-      padding: var(--spacing-xl) var(--spacing-lg);
-    }
-
-    .hero-section h1 {
-      font-size: 2.25rem;
-    }
-  }
-}
-</style>
-
-<section class="eco-studio-container">
-  <div class="hero-section">
-    <h1>{{ t.studio.title }}</h1>
-    <p>{{ t.studio.subtitle }}</p>
-    <p>{{ t.studio.description }}</p>
-    <p>{{ t.studio.minStay }}</p>
+<section class="page-section">
+  {% image "assets/img/fond-hero-studio.jpg", "Eco Studio La Sonnaz", "page-hero-image", "eager" %}
+  <div class="section-header">
+    <h1 class="hero-title">{{ t.studio.title }}</h1>
+    <p class="text-xl text-muted">{{ t.studio.subtitle }}</p>
+    <p class="text-lg text-light">{{ t.studio.description }}</p>
+    <p class="text-base font-semibold text-primary">{{ t.studio.minStay }}</p>
+    <div class="gallery-grid mt-4" style="grid-template-columns: repeat(3, 1fr);">
+      <div class="gallery-item lightbox-trigger" data-image="/assets/img/gallery/studio/gallerie-studio-1.jpg" data-caption="Wifi haut débit">
+        {% image "assets/img/gallery/studio/gallerie-studio-1.jpg", "Aperçu studio", "gallery-image", "eager" %}
+      </div>
+      <div class="gallery-item lightbox-trigger" data-image="/assets/img/gallery/studio/gallerie-studio-2.jpg" data-caption="Entrée indépendante">
+        {% image "assets/img/gallery/studio/gallerie-studio-2.jpg", "Aperçu studio", "gallery-image", "eager" %}
+      </div>
+      <div class="gallery-item lightbox-trigger" data-image="/assets/img/gallery/studio/gallerie-studio-3.jpg" data-caption="Vue dégagée">
+        {% image "assets/img/gallery/studio/gallerie-studio-3.jpg", "Aperçu studio", "gallery-image", "eager" %}
+      </div>
+    </div>
   </div>
 
-  <div class="equipment-card">
-    <h2>Équipements</h2>
+  <div class="card">
+    <h2 class="section-title mb-8">Équipements</h2>
 
-    <div class="equipment-sections">
+    <div class="space-y-xl">
       <div class="equipment-section">
-        <h3>Chambre</h3>
-        <ul>
-          <li>
+        <h3 class="text-lg font-semibold text-primary mb-4">Chambre</h3>
+        <ul class="space-y-sm">
+          <li class="flex items-start gap-sm">
             <span>🛏️</span>
-            <span>{{ t.studio.bedroom }}</span>
+            <span class="text-muted">{{ t.studio.bedroom }}</span>
           </li>
-          <li>
+          <li class="flex items-start gap-sm">
             <span>🛋️</span>
-            <span>{{ t.studio.sofaBed }}</span>
+            <span class="text-muted">{{ t.studio.sofaBed }}</span>
           </li>
         </ul>
       </div>
 
       <div class="equipment-section">
-        <h3>Cuisine</h3>
-        <p>{{ t.studio.kitchen }}</p>
+        <h3 class="text-lg font-semibold text-primary mb-2">Cuisine</h3>
+        <p class="text-muted">{{ t.studio.kitchen }}</p>
       </div>
 
       <div class="equipment-section">
-        <h3>Salle de bain</h3>
-        <p>{{ t.studio.bathroom }}</p>
+        <h3 class="text-lg font-semibold text-primary mb-2">Salle de bain</h3>
+        <p class="text-muted">{{ t.studio.bathroom }}</p>
       </div>
 
       <div class="equipment-section">
-        <h3>Linge</h3>
-        <p>{{ t.studio.laundry }}</p>
+        <h3 class="text-lg font-semibold text-primary mb-2">Linge</h3>
+        <p class="text-muted">{{ t.studio.laundry }}</p>
       </div>
 
       <div class="equipment-section">
-        <h3>Divertissement</h3>
-        <p>{{ t.studio.entertainment }}</p>
+        <h3 class="text-lg font-semibold text-primary mb-2">Divertissement</h3>
+        <p class="text-muted">{{ t.studio.entertainment }}</p>
       </div>
 
       <div class="equipment-section">
-        <h3>Internet</h3>
-        <p>{{ t.studio.internet }}</p>
+        <h3 class="text-lg font-semibold text-primary mb-2">Internet</h3>
+        <p class="text-muted">{{ t.studio.internet }}</p>
       </div>
 
       <div class="equipment-section">
-        <h3>Extérieur</h3>
-        <ul>
-          <li>
+        <h3 class="text-lg font-semibold text-primary mb-4">Extérieur</h3>
+        <ul class="space-y-sm">
+          <li class="flex items-start gap-sm">
             <span>🚗</span>
-            <span>{{ t.studio.parking }}</span>
+            <span class="text-muted">{{ t.studio.parking }}</span>
           </li>
-          <li>
+          <li class="flex items-start gap-sm">
             <span>🌳</span>
-            <span>{{ t.studio.terrace }}</span>
+            <span class="text-muted">{{ t.studio.terrace }}</span>
           </li>
         </ul>
       </div>
 
       <div class="equipment-section">
-        <h3>Écologie</h3>
-        <p>{{ t.studio.eco }}</p>
+        <h3 class="text-lg font-semibold text-primary mb-2">Écologie</h3>
+        <p class="text-muted">{{ t.studio.eco }}</p>
       </div>
 
       <div class="equipment-section">
-        <h3>Famille</h3>
-        <p>{{ t.studio.children }}</p>
+        <h3 class="text-lg font-semibold text-primary mb-2">Famille</h3>
+        <p class="text-muted">{{ t.studio.children }}</p>
       </div>
 
       <div class="equipment-section">
-        <h3>Localisation</h3>
-        <p>{{ t.studio.location }}</p>
+        <h3 class="text-lg font-semibold text-primary mb-2">Localisation</h3>
+        <p class="text-muted">{{ t.studio.location }}</p>
       </div>
     </div>
 
-    <div class="booking-section">
-      <div class="booking-main-buttons">
+    <div class="section-header align-center mt-12" id="reservation">
+      <div class="flex flex-wrap justify-center gap-lg">
         <a href="https://www.booking.com/hotel/ch/cedric-studio.fr.html" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
-        {{ t.bookOnBooking }}
-      </a>
+          {{ t.bookOnBooking }}
+        </a>
         <a href="https://fr.airbnb.ch/rooms/4116019" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
-        {{ t.bookOnAirbnb }}
-      </a>
+          {{ t.bookOnAirbnb }}
+        </a>
       </div>
-      <div class="booking-directions">
+      <div class="mt-6">
         <a href="https://share.google/4SQW4ioSzq3wkMAiA" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
-        🗺️ {{ t.getDirections }}
-      </a>
+          🗺️ {{ t.getDirections }}
+        </a>
       </div>
     </div>
   </div>
@@ -467,41 +124,71 @@ ogImage: assets/img/logo-cc.jpg
   <!-- Business Section (visible octobre-février) -->
   {% set now = "now" | date("MM") | int %}
   {% if now >= 10 or now <= 2 %}
-  <div class="business-card">
-    <h2>{{ t.businessTitle }}</h2>
-    <p>{{ t.businessSubtitle }}</p>
-    <ul>
-      <li>
-        <span>✓</span>
-        <span>{{ t.businessFeatures.wifi }}</span>
+  <div class="card mt-12 border-primary">
+    <h2 class="section-title mb-4">{{ t.businessTitle }}</h2>
+    <p class="text-lg text-muted mb-8">{{ t.businessSubtitle }}</p>
+    <ul class="space-y-md">
+      <li class="flex items-start gap-sm">
+        <span class="text-primary font-bold">✓</span>
+        <span class="text-muted">{{ t.businessFeatures.wifi }}</span>
       </li>
-      <li>
-        <span>✓</span>
-        <span>{{ t.businessFeatures.quiet }}</span>
+      <li class="flex items-start gap-sm">
+        <span class="text-primary font-bold">✓</span>
+        <span class="text-muted">{{ t.businessFeatures.quiet }}</span>
       </li>
-      <li>
-        <span>✓</span>
-        <span>{{ t.businessFeatures.office }}</span>
+      <li class="flex items-start gap-sm">
+        <span class="text-primary font-bold">✓</span>
+        <span class="text-muted">{{ t.businessFeatures.office }}</span>
       </li>
-      <li>
-        <span>✓</span>
-        <span>{{ t.businessFeatures.location }}</span>
+      <li class="flex items-start gap-sm">
+        <span class="text-primary font-bold">✓</span>
+        <span class="text-muted">{{ t.businessFeatures.location }}</span>
       </li>
-      <li>
-        <span>✓</span>
-        <span>{{ t.businessFeatures.monthly }}</span>
+      <li class="flex items-start gap-sm">
+        <span class="text-primary font-bold">✓</span>
+        <span class="text-muted">{{ t.businessFeatures.monthly }}</span>
       </li>
     </ul>
   </div>
   {% endif %}
 
-  <!-- Témoignages -->
-  <section class="testimonials-section">
-    <div class="testimonials-header">
-      <h2>{{ t.testimonials.title }}</h2>
-      <p>{{ t.testimonials.intro }}</p>
+  <!-- Galerie Photos -->
+  <section class="mt-2xl">
+    <div class="section-header">
+      <h2 class="section-title">{{ t.gallery.title }}</h2>
+      <p class="text-muted">{{ t.gallery.studioIntro }}</p>
     </div>
-    <div class="testimonials-grid" id="testimonials-grid">
+    <div class="gallery-grid">
+      {% set galleryImages = [
+        { src: 'assets/img/gallery/studio/gallerie-studio-bed.jpg', caption: "Lit double confortable de 180 cm de large (2 pers.)" },
+        { src: 'assets/img/gallery/studio/gallerie-studio-living-room.jpg', caption: "Séjour avec télé (+ Chromecast & PS4) et canapé-lit" },
+        { src: 'assets/img/gallery/studio/gallerie-studio-kitchen.jpg', caption: "Cuisine toute équipée" },
+        { src: 'assets/img/gallery/studio/gallerie-studio-toilet-tumbler.jpg', caption: "WC douche et colonne de lavage-séchage" },
+        { src: 'assets/img/gallery/studio/gallerie-studio-outside-terrace.jpg', caption: "Terrasse de gazon" },
+        { src: 'assets/img/gallery/studio/gallerie-studio-outside-parking.jpg', caption: "Place de stationnement sans supplément" },
+        { src: 'assets/img/gallery/studio/gallerie-studio-1.jpg', caption: "Wifi haut débit (fibre optique 10 GB symétrique)" },
+        { src: 'assets/img/gallery/studio/gallerie-studio-2.jpg', caption: "Entrée indépendante" },
+        { src: 'assets/img/gallery/studio/gallerie-studio-3.jpg', caption: "Vue dégagée" }
+      ] %}
+
+      {% for item in galleryImages %}
+      <div class="gallery-item lightbox-trigger" data-image="/{{ item.src }}" data-caption="{{ item.caption }}">
+        {% image item.src, item.caption, "gallery-image", "lazy" %}
+        <div class="gallery-caption-overlay">
+          <span>{{ item.caption }}</span>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- Témoignages -->
+  <section class="mt-2xl">
+    <div class="section-header">
+      <h2 class="section-title">{{ t.testimonials.title }}</h2>
+      <p class="text-muted">{{ t.testimonials.intro }}</p>
+    </div>
+    <div class="gallery-grid" id="testimonials-grid">
       {% set testimonialImages = [
         'assets/img/testimonials/testimonial-01.jpg',
         'assets/img/testimonials/testimonial-02.jpg',
@@ -523,8 +210,8 @@ ogImage: assets/img/logo-cc.jpg
       ] %}
 
       {% for image in testimonialImages %}
-      <div class="testimonial-item" data-image="/{{ image }}">
-        <img src="/{{ image }}" alt="Témoignage client" class="testimonial-image" loading="lazy">
+      <div class="gallery-item lightbox-trigger" data-image="/{{ image }}">
+        <img src="/{{ image }}" alt="Témoignage client" class="gallery-image" loading="lazy">
       </div>
       {% endfor %}
     </div>
@@ -547,17 +234,43 @@ ogImage: assets/img/logo-cc.jpg
       const closeBtn = document.getElementById('lightbox-close');
       const prevBtn = document.getElementById('lightbox-prev');
       const nextBtn = document.getElementById('lightbox-next');
-      const items = document.querySelectorAll('.testimonial-item');
+      const triggers = document.querySelectorAll('.lightbox-trigger');
       
       let currentIndex = 0;
-      const images = Array.from(items).map(item => item.dataset.image);
+      let activeTriggers = [];
       
-      function openLightbox(index) {
-        currentIndex = index;
-        lightboxImage.src = images[currentIndex];
+      function openLightbox(trigger, event) {
+        // Find all triggers in the same container (gallery or testimonials)
+        const container = trigger.closest('.gallery-grid, .testimonials-grid');
+        activeTriggers = Array.from(container.querySelectorAll('.lightbox-trigger'));
+        currentIndex = activeTriggers.indexOf(trigger);
+        
+        updateLightbox();
         lightbox.classList.remove('hidden');
         lightbox.classList.add('flex');
         document.body.style.overflow = 'hidden';
+      }
+      
+      function updateLightbox() {
+        const trigger = activeTriggers[currentIndex];
+        lightboxImage.src = trigger.dataset.image;
+        
+        const caption = trigger.dataset.caption;
+        let lightboxCaption = document.getElementById('lightbox-caption');
+        
+        if (!lightboxCaption) {
+          lightboxCaption = document.createElement('div');
+          lightboxCaption.id = 'lightbox-caption';
+          lightboxCaption.className = 'lightbox-caption';
+          document.querySelector('.lightbox-container').appendChild(lightboxCaption);
+        }
+        
+        if (caption) {
+          lightboxCaption.textContent = caption;
+          lightboxCaption.style.display = 'block';
+        } else {
+          lightboxCaption.style.display = 'none';
+        }
       }
       
       function closeLightbox() {
@@ -567,17 +280,17 @@ ogImage: assets/img/logo-cc.jpg
       }
       
       function showNext() {
-        currentIndex = (currentIndex + 1) % images.length;
-        lightboxImage.src = images[currentIndex];
+        currentIndex = (currentIndex + 1) % activeTriggers.length;
+        updateLightbox();
       }
       
       function showPrev() {
-        currentIndex = (currentIndex - 1 + images.length) % images.length;
-        lightboxImage.src = images[currentIndex];
+        currentIndex = (currentIndex - 1 + activeTriggers.length) % activeTriggers.length;
+        updateLightbox();
       }
       
-      items.forEach((item, index) => {
-        item.addEventListener('click', () => openLightbox(index));
+      triggers.forEach((trigger) => {
+        trigger.addEventListener('click', (e) => openLightbox(trigger, e));
       });
       
       closeBtn.addEventListener('click', closeLightbox);
@@ -585,7 +298,11 @@ ogImage: assets/img/logo-cc.jpg
       nextBtn.addEventListener('click', showNext);
       
       lightbox.addEventListener('click', (e) => {
-        if (e.target === lightbox) closeLightbox();
+        if (e.target === lightbox || e.target.closest('.lightbox-container') === null) {
+          if (e.target !== prevBtn && e.target !== nextBtn) {
+            closeLightbox();
+          }
+        }
       });
       
       document.addEventListener('keydown', (e) => {
@@ -597,6 +314,14 @@ ogImage: assets/img/logo-cc.jpg
       });
     })();
   </script>
+  <div class="mt-12 text-center pb-12">
+    <h2 class="text-xl font-bold text-primary mb-6">Réserver votre séjour</h2>
+    <div class="flex justify-center">
+      <a href="#reservation" class="btn btn-primary">
+        Réserver
+      </a>
+    </div>
+  </div>
 </section>
 
 <script type="application/ld+json">

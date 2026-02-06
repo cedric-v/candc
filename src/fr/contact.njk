@@ -141,22 +141,9 @@ ogImage: assets/img/logo-cc.jpg
 
     <div class="contact-section">
       <h2>{{ t.email }}</h2>
-      <p class="contact-info">
+      <p class="contact-info mb-4">
         <a href="#" class="email-obfuscated"></a>
       </p>
-    </div>
-
-    <div class="contact-section">
-      <h2>{{ t.address }}</h2>
-      <p class="contact-info">
-        La Sonnaz<br>
-        1782 Belfaux<br>
-        Suisse
-      </p>
-    </div>
-
-    <div class="contact-section">
-      <h2>{{ t.sendMessage }}</h2>
       <div class="contact-actions">
         <a href="#" class="btn btn-primary email-obfuscated">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -167,6 +154,14 @@ ogImage: assets/img/logo-cc.jpg
         </a>
       </div>
     </div>
+
+    <div class="contact-section">
+      <h2>{{ t.address }}</h2>
+      <a href="{{ '/fr/location/' | relativeUrl }}" class="btn btn-secondary text-center" style="display: inline-block; text-decoration: none;">
+        {{ t.addressButton }}
+      </a>
+    </div>
+
   </div>
 </section>
 

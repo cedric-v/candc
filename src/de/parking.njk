@@ -9,201 +9,313 @@ ogImage: assets/img/logo-cc.jpg
 
 {% set t = translations[locale] or translations['de'] %}
 
-<style>
-  .payment-section {
-    margin-top: 3rem;
-    text-align: center;
-  }
-
-  .payment-section h2 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #5B6E7D;
-    margin-bottom: 1.5rem;
-  }
-
-  .payment-text {
-    font-size: 1rem;
-    color: rgba(31, 31, 31, 0.8);
-    margin-bottom: 2rem;
-    line-height: 1.5;
-  }
-
-  .payment-image {
-    max-width: 100%;
-    height: auto;
-    border-radius: 0.75rem;
-    box-shadow: 0 25px 60px rgba(15, 23, 42, 0.08);
-  }
-</style>
-
-<section class="max-w-4xl mx-auto px-6 md:px-12 py-16 space-y-8">
-  <div class="text-center space-y-4">
-    <h1 class="text-4xl md:text-5xl font-bold text-[#5B6E7D]">{{ t.parking.title }}</h1>
-    <p class="text-xl text-[#1f1f1f]/80">{{ t.parking.subtitle }}</p>
-    <p class="text-lg text-[#1f1f1f]/70">{{ t.parking.description }}</p>
+<section class="page-section">
+  <div class="section-header">
+    <h1 class="hero-title">{{ t.parking.title }}</h1>
+    <p class="text-xl text-muted">{{ t.parking.subtitle }}</p>
+    <p class="text-lg text-light">{{ t.parking.description }}</p>
   </div>
 
-  <div class="section-card p-8 bg-white">
-    <h2 class="text-2xl font-bold text-[#5B6E7D] mb-6">Was wir bieten</h2>
-    <ul class="space-y-3 text-[#1f1f1f]/80 mb-6">
-      <li class="flex items-start gap-2"><span class="text-xl">🅿️</span><span>Stellplatz</span></li>
-      <li class="flex items-start gap-2"><span class="text-xl">⚡</span><span>Steckdose</span></li>
-      <li class="flex items-start gap-2"><span class="text-xl">🗑️</span><span>Abfallentsorgung</span></li>
-      <li class="flex items-start gap-2"><span class="text-xl">📶</span><span>Schnelles WiFi</span></li>
-      <li class="flex items-start gap-2"><span class="text-xl">💧</span><span>Außenwasserhahn mit Trinkwasser</span></li>
-      <li class="flex items-start gap-2"><span class="text-xl">🌄</span><span>Terrasse mit Aussicht</span></li>
+  <div class="card">
+    <h2 class="section-title mb-8">Was wir bieten</h2>
+    <ul class="features-list">
+      <li>
+        <span class="text-xl">🅿️</span>
+        <span class="text-muted">Stellplatz</span>
+      </li>
+      <li>
+        <span class="text-xl">⚡</span>
+        <span class="text-muted">Steckdose</span>
+      </li>
+      <li>
+        <span class="text-xl">🗑️</span>
+        <span class="text-muted">Abfallentsorgung</span>
+      </li>
+      <li>
+        <span class="text-xl">📶</span>
+        <span class="text-muted">Schnelles WiFi</span>
+      </li>
+      <li>
+        <span class="text-xl">💧</span>
+        <span class="text-muted">Außenwasserhahn mit Trinkwasser</span>
+      </li>
+      <li>
+        <span class="text-xl">🌄</span>
+        <span class="text-muted">Terrasse mit Aussicht</span>
+      </li>
     </ul>
 
-    <div class="bg-[#5B6E7D]/10 p-4 rounded-lg mb-6">
-      <p class="text-[#1f1f1f]/80"><strong>Wichtiger Hinweis:</strong> {{ t.parking.note }}</p>
+    <div class="note-box mt-12">
+      <p><strong class="text-primary">Wichtiger Hinweis :</strong> {{ t.parking.note }}</p>
     </div>
 
-    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
-      <p class="text-[#1f1f1f]/80"><strong>⚠️</strong> {{ t.parking.noChemicalToilet }}</p>
+    <div class="warning-box mt-12 mb-12">
+      <p><strong class="text-xl">⚠️</strong> {{ t.parking.noChemicalToilet }}</p>
     </div>
 
-    <div class="space-y-4 mb-8">
-      <div class="bg-blue-50 p-4 rounded-lg">
-        <h3 class="font-semibold text-[#5B6E7D] mb-2">🚿 Zugang zu Toilette und Dusche</h3>
-        <p class="text-[#1f1f1f]/80">{{ t.parking.toilet }}</p>
+    <div class="space-y-lg mb-12">
+      <div class="service-box toilet">
+        <h3 class="text-lg font-semibold text-primary mb-2">🚿 Zugang zu Toilette und Dusche</h3>
+        <p class="text-muted">{{ t.parking.toilet }}</p>
       </div>
 
-      <div class="bg-green-50 p-4 rounded-lg">
-        <h3 class="font-semibold text-[#5B6E7D] mb-2">🔌 Elektroauto-Ladung</h3>
-        <p class="text-[#1f1f1f]/80">{{ t.parking.evCharging }}</p>
-        <p class="text-sm text-[#1f1f1f]/70 mt-2">Kabel kompatibel mit Typ-13-Steckdose (220V, 10A) mit Typ-2-Stecker</p>
+      <div class="service-box charging mt-8">
+        <h3 class="text-lg font-semibold text-primary mb-2">🔌 Elektroauto-Ladung</h3>
+        <p class="text-muted">{{ t.parking.evCharging }}</p>
+        <p class="text-sm text-light mt-2">Kabel kompatibel mit Typ-13-Steckdose (220V, 10A) mit Typ-2-Stecker</p>
       </div>
     </div>
 
-    <div class="booking-buttons">
-      <a href="https://www.booking.com" target="_blank" rel="noopener noreferrer" class="btn btn-primary">{{ t.bookOnBooking }}</a>
-      <a href="https://www.airbnb.com" target="_blank" rel="noopener noreferrer" class="btn btn-primary">{{ t.bookOnAirbnb }}</a>
-      <a href="https://share.google/a1QGExomdhBG15St6" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
-        🗺️ {{ t.getDirections }}
-      </a>
+    <div class="section-header align-center" id="reservation">
+      <div class="flex flex-wrap justify-center gap-lg">
+        <a href="https://www.booking.com" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
+          {{ t.bookOnBooking }}
+        </a>
+        <a href="https://www.airbnb.com" target="_blank" rel="noopener noreferrer" class="btn-primary">
+          {{ t.bookOnAirbnb }}
+        </a>
+      </div>
+      <div class="mt-6">
+        <a href="https://share.google/a1QGExomdhBG15St6" target="_blank" rel="noopener noreferrer" class="btn-secondary">
+          🗺️ {{ t.getDirections }}
+        </a>
+      </div>
     </div>
 
-    <h2 class="text-2xl font-bold text-[#5B6E7D] mb-4">Buchungsanfrage</h2>
-    <div class="contact-actions">
-      <a href="#" class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#5B6E7D] text-white rounded-lg font-semibold hover:bg-[#4a5a68] transition-colors shadow-md w-full email-obfuscated">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-          <polyline points="22,6 12,13 2,6"></polyline>
-        </svg>
-        <span class="email-label">{{ t.sendMessage }}</span>
-      </a>
+    <div class="mt-12 text-center">
+      <h2 class="text-xl font-bold text-primary mb-6">Buchungsanfrage</h2>
+      <div class="flex justify-center">
+        <a href="/{{ locale }}/contact/" class="btn btn-primary">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+            <polyline points="22,6 12,13 2,6"></polyline>
+          </svg>
+          <span class="ml-2">{{ t.sendMessage }}</span>
+        </a>
+      </div>
     </div>
   </div>
 
-  <!-- Zahlungsmethoden / Payment methods -->
-  <section class="payment-section">
-    <h2>Zahlungsmethoden / Payment methods</h2>
-    <p class="payment-text">
-      Wir akzeptieren Kreditkarten und Bargeld (CHF oder EUR).<br>
-      We accept credit cards and cash (CHF or EUR).
-    </p>
-    <img src="/assets/img/payment-methods.jpg" alt="Akzeptierte Zahlungsmethoden / Accepted payment methods" class="payment-image">
+  <!-- Fotogalerie -->
+  <section class="mt-2xl">
+    <div class="section-header">
+      <h2 class="section-title">{{ t.gallery.title }}</h2>
+      <p class="text-muted">{{ t.gallery.parkingIntro }}</p>
+    </div>
+    <div class="gallery-grid">
+      {% set galleryImages = [
+        { src: 'assets/img/gallery/parking/parking-01.jpg', caption: "Der Parkplatz (9 Meter lang) am Ende einer Sackgasse, auf dem Land" },
+        { src: 'assets/img/gallery/parking/parking-02.jpg', caption: "Terrasse mit Aussicht und WLAN" },
+        { src: 'assets/img/gallery/parking/parking-03.jpg', caption: "Zugang zu einem Trinkwasserhahn" },
+        { src: 'assets/img/gallery/parking/parking-04.jpg', caption: "Eine Schweizer Steckdose (220V) ist ebenfalls vorhanden" },
+        { src: 'assets/img/gallery/parking/parking-05.jpg', caption: "Zugang zu WC/Dusche auf Anfrage und wenn wir vor Ort sind" }
+      ] %}
+
+      {% for item in galleryImages %}
+      <div class="gallery-item lightbox-trigger" data-image="/{{ item.src }}" data-caption="{{ item.caption }}">
+        {% image item.src, item.caption, "gallery-image", "lazy" %}
+        <div class="gallery-caption-overlay">
+          <span>{{ item.caption }}</span>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
   </section>
 
-  <!-- Schema.org für den Parkplatz -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "ParkingFacility",
-    "name": "C&C Eco Studio - Parkplatz",
-    "description": "Voll ausgestatteter Stellplatz für Van/Camping-Car/Motorhome nahe Freiburg, Schweiz. Steckdose, WiFi, Abfallentsorgung.",
-    "url": "https://candc.ch/de/parking/",
-    "address": {
-      "@type": "PostalAddress",
-      "streetAddress": "Impasse de la Pommeraie 5",
-      "addressLocality": "Formangueires",
-      "postalCode": "1782",
-      "addressCountry": "CH"
-    },
-    "geo": {
-      "@type": "GeoCoordinates",
-      "latitude": "46.6931",
-      "longitude": "7.1694"
-    },
-    "telephone": "+41763456789",
-    "email": "cedricjourney@gmail.com",
-    "amenityFeature": [
-      {
-        "@type": "LocationFeatureSpecification",
-        "name": "Stellplatz",
-        "value": "true"
-      },
-      {
-        "@type": "LocationFeatureSpecification",
-        "name": "Steckdose",
-        "value": "true"
-      },
-      {
-        "@type": "LocationFeatureSpecification",
-        "name": "Schnelles WiFi",
-        "value": "true"
-      },
-      {
-        "@type": "LocationFeatureSpecification",
-        "name": "Abfallentsorgung",
-        "value": "true"
-      },
-      {
-        "@type": "LocationFeatureSpecification",
-        "name": "Trinkwasser",
-        "value": "true"
-      }
-    ],
-    "priceRange": "CHF 10-30",
-    "paymentAccepted": "Bargeld, Kreditkarte",
-    "currenciesAccepted": "CHF, EUR",
-    "provider": {
-      "@type": "Organization",
-      "name": "C&C Eco Studio",
-      "url": "https://candc.ch",
-      "logo": "https://candc.ch/assets/img/logo-cc.jpg"
-    }
-  }
-  </script>
+  <!-- Zahlungsmethoden -->
+  <section class="mt-2xl text-center">
+    <h2 class="section-title mb-4">Zahlungsmethoden / Payment methods</h2>
+    <p class="text-muted mb-8">
+      Wir akzeptieren Kreditkarten und Bargeld (CHF oder EUR).
+    </p>
+    <div class="flex justify-center">
+      <img src="/assets/img/payment-methods.jpg" alt="Zahlungsmethoden" class="rounded-lg shadow w-full max-w-2xl">
+    </div>
+  </section>
 
-  <!-- Testimonials (images) -->
+  <!-- Témoignages (images) -->
   {% set pageTestimonials = testimonials.parking[locale] or testimonials.parking['de'] or [] %}
   {% if pageTestimonials and pageTestimonials.length > 0 %}
-  <section id="testimonials" class="mt-12">
-    <div class="text-center mb-8">
-      <h2 class="text-3xl font-bold text-[#5B6E7D] mb-4">Testimonials</h2>
-      <p class="text-lg text-[#1f1f1f]/80">Was unsere Gäste sagen</p>
+  <section class="mt-3xl">
+    <div class="section-header">
+      <h2 class="section-title">Bewertungen</h2>
+      <p class="text-muted">Was unsere Gäste sagen</p>
     </div>
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="gallery-grid" id="testimonials-grid">
       {% for testimonial in pageTestimonials %}
-      <div class="section-card p-4 bg-white overflow-hidden">
+      <div class="gallery-item lightbox-trigger" data-image="/assets/img/testimonials/{{ testimonial.image }}">
         {% if testimonial.image %}
           {% set imagePath = "assets/img/testimonials/" + testimonial.image %}
           {% set imageAlt = testimonial.alt or "Gästebewertung" %}
-          {% image imagePath, imageAlt, "w-full h-auto rounded-lg", "lazy" %}
+          {% image imagePath, imageAlt, "gallery-image", "lazy" %}
         {% endif %}
       </div>
       {% endfor %}
     </div>
   </section>
   {% endif %}
+
+  <!-- Lightbox -->
+  <div id="parking-lightbox" class="lightbox">
+    <button id="lightbox-close" class="lightbox-close" aria-label="Schließen">×</button>
+    <button id="lightbox-prev" class="lightbox-prev" aria-label="Vorherige">‹</button>
+    <button id="lightbox-next" class="lightbox-next" aria-label="Nächste">›</button>
+    <div class="lightbox-container">
+      <img id="lightbox-image" src="" alt="Foto">
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      const lightbox = document.getElementById('parking-lightbox');
+      const lightboxImage = document.getElementById('lightbox-image');
+      let lightboxCaption = document.getElementById('lightbox-caption');
+      
+      // Create caption element if it doesn't exist
+      if (!lightboxCaption) {
+        lightboxCaption = document.createElement('div');
+        lightboxCaption.id = 'lightbox-caption';
+        lightboxCaption.className = 'lightbox-caption';
+        document.querySelector('.lightbox-container').appendChild(lightboxCaption);
+      }
+
+      const closeBtn = document.getElementById('lightbox-close');
+      const prevBtn = document.getElementById('lightbox-prev');
+      const nextBtn = document.getElementById('lightbox-next');
+      const triggers = document.querySelectorAll('.lightbox-trigger');
+      
+      let currentIndex = 0;
+      let activeTriggers = [];
+      
+      function openLightbox(trigger) {
+        const container = trigger.closest('.gallery-grid');
+        activeTriggers = Array.from(container.querySelectorAll('.lightbox-trigger'));
+        currentIndex = activeTriggers.indexOf(trigger);
+        updateLightbox();
+        lightbox.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+      }
+      
+      function updateLightbox() {
+        const trigger = activeTriggers[currentIndex];
+        lightboxImage.src = trigger.dataset.image;
+        
+        const caption = trigger.dataset.caption;
+        if (caption) {
+          lightboxCaption.textContent = caption;
+          lightboxCaption.style.display = 'block';
+        } else {
+          lightboxCaption.style.display = 'none';
+        }
+      }
+      
+      function next() {
+        currentIndex = (currentIndex + 1) % activeTriggers.length;
+        updateLightbox();
+      }
+      
+      function prev() {
+        currentIndex = (currentIndex - 1 + activeTriggers.length) % activeTriggers.length;
+        updateLightbox();
+      }
+      
+      triggers.forEach(t => t.addEventListener('click', () => openLightbox(t)));
+      
+      closeBtn.onclick = () => {
+        lightbox.classList.remove('flex');
+        document.body.style.overflow = '';
+      };
+      
+      nextBtn.onclick = next;
+      prevBtn.onclick = prev;
+      
+      lightbox.onclick = (e) => {
+        if (e.target === lightbox || e.target.classList.contains('lightbox-container')) {
+          closeBtn.onclick();
+        }
+      };
+      
+      document.onkeydown = (e) => {
+        if (!lightbox.classList.contains('flex')) return;
+        if (e.key === 'Escape') closeBtn.onclick();
+        if (e.key === 'ArrowRight') next();
+        if (e.key === 'ArrowLeft') prev();
+      };
+
+      // Email protection
+      const user = 'bonjour';
+      const domain = 'candc';
+      const tld = 'ch';
+      const email = user + '@' + domain + '.' + tld;
+      
+      document.querySelectorAll('.email-obfuscated').forEach(el => {
+        el.href = 'mailto:' + email;
+        const label = el.querySelector('.email-label');
+        if (!label) {
+          el.textContent = email;
+        }
+      });
+    })();
+  </script>
 </section>
 
-<script>
-  // Protection anti-spam : construction dynamique de l'email
-  (function() {
-    const user = 'bonjour';
-    const domain = 'candc';
-    const tld = 'ch';
-    const email = user + '@' + domain + '.' + tld;
-    
-    document.querySelectorAll('.email-obfuscated').forEach(el => {
-      el.href = 'mailto:' + email;
-      const label = el.querySelector('.email-label');
-      if (!label) {
-        el.textContent = email;
-      }
-    });
-  })();
+<!-- Schema.org for parking -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ParkingFacility",
+  "name": "C&C Eco Studio - Parkplatz",
+  "description": "Voll ausgestatteter Stellplatz für Van/Camping-Car/Motorhome nahe Freiburg, Schweiz. Steckdose, WiFi, Abfallentsorgung.",
+  "url": "https://candc.ch/de/parking/",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Impasse de la Pommeraie 5",
+    "addressLocality": "Formangueires",
+    "postalCode": "1782",
+    "addressCountry": "CH"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": "46.6931",
+    "longitude": "7.1694"
+  },
+  "telephone": "+41763456789",
+  "email": "cedricjourney@gmail.com",
+  "amenityFeature": [
+    {
+      "@type": "LocationFeatureSpecification",
+      "name": "Stellplatz",
+      "value": "true"
+    },
+    {
+      "@type": "LocationFeatureSpecification",
+      "name": "Steckdose",
+      "value": "true"
+    },
+    {
+      "@type": "LocationFeatureSpecification",
+      "name": "Schnelles WiFi",
+      "value": "true"
+    },
+    {
+      "@type": "LocationFeatureSpecification",
+      "name": "Abfallentsorgung",
+      "value": "true"
+    },
+    {
+      "@type": "LocationFeatureSpecification",
+      "name": "Trinkwasser",
+      "value": "true"
+    }
+  ],
+  "priceRange": "CHF 10-30",
+  "paymentAccepted": "Bargeld, Kreditkarte",
+  "currenciesAccepted": "CHF, EUR",
+  "provider": {
+    "@type": "Organization",
+    "name": "C&C Eco Studio",
+    "url": "https://candc.ch",
+    "logo": "https://candc.ch/assets/img/logo-cc.jpg"
+  }
+}
 </script>

@@ -3,12 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "npm-run-all --parallel dev:*",
-    "dev:11ty": "cross-env ELEVENTY_ENV=dev eleventy --serve",
-    "dev:css": "mkdir -p _site/assets/css && npx @tailwindcss/cli -i ./src/assets/css/styles.css -o ./_site/assets/css/styles.css --watch",
-    "build": "cross-env ELEVENTY_ENV=prod npm-run-all build:css build:11ty",
-    "build:11ty": "eleventy",
-    "build:css": "npx @tailwindcss/cli -i ./src/assets/css/styles.css -o ./_site/assets/css/styles.css --minify",
+    "start": "eleventy --serve",
+    "build": "cross-env ELEVENTY_ENV=prod eleventy",
     "test": "node scripts/smoke-tests.js"
   },
   "keywords": [],
@@ -26,9 +22,6 @@
   },
   "devDependencies": {
     "@11ty/eleventy-img": "^4.0.1",
-    "@tailwindcss/cli": "^4.1.18",
-    "autoprefixer": "^10.4.23",
-    "html-minifier-next": "^4.17.0",
-    "postcss": "^8.5.6"
+    "html-minifier-next": "^4.17.0"
   }
 }

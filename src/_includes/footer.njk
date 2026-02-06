@@ -20,7 +20,7 @@
             </li>
             <li>
               <span>{{ t.address }}: </span>
-              <span>La Sonnaz, 1782 Belfaux, Suisse</span>
+              <a href="{{ '/' + locale + '/location/' | relativeUrl }}">La Sonnaz, 1782 Belfaux, Suisse</a>
             </li>
           </ul>
         </div>
@@ -28,8 +28,38 @@
         <div class="footer-column">
           <h3>{{ t.booking }}</h3>
           <ul>
-            <li><a href="https://www.booking.com" target="_blank" rel="noopener noreferrer">{{ t.bookOnBooking }}</a></li>
-            <li><a href="https://www.airbnb.com" target="_blank" rel="noopener noreferrer">{{ t.bookOnAirbnb }}</a></li>
+            <li><a href="{{ '/' + locale + '/eco-studio/#reservation' | relativeUrl }}">C&C Eco Studio</a></li>
+            <li><a href="{{ '/' + locale + '/parking/#reservation' | relativeUrl }}">C&C Parking Space</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-column">
+          <h3>Langue / Language</h3>
+          <ul class="language-list">
+            {% set languages = ['fr', 'en', 'de', 'es', 'pt'] %}
+            {% set langFullNames = {'fr': 'Français', 'en': 'English', 'de': 'Deutsch', 'es': 'Español', 'pt': 'Português'} %}
+            {% for lang in languages %}
+              {% if lang != locale %}
+                {% set currentUrl = page.url %}
+                {% if lang == 'fr' %}
+                  {% set targetUrl = currentUrl | replace('/en/', '/') | replace('/de/', '/') | replace('/es/', '/') | replace('/pt/', '/') %}
+                  {% if targetUrl == '' %}{% set targetUrl = '/' %}{% endif %}
+                {% else %}
+                  {% set langPrefix = '/' + lang + '/' %}
+                  {% if currentUrl == '/' %}
+                    {% set targetUrl = langPrefix %}
+                  {% else %}
+                    {% set targetUrl = currentUrl | replace('/fr/', langPrefix) | replace('/en/', langPrefix) | replace('/de/', langPrefix) | replace('/es/', langPrefix) | replace('/pt/', langPrefix) %}
+                    {% if targetUrl == currentUrl %}
+                      {% set targetUrl = '/' + lang + currentUrl %}
+                    {% endif %}
+                  {% endif %}
+                {% endif %}
+                <li>
+                  <a href="{{ targetUrl | relativeUrl }}">{{ langFullNames[lang] }}</a>
+                </li>
+              {% endif %}
+            {% endfor %}
           </ul>
         </div>
       </div>

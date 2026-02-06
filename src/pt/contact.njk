@@ -30,7 +30,9 @@ ogImage: assets/img/logo-cc.jpg
 
     <div class="pt-6 border-t border-[#2D5016]/20">
       <h2 class="text-xl font-semibold text-[#2D5016] mb-3">{{ t.address }}</h2>
-      <p class="text-[#0f172a]/80">La Sonnaz<br>1782 Belfaux<br>Switzerland</p>
+      <a href="{{ '/pt/location/' | relativeUrl }}" class="btn btn-secondary text-center" style="display: inline-block; text-decoration: none;">
+        {{ t.addressButton }}
+      </a>
     </div>
 
     <div class="pt-6 border-t border-[#2D5016]/20">

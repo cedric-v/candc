@@ -21,6 +21,11 @@ module.exports = function (eleventyConfig) {
       return `<img src="${src}" alt="${alt}" class="${cls}" ${loading ? `loading="${loading}"` : ''} ${fetchpriority ? `fetchpriority="${fetchpriority}"` : ''} ${width ? `width="${width}"` : ''} ${height ? `height="${height}"` : ''}>`;
     }
 
+    const loadingAttr = loading ? `loading="${loading}"` : '';
+    const fetchpriorityAttr = fetchpriority ? `fetchpriority="${fetchpriority}"` : '';
+    const widthAttr = width ? `width="${width}"` : '';
+    const heightAttr = height ? `height="${height}"` : '';
+
     try {
       const metadata = await Image(fullSrc, {
         widths: [300, 600, 900, 1200],
@@ -28,11 +33,6 @@ module.exports = function (eleventyConfig) {
         outputDir: path.join(__dirname, "_site", path.dirname(cleanSrc)),
         urlPath: `/${path.dirname(cleanSrc)}/`,
       });
-
-      const loadingAttr = loading ? `loading="${loading}"` : '';
-      const fetchpriorityAttr = fetchpriority ? `fetchpriority="${fetchpriority}"` : '';
-      const widthAttr = width ? `width="${width}"` : '';
-      const heightAttr = height ? `height="${height}"` : '';
 
       const webp = metadata.webp[metadata.webp.length - 1];
       const jpeg = metadata.jpeg[metadata.jpeg.length - 1];
@@ -420,6 +420,7 @@ module.exports = function (eleventyConfig) {
 
   // 10. Copie des assets statiques
   eleventyConfig.addPassthroughCopy({ "src/assets/img": "assets/img" });
+  eleventyConfig.addPassthroughCopy({ "src/assets/css": "assets/css" });
   eleventyConfig.addPassthroughCopy({ "src/assets/js": "assets/js" });
   eleventyConfig.addPassthroughCopy({ "src/robots.txt": "robots.txt" });
   eleventyConfig.addPassthroughCopy({ "src/_redirects": "_redirects" });

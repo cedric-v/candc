@@ -7,14 +7,12 @@
     "streetAddress": "La Sonnaz",
     "home": "Accueil",
     "ecoStudio": "Eco Studio",
-    "parking": "Parking",
+    "homeEcoStudioBtn": "C&C Eco Studio",
     "menuParking": "Parking",
+    "homeParkingBtn": "C&C Parking Space",
     "location": "Emplacement",
     "contact": "Contact",
-    "about": "Qui sommes-nous ?",
-      "location": "Emplacement",
-      "menuAbout": "Qui sommes-nous ?",
-    "testimonials": "Témoignages",
+    "menuAbout": "Qui sommes-nous ?",
     "menuTestimonials": "Témoignages",
     "booking": "Réservation",
     "email": "E-mail",
@@ -25,6 +23,7 @@
     "bookOnBooking": "Réserver sur Booking.com",
     "bookOnAirbnb": "Réserver sur Airbnb",
     "getDirections": "Voir l'itinéraire sur Google Maps",
+    "addressButton": "Cliquez ici pour l'adresse exacte et le lien vers Google Maps",
     "contactUs": "Contactez-nous",
     "sendMessage": "Envoyer un message",
     "name": "Nom",
@@ -40,7 +39,7 @@
       "monthly": "Location au mois"
     },
     "seo": {
-      "baseCentral": "Base centrale idéale pour visiter toute la Suisse",
+      "baseCentral": "Base centrale idéale pour visiter toute la Suisse, juste à côté de la ville de Fribourg / Freiburg",
       "highway": "Proche autoroute A12",
       "publicTransport": "Transports publics à proximité"
     },
@@ -83,6 +82,15 @@
     "testimonials": {
       "title": "Témoignages",
       "intro": "Quelques témoignages laissés sur AirBnb ou Booking"
+    },
+    "gallery": {
+      "title": "Galerie Photos",
+      "studioIntro": "Découvrez notre Eco Studio en photos",
+      "parkingIntro": "L'aire de stationnement et ses environs"
+    },
+    "superhost": {
+      "text": "Nous sommes superhôtes sur Airbnb",
+      "subtext": "C'est signe d'un accueil de qualité."
     }
   },
   "en": {
@@ -94,13 +102,9 @@
     "streetAddress": "La Sonnaz",
     "home": "Home",
     "ecoStudio": "Eco Studio",
-    "parking": "Parking",
     "menuParking": "Parking",
-    "location": "Emplacement",
     "contact": "Contact",
-    "about": "About us",
     "menuAbout": "About us",
-    "testimonials": "Testimonials",
     "menuTestimonials": "Testimonials",
     "booking": "Booking",
     "email": "Email",
@@ -111,6 +115,7 @@
     "bookOnBooking": "Book on Booking.com",
     "bookOnAirbnb": "Book on Airbnb",
     "getDirections": "Get directions on Google Maps",
+    "addressButton": "Click here for the exact address and Google Maps link",
     "contactUs": "Contact us",
     "sendMessage": "Send message",
     "name": "Name",
@@ -169,6 +174,15 @@
     "testimonials": {
       "title": "Testimonials",
       "intro": "Some testimonials left on Airbnb or Booking"
+    },
+    "gallery": {
+      "title": "Photo Gallery",
+      "studioIntro": "Discover our Eco Studio in photos",
+      "parkingIntro": "The parking area and its surroundings"
+    },
+    "superhost": {
+      "text": "We are Superhosts on Airbnb",
+      "subtext": "It's a sign of a quality welcome."
     }
   },
   "de": {
@@ -180,12 +194,9 @@
     "streetAddress": "La Sonnaz",
     "home": "Startseite",
     "ecoStudio": "Eco Studio",
-    "parking": "Parkplatz",
     "menuParking": "Parkplatz",
     "contact": "Kontakt",
-    "about": "Über uns",
     "menuAbout": "Über uns",
-    "testimonials": "Bewertungen",
     "menuTestimonials": "Bewertungen",
     "booking": "Buchung",
     "email": "E-Mail",
@@ -196,6 +207,7 @@
     "bookOnBooking": "Auf Booking.com buchen",
     "bookOnAirbnb": "Auf Airbnb buchen",
     "getDirections": "Route auf Google Maps anzeigen",
+    "addressButton": "Klicken Sie hier für die genaue Adresse und den Google Maps Link",
     "contactUs": "Kontaktieren Sie uns",
     "sendMessage": "Nachricht senden",
     "name": "Name",
@@ -254,6 +266,15 @@
     "testimonials": {
       "title": "Bewertungen",
       "intro": "Einige Bewertungen auf Airbnb oder Booking"
+    },
+    "gallery": {
+      "title": "Fotogalerie",
+      "studioIntro": "Entdecken Sie unser Eco Studio in Fotos",
+      "parkingIntro": "Der Stellplatz und seine Umgebung"
+    },
+    "superhost": {
+      "text": "Wir sind Superhosts auf Airbnb",
+      "subtext": "Das ist ein Zeichen für einen qualitativ hochwertigen Empfang."
     }
   },
   "es": {
@@ -265,12 +286,9 @@
     "streetAddress": "La Sonnaz",
     "home": "Inicio",
     "ecoStudio": "Eco Studio",
-    "parking": "Aparcamiento",
     "menuParking": "Aparcamiento",
     "contact": "Contacto",
-    "about": "Quiénes somos",
     "menuAbout": "Quiénes somos",
-    "testimonials": "Testimonios",
     "menuTestimonials": "Testimonios",
     "booking": "Reserva",
     "email": "Correo electrónico",
@@ -281,6 +299,7 @@
     "bookOnBooking": "Reservar en Booking.com",
     "bookOnAirbnb": "Reservar en Airbnb",
     "getDirections": "Ver ruta en Google Maps",
+    "addressButton": "Haga clic aquí para ver la dirección exacta y el enlace a Google Maps",
     "contactUs": "Contáctenos",
     "sendMessage": "Enviar mensaje",
     "name": "Nombre",
@@ -339,6 +358,15 @@
     "testimonials": {
       "title": "Testimonios",
       "intro": "Algunos testimonios dejados en Airbnb o Booking"
+    },
+    "gallery": {
+      "title": "Galería de Fotos",
+      "studioIntro": "Descubra nuestro Eco Studio en fotos",
+      "parkingIntro": "El área de estacionamiento y sus alrededores"
+    },
+    "superhost": {
+      "text": "Somos Superhosts en Airbnb",
+      "subtext": "Es señal de una bienvenida de calidad."
     }
   },
   "pt": {
@@ -350,12 +378,9 @@
     "streetAddress": "La Sonnaz",
     "home": "Início",
     "ecoStudio": "Eco Studio",
-    "parking": "Estacionamento",
     "menuParking": "Estacionamento",
     "contact": "Contato",
-    "about": "Quem somos",
     "menuAbout": "Quem somos",
-    "testimonials": "Depoimentos",
     "menuTestimonials": "Depoimentos",
     "booking": "Reserva",
     "email": "E-mail",
@@ -366,6 +391,7 @@
     "bookOnBooking": "Reservar no Booking.com",
     "bookOnAirbnb": "Reservar no Airbnb",
     "getDirections": "Ver rota no Google Maps",
+    "addressButton": "Clique aqui para ver o endereço exato e o link do Google Maps",
     "contactUs": "Entre em contato",
     "sendMessage": "Enviar mensagem",
     "name": "Nome",
@@ -424,6 +450,15 @@
     "testimonials": {
       "title": "Depoimentos",
       "intro": "Alguns depoimentos deixados no Airbnb ou Booking"
+    },
+    "gallery": {
+      "title": "Galeria de Fotos",
+      "studioIntro": "Descubra o nosso Eco Studio em fotos",
+      "parkingIntro": "A área de estacionamento e arredores"
+    },
+    "superhost": {
+      "text": "Somos Superhosts no Airbnb",
+      "subtext": "É sinal de um acolhimento de qualidade."
     }
   }
 }

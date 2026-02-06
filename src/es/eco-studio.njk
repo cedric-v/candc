@@ -9,143 +9,162 @@ ogImage: assets/img/logo-cc.jpg
 
 {% set t = translations[locale] or translations['es'] %}
 
-<style>
-  .testimonial-item {
-    border-radius: 1.5rem;
-    border: 1px solid rgba(45, 80, 22, 0.15);
-    background: white;
-    box-shadow: 0 25px 60px rgba(15, 23, 42, 0.08);
-    overflow: hidden;
-    cursor: pointer;
-    transition: box-shadow 0.2s ease;
-  }
-
-  .testimonial-item:hover {
-    box-shadow: 0 25px 60px rgba(15, 23, 42, 0.12);
-  }
-
-  .testimonial-image {
-    width: 100%;
-    height: auto;
-    object-fit: cover;
-    display: block;
-  }
-
-  /* Lightbox classes for JavaScript functionality */
-  .hidden {
-    display: none !important;
-  }
-
-  .flex {
-    display: flex !important;
-  }
-
-  .booking-section {
-    gap: var(--spacing-lg);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .booking-main-buttons {
-    gap: var(--spacing-lg);
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .booking-directions {
-    margin-top: var(--spacing-md);
-  }
-</style>
-
-<section class="max-w-4xl mx-auto px-6 md:px-12 py-16 space-y-8">
-  <div class="text-center space-y-4">
-    <h1 class="text-4xl md:text-5xl font-bold text-[#2D5016]">{{ t.studio.title }}</h1>
-    <p class="text-xl text-[#1f1f1f]/80">{{ t.studio.subtitle }}</p>
-    <p class="text-lg text-[#1f1f1f]/70">{{ t.studio.description }}</p>
-    <p class="text-base text-[#1f1f1f]/60 font-semibold">{{ t.studio.minStay }}</p>
+<section class="page-section">
+  <div class="section-header">
+    <h1 class="hero-title">{{ t.studio.title }}</h1>
+    <p class="text-xl text-muted">{{ t.studio.subtitle }}</p>
+    <p class="text-lg text-light">{{ t.studio.description }}</p>
+    <p class="text-base font-semibold text-primary">{{ t.studio.minStay }}</p>
   </div>
 
-  <div class="section-card p-8 bg-white">
-    <h2 class="text-2xl font-bold text-[#2D5016] mb-6">Equipamiento</h2>
+  <div class="card">
+    <h2 class="section-title mb-8">Equipamiento</h2>
     
-    <div class="space-y-6">
+    <div class="space-y-xl">
       <div>
-        <h3 class="text-lg font-semibold text-[#2D5016] mb-3">Dormitorio</h3>
-        <ul class="space-y-2 text-[#1f1f1f]/80">
-          <li class="flex items-start gap-2"><span class="text-xl">🛏️</span><span>{{ t.studio.bedroom }}</span></li>
-          <li class="flex items-start gap-2"><span class="text-xl">🛋️</span><span>{{ t.studio.sofaBed }}</span></li>
+        <h3 class="text-lg font-semibold text-primary mb-4">Dormitorio</h3>
+        <ul class="space-y-sm">
+          <li class="flex items-start gap-sm">
+            <span class="text-xl">🛏️</span>
+            <span class="text-muted">{{ t.studio.bedroom }}</span>
+          </li>
+          <li class="flex items-start gap-sm">
+            <span class="text-xl">🛋️</span>
+            <span class="text-muted">{{ t.studio.sofaBed }}</span>
+          </li>
         </ul>
       </div>
-      <div><h3 class="text-lg font-semibold text-[#2D5016] mb-3">Cocina</h3><p class="text-[#1f1f1f]/80">{{ t.studio.kitchen }}</p></div>
-      <div><h3 class="text-lg font-semibold text-[#2D5016] mb-3">Baño</h3><p class="text-[#1f1f1f]/80">{{ t.studio.bathroom }}</p></div>
-      <div><h3 class="text-lg font-semibold text-[#2D5016] mb-3">Lavandería</h3><p class="text-[#1f1f1f]/80">{{ t.studio.laundry }}</p></div>
-      <div><h3 class="text-lg font-semibold text-[#2D5016] mb-3">Entretenimiento</h3><p class="text-[#1f1f1f]/80">{{ t.studio.entertainment }}</p></div>
-      <div><h3 class="text-lg font-semibold text-[#2D5016] mb-3">Internet</h3><p class="text-[#1f1f1f]/80">{{ t.studio.internet }}</p></div>
+
       <div>
-        <h3 class="text-lg font-semibold text-[#2D5016] mb-3">Exterior</h3>
-        <ul class="space-y-2 text-[#1f1f1f]/80">
-          <li class="flex items-start gap-2"><span class="text-xl">🚗</span><span>{{ t.studio.parking }}</span></li>
-          <li class="flex items-start gap-2"><span class="text-xl">🌳</span><span>{{ t.studio.terrace }}</span></li>
+        <h3 class="text-lg font-semibold text-primary mb-2">Cocina</h3>
+        <p class="text-muted">{{ t.studio.kitchen }}</p>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold text-primary mb-2">Baño</h3>
+        <p class="text-muted">{{ t.studio.bathroom }}</p>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold text-primary mb-2">Lavandería</h3>
+        <p class="text-muted">{{ t.studio.laundry }}</p>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold text-primary mb-2">Entretenimiento</h3>
+        <p class="text-muted">{{ t.studio.entertainment }}</p>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold text-primary mb-2">Internet</h3>
+        <p class="text-muted">{{ t.studio.internet }}</p>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold text-primary mb-4">Exterior</h3>
+        <ul class="space-y-sm">
+          <li class="flex items-start gap-sm">
+            <span class="text-xl">🚗</span>
+            <span class="text-muted">{{ t.studio.parking }}</span>
+          </li>
+          <li class="flex items-start gap-sm">
+            <span class="text-xl">🌳</span>
+            <span class="text-muted">{{ t.studio.terrace }}</span>
+          </li>
         </ul>
       </div>
-      <div><h3 class="text-lg font-semibold text-[#2D5016] mb-3">Ecología</h3><p class="text-[#1f1f1f]/80">{{ t.studio.eco }}</p></div>
-      <div><h3 class="text-lg font-semibold text-[#2D5016] mb-3">Familia</h3><p class="text-[#1f1f1f]/80">{{ t.studio.children }}</p></div>
-      <div><h3 class="text-lg font-semibold text-[#2D5016] mb-3">Ubicación</h3><p class="text-[#1f1f1f]/80">{{ t.studio.location }}</p></div>
+
+      <div>
+        <h3 class="text-lg font-semibold text-primary mb-2">Ecología</h3>
+        <p class="text-muted">{{ t.studio.eco }}</p>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold text-primary mb-2">Familia</h3>
+        <p class="text-muted">{{ t.studio.children }}</p>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold text-primary mb-2">Ubicación</h3>
+        <p class="text-muted">{{ t.studio.location }}</p>
+      </div>
     </div>
 
-    <div class="booking-section">
-      <div class="booking-main-buttons">
-        <a href="https://www.booking.com/hotel/ch/cedric-studio.fr.html" target="_blank" rel="noopener noreferrer" class="btn btn-primary">{{ t.bookOnBooking }}</a>
-        <a href="https://fr.airbnb.ch/rooms/4116019" target="_blank" rel="noopener noreferrer" class="btn btn-primary">{{ t.bookOnAirbnb }}</a>
+    <div class="section-header align-center mt-12">
+      <div class="flex flex-wrap justify-center gap-lg">
+        <a href="https://www.booking.com/hotel/ch/cedric-studio.fr.html" target="_blank" rel="noopener noreferrer" class="btn-primary">{{ t.bookOnBooking }}</a>
+        <a href="https://fr.airbnb.ch/rooms/4116019" target="_blank" rel="noopener noreferrer" class="btn-primary">{{ t.bookOnAirbnb }}</a>
       </div>
-      <div class="booking-directions">
-        <a href="https://share.google/4SQW4ioSzq3wkMAiA" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
+      <div class="mt-6">
+        <a href="https://share.google/4SQW4ioSzq3wkMAiA" target="_blank" rel="noopener noreferrer" class="btn-secondary">
           🗺️ {{ t.getDirections }}
         </a>
       </div>
     </div>
   </div>
 
-  <!-- Business Section (visible octobre-février) -->
+  <!-- Business Section (visible octubre-février) -->
   {% set now = "now" | date("MM") | int %}
   {% if now >= 10 or now <= 2 %}
-  <div class="section-card p-8 bg-white">
-    <h2 class="text-3xl font-bold mb-4 text-[#2D5016]">{{ t.businessTitle }}</h2>
-    <p class="text-xl mb-6 text-[#1f1f1f]/80">{{ t.businessSubtitle }}</p>
-    <ul class="space-y-3 mb-6 text-[#1f1f1f]/80">
-      <li class="flex items-start gap-2">
-        <span class="text-2xl text-[#2D5016]">✓</span>
-        <span>{{ t.businessFeatures.wifi }}</span>
+  <div class="card mt-12 border-primary">
+    <h2 class="section-title mb-4">{{ t.businessTitle }}</h2>
+    <p class="text-xl mb-8 text-muted">{{ t.businessSubtitle }}</p>
+    <ul class="space-y-md">
+      <li class="flex items-start gap-sm">
+        <span class="text-primary font-bold">✓</span>
+        <span class="text-muted">{{ t.businessFeatures.wifi }}</span>
       </li>
-      <li class="flex items-start gap-2">
-        <span class="text-2xl text-[#2D5016]">✓</span>
-        <span>{{ t.businessFeatures.quiet }}</span>
+      <li class="flex items-start gap-sm">
+        <span class="text-primary font-bold">✓</span>
+        <span class="text-muted">{{ t.businessFeatures.quiet }}</span>
       </li>
-      <li class="flex items-start gap-2">
-        <span class="text-2xl text-[#2D5016]">✓</span>
-        <span>{{ t.businessFeatures.office }}</span>
+      <li class="flex items-start gap-sm">
+        <span class="text-primary font-bold">✓</span>
+        <span class="text-muted">{{ t.businessFeatures.office }}</span>
       </li>
-      <li class="flex items-start gap-2">
-        <span class="text-2xl text-[#2D5016]">✓</span>
-        <span>{{ t.businessFeatures.location }}</span>
+      <li class="flex items-start gap-sm">
+        <span class="text-primary font-bold">✓</span>
+        <span class="text-muted">{{ t.businessFeatures.location }}</span>
       </li>
-      <li class="flex items-start gap-2">
-        <span class="text-2xl text-[#2D5016]">✓</span>
-        <span>{{ t.businessFeatures.monthly }}</span>
+      <li class="flex items-start gap-sm">
+        <span class="text-primary font-bold">✓</span>
+        <span class="text-muted">{{ t.businessFeatures.monthly }}</span>
       </li>
     </ul>
   </div>
   {% endif %}
 
-  <!-- Testimonials -->
-  <section id="testimonials" class="mt-12">
-    <div class="text-center mb-8">
-      <h2 class="text-3xl font-bold text-[#2D5016] mb-4">{{ t.testimonials.title }}</h2>
-      <p class="text-lg text-[#1f1f1f]/80">{{ t.testimonials.intro }}</p>
+  <!-- Galería de fotos -->
+  <section class="mt-2xl">
+    <div class="section-header">
+      <h2 class="section-title">{{ t.gallery.title }}</h2>
+      <p class="text-muted">{{ t.gallery.studioIntro }}</p>
     </div>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8" id="testimonials-grid">
+    <div class="gallery-grid">
+      {% set galleryImages = [
+        'assets/img/gallery/studio/studio-01.jpg',
+        'assets/img/gallery/studio/studio-02.jpg',
+        'assets/img/gallery/studio/studio-03.jpg',
+        'assets/img/gallery/studio/studio-04.jpg',
+        'assets/img/gallery/studio/studio-05.jpg',
+        'assets/img/gallery/studio/studio-06.jpg'
+      ] %}
+
+      {% for image in galleryImages %}
+      <div class="gallery-item lightbox-trigger" data-image="/{{ image }}">
+        {% image image, "Photo Eco Studio", "gallery-image", "lazy" %}
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- Testimonios -->
+  <section id="testimonials" class="mt-2xl">
+    <div class="section-header">
+      <h2 class="section-title">{{ t.testimonials.title }}</h2>
+      <p class="text-muted">{{ t.testimonials.intro }}</p>
+    </div>
+    <div class="gallery-grid" id="testimonials-grid">
       {% set testimonialImages = [
         'assets/img/testimonials/testimonial-01.jpg',
         'assets/img/testimonials/testimonial-02.jpg',
@@ -167,78 +186,80 @@ ogImage: assets/img/logo-cc.jpg
       ] %}
       
       {% for image in testimonialImages %}
-      <div class="testimonial-item" data-image="/{{ image }}">
-        <img src="/{{ image }}" alt="Testimonio de huésped" class="testimonial-image" loading="lazy">
+      <div class="gallery-item lightbox-trigger" data-image="/{{ image }}">
+        <img src="/{{ image }}" alt="Testimonio de huésped" class="gallery-image" loading="lazy">
       </div>
       {% endfor %}
     </div>
   </section>
 
   <!-- Lightbox -->
-  <div id="testimonial-lightbox" class="fixed inset-0 bg-black/90 z-50 hidden items-center justify-center">
-    <button id="lightbox-close" class="absolute top-4 right-4 text-white text-5xl font-light hover:text-gray-300 transition z-10 w-12 h-12 flex items-center justify-center rounded-full hover:bg-white/10" aria-label="Cerrar">×</button>
-    <button id="lightbox-prev" class="absolute left-4 text-white text-6xl font-light hover:text-gray-300 transition z-10 w-16 h-16 flex items-center justify-center rounded-full hover:bg-white/10" aria-label="Anterior">‹</button>
-    <button id="lightbox-next" class="absolute right-4 text-white text-6xl font-light hover:text-gray-300 transition z-10 w-16 h-16 flex items-center justify-center rounded-full hover:bg-white/10" aria-label="Siguiente">›</button>
-    <div class="max-w-6xl max-h-[90vh] p-8">
-      <img id="lightbox-image" src="" alt="Testimonio" class="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl">
+  <div id="eco-lightbox" class="lightbox">
+    <button id="lightbox-close" class="lightbox-close" aria-label="Cerrar">×</button>
+    <button id="lightbox-prev" class="lightbox-prev" aria-label="Anterior">‹</button>
+    <button id="lightbox-next" class="lightbox-next" aria-label="Siguiente">›</button>
+    <div class="lightbox-container">
+      <img id="lightbox-image" src="" alt="Photo">
     </div>
   </div>
 
   <script>
     (function() {
-      const lightbox = document.getElementById('testimonial-lightbox');
+      const lightbox = document.getElementById('eco-lightbox');
       const lightboxImage = document.getElementById('lightbox-image');
       const closeBtn = document.getElementById('lightbox-close');
       const prevBtn = document.getElementById('lightbox-prev');
       const nextBtn = document.getElementById('lightbox-next');
-      const items = document.querySelectorAll('.testimonial-item');
+      const triggers = document.querySelectorAll('.lightbox-trigger');
       
       let currentIndex = 0;
-      const images = Array.from(items).map(item => item.dataset.image);
+      let activeTriggers = [];
       
-      function openLightbox(index) {
-        currentIndex = index;
-        lightboxImage.src = images[currentIndex];
-        lightbox.classList.remove('hidden');
+      function openLightbox(trigger) {
+        const container = trigger.closest('.gallery-grid');
+        activeTriggers = Array.from(container.querySelectorAll('.lightbox-trigger'));
+        currentIndex = activeTriggers.indexOf(trigger);
+        updateLightbox();
         lightbox.classList.add('flex');
         document.body.style.overflow = 'hidden';
       }
       
-      function closeLightbox() {
-        lightbox.classList.add('hidden');
+      function updateLightbox() {
+        lightboxImage.src = activeTriggers[currentIndex].dataset.image;
+      }
+      
+      function next() {
+        currentIndex = (currentIndex + 1) % activeTriggers.length;
+        updateLightbox();
+      }
+      
+      function prev() {
+        currentIndex = (currentIndex - 1 + activeTriggers.length) % activeTriggers.length;
+        updateLightbox();
+      }
+      
+      triggers.forEach(t => t.addEventListener('click', () => openLightbox(t)));
+      
+      closeBtn.onclick = () => {
         lightbox.classList.remove('flex');
         document.body.style.overflow = '';
-      }
+      };
       
-      function showNext() {
-        currentIndex = (currentIndex + 1) % images.length;
-        lightboxImage.src = images[currentIndex];
-      }
+      nextBtn.onclick = next;
+      prevBtn.onclick = prev;
       
-      function showPrev() {
-        currentIndex = (currentIndex - 1 + images.length) % images.length;
-        lightboxImage.src = images[currentIndex];
-      }
-      
-      items.forEach((item, index) => {
-        item.addEventListener('click', () => openLightbox(index));
-      });
-      
-      closeBtn.addEventListener('click', closeLightbox);
-      prevBtn.addEventListener('click', showPrev);
-      nextBtn.addEventListener('click', showNext);
-      
-      lightbox.addEventListener('click', (e) => {
-        if (e.target === lightbox) closeLightbox();
-      });
-      
-      document.addEventListener('keydown', (e) => {
-        if (!lightbox.classList.contains('hidden')) {
-          if (e.key === 'Escape') closeLightbox();
-          if (e.key === 'ArrowLeft') showPrev();
-          if (e.key === 'ArrowRight') showNext();
+      lightbox.onclick = (e) => {
+        if (e.target === lightbox || e.target.classList.contains('lightbox-container')) {
+          closeBtn.onclick();
         }
-      });
+      };
+      
+      document.onkeydown = (e) => {
+        if (!lightbox.classList.contains('flex')) return;
+        if (e.key === 'Escape') closeBtn.onclick();
+        if (e.key === 'ArrowRight') next();
+        if (e.key === 'ArrowLeft') prev();
+      };
     })();
   </script>
 </section>
