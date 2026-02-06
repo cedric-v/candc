@@ -15,6 +15,20 @@ ogImage: assets/img/logo-cc.jpg
     <h1 class="hero-title">{{ t.parking.title }}</h1>
     <p class="text-xl text-muted">{{ t.parking.subtitle }}</p>
     <p class="text-lg text-light">{{ t.parking.description }}</p>
+    <div class="gallery-grid mt-4" style="grid-template-columns: repeat(4, 1fr);">
+      <div class="gallery-item lightbox-trigger" data-image="/assets/img/gallery/parking/cc-parking-space-front-view.jpg" data-caption="{{ t.gallery.parkingFrontView }}">
+        {% image "assets/img/gallery/parking/cc-parking-space-front-view.jpg", "Parkplatz Vorschau", "gallery-image", "eager" %}
+      </div>
+      <div class="gallery-item lightbox-trigger" data-image="/assets/img/gallery/parking/cc-parking-space-park-here.jpg" data-caption="{{ t.gallery.parkingSpot }}">
+        {% image "assets/img/gallery/parking/cc-parking-space-park-here.jpg", "Parkplatz Vorschau", "gallery-image", "eager" %}
+      </div>
+      <div class="gallery-item lightbox-trigger" data-image="/assets/img/gallery/parking/cc-parking-space-terrace-with-field-view.jpg" data-caption="{{ t.gallery.terraceFieldView }}">
+        {% image "assets/img/gallery/parking/cc-parking-space-terrace-with-field-view.jpg", "Parkplatz Vorschau", "gallery-image", "eager" %}
+      </div>
+      <div class="gallery-item lightbox-trigger" data-image="/assets/img/gallery/parking/cc-parking-space-terrace-with-park-view.jpg" data-caption="{{ t.gallery.terraceParkView }}">
+        {% image "assets/img/gallery/parking/cc-parking-space-terrace-with-park-view.jpg", "Parkplatz Vorschau", "gallery-image", "eager" %}
+      </div>
+    </div>
   </div>
 
   <div class="card">
