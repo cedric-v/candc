@@ -43,5 +43,9 @@ npm test
   - `assets/` - Images, CSS, JS
 
 ## Déploiement
+ 
+ Le site est configuré pour Netlify avec Netlify Forms et les headers de sécurité.
 
-Le site est configuré pour Netlify avec Netlify Forms et les headers de sécurité.
+## Analytics
+ 
+ L'analyse d'audience est gérée via **CloudFlare Zaraz - Web tag management**. Aucun tag GTM (Google Tag Manager) ou GA (Google Analytics) ne doit être inséré directement dans le code source de ce dépôt.

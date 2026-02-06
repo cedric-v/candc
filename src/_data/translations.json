@@ -86,7 +86,16 @@
     "gallery": {
       "title": "Galerie Photos",
       "studioIntro": "Découvrez notre Eco Studio en photos",
-      "parkingIntro": "L'aire de stationnement et ses environs"
+      "parkingIntro": "L'aire de stationnement et ses environs",
+      "doubleBed": "Lit double confortable de 180 cm de large (2 pers.)",
+      "livingArea": "Séjour avec télé (+ Chromecast & PS4) et canapé-lit",
+      "kitchen": "Cuisine toute équipée",
+      "bathroom": "WC douche et colonne de lavage-séchage",
+      "outsideTerrace": "Terrasse de gazon",
+      "parkingSpace": "Place de stationnement sans supplément",
+      "highSpeedWifi": "Wifi haut débit (fibre optique 10 GB symétrique)",
+      "independentEntry": "Entrée indépendante",
+      "clearView": "Vue dégagée"
     },
     "superhost": {
       "text": "Nous sommes superhôtes sur Airbnb",
@@ -178,7 +187,16 @@
     "gallery": {
       "title": "Photo Gallery",
       "studioIntro": "Discover our Eco Studio in photos",
-      "parkingIntro": "The parking area and its surroundings"
+      "parkingIntro": "The parking area and its surroundings",
+      "doubleBed": "Comfortable 180 cm double bed (2 pers.)",
+      "livingArea": "Living area with TV (+ Chromecast & PS4) and sofa bed",
+      "kitchen": "Fully equipped kitchen",
+      "bathroom": "WC shower and washing-drying column",
+      "outsideTerrace": "Grass terrace",
+      "parkingSpace": "Parking space at no extra charge",
+      "highSpeedWifi": "High-speed Wifi (10 GB symmetrical fiber)",
+      "independentEntry": "Independent entry",
+      "clearView": "Clear view"
     },
     "superhost": {
       "text": "We are Superhosts on Airbnb",
@@ -270,7 +288,16 @@
     "gallery": {
       "title": "Fotogalerie",
       "studioIntro": "Entdecken Sie unser Eco Studio in Fotos",
-      "parkingIntro": "Der Stellplatz und seine Umgebung"
+      "parkingIntro": "Der Stellplatz und seine Umgebung",
+      "doubleBed": "Komfortables 180 cm Doppelbett (2 Pers.)",
+      "livingArea": "Wohnbereich mit TV (+ Chromecast & PS4) und Schlafsofa",
+      "kitchen": "Voll ausgestattete Küche",
+      "bathroom": "WC-Dusche und Wasch-Trockensäule",
+      "outsideTerrace": "Rasenterrasse",
+      "parkingSpace": "Parkplatz ohne Aufpreis",
+      "highSpeedWifi": "Hochgeschwindigkeits-Wifi (10 GB symmetrische Glasfaser)",
+      "independentEntry": "Unabhängiger Eingang",
+      "clearView": "Freie Aussicht"
     },
     "superhost": {
       "text": "Wir sind Superhosts auf Airbnb",
@@ -362,7 +389,16 @@
     "gallery": {
       "title": "Galería de Fotos",
       "studioIntro": "Descubra nuestro Eco Studio en fotos",
-      "parkingIntro": "El área de estacionamiento y sus alrededores"
+      "parkingIntro": "El área de estacionamiento y sus alrededores",
+      "doubleBed": "Cómoda cama doble de 180 cm (2 pers.)",
+      "livingArea": "Sala de estar con TV (+ Chromecast & PS4) y sofá cama",
+      "kitchen": "Cocina totalmente equipada",
+      "bathroom": "WC con ducha y columna de lavado-secado",
+      "outsideTerrace": "Terraza de césped",
+      "parkingSpace": "Plaza de aparcamiento sin cargo adicional",
+      "highSpeedWifi": "Wifi de alta velocidad (fibra simétrica de 10 GB)",
+      "independentEntry": "Entrada independiente",
+      "clearView": "Vista despejada"
     },
     "superhost": {
       "text": "Somos Superhosts en Airbnb",
@@ -454,7 +490,16 @@
     "gallery": {
       "title": "Galeria de Fotos",
       "studioIntro": "Descubra o nosso Eco Studio em fotos",
-      "parkingIntro": "A área de estacionamento e arredores"
+      "parkingIntro": "A área de estacionamento e arredores",
+      "doubleBed": "Cama de casal confortável de 180 cm (2 pess.)",
+      "livingArea": "Área de estar com TV (+ Chromecast & PS4) e sofá-cama",
+      "kitchen": "Cozinha totalmente equipada",
+      "bathroom": "WC com duche e coluna de lavagem-secagem",
+      "outsideTerrace": "Terraço de relva",
+      "parkingSpace": "Lugar de estacionamento sem custo extra",
+      "highSpeedWifi": "Wifi de alta velocidade (fibra simétrica de 10 GB)",
+      "independentEntry": "Entrada independente",
+      "clearView": "Vista desimpedida"
     },
     "superhost": {
       "text": "Somos Superhosts no Airbnb",

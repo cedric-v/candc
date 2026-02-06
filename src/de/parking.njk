@@ -10,6 +10,7 @@ ogImage: assets/img/logo-cc.jpg
 {% set t = translations[locale] or translations['de'] %}
 
 <section class="page-section">
+  {% image "assets/img/fond-hero-parking.jpg", "Parking La Sonnaz", "page-hero-image", "eager" %}
   <div class="section-header">
     <h1 class="hero-title">{{ t.parking.title }}</h1>
     <p class="text-xl text-muted">{{ t.parking.subtitle }}</p>

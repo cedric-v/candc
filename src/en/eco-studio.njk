@@ -10,11 +10,23 @@ ogImage: assets/img/logo-cc.jpg
 {% set t = translations[locale] or translations['en'] %}
 
 <section class="page-section">
+  {% image "assets/img/fond-hero-studio.jpg", "Eco Studio La Sonnaz", "page-hero-image", "eager" %}
   <div class="section-header">
     <h1 class="hero-title">{{ t.studio.title }}</h1>
     <p class="text-xl text-muted">{{ t.studio.subtitle }}</p>
     <p class="text-lg text-light">{{ t.studio.description }}</p>
     <p class="text-base font-semibold text-primary">{{ t.studio.minStay }}</p>
+    <div class="gallery-grid mt-4" style="grid-template-columns: repeat(3, 1fr);">
+      <div class="gallery-item lightbox-trigger" data-image="/assets/img/gallery/studio/gallerie-studio-1.jpg" data-caption="{{ t.gallery.highSpeedWifi }}">
+        {% image "assets/img/gallery/studio/gallerie-studio-1.jpg", "Studio preview", "gallery-image", "eager" %}
+      </div>
+      <div class="gallery-item lightbox-trigger" data-image="/assets/img/gallery/studio/gallerie-studio-2.jpg" data-caption="{{ t.gallery.independentEntry }}">
+        {% image "assets/img/gallery/studio/gallerie-studio-2.jpg", "Studio preview", "gallery-image", "eager" %}
+      </div>
+      <div class="gallery-item lightbox-trigger" data-image="/assets/img/gallery/studio/gallerie-studio-3.jpg" data-caption="{{ t.gallery.clearView }}">
+        {% image "assets/img/gallery/studio/gallerie-studio-3.jpg", "Studio preview", "gallery-image", "eager" %}
+      </div>
+    </div>
   </div>
 
   <div class="card">
@@ -142,17 +154,20 @@ ogImage: assets/img/logo-cc.jpg
     </div>
     <div class="gallery-grid">
       {% set galleryImages = [
-        'assets/img/gallery/studio/studio-01.jpg',
-        'assets/img/gallery/studio/studio-02.jpg',
-        'assets/img/gallery/studio/studio-03.jpg',
-        'assets/img/gallery/studio/studio-04.jpg',
-        'assets/img/gallery/studio/studio-05.jpg',
-        'assets/img/gallery/studio/studio-06.jpg'
+        { src: 'assets/img/gallery/studio/gallerie-studio-bed.jpg', caption: t.gallery.doubleBed },
+        { src: 'assets/img/gallery/studio/gallerie-studio-living-room.jpg', caption: t.gallery.livingArea },
+        { src: 'assets/img/gallery/studio/gallerie-studio-kitchen.jpg', caption: t.gallery.kitchen },
+        { src: 'assets/img/gallery/studio/gallerie-studio-toilet-tumbler.jpg', caption: t.gallery.bathroom },
+        { src: 'assets/img/gallery/studio/gallerie-studio-outside-terrace.jpg', caption: t.gallery.outsideTerrace },
+        { src: 'assets/img/gallery/studio/gallerie-studio-outside-parking.jpg', caption: t.gallery.parkingSpace },
+        { src: 'assets/img/gallery/studio/gallerie-studio-1.jpg', caption: t.gallery.highSpeedWifi },
+        { src: 'assets/img/gallery/studio/gallerie-studio-2.jpg', caption: t.gallery.independentEntry },
+        { src: 'assets/img/gallery/studio/gallerie-studio-3.jpg', caption: t.gallery.clearView }
       ] %}
 
-      {% for image in galleryImages %}
-      <div class="gallery-item lightbox-trigger" data-image="/{{ image }}">
-        {% image image, "Photo Eco Studio", "gallery-image", "lazy" %}
+      {% for item in galleryImages %}
+      <div class="gallery-item lightbox-trigger" data-image="/{{ item.src }}" data-caption="{{ item.caption }}">
+        {% image item.src, "Photo Eco Studio", "gallery-image", "lazy" %}
       </div>
       {% endfor %}
     </div>
