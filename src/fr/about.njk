@@ -28,6 +28,12 @@ ogImage: assets/img/logo-cc.jpg
   </div>
   
   {% include "superhost.njk" %}
+
+  <div class="text-center mt-12">
+    <a href="{{ '/fr/eco-studio/#reservation' | relativeUrl }}" class="btn btn-primary">
+      Réserver le studio meublé
+    </a>
+  </div>
 </section>
 
 <!-- Schema.org pour la page about -->
@@ -75,7 +81,6 @@ ogImage: assets/img/logo-cc.jpg
 </script>
 
 <style>
-@layer components {
   .hero-section {
     position: relative;
     width: 100%;
@@ -98,7 +103,7 @@ ogImage: assets/img/logo-cc.jpg
   .hero-overlay {
     position: absolute;
     inset: 0;
-    background-color: rgba(45, 80, 22, 0.2);
+    background-color: rgba(45, 80, 22, 0.4);
   }
 
   .hero-content {
@@ -117,12 +122,14 @@ ogImage: assets/img/logo-cc.jpg
     font-weight: 700;
     margin-bottom: var(--spacing-lg);
     color: var(--white);
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
   }
 
   .hero-content p {
     font-size: 1.5rem;
     font-weight: 600;
     color: var(--white);
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
   }
 
   .content-section {
@@ -161,5 +168,4 @@ ogImage: assets/img/logo-cc.jpg
       padding: var(--spacing-3xl) var(--spacing-3xl);
     }
   }
-}
 </style>
