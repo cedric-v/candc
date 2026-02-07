@@ -46,8 +46,8 @@
             {% if lang != locale %}
               {% set currentUrl = page.url %}
               {% if lang == 'fr' %}
-                {% set targetUrl = currentUrl | replace('/en/', '/') | replace('/de/', '/') | replace('/es/', '/') | replace('/pt/', '/') %}
-                {% if targetUrl == '' %}{% set targetUrl = '/' %}{% endif %}
+                {% set targetUrl = currentUrl | replace('/en/', '/fr/') | replace('/de/', '/fr/') | replace('/es/', '/fr/') | replace('/pt/', '/fr/') %}
+                {% if targetUrl == '' %}{% set targetUrl = '/fr/' %}{% endif %}
               {% else %}
                 {% set langPrefix = '/' + lang + '/' %}
                 {% if currentUrl == '/' %}
@@ -94,8 +94,17 @@
           {% if lang != locale %}
             {% set currentUrl = page.url %}
             {% if lang == 'fr' %}
-              {% set targetUrl = currentUrl | replace('/en/', '/') | replace('/de/', '/') | replace('/es/', '/') | replace('/pt/', '/') %}
-              {% if targetUrl == '' %}{% set targetUrl = '/' %}{% endif %}
+              {% set targetUrl = currentUrl | replace('/en/', '/fr/') | replace('/de/', '/fr/') | replace('/es/', '/fr/') | replace('/pt/', '/fr/') %}
+              {% if targetUrl == currentUrl %}
+                 {# If no replacement happened, check if we are at root /en/ or similar which might have been handled, or if we are at a page that needs prefixing #}
+                 {# But actually, checking if targetUrl == currentUrl suggests we might be on a page that doesn't have the prefix yet? No, we are generating links FOR other languages FROM current page. #}
+                 {# If we are on /en/parking/, replace works. #}
+                 {# If we are on / (root), currentUrl is /. #}
+                 {% if currentUrl == '/' %}
+                    {% set targetUrl = '/fr/' %}
+                 {% endif %}
+              {% endif %}
+              {% if targetUrl == '' %}{% set targetUrl = '/fr/' %}{% endif %}
             {% else %}
               {% set langPrefix = '/' + lang + '/' %}
               {% if currentUrl == '/' %}

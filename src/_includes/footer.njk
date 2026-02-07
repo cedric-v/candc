@@ -41,8 +41,8 @@
               {% if lang != locale %}
                 {% set currentUrl = page.url %}
                 {% if lang == 'fr' %}
-                  {% set targetUrl = currentUrl | replace('/en/', '/') | replace('/de/', '/') | replace('/es/', '/') | replace('/pt/', '/') %}
-                  {% if targetUrl == '' %}{% set targetUrl = '/' %}{% endif %}
+                  {% set targetUrl = currentUrl | replace('/en/', '/fr/') | replace('/de/', '/fr/') | replace('/es/', '/fr/') | replace('/pt/', '/fr/') %}
+                  {% if targetUrl == '' %}{% set targetUrl = '/fr/' %}{% endif %}
                 {% else %}
                   {% set langPrefix = '/' + lang + '/' %}
                   {% if currentUrl == '/' %}
