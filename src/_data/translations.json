@@ -1,9 +1,9 @@
 {
   "fr": {
     "siteName": "C & C",
-    "siteDescription": "Eco Studio et Parking à La Sonnaz, Fribourg",
+    "siteDescription": "Éco Studio et parking pour van/camping-car à La Sonnaz, Fribourg, Suisse",
     "businessName": "C & C",
-    "businessDescription": "Eco Studio et Parking à La Sonnaz, Fribourg. Location d'appartement meublé et parking sécurisé.",
+    "businessDescription": "Éco Studio et parking pour van/camping-car à La Sonnaz, Fribourg, Suisse. Location d'appartement meublé et parking sécurisé.",
     "streetAddress": "La Sonnaz",
     "home": "Accueil",
     "ecoStudio": "Eco Studio",
@@ -72,7 +72,7 @@
     },
     "parking": {
       "title": "Aire de stationnement pour van/camping-car/motorhome",
-      "subtitle": "Aire de stationnement pour van/camping-car/motorhome près de Fribourg (Suisse)",
+      "subtitle": "Emplacement individuel pour van/camping-car/motorhome près de Fribourg (Suisse)",
       "description": "Place de stationnement tout équipée située en bordure de village, proche de Fribourg, avec vue sur les champs",
       "equipment": "Place de stationnement, prise électrique, gestion des déchets, Wi-Fi rapide, robinet extérieur avec eau potable, terrasse avec vue",
       "note": "Le camping-car/van n'est pas fourni, c'est à vous d'arriver avec le vôtre",
@@ -89,7 +89,7 @@
     },
     "testimonials": {
       "title": "Témoignages",
-      "intro": "Quelques témoignages laissés sur AirBnb ou Booking"
+      "intro": "Quelques témoignages laissés sur AirBnb, Booking ou Google Maps"
     },
     "gallery": {
       "title": "Galerie Photos",
@@ -107,7 +107,13 @@
       "parkingFrontView": "Vue d'ensemble de la place",
       "parkingSpot": "Emplacement pour stationner",
       "terraceFieldView": "Terrasse avec vue sur les champs",
-      "terraceParkView": "Terrasse avec vue sur la place"
+      "terraceParkView": "Terrasse avec vue sur la place",
+      "toilet": "Toilettes et douche"
+    },
+    "payment": {
+      "title": "Moyens de paiement",
+      "methods": "Nous acceptons les cartes de crédit et le liquide (CHF ou EUR).",
+      "alt": "Moyens de paiement acceptés"
     },
     "superhost": {
       "text": "Nous sommes superhôtes sur Airbnb",
@@ -117,9 +123,9 @@
   "en": {
     "siteName": "C & C",
     "location": "Location",
-    "siteDescription": "Eco Studio and Parking in La Sonnaz, Fribourg",
+    "siteDescription": "Eco Studio and van/camper parking in La Sonnaz, Fribourg, Switzerland",
     "businessName": "C & C",
-    "businessDescription": "Eco Studio and Parking in La Sonnaz, Fribourg. Furnished apartment rental and secure parking.",
+    "businessDescription": "Eco Studio and van/camper parking in La Sonnaz, Fribourg, Switzerland. Furnished apartment rental and secure parking.",
     "streetAddress": "La Sonnaz",
     "home": "Home",
     "ecoStudio": "Eco Studio",
@@ -184,7 +190,7 @@
     },
     "parking": {
       "title": "Parking area for van/camping-car/motorhome/RV",
-      "subtitle": "Parking area for van/camping-car/motorhome/RV near Freiburg (Switzerland)",
+      "subtitle": "Individual parking space for van/camper/motorhome/RV near Fribourg (Switzerland)",
       "description": "Fully equipped parking space located on the edge of a village, overlooking fields",
       "equipment": "Parking space, electrical outlet, waste management, fast WiFi, outside tap with drinking water, terrace with view",
       "note": "The motorhome/RV/van is not provided; you have to bring your own",
@@ -201,7 +207,7 @@
     },
     "testimonials": {
       "title": "Testimonials",
-      "intro": "Some testimonials left on Airbnb or Booking"
+      "intro": "Some testimonials left on Airbnb, Booking or Google Maps"
     },
     "gallery": {
       "title": "Photo Gallery",
@@ -219,7 +225,13 @@
       "parkingFrontView": "General view of the space",
       "parkingSpot": "Parking spot",
       "terraceFieldView": "Terrace with field view",
-      "terraceParkView": "Terrace with park view"
+      "terraceParkView": "Terrace with park view",
+      "toilet": "Toilet and shower"
+    },
+    "payment": {
+      "title": "Payment methods",
+      "methods": "We accept credit cards and cash (CHF or EUR).",
+      "alt": "Accepted payment methods"
     },
     "superhost": {
       "text": "We are Superhosts on Airbnb",
@@ -229,9 +241,9 @@
   "de": {
     "siteName": "C & C",
     "location": "Lage",
-    "siteDescription": "Eco Studio und Parkplatz in La Sonnaz, Freiburg",
+    "siteDescription": "Eco Studio und Van/Camping-Car Parkplatz in La Sonnaz, Freiburg, Schweiz",
     "businessName": "C & C",
-    "businessDescription": "Eco Studio und Parkplatz in La Sonnaz, Freiburg. Möblierte Wohnung und sicherer Parkplatz.",
+    "businessDescription": "Eco Studio und Van/Camping-Car Parkplatz in La Sonnaz, Freiburg, Schweiz. Möblierte Wohnung und sicherer Parkplatz.",
     "streetAddress": "La Sonnaz",
     "home": "Startseite",
     "ecoStudio": "Eco Studio",
@@ -296,7 +308,7 @@
     },
     "parking": {
       "title": "Stellplatz für Van/Camping-Car/Motorhome",
-      "subtitle": "Stellplatz für Van/Camping-Car/Motorhome in der Nähe von Freiburg (Schweiz)",
+      "subtitle": "Einzelstellplatz für Van/Camping-Car/Motorhome in der Nähe von Freiburg (Schweiz)",
       "description": "Voll ausgestatteter Stellplatz am Dorfrand mit Blick auf Felder",
       "equipment": "Stellplatz, Steckdose, Abfallentsorgung, schnelles WiFi, Außenwasserhahn mit Trinkwasser, Terrasse mit Aussicht",
       "note": "Das Motorhome/Van wird nicht gestellt; Sie müssen Ihr eigenes mitbringen",
@@ -313,7 +325,7 @@
     },
     "testimonials": {
       "title": "Bewertungen",
-      "intro": "Einige Bewertungen auf Airbnb oder Booking"
+      "intro": "Einige Bewertungen auf Airbnb, Booking oder Google Maps"
     },
     "gallery": {
       "title": "Fotogalerie",
@@ -331,7 +343,13 @@
       "parkingFrontView": "Gesamtansicht des Stellplatzes",
       "parkingSpot": "Parkplatz",
       "terraceFieldView": "Terrasse mit Blick auf die Felder",
-      "terraceParkView": "Terrasse mit Blick auf den Platz"
+      "terraceParkView": "Terrasse mit Blick auf den Platz",
+      "toilet": "Toilette und Dusche"
+    },
+    "payment": {
+      "title": "Zahlungsmethoden",
+      "methods": "Wir akzeptieren Kreditkarten und Bargeld (CHF oder EUR).",
+      "alt": "Akzeptierte Zahlungsmethoden"
     },
     "superhost": {
       "text": "Wir sind Superhosts auf Airbnb",
@@ -341,9 +359,9 @@
   "es": {
     "siteName": "C & C",
     "location": "Ubicación",
-    "siteDescription": "Eco Studio y Aparcamiento en La Sonnaz, Friburgo",
+    "siteDescription": "Eco Studio y aparcamiento para furgoneta/caravana en La Sonnaz, Friburgo, Suiza",
     "businessName": "C & C",
-    "businessDescription": "Eco Studio y Aparcamiento en La Sonnaz, Friburgo. Alquiler de apartamento amueblado y aparcamiento seguro.",
+    "businessDescription": "Eco Studio y aparcamiento para furgoneta/caravana en La Sonnaz, Friburgo, Suiza. Alquiler de apartamento amueblado y aparcamiento seguro.",
     "streetAddress": "La Sonnaz",
     "home": "Inicio",
     "ecoStudio": "Eco Studio",
@@ -408,7 +426,7 @@
     },
     "parking": {
       "title": "Aparcamiento para furgoneta/caravana/autocaravana",
-      "subtitle": "Aparcamiento para furgoneta/caravana/autocaravana cerca de Friburgo (Suiza)",
+      "subtitle": "Plaza individual para furgoneta/caravana/autocaravana cerca de Friburgo (Suiza)",
       "description": "Plaza de aparcamiento totalmente equipada ubicada en el borde de un pueblo, con vistas a los campos",
       "equipment": "Plaza de aparcamiento, toma de corriente, gestión de residuos, WiFi rápido, grifo exterior con agua potable, terraza con vistas",
       "note": "La autocaravana/furgoneta no se proporciona; debe traer la suya propia",
@@ -425,7 +443,7 @@
     },
     "testimonials": {
       "title": "Testimonios",
-      "intro": "Algunos testimonios dejados en Airbnb o Booking"
+      "intro": "Algunos testimonios dejados en Airbnb, Booking o Google Maps"
     },
     "gallery": {
       "title": "Galería de Fotos",
@@ -443,7 +461,13 @@
       "parkingFrontView": "Vista general de la plaza",
       "parkingSpot": "Lugar para estacionar",
       "terraceFieldView": "Terraza con vista al campo",
-      "terraceParkView": "Terraza con vista a la plaza"
+      "terraceParkView": "Terraza con vista a la plaza",
+      "toilet": "Baño y ducha"
+    },
+    "payment": {
+      "title": "Métodos de pago",
+      "methods": "Aceptamos tarjetas de crédito y efectivo (CHF o EUR).",
+      "alt": "Métodos de pago aceptados"
     },
     "superhost": {
       "text": "Somos Superhosts en Airbnb",
@@ -453,9 +477,9 @@
   "pt": {
     "siteName": "C & C",
     "location": "Localização",
-    "siteDescription": "Eco Studio e Estacionamento em La Sonnaz, Friburgo",
+    "siteDescription": "Eco Studio e estacionamento para carrinha/autocaravana em La Sonnaz, Friburgo, Suíça",
     "businessName": "C & C",
-    "businessDescription": "Eco Studio e Estacionamento em La Sonnaz, Friburgo. Aluguel de apartamento mobiliado e estacionamento seguro.",
+    "businessDescription": "Eco Studio e estacionamento para carrinha/autocaravana em La Sonnaz, Friburgo, Suíça. Aluguel de apartamento mobiliado e estacionamento seguro.",
     "streetAddress": "La Sonnaz",
     "home": "Início",
     "ecoStudio": "Eco Studio",
@@ -520,7 +544,7 @@
     },
     "parking": {
       "title": "Estacionamento para carrinha/caravana/autocaravana",
-      "subtitle": "Estacionamento para carrinha/caravana/autocaravana perto de Friburgo (Suíça)",
+      "subtitle": "Lugar individual para carrinha/caravana/autocaravana perto de Friburgo (Suíça)",
       "description": "Lugar de estacionamento totalmente equipado localizado na borda de uma aldeia, com vista para os campos",
       "equipment": "Lugar de estacionamento, tomada elétrica, gestão de resíduos, WiFi rápido, torneira exterior com água potável, terraço com vista",
       "note": "A autocaravana/carrinha não é fornecida; tem de trazer a sua própria",
@@ -537,7 +561,7 @@
     },
     "testimonials": {
       "title": "Depoimentos",
-      "intro": "Alguns depoimentos deixados no Airbnb ou Booking"
+      "intro": "Alguns depoimentos deixados no Airbnb, Booking ou Google Maps"
     },
     "gallery": {
       "title": "Galeria de Fotos",
@@ -555,7 +579,13 @@
       "parkingFrontView": "Vista geral do espaço",
       "parkingSpot": "Lugar para estacionar",
       "terraceFieldView": "Terraço com vista para o campo",
-      "terraceParkView": "Terraço com vista para a praça"
+      "terraceParkView": "Terraço com vista para a praça",
+      "toilet": "Casa de banho e duche"
+    },
+    "payment": {
+      "title": "Métodos de pagamento",
+      "methods": "Aceitamos cartões de crédito e dinheiro (CHF ou EUR).",
+      "alt": "Métodos de pagamento aceites"
     },
     "superhost": {
       "text": "Somos Superhosts no Airbnb",

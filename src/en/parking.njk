@@ -1,6 +1,6 @@
 ---
 layout: base.njk
-title: Parking - Motorhome/RV Parking Space
+title: Parking - Individual van/camper parking space
 description: Fully equipped parking space for van/camping-car/motorhome/RV in La Sonnaz, Fribourg. Electrical outlet, WiFi, drinking water.
 locale: en
 permalink: /en/parking/
@@ -81,26 +81,15 @@ ogImage: assets/img/logo-cc.jpg
       </div>
     </div>
 
-    <div class="mt-12 text-center" id="reservation">
-    <div class="mt-12 text-center" id="reservation">
+    <div class="mt-12 flex flex-wrap justify-center gap-md" id="reservation">
+      <a href="/{{ locale }}/contact/" class="btn btn-primary">
+        {{ t.requestReservation }}
+      </a>
       <a href="{{ t.googleMapsParkingLink }}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
         🗺️ {{ t.getDirections }}
       </a>
     </div>
-    </div>
 
-    <div class="mt-12 text-center">
-      <h2 class="text-xl font-bold text-primary mb-6">{{ t.bookParking }}</h2>
-      <div class="flex justify-center">
-        <a href="/{{ locale }}/contact/" class="btn btn-primary">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-            <polyline points="22,6 12,13 2,6"></polyline>
-          </svg>
-          <span class="ml-2">{{ t.requestReservation }}</span>
-        </a>
-      </div>
-    </div>
   </div>
 
   <!-- Photo Gallery -->
@@ -129,17 +118,6 @@ ogImage: assets/img/logo-cc.jpg
     </div>
   </section>
 
-  <!-- Payment methods -->
-  <section class="mt-2xl text-center">
-    <h2 class="section-title mb-4">Moyens de paiement / Payment methods</h2>
-    <p class="text-muted mb-8">
-      We accept credit cards and cash (CHF or EUR).
-    </p>
-    <div class="flex justify-center">
-      <img src="/assets/img/payment-methods.jpg" alt="Accepted payment methods" class="rounded-lg shadow w-full max-w-2xl">
-    </div>
-  </section>
-
   <!-- Témoignages (images) -->
   <section class="mt-3xl">
     <div class="section-header">
@@ -147,7 +125,7 @@ ogImage: assets/img/logo-cc.jpg
       <p class="text-muted">{{ t.testimonials.intro }}</p>
     </div>
     <div class="gallery-grid" id="testimonials-grid">
-      {% set pageTestimonials = testimonials.parking[locale] or testimonials.parking['en'] %}
+      {% set pageTestimonials = testimonials.parking[locale] or testimonials.parking['fr'] %}
       {% for testimonial in pageTestimonials %}
       <div class="gallery-item lightbox-trigger" data-image="/{{ testimonial.image }}" data-caption="{{ testimonial.author }}: {{ testimonial.alt }}">
         <img src="/{{ testimonial.image }}" alt="{{ testimonial.alt }}" class="gallery-image" loading="lazy">
@@ -158,6 +136,30 @@ ogImage: assets/img/logo-cc.jpg
       {% endfor %}
     </div>
   </section>
+
+  <!-- Payment methods -->
+  <section class="mt-3xl text-center">
+    <h2 class="section-title mb-4">{{ t.payment.title }}</h2>
+    <p class="text-muted mb-8">
+      {{ t.payment.methods }}
+    </p>
+    <div class="flex justify-center">
+      <img src="/assets/img/payment-methods.jpg" alt="{{ t.payment.alt }}" class="rounded-lg shadow w-full max-w-2xl">
+    </div>
+  </section>
+
+  <div class="mt-12 text-center pb-12">
+    <h2 class="text-xl font-bold text-primary mb-6">{{ t.bookParking }}</h2>
+    <div class="flex justify-center">
+      <a href="/{{ locale }}/contact/" class="btn btn-primary">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+          <polyline points="22,6 12,13 2,6"></polyline>
+        </svg>
+        <span class="ml-2">{{ t.requestReservation }}</span>
+      </a>
+    </div>
+  </div>
 
   <!-- Lightbox -->
   <div id="parking-lightbox" class="lightbox">
@@ -269,7 +271,7 @@ ogImage: assets/img/logo-cc.jpg
   "@context": "https://schema.org",
   "@type": "ParkingFacility",
   "name": "C&C Eco Studio - Parking",
-  "description": "Fully equipped parking space for van/camping-car/motorhome near Fribourg, Switzerland. Electrical outlet, WiFi, waste management.",
+  "description": "Fully equipped individual parking space for van/camping-car/motorhome near Fribourg, Switzerland. Electrical outlet, WiFi, waste management.",
   "url": "https://candc.ch/en/parking/",
   "address": {
     "@type": "PostalAddress",
