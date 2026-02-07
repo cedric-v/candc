@@ -76,9 +76,12 @@
       "description": "Place de stationnement tout équipée située en bordure de village, proche de Fribourg, avec vue sur les champs",
       "equipment": "Place de stationnement, prise électrique, gestion des déchets, Wi-Fi rapide, robinet extérieur avec eau potable, terrasse avec vue",
       "note": "Le camping-car/van n'est pas fourni, c'est à vous d'arriver avec le vôtre",
-      "toilet": "Accès toilette et douche disponible sur demande entre 7h et 21h (10 CHF pour tout le séjour)",
+      "toilet": "Accès à une toilette et une douche disponibles sur demande entre 7 h et 21 h, lorsque nous sommes sur place. Service optionnel moyennant 10 CHF de frais de nettoyage pour tout le séjour. Merci de vérifier la disponibilité en nous écrivant.",
       "evCharging": "Recharge voiture électrique : 15 CHF (10h) ou 30 CHF (journée/nuit complète)",
-      "noChemicalToilet": "Nous n'avons pas l'infrastructure pour vidanger les toilettes chimiques"
+      "noChemicalToilet": "Nous n'avons pas l'infrastructure pour vidanger les toilettes chimiques",
+      "ratesTitle": "Tarif",
+      "ratesMain": "20 CHF / nuitée + 3 CHF de taxe de séjour par adulte / nuitée (*)",
+      "ratesNote": "* : le tarif peut être plus élevé en cas de forte demande ou d'événements proches"
     },
     "about": {
       "title": "Qui sommes-nous ?",
@@ -194,9 +197,12 @@
       "description": "Fully equipped parking space located on the edge of a village, overlooking fields",
       "equipment": "Parking space, electrical outlet, waste management, fast WiFi, outside tap with drinking water, terrace with view",
       "note": "The motorhome/RV/van is not provided; you have to bring your own",
-      "toilet": "Access to toilet and shower available on request between 7 a.m. and 9 p.m. (CHF 10 for the entire stay)",
+      "toilet": "Access to a toilet and shower available on request between 7 a.m. and 9 p.m., when we are on site. Optional service for a 10 CHF cleaning fee for the entire stay. Please check availability by writing to us.",
       "evCharging": "Electric car charging: CHF 15 (10h) or CHF 30 (whole day or night)",
-      "noChemicalToilet": "We do not have the infrastructure to empty chemical toilets from motorhomes/RV"
+      "noChemicalToilet": "We do not have the infrastructure to empty chemical toilets from motorhomes/RV",
+      "ratesTitle": "Rates",
+      "ratesMain": "20 CHF / night + 3 CHF tourist tax per adult / night (*)",
+      "ratesNote": "* : rate may be higher during high demand or nearby events"
     },
     "about": {
       "title": "About us",
@@ -312,9 +318,12 @@
       "description": "Voll ausgestatteter Stellplatz am Dorfrand mit Blick auf Felder",
       "equipment": "Stellplatz, Steckdose, Abfallentsorgung, schnelles WiFi, Außenwasserhahn mit Trinkwasser, Terrasse mit Aussicht",
       "note": "Das Motorhome/Van wird nicht gestellt; Sie müssen Ihr eigenes mitbringen",
-      "toilet": "Zugang zu Toilette und Dusche auf Anfrage zwischen 7 und 21 Uhr (10 CHF für den gesamten Aufenthalt)",
-      "evCharging": "Elektroauto-Ladung: 15 CHF (10h) oder 30 CHF (ganzer Tag oder Nacht)",
-      "noChemicalToilet": "Wir haben keine Infrastruktur zum Entleeren von Chemietoiletten von Motorhomes"
+      "toilet": "Zugang zu einer Toilette und einer Dusche auf Anfrage zwischen 7:00 und 21:00 Uhr möglich, wenn wir vor Ort sind. Optionaler Service gegen eine Reinigungsgebühr von 10 CHF für den gesamten Aufenthalt. Bitte prüfen Sie die Verfügbarkeit, indem Sie uns schreiben.",
+      "evCharging": "Elektroauto-Ladung: 15 CHF (10h) ou 30 CHF (ganzer Tag oder Nacht)",
+      "noChemicalToilet": "Wir haben keine Infrastruktur zum Entleeren von Chemietoiletten von Motorhomes",
+      "ratesTitle": "Tarife",
+      "ratesMain": "20 CHF / Nacht + 3 CHF Kurtaxe pro Erwachsener / Nacht (*)",
+      "ratesNote": "* : Der Preis kann bei hoher Nachfrage oder Veranstaltungen in der Nähe höher sein"
     },
     "about": {
       "title": "Über uns",
@@ -430,9 +439,12 @@
       "description": "Plaza de aparcamiento totalmente equipada ubicada en el borde de un pueblo, con vistas a los campos",
       "equipment": "Plaza de aparcamiento, toma de corriente, gestión de residuos, WiFi rápido, grifo exterior con agua potable, terraza con vistas",
       "note": "La autocaravana/furgoneta no se proporciona; debe traer la suya propia",
-      "toilet": "Acceso a baño y ducha disponible bajo petición entre las 7 y las 21 h (10 CHF para toda la estancia)",
+      "toilet": "Acceso a un aseo y una ducha disponibles bajo petición entre las 7:00 y las 21:00, cuando estemos presentes. Servicio opcional con un cargo de limpieza de 10 CHF para toda la estancia. Por favor, compruebe la disponibilidad escribiéndonos.",
       "evCharging": "Carga de coche eléctrico: 15 CHF (10h) o 30 CHF (día o noche completa)",
-      "noChemicalToilet": "No tenemos la infraestructura para vaciar las toilettes químicas de las autocaravanas"
+      "noChemicalToilet": "No tenemos la infraestructura para vaciar las toilettes químicas de las autocaravanas",
+      "ratesTitle": "Tarifas",
+      "ratesMain": "20 CHF / noche + 3 CHF de tasa turística por adulto / noche (*)",
+      "ratesNote": "* : la tarifa puede ser superior en caso de alta demanda o eventos cercanos"
     },
     "about": {
       "title": "Quiénes somos",
@@ -548,9 +560,12 @@
       "description": "Lugar de estacionamento totalmente equipado localizado na borda de uma aldeia, com vista para os campos",
       "equipment": "Lugar de estacionamento, tomada elétrica, gestão de resíduos, WiFi rápido, torneira exterior com água potável, terraço com vista",
       "note": "A autocaravana/carrinha não é fornecida; tem de trazer a sua própria",
-      "toilet": "Acesso a casa de banho e duche disponível mediante pedido entre as 7h e as 21h (10 CHF para toda a estadia)",
+      "toilet": "Acesso a uma sanita e um duche disponíveis mediante pedido entre as 7h e as 21h, quando estivermos no local. Serviço opcional com uma taxa de limpeza de 10 CHF para toda a estadia. Por favor, verifique a disponibilidade escrevendo-nos.",
       "evCharging": "Carregamento de carro elétrico: 15 CHF (10h) ou 30 CHF (dia ou noite completa)",
-      "noChemicalToilet": "Não temos a infraestrutura para esvaziar as sanitas químicas das autocaravanas"
+      "noChemicalToilet": "Não temos a infraestrutura para esvaziar as sanitas químicas das autocaravanas",
+      "ratesTitle": "Tarifas",
+      "ratesMain": "20 CHF / noite + 3 CHF de taxa turística por adulto / noite (*)",
+      "ratesNote": "* : a tarifa pode ser superior em caso de forte procura ou eventos próximos"
     },
     "about": {
       "title": "Quem somos",

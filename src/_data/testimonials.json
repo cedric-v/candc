@@ -4,7 +4,7 @@
       {
         "image": "assets/img/testimonials/testimonial-01.jpg",
         "alt": "Témoignage client : Studio très propre et bien équipé. Cédric est un hôte très accueillant.",
-        "author": "Jean-Pierre",
+        "author": "Florence Berguerre",
         "rating": 5
       },
       {
@@ -28,7 +28,7 @@
       {
         "image": "assets/img/testimonials/testimonial-13.jpg",
         "alt": "Avis client : Très bon séjour, tout était conforme à la description.",
-        "author": "David",
+        "author": "Slim",
         "rating": 5
       },
       {
@@ -40,7 +40,7 @@
       {
         "image": "assets/img/testimonials/testimonial-15.jpg",
         "alt": "Avis : Excellent rapport qualité-prix. Propreté irréprochable.",
-        "author": "Nicolas",
+        "author": "Helmut",
         "rating": 5
       },
       {
@@ -922,4 +922,5 @@
         "rating": 5
       }
     ]
-  }}
+  }
+}

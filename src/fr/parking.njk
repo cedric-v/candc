@@ -138,6 +138,19 @@ ogImage: assets/img/logo-cc.jpg
     </div>
   </section>
 
+  <!-- Tarif -->
+  <section class="mt-3xl text-center">
+    <h2 class="section-title mb-4">{{ t.parking.ratesTitle }}</h2>
+    <div class="card max-w-2xl mx-auto">
+      <p class="text-xl font-bold text-primary mb-2">
+        {{ t.parking.ratesMain }}
+      </p>
+      <p class="text-sm text-muted italic">
+        {{ t.parking.ratesNote }}
+      </p>
+    </div>
+  </section>
+
   <!-- Moyens de paiement -->
   <section class="mt-3xl text-center">
     <h2 class="section-title mb-4">{{ t.payment.title }}</h2>
@@ -195,8 +208,12 @@ ogImage: assets/img/logo-cc.jpg
     let currentIndex = 0;
     let activeTriggers = [];
     
+    // Swipe support
+    let touchStartX = 0;
+    let touchEndX = 0;
+
     function openLightbox(trigger) {
-      const container = trigger.closest('.gallery-grid, .testimonials-grid');
+      const container = trigger.closest('.gallery-grid, #testimonials-grid');
       activeTriggers = Array.from(container.querySelectorAll('.lightbox-trigger'));
       currentIndex = activeTriggers.indexOf(trigger);
       
@@ -226,22 +243,32 @@ ogImage: assets/img/logo-cc.jpg
     }
     
     function showNext() {
+      if (activeTriggers.length <= 1) return;
       currentIndex = (currentIndex + 1) % activeTriggers.length;
       updateLightbox();
     }
     
     function showPrev() {
+      if (activeTriggers.length <= 1) return;
       currentIndex = (currentIndex - 1 + activeTriggers.length) % activeTriggers.length;
       updateLightbox();
     }
     
+    function handleGesture() {
+      if (touchEndX < touchStartX - 50) showNext();
+      if (touchEndX > touchStartX + 50) showPrev();
+    }
+
     triggers.forEach((trigger) => {
-      trigger.addEventListener('click', () => openLightbox(trigger));
+      trigger.addEventListener('click', (e) => {
+        e.preventDefault();
+        openLightbox(trigger);
+      });
     });
     
     closeBtn.addEventListener('click', closeLightbox);
-    prevBtn.addEventListener('click', showPrev);
-    nextBtn.addEventListener('click', showNext);
+    prevBtn.addEventListener('click', (e) => { e.stopPropagation(); showPrev(); });
+    nextBtn.addEventListener('click', (e) => { e.stopPropagation(); showNext(); });
     
     lightbox.addEventListener('click', (e) => {
       if (e.target === lightbox || e.target.closest('.lightbox-container') === null) {
@@ -250,6 +277,15 @@ ogImage: assets/img/logo-cc.jpg
         }
       }
     });
+
+    lightbox.addEventListener('touchstart', e => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, {passive: true});
+
+    lightbox.addEventListener('touchend', e => {
+      touchEndX = e.changedTouches[0].screenX;
+      handleGesture();
+    }, {passive: true});
     
     document.addEventListener('keydown', (e) => {
       if (!lightbox.classList.contains('hidden')) {

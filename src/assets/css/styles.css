@@ -1465,33 +1465,69 @@ a:hover {
   z-index: 10;
 }
 
-.lightbox-close:hover,
-.lightbox-prev:hover,
-.lightbox-next:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: scale(1.1);
+.lightbox-close {
+  top: 2rem;
+  right: 2rem;
+  width: 3rem;
+  height: 3rem;
+  font-size: 1.5rem;
+  background: rgba(0, 0, 0, 0.5);
 }
 
-.lightbox-close {
-  top: var(--spacing-lg);
-  right: var(--spacing-lg);
+.lightbox-prev,
+.lightbox-next {
+  top: 50%;
+  transform: translateY(-50%);
   width: 3.5rem;
   height: 3.5rem;
-  font-size: 2.5rem;
+  background: rgba(0, 0, 0, 0.5);
+  font-size: 2rem;
 }
 
 .lightbox-prev {
-  left: var(--spacing-lg);
-  width: 4rem;
-  height: 4rem;
-  font-size: 3rem;
+  left: 2rem;
 }
 
 .lightbox-next {
-  right: var(--spacing-lg);
-  width: 4rem;
-  height: 4rem;
-  font-size: 3rem;
+  right: 2rem;
+}
+
+.lightbox-prev:hover,
+.lightbox-next:hover,
+.lightbox-close:hover {
+  background: rgba(0, 0, 0, 0.8);
+  transform: scale(1.1);
+}
+
+.lightbox-prev:hover,
+.lightbox-next:hover {
+  transform: translateY(-50%) scale(1.1);
+}
+
+@media (max-width: 768px) {
+  .lightbox-close {
+    top: 1rem;
+    right: 1rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1.25rem;
+  }
+
+  .lightbox-prev,
+  .lightbox-next {
+    width: 3.5rem;
+    height: 3.5rem;
+    font-size: 1.8rem;
+    background: rgba(0, 0, 0, 0.7);
+  }
+
+  .lightbox-prev {
+    left: 1rem;
+  }
+
+  .lightbox-next {
+    right: 1rem;
+  }
 }
 
 .lightbox-container {

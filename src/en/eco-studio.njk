@@ -214,6 +214,16 @@ ogImage: assets/img/logo-cc.jpg
     (function() {
       const lightbox = document.getElementById('eco-lightbox');
       const lightboxImage = document.getElementById('lightbox-image');
+      let lightboxCaption = document.getElementById('lightbox-caption');
+      
+      // Create caption element if it doesn't exist
+      if (!lightboxCaption) {
+        lightboxCaption = document.createElement('div');
+        lightboxCaption.id = 'lightbox-caption';
+        lightboxCaption.className = 'lightbox-caption';
+        document.querySelector('.lightbox-container').appendChild(lightboxCaption);
+      }
+
       const closeBtn = document.getElementById('lightbox-close');
       const prevBtn = document.getElementById('lightbox-prev');
       const nextBtn = document.getElementById('lightbox-next');
@@ -222,9 +232,13 @@ ogImage: assets/img/logo-cc.jpg
       let currentIndex = 0;
       let activeTriggers = [];
       
+      // Swipe support
+      let touchStartX = 0;
+      let touchEndX = 0;
+
       function openLightbox(trigger) {
-        // Find all triggers in the same container (gallery or testimonials)
-        const container = trigger.closest('.gallery-grid, .testimonials-grid');
+        // Group by the parent .gallery-grid or #testimonials-grid
+        const container = trigger.closest('.gallery-grid, #testimonials-grid');
         activeTriggers = Array.from(container.querySelectorAll('.lightbox-trigger'));
         currentIndex = activeTriggers.indexOf(trigger);
         
@@ -239,15 +253,6 @@ ogImage: assets/img/logo-cc.jpg
         lightboxImage.src = trigger.dataset.image;
         
         const caption = trigger.dataset.caption;
-        let lightboxCaption = document.getElementById('lightbox-caption');
-        
-        if (!lightboxCaption) {
-          lightboxCaption = document.createElement('div');
-          lightboxCaption.id = 'lightbox-caption';
-          lightboxCaption.className = 'lightbox-caption';
-          document.querySelector('.lightbox-container').appendChild(lightboxCaption);
-        }
-        
         if (caption) {
           lightboxCaption.textContent = caption;
           lightboxCaption.style.display = 'block';
@@ -263,33 +268,52 @@ ogImage: assets/img/logo-cc.jpg
       }
       
       function next() {
+        if (activeTriggers.length <= 1) return;
         currentIndex = (currentIndex + 1) % activeTriggers.length;
         updateLightbox();
       }
       
       function prev() {
+        if (activeTriggers.length <= 1) return;
         currentIndex = (currentIndex - 1 + activeTriggers.length) % activeTriggers.length;
         updateLightbox();
       }
       
-      triggers.forEach(t => t.addEventListener('click', () => openLightbox(t)));
+      function handleGesture() {
+        if (touchEndX < touchStartX - 50) next();
+        if (touchEndX > touchStartX + 50) prev();
+      }
+
+      triggers.forEach(t => t.addEventListener('click', (e) => {
+        e.preventDefault();
+        openLightbox(t);
+      }));
       
       closeBtn.onclick = closeLightbox;
       
-      nextBtn.onclick = next;
-      prevBtn.onclick = prev;
+      nextBtn.onclick = (e) => { e.stopPropagation(); next(); };
+      prevBtn.onclick = (e) => { e.stopPropagation(); prev(); };
       
       lightbox.onclick = (e) => {
         if (e.target === lightbox || e.target.classList.contains('lightbox-container')) {
-          closeBtn.onclick();
+          closeLightbox();
         }
       };
+
+      lightbox.addEventListener('touchstart', e => {
+        touchStartX = e.changedTouches[0].screenX;
+      }, {passive: true});
+
+      lightbox.addEventListener('touchend', e => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleGesture();
+      }, {passive: true});
       
       document.addEventListener('keydown', (e) => {
         if (!lightbox.classList.contains('hidden')) {
           if (e.key === 'Escape') closeLightbox();
-          if (e.key === 'ArrowLeft') showPrev();
-          if (e.key === 'ArrowRight') showNext();
+          if (e.key === 'ArrowLeft') prev();
+          if (e.key === 'ArrowRight') next();
         }
       });
     })();
