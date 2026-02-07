@@ -18,8 +18,10 @@ ogImage: assets/img/logo-cc.jpg
 
   <div class="main-grid">
     <div class="card studio-gradient text-white">
-      {% image "assets/img/fond-hero-studio.jpg", "Eco Studio La Sonnaz", "card-hero-image" %}
-      <h2 class="section-title text-white mb-4">{{ t.studio.title }}</h2>
+      <a href="{{ '/en/eco-studio/' | relativeUrl }}" class="card-link-wrapper">
+        {% image "assets/img/fond-hero-studio.jpg", "Eco Studio La Sonnaz", "card-hero-image" %}
+        <h2 class="section-title text-white mb-4">{{ t.studio.title }}</h2>
+      </a>
       <p class="mb-4 text-white/90">{{ t.studio.subtitle }}</p>
       <p class="mb-2 text-white/80 text-sm">{{ t.studio.size }} • {{ t.studio.minStay }}</p>
       <p class="mb-6 text-white/90">{{ t.studio.description }}</p>
@@ -29,8 +31,10 @@ ogImage: assets/img/logo-cc.jpg
     </div>
 
     <div class="card parking-gradient text-white">
-      {% image "assets/img/fond-hero-parking.jpg", "Parking La Sonnaz", "card-hero-image" %}
-      <h2 class="section-title text-white mb-4">{{ t.parking.title }}</h2>
+      <a href="{{ '/en/parking/' | relativeUrl }}" class="card-link-wrapper">
+        {% image "assets/img/fond-hero-parking.jpg", "Parking La Sonnaz", "card-hero-image" %}
+        <h2 class="section-title text-white mb-4">{{ t.parking.title }}</h2>
+      </a>
       <p class="mb-4 text-white/90">{{ t.parking.subtitle }}</p>
       <p class="mb-6 text-white/90">{{ t.parking.description }}</p>
       <a href="{{ '/en/parking/' | relativeUrl }}" class="btn btn-white">
@@ -40,8 +44,6 @@ ogImage: assets/img/logo-cc.jpg
   </div>
 
   {% include "superhost.njk" %}
-
-{% include "superhost.njk" %}
 
   <div class="card mt-12">
     <h2 class="section-title mb-4">Why La Sonnaz?</h2>
