@@ -1,0 +1,404 @@
+---
+layout: base.njk
+title: Eco Studio - Affitto di appartamento arredato
+description: Monolocale arredato di 34 m² in campagna vicino a Friburgo. Soggiorno minimo 5 notti. Attrezzature moderne ed ecologiche.
+locale: it
+permalink: /it/eco-studio/
+ogImage: assets/img/logo-cc.jpg
+---
+
+{% set t = translations[locale] or translations['fr'] %}
+
+<section class="page-section">
+  {% image "assets/img/fond-hero-studio.jpg", "Eco Studio La Sonnaz", "page-hero-image", "eager" %}
+  <div class="section-header">
+    <h1 class="hero-title">{{ t.studio.title }}</h1>
+    <p class="text-xl text-muted">{{ t.studio.subtitle }}</p>
+    <p class="text-lg text-light">{{ t.studio.description }}</p>
+    <p class="text-base font-semibold text-primary">{{ t.studio.minStay }}</p>
+    <div class="gallery-grid mt-4" style="grid-template-columns: repeat(3, 1fr);">
+      <div class="gallery-item lightbox-trigger" data-image="/assets/img/gallery/studio/gallerie-studio-1.jpg" data-caption="Wifi ad alta velocità">
+        {% image "assets/img/gallery/studio/gallerie-studio-1.jpg", "Anteprima studio", "gallery-image", "eager" %}
+      </div>
+      <div class="gallery-item lightbox-trigger" data-image="/assets/img/gallery/studio/gallerie-studio-2.jpg" data-caption="Divano letto e letto matrimoniale">
+        {% image "assets/img/gallery/studio/gallerie-studio-2.jpg", "Anteprima studio", "gallery-image", "eager" %}
+      </div>
+      <div class="gallery-item lightbox-trigger" data-image="/assets/img/gallery/studio/gallerie-studio-3.jpg" data-caption="WC doccia e colonna lavatrice-asciugatrice">
+        {% image "assets/img/gallery/studio/gallerie-studio-3.jpg", "Anteprima studio", "gallery-image", "eager" %}
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 class="section-title mb-8">Attrezzature</h2>
+
+    <div class="space-y-xl">
+      <div class="equipment-section">
+        <h3 class="text-lg font-semibold text-primary mb-4">Camera</h3>
+        <ul class="space-y-sm">
+          <li class="flex items-start gap-sm">
+            <span>🛏️</span>
+            <span class="text-muted">{{ t.studio.bedroom }}</span>
+          </li>
+          <li class="flex items-start gap-sm">
+            <span>🛋️</span>
+            <span class="text-muted">{{ t.studio.sofaBed }}</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="equipment-section">
+        <h3 class="text-lg font-semibold text-primary mb-2">Cucina</h3>
+        <p class="text-muted">{{ t.studio.kitchen }}</p>
+      </div>
+
+      <div class="equipment-section">
+        <h3 class="text-lg font-semibold text-primary mb-2">Bagno</h3>
+        <p class="text-muted">{{ t.studio.bathroom }}</p>
+      </div>
+
+      <div class="equipment-section">
+        <h3 class="text-lg font-semibold text-primary mb-2">Lavanderia</h3>
+        <p class="text-muted">{{ t.studio.laundry }}</p>
+      </div>
+
+      <div class="equipment-section">
+        <h3 class="text-lg font-semibold text-primary mb-2">Intrattenimento</h3>
+        <p class="text-muted">{{ t.studio.entertainment }}</p>
+      </div>
+
+      <div class="equipment-section">
+        <h3 class="text-lg font-semibold text-primary mb-2">Internet</h3>
+        <p class="text-muted">{{ t.studio.internet }}</p>
+      </div>
+
+      <div class="equipment-section">
+        <h3 class="text-lg font-semibold text-primary mb-4">Esterno</h3>
+        <ul class="space-y-sm">
+          <li class="flex items-start gap-sm">
+            <span>🚗</span>
+            <span class="text-muted">{{ t.studio.parking }}</span>
+          </li>
+          <li class="flex items-start gap-sm">
+            <span>🌳</span>
+            <span class="text-muted">{{ t.studio.terrace }}</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="equipment-section">
+        <h3 class="text-lg font-semibold text-primary mb-2">Ecologia</h3>
+        <p class="text-muted">{{ t.studio.eco }}</p>
+      </div>
+
+      <div class="equipment-section">
+        <h3 class="text-lg font-semibold text-primary mb-2">Famiglia</h3>
+        <p class="text-muted">{{ t.studio.children }}</p>
+      </div>
+
+      <div class="equipment-section">
+        <h3 class="text-lg font-semibold text-primary mb-2">Localizzazione</h3>
+        <p class="text-muted">{{ t.studio.location }}</p>
+      </div>
+    </div>
+
+    <div class="section-header align-center mt-12" id="reservation">
+      <div class="flex flex-wrap justify-center gap-lg">
+        <a href="https://www.booking.com/hotel/ch/cedric-studio.fr.html" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
+          {{ t.bookOnBooking }}
+        </a>
+        <a href="https://fr.airbnb.ch/rooms/4116019" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
+          {{ t.bookOnAirbnb }}
+        </a>
+      </div>
+      <div class="mt-6">
+        <a href="{{ t.googleMapsStudioLink }}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
+          🗺️ {{ t.getDirections }}
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Business Section (visibile ottobre-febbraio) -->
+  {% set now = "now" | date("MM") | int %}
+  {% if now >= 10 or now <= 2 %}
+  <div class="card mt-12 border-primary">
+    <h2 class="section-title mb-4">{{ t.businessTitle }}</h2>
+    <p class="text-lg text-muted mb-8">{{ t.businessSubtitle }}</p>
+    <ul class="space-y-md">
+      <li class="flex items-start gap-sm">
+        <span class="text-primary font-bold">✓</span>
+        <span class="text-muted">{{ t.businessFeatures.wifi }}</span>
+      </li>
+      <li class="flex items-start gap-sm">
+        <span class="text-primary font-bold">✓</span>
+        <span class="text-muted">{{ t.businessFeatures.quiet }}</span>
+      </li>
+      <li class="flex items-start gap-sm">
+        <span class="text-primary font-bold">✓</span>
+        <span class="text-muted">{{ t.businessFeatures.office }}</span>
+      </li>
+      <li class="flex items-start gap-sm">
+        <span class="text-primary font-bold">✓</span>
+        <span class="text-muted">{{ t.businessFeatures.location }}</span>
+      </li>
+      <li class="flex items-start gap-sm">
+        <span class="text-primary font-bold">✓</span>
+        <span class="text-muted">{{ t.businessFeatures.monthly }}</span>
+      </li>
+    </ul>
+  </div>
+  {% endif %}
+
+  <!-- Galleria Fotografica -->
+  <section class="mt-2xl">
+    <div class="section-header">
+      <h2 class="section-title">{{ t.gallery.title }}</h2>
+      <p class="text-muted">{{ t.gallery.studioIntro }}</p>
+    </div>
+    <div class="gallery-grid">
+      {% set galleryImages = [
+        { src: 'assets/img/gallery/studio/gallerie-studio-bed.jpg', caption: t.gallery.doubleBed },
+        { src: 'assets/img/gallery/studio/gallerie-studio-living-room.jpg', caption: t.gallery.independentEntry },
+        { src: 'assets/img/gallery/studio/gallerie-studio-kitchen.jpg', caption: t.gallery.kitchen },
+        { src: 'assets/img/gallery/studio/gallerie-studio-outside-terrace.jpg', caption: t.gallery.outsideTerrace },
+        { src: 'assets/img/gallery/studio/gallerie-studio-outside-parking.jpg', caption: t.gallery.parkingSpace },
+        { src: 'assets/img/gallery/studio/gallerie-studio-1.jpg', caption: t.gallery.highSpeedWifi },
+        { src: 'assets/img/gallery/studio/gallerie-studio-2.jpg', caption: t.gallery.independentEntry },
+        { src: 'assets/img/gallery/studio/gallerie-studio-3.jpg', caption: t.gallery.clearView }
+      ] %}
+
+      {% for item in galleryImages %}
+      <div class="gallery-item lightbox-trigger" data-image="/{{ item.src }}" data-caption="{{ item.caption }}">
+        {% image item.src, item.caption, "gallery-image", "lazy" %}
+        <div class="gallery-caption-overlay">
+          <span>{{ item.caption }}</span>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- Testimonianze -->
+  <section class="mt-2xl">
+    <div class="section-header">
+      <h2 class="section-title">{{ t.testimonials.title }}</h2>
+      <p class="text-muted">{{ t.testimonials.intro }}</p>
+    </div>
+    <div class="gallery-grid" id="testimonials-grid">
+      {% set localTestimonials = testimonials.studio[locale] or testimonials.studio['fr'] %}
+      {% for testimonial in localTestimonials %}
+      <div class="gallery-item lightbox-trigger" data-image="/{{ testimonial.image }}" data-caption="{{ testimonial.author }}: {{ testimonial.alt }}">
+        <img src="/{{ testimonial.image }}" alt="{{ testimonial.alt }}" class="gallery-image" loading="lazy">
+        <div class="gallery-caption-overlay">
+          <span>{{ testimonial.author }}</span>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="testimonial-lightbox">
+    <button class="lightbox-close" id="lightbox-close" aria-label="Chiudi">×</button>
+    <button class="lightbox-prev" id="lightbox-prev" aria-label="Precedente">‹</button>
+    <button class="lightbox-next" id="lightbox-next" aria-label="Successivo">›</button>
+    <div class="lightbox-container">
+      <img id="lightbox-image" src="" alt="Testimonianza">
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      const lightbox = document.getElementById('testimonial-lightbox');
+      const lightboxImage = document.getElementById('lightbox-image');
+      let lightboxCaption = document.getElementById('lightbox-caption');
+      
+      if (!lightboxCaption) {
+        lightboxCaption = document.createElement('div');
+        lightboxCaption.id = 'lightbox-caption';
+        lightboxCaption.className = 'lightbox-caption';
+        document.querySelector('.lightbox-container').appendChild(lightboxCaption);
+      }
+
+      const closeBtn = document.getElementById('lightbox-close');
+      const prevBtn = document.getElementById('lightbox-prev');
+      const nextBtn = document.getElementById('lightbox-next');
+      const triggers = document.querySelectorAll('.lightbox-trigger');
+      
+      let currentIndex = 0;
+      let activeTriggers = [];
+      
+      let touchStartX = 0;
+      let touchEndX = 0;
+
+      function openLightbox(trigger) {
+        const container = trigger.closest('.gallery-grid, #testimonials-grid');
+        activeTriggers = Array.from(container.querySelectorAll('.lightbox-trigger'));
+        currentIndex = activeTriggers.indexOf(trigger);
+        
+        updateLightbox();
+        lightbox.classList.remove('hidden');
+        lightbox.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+      }
+      
+      function updateLightbox() {
+        const trigger = activeTriggers[currentIndex];
+        lightboxImage.src = trigger.dataset.image;
+        
+        const caption = trigger.dataset.caption;
+        if (caption) {
+          lightboxCaption.textContent = caption;
+          lightboxCaption.style.display = 'block';
+        } else {
+          lightboxCaption.style.display = 'none';
+        }
+      }
+      
+      function closeLightbox() {
+        lightbox.classList.add('hidden');
+        lightbox.classList.remove('flex');
+        document.body.style.overflow = '';
+      }
+      
+      function showNext() {
+        if (activeTriggers.length <= 1) return;
+        currentIndex = (currentIndex + 1) % activeTriggers.length;
+        updateLightbox();
+      }
+      
+      function showPrev() {
+        if (activeTriggers.length <= 1) return;
+        currentIndex = (currentIndex - 1 + activeTriggers.length) % activeTriggers.length;
+        updateLightbox();
+      }
+      
+      function handleGesture() {
+        if (touchEndX < touchStartX - 50) showNext();
+        if (touchEndX > touchStartX + 50) showPrev();
+      }
+
+      triggers.forEach((trigger) => {
+        trigger.addEventListener('click', (e) => {
+          e.preventDefault();
+          openLightbox(trigger);
+        });
+      });
+      
+      closeBtn.addEventListener('click', closeLightbox);
+      prevBtn.addEventListener('click', (e) => { e.stopPropagation(); showPrev(); });
+      nextBtn.addEventListener('click', (e) => { e.stopPropagation(); showNext(); });
+      
+      lightbox.addEventListener('click', (e) => {
+        if (e.target === lightbox || e.target.closest('.lightbox-container') === null) {
+          if (e.target !== prevBtn && e.target !== nextBtn) {
+            closeLightbox();
+          }
+        }
+      });
+
+      lightbox.addEventListener('touchstart', e => {
+        touchStartX = e.changedTouches[0].screenX;
+      }, {passive: true});
+
+      lightbox.addEventListener('touchend', e => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleGesture();
+      }, {passive: true});
+      
+      document.addEventListener('keydown', (e) => {
+        if (!lightbox.classList.contains('hidden')) {
+          if (e.key === 'Escape') closeLightbox();
+          if (e.key === 'ArrowLeft') showPrev();
+          if (e.key === 'ArrowRight') showNext();
+        }
+      });
+    })();
+  </script>
+  <div class="mt-12 text-center pb-12">
+    <h2 class="text-xl font-bold text-primary mb-6">{{ t.bookNow }}</h2>
+    <div class="flex justify-center">
+      <a href="#reservation" class="btn btn-primary">
+        {{ t.checkAvailability }}
+      </a>
+    </div>
+  </div>
+</section>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "LodgingBusiness",
+  "name": "C & C Eco Studio La Sonnaz",
+  "description": "Monolocale arredato di 34m² con vista sui campi, vicino a Friburgo",
+  "url": "https://candc.ch/it/eco-studio/",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Impasse de la Pommeraie 5",
+    "addressLocality": "Formangueires",
+    "postalCode": "1782",
+    "addressCountry": "CH"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": "46.695",
+    "longitude": "7.177"
+  },
+  "telephone": "+41-XX-XXX-XX-XX",
+  "priceRange": "€€",
+  "amenityFeature": [
+    {
+      "@type": "LocationFeatureSpecification",
+      "name": "WiFi",
+      "value": true
+    },
+    {
+      "@type": "LocationFeatureSpecification",
+      "name": "Parcheggio",
+      "value": true
+    },
+    {
+      "@type": "LocationFeatureSpecification",
+      "name": "Terrazza",
+      "value": true
+    },
+    {
+      "@type": "LocationFeatureSpecification",
+      "name": "Cucina",
+      "value": true
+    },
+    {
+      "@type": "LocationFeatureSpecification",
+      "name": "Lavanderia",
+      "value": true
+    }
+  ],
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.8",
+    "reviewCount": "25"
+  },
+  "sameAs": [
+    "https://www.booking.com/hotel/ch/cedric-studio.fr.html",
+    "https://fr.airbnb.ch/rooms/4116019"
+  ],
+  "review": [
+    {% for testimonial in testimonials.studio[locale] or testimonials.studio['fr'] %}
+    {
+      "@type": "Review",
+      "author": {
+        "@type": "Person",
+        "name": "{{ testimonial.author }}"
+      },
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": "{{ testimonial.rating }}",
+        "bestRating": "5"
+      },
+      "reviewBody": "{{ testimonial.alt }}"
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ]
+}
+</script>

@@ -121,7 +121,8 @@
     "superhost": {
       "text": "Nous sommes superhôtes sur Airbnb",
       "subtext": "C'est signe d'un accueil de qualité."
-    }
+    },
+    "changeLanguage": "Changer de langue"
   },
   "en": {
     "siteName": "C & C",
@@ -244,7 +245,8 @@
     "superhost": {
       "text": "We are Superhosts on Airbnb",
       "subtext": "It's a sign of a quality welcome."
-    }
+    },
+    "changeLanguage": "Change language"
   },
   "de": {
     "siteName": "C & C",
@@ -367,7 +369,8 @@
     "superhost": {
       "text": "Wir sind Superhosts auf Airbnb",
       "subtext": "Das ist ein Zeichen für einen qualitativ hochwertigen Empfang."
-    }
+    },
+    "changeLanguage": "Sprache ändern"
   },
   "es": {
     "siteName": "C & C",
@@ -490,7 +493,8 @@
     "superhost": {
       "text": "Somos Superhosts en Airbnb",
       "subtext": "Es señal de una bienvenida de calidad."
-    }
+    },
+    "changeLanguage": "Cambiar idioma"
   },
   "pt": {
     "siteName": "C & C",
@@ -613,6 +617,131 @@
     "superhost": {
       "text": "Somos Superhosts no Airbnb",
       "subtext": "É sinal de um acolhimento de qualidade."
-    }
+    },
+    "changeLanguage": "Alterar idioma"
+  },
+  "it": {
+    "siteName": "C & C",
+    "location": "Posizione",
+    "siteDescription": "Eco Studio e parcheggio per van / camper a La Sonnaz, Friburgo, Svizzera",
+    "businessName": "C & C",
+    "businessDescription": "Eco Studio e parcheggio per van / camper a La Sonnaz, Friburgo, Svizzera. Affitto di appartamento arredato e parcheggio sicuro.",
+    "streetAddress": "La Sonnaz",
+    "home": "Home",
+    "ecoStudio": "Eco Studio",
+    "homeEcoStudioBtn": "C&C Eco Studio",
+    "menuParking": "Parcheggio",
+    "homeParkingBtn": "C&C Parking Space",
+    "contact": "Contatto",
+    "menuAbout": "Chi siamo",
+    "menuTestimonials": "Testimonianze",
+    "booking": "Prenotazione",
+    "email": "E-mail",
+    "whatsapp": "WhatsApp",
+    "address": "Indirizzo",
+    "phone": "Telefono",
+    "bookNow": "Prenota ora",
+    "checkAvailability": "Verifica disponibilità e tariffe",
+    "requestReservation": "Richiedi una prenotazione",
+    "bookStudio": "Prenota lo studio arredato",
+    "bookParking": "Prenota il posto auto per camper / van",
+    "bookOnBooking": "Prenota su Booking.com",
+    "bookOnAirbnb": "Prenota su Airbnb",
+    "getDirections": "Ottieni indicazioni su Google Maps",
+    "googleMapsStudioLink": "https://maps.app.goo.gl/HAGiaSdfLJq73Pme6",
+    "googleMapsParkingLink": "https://maps.app.goo.gl/GQEArnNF6nscdBtz7",
+    "googleMapsFindUs": "🗺️ Su Google Maps, trovi facilmente cercandoci come \"C&C Eco Studio\" o \"C&C Parking Space\"",
+    "addressButton": "Clicca qui per l'indirizzo esatto e il link a Google Maps",
+    "contactUs": "Contattaci",
+    "sendMessage": "Invia messaggio",
+    "name": "Nome",
+    "message": "Messaggio",
+    "submit": "Invia",
+    "businessTitle": "Eco Studio Business / Corporate",
+    "businessSubtitle": "Affitto mensile per professionisti (da ottobre a febbraio)",
+    "businessFeatures": {
+      "wifi": "Wi-Fi ad alta velocità",
+      "quiet": "Calma e tranquillità",
+      "office": "Spazio ufficio",
+      "location": "Vicino ai poli economici (Friburgo, Berna, Bulle)",
+      "monthly": "Affitto mensile"
+    },
+    "seo": {
+      "baseCentral": "Base centrale ideale per visitare tutta la Svizzera",
+      "highway": "Vicino all'autostrada A12",
+      "publicTransport": "Trasporti pubblici nelle vicinanze"
+    },
+    "studio": {
+      "title": "Incantevole monolocale arredato in campagna",
+      "subtitle": "Alloggio arredato in campagna vicino a Friburgo (Svizzera)",
+      "description": "Monolocale di 34 m² con vista sui campi, bosco a 5 minuti a piedi",
+      "size": "34 metri quadrati",
+      "minStay": "Soggiorno minimo: 5 notti",
+      "bedroom": "Letto matrimoniale da 180 cm (2 persone) con testiere mobili",
+      "sofaBed": "Divano letto (1 adulto o 2 bambini)",
+      "kitchen": "Cucina moderna e completamente attrezzata (forno, microonde, frigorifero con congelatore, macchina da caffè, piano cottura in vetroceramica)",
+      "bathroom": "Bagno con WC, doccia moderna e asciugacapelli",
+      "laundry": "Lavatrice e asciugatrice moderne",
+      "entertainment": "TV con oltre 250 canali, Apple TV (Netflix, Disney+, YouTube), PlayStation 4, Chromecast",
+      "internet": "Accesso Internet wireless con connessione ad altissima velocità (10 Gbits simmetrici tramite fibra ottica)",
+      "parking": "Posto auto incluso con possibilità di ricarica auto elettrica",
+      "terrace": "Terrazza in erba dedicata",
+      "eco": "Elettricità fotovoltaica, acqua riscaldata da pannelli termici, riscaldamento tramite pompa di calore geotermica",
+      "children": "Culla e giocattoli disponibili su richiesta",
+      "location": "Piccolo villaggio tranquillo, a meno di 5 minuti da 2 accessi A12 (Friburgo-Nord e Friburgo-Sud), a 1 km dalla stazione di Belfaux-Village"
+    },
+    "parking": {
+      "title": "Area di parcheggio per van / caravan / camper",
+      "subtitle": "Posto auto individuale per van / caravan / camper vicino a Friburgo (Svizzera)",
+      "description": "Posto auto completamente attrezzato situato ai margini di un villaggio, con vista sui campi",
+      "equipment": "Posto auto, presa elettrica, gestione dei rifiuti, Wi-Fi veloce, rubinetto esterno con acqua potabile, terrazza con vista",
+      "note": "Il camper / van non viene fornito; devi portare il tuo",
+      "toilet": "Accesso a un bagno e una doccia disponibili su richiesta tra le 7:00 e le 21:00, quando siamo presenti. Servizio opzionale con un supplemento per la pulizia di 10 CHF per l'intero soggiorno. Si prega di verificare la disponibilità scrivendoci.",
+      "evCharging": "Ricarica auto elettrica: 15 CHF (10h) o 30 CHF (giorno o notte completa)",
+      "noChemicalToilet": "Non abbiamo l'infrastruttura per svuotare i bagni chimici dei camper",
+      "ratesTitle": "Tariffe",
+      "ratesMain": "20 CHF / notte + 3 CHF di tassa di soggiorno per adulto / notte (*)",
+      "ratesNote": "* : la tariffa può essere superiore in caso di alta domanda o eventi nelle vicinanze"
+    },
+    "about": {
+      "title": "Chi siamo",
+      "names": "Céline e Cédric",
+      "text1": "Una delle nostre passioni comuni è viaggiare.",
+      "text2": "Abbiamo creato questo monolocale per poter viaggiare anche restando a casa, grazie all'incontro con viaggiatori come voi!",
+      "text3": "Saremo lieti di conoscervi."
+    },
+    "testimonials": {
+      "title": "Testimonianze",
+      "intro": "Alcune testimonianze lasciate su Airbnb, Booking o Google Maps"
+    },
+    "gallery": {
+      "title": "Galleria Fotografica",
+      "studioIntro": "Scoprite il nostro Eco Studio in foto",
+      "parkingIntro": "L'area di parcheggio e i dintorni",
+      "doubleBed": "Comodo letto matrimoniale da 180 cm (2 pers.)",
+      "livingArea": "Soggiorno con TV (+ Chromecast & PS4) e divano letto",
+      "kitchen": "Cucina completamente attrezzata",
+      "bathroom": "WC doccia e colonna lavatrice-asciugatrice",
+      "outsideTerrace": "Terrazza in erba",
+      "parkingSpace": "Posto auto senza supplemento",
+      "highSpeedWifi": "Wifi ad alta velocità (fibra simmetrica da 10 GB)",
+      "independentEntry": "Entrata indipendente",
+      "clearView": "Vista libera",
+      "parkingFrontView": "Vista generale del posto",
+      "parkingSpot": "Posto per parcheggiare",
+      "terraceFieldView": "Terrazza con vista sui campi",
+      "terraceParkView": "Terrazza con vista sulla piazza",
+      "toilet": "Bagno e doccia"
+    },
+    "payment": {
+      "title": "Metodi di pagamento",
+      "methods": "Accettiamo carte di credito e contanti (CHF o EUR).",
+      "alt": "Metodi di pagamento accettati"
+    },
+    "superhost": {
+      "text": "Siamo Superhost su Airbnb",
+      "subtext": "È segno di un'accoglienza di qualità."
+    },
+    "changeLanguage": "Cambia lingua"
   }
 }

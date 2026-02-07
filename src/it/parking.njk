@@ -1,0 +1,309 @@
+---
+layout: base.njk
+title: Parcheggio - Area di sosta individuale per van/camper
+description: Posto auto completamente attrezzato per van/camper/motorhome a La Sonnaz, Friburgo. Presa elettrica, Wi-Fi, acqua potabile.
+locale: it
+permalink: /it/parking/
+ogImage: assets/img/logo-cc.jpg
+---
+
+{% set t = translations[locale] or translations['fr'] %}
+
+<section class="page-section">
+  {% image "assets/img/fond-hero-parking.jpg", "Parcheggio La Sonnaz", "page-hero-image", "eager" %}
+  <div class="section-header">
+    <h1 class="hero-title">{{ t.parking.title }}</h1>
+    <p class="text-xl text-muted">{{ t.parking.subtitle }}</p>
+    <p class="text-lg text-light">{{ t.parking.description }}</p>
+    <div class="gallery-grid mt-4" style="grid-template-columns: repeat(4, 1fr);">
+      <div class="gallery-item lightbox-trigger" data-image="/assets/img/gallery/parking/cc-parking-space-front-view.jpg" data-caption="{{ t.gallery.parkingFrontView }}">
+        {% image "assets/img/gallery/parking/cc-parking-space-front-view.jpg", "Anteprima parcheggio", "gallery-image", "eager" %}
+      </div>
+      <div class="gallery-item lightbox-trigger" data-image="/assets/img/gallery/parking/cc-parking-space-park-here.jpg" data-caption="{{ t.gallery.parkingSpot }}">
+        {% image "assets/img/gallery/parking/cc-parking-space-park-here.jpg", "Anteprima parcheggio", "gallery-image", "eager" %}
+      </div>
+      <div class="gallery-item lightbox-trigger" data-image="/assets/img/gallery/parking/cc-parking-space-terrace-with-field-view.jpg" data-caption="{{ t.gallery.terraceFieldView }}">
+        {% image "assets/img/gallery/parking/cc-parking-space-terrace-with-field-view.jpg", "Anteprima parcheggio", "gallery-image", "eager" %}
+      </div>
+      <div class="gallery-item lightbox-trigger" data-image="/assets/img/gallery/parking/cc-parking-space-terrace-with-park-view.jpg" data-caption="{{ t.gallery.terraceParkView }}">
+        {% image "assets/img/gallery/parking/cc-parking-space-terrace-with-park-view.jpg", "Anteprima parcheggio", "gallery-image", "eager" %}
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 class="section-title mb-8">Cosa forniamo</h2>
+    <ul class="features-list">
+      <li>
+        <span class="text-xl">🅿️</span>
+        <span class="text-muted">Posto auto</span>
+      </li>
+      <li>
+        <span class="text-xl">⚡</span>
+        <span class="text-muted">Presa elettrica</span>
+      </li>
+      <li>
+        <span class="text-xl">🗑️</span>
+        <span class="text-muted">Gestione dei rifiuti</span>
+      </li>
+      <li>
+        <span class="text-xl">📶</span>
+        <span class="text-muted">Wi-Fi veloce</span>
+      </li>
+      <li>
+        <span class="text-xl">💧</span>
+        <span class="text-muted">Rubinetto esterno con acqua potabile</span>
+      </li>
+      <li>
+        <span class="text-xl">🌄</span>
+        <span class="text-muted">Terrazza con vista</span>
+      </li>
+    </ul>
+
+    <div class="note-box mt-12">
+      <p><strong class="text-primary">Nota importante:</strong> {{ t.parking.note }}</p>
+    </div>
+
+    <div class="warning-box mt-12 mb-12">
+      <p><strong class="text-xl">⚠️</strong> {{ t.parking.noChemicalToilet }}</p>
+    </div>
+
+    <div class="space-y-lg mb-12">
+      <div class="service-box toilet">
+        <h3 class="text-lg font-semibold text-primary mb-2">🚿 Accesso bagno e doccia</h3>
+        <p class="text-muted">{{ t.parking.toilet }}</p>
+      </div>
+
+      <div class="service-box charging mt-8">
+        <h3 class="text-lg font-semibold text-primary mb-2">🔌 Ricarica auto elettrica</h3>
+        <p class="text-muted">{{ t.parking.evCharging }}</p>
+        <p class="text-sm text-light mt-2">Cavo compatibile Tipo 13 (220V, 10A) con connettore Tipo 2</p>
+      </div>
+    </div>
+
+    <div class="mt-12 flex flex-wrap justify-center gap-md" id="reservation">
+      <a href="/{{ locale }}/contact/" class="btn btn-primary">
+        {{ t.requestReservation }}
+      </a>
+      <a href="{{ t.googleMapsParkingLink }}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
+        🗺️ {{ t.getDirections }}
+      </a>
+    </div>
+
+  </div>
+
+  <!-- Galleria Fotografica -->
+  <section class="mt-2xl">
+    <div class="section-header">
+      <h2 class="section-title">{{ t.gallery.title }}</h2>
+      <p class="text-muted">{{ t.gallery.parkingIntro }}</p>
+    </div>
+    <div class="gallery-grid">
+      {% set galleryImages = [
+        { src: 'assets/img/gallery/parking/parking-01.jpg', caption: t.gallery.parkingFrontView },
+        { src: 'assets/img/gallery/parking/parking-02.jpg', caption: t.gallery.terraceFieldView },
+        { src: 'assets/img/gallery/parking/parking-03.jpg', caption: t.gallery.parkingSpace },
+        { src: 'assets/img/gallery/parking/parking-04.jpg', caption: t.gallery.parkingSpot },
+        { src: 'assets/img/gallery/parking/parking-05.jpg', caption: t.gallery.toilet }
+      ] %}
+
+      {% for item in galleryImages %}
+      <div class="gallery-item lightbox-trigger" data-image="/{{ item.src }}" data-caption="{{ item.caption }}">
+        {% image item.src, item.caption, "gallery-image", "lazy" %}
+        <div class="gallery-caption-overlay">
+          <span>{{ item.caption }}</span>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+
+  <!-- Testimonianze (immagini) -->
+  <section class="mt-3xl">
+    <div class="section-header">
+      <h2 class="section-title">{{ t.testimonials.title }}</h2>
+      <p class="text-muted">{{ t.testimonials.intro }}</p>
+    </div>
+    <div class="gallery-grid" id="testimonials-grid">
+      {% set pageTestimonials = testimonials.parking[locale] or testimonials.parking['fr'] %}
+      {% for testimonial in pageTestimonials %}
+      <div class="gallery-item lightbox-trigger" data-image="/{{ testimonial.image }}" data-caption="{{ testimonial.author }}: {{ testimonial.alt }}">
+        <img src="/{{ testimonial.image }}" alt="{{ testimonial.alt }}" class="gallery-image" loading="lazy">
+        <div class="gallery-caption-overlay">
+          <span>{{ testimonial.author }}</span>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- Tariffe -->
+  <section class="mt-3xl text-center">
+    <h2 class="section-title mb-4">{{ t.parking.ratesTitle }}</h2>
+    <div class="card max-w-2xl mx-auto">
+      <p class="text-xl font-bold text-primary mb-2">
+        {{ t.parking.ratesMain }}
+      </p>
+      <p class="text-sm text-muted italic">
+        {{ t.parking.ratesNote }}
+      </p>
+    </div>
+  </section>
+
+  <!-- Metodi di pagamento -->
+  <section class="mt-3xl text-center">
+    <h2 class="section-title mb-4">{{ t.payment.title }}</h2>
+    <p class="text-muted mb-8">
+      {{ t.payment.methods }}
+    </p>
+    <div class="flex justify-center">
+      <img src="/assets/img/payment-methods.jpg" alt="{{ t.payment.alt }}" class="rounded-lg shadow w-full max-w-2xl">
+    </div>
+  </section>
+
+  <div class="mt-12 text-center pb-12">
+    <h2 class="text-xl font-bold text-primary mb-6">{{ t.bookParking }}</h2>
+    <div class="flex justify-center">
+      <a href="/{{ locale }}/contact/" class="btn btn-primary">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+          <polyline points="22,6 12,13 2,6"></polyline>
+        </svg>
+        <span class="ml-2">{{ t.requestReservation }}</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Lightbox -->
+<div class="lightbox" id="gallery-lightbox">
+  <button class="lightbox-close" id="lightbox-close" aria-label="Chiudi">×</button>
+  <button class="lightbox-prev" id="lightbox-prev" aria-label="Precedente">‹</button>
+  <button class="lightbox-next" id="lightbox-next" aria-label="Successivo">›</button>
+  <div class="lightbox-container">
+    <img id="lightbox-image" src="" alt="Foto">
+  </div>
+</div>
+
+<script>
+  (function() {
+    const lightbox = document.getElementById('gallery-lightbox');
+    const lightboxImage = document.getElementById('lightbox-image');
+    let lightboxCaption = document.getElementById('lightbox-caption');
+    
+    if (!lightboxCaption) {
+      lightboxCaption = document.createElement('div');
+      lightboxCaption.id = 'lightbox-caption';
+      lightboxCaption.className = 'lightbox-caption';
+      document.querySelector('.lightbox-container').appendChild(lightboxCaption);
+    }
+
+    const closeBtn = document.getElementById('lightbox-close');
+    const prevBtn = document.getElementById('lightbox-prev');
+    const nextBtn = document.getElementById('lightbox-next');
+    const triggers = document.querySelectorAll('.lightbox-trigger');
+    
+    let currentIndex = 0;
+    let activeTriggers = [];
+    
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    function openLightbox(trigger) {
+      const container = trigger.closest('.gallery-grid, #testimonials-grid');
+      activeTriggers = Array.from(container.querySelectorAll('.lightbox-trigger'));
+      currentIndex = activeTriggers.indexOf(trigger);
+      
+      updateLightbox();
+      lightbox.classList.remove('hidden');
+      lightbox.classList.add('flex');
+      document.body.style.overflow = 'hidden';
+    }
+    
+    function updateLightbox() {
+      const trigger = activeTriggers[currentIndex];
+      lightboxImage.src = trigger.dataset.image;
+      
+      const caption = trigger.dataset.caption;
+      if (caption) {
+        lightboxCaption.textContent = caption;
+        lightboxCaption.style.display = 'block';
+      } else {
+        lightboxCaption.style.display = 'none';
+      }
+    }
+    
+    function closeLightbox() {
+      lightbox.classList.add('hidden');
+      lightbox.classList.remove('flex');
+      document.body.style.overflow = '';
+    }
+    
+    function showNext() {
+      if (activeTriggers.length <= 1) return;
+      currentIndex = (currentIndex + 1) % activeTriggers.length;
+      updateLightbox();
+    }
+    
+    function showPrev() {
+      if (activeTriggers.length <= 1) return;
+      currentIndex = (currentIndex - 1 + activeTriggers.length) % activeTriggers.length;
+      updateLightbox();
+    }
+    
+    function handleGesture() {
+      if (touchEndX < touchStartX - 50) showNext();
+      if (touchEndX > touchStartX + 50) showPrev();
+    }
+
+    triggers.forEach((trigger) => {
+      trigger.addEventListener('click', (e) => {
+        e.preventDefault();
+        openLightbox(trigger);
+      });
+    });
+    
+    closeBtn.addEventListener('click', closeLightbox);
+    prevBtn.addEventListener('click', (e) => { e.stopPropagation(); showPrev(); });
+    nextBtn.addEventListener('click', (e) => { e.stopPropagation(); showNext(); });
+    
+    lightbox.addEventListener('click', (e) => {
+      if (e.target === lightbox || e.target.closest('.lightbox-container') === null) {
+        if (e.target !== prevBtn && e.target !== nextBtn) {
+          closeLightbox();
+        }
+      }
+    });
+
+    lightbox.addEventListener('touchstart', e => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, {passive: true});
+
+    lightbox.addEventListener('touchend', e => {
+      touchEndX = e.changedTouches[0].screenX;
+      handleGesture();
+    }, {passive: true});
+    
+    document.addEventListener('keydown', (e) => {
+      if (!lightbox.classList.contains('hidden')) {
+        if (e.key === 'Escape') closeLightbox();
+        if (e.key === 'ArrowLeft') showPrev();
+        if (e.key === 'ArrowRight') showNext();
+      }
+    });
+
+    const user = 'bonjour';
+    const domain = 'candc';
+    const tld = 'ch';
+    const email = user + '@' + domain + '.' + tld;
+    
+    document.querySelectorAll('.email-obfuscated').forEach(el => {
+      el.href = 'mailto:' + email;
+      const label = el.querySelector('.email-label');
+      if (!label) {
+        el.textContent = email;
+      }
+    });
+  })();
+</script>

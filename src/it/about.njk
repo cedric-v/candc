@@ -1,0 +1,174 @@
+---
+layout: base.njk
+title: Chi siamo
+description: Scoprite chi siamo e la nostra passione per i viaggi che ci ha spinto a creare questo studio.
+locale: it
+permalink: /it/about/
+ogImage: assets/img/logo-cc.jpg
+---
+
+{% set t = translations[locale] or translations['fr'] %}
+
+<!-- Hero Section with Background Image -->
+<div class="hero-section">
+  <div class="hero-background" style="background-image: url('{{ '/assets/img/about-background.jpg' | relativeUrl }}');"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <h1>{{ t.about.title }}</h1>
+    <p>{{ t.about.names }}</p>
+  </div>
+</div>
+
+<!-- Content Section -->
+<section class="content-section">
+  <div class="prose">
+    <p>{{ t.about.text1 }}</p>
+    <p>{{ t.about.text2 }}</p>
+    <p>{{ t.about.text3 }}</p>
+  </div>
+  
+  {% include "superhost.njk" %}
+
+  <div class="mt-12 flex flex-wrap justify-center gap-md">
+    <a href="{{ '/it/eco-studio/#reservation' | relativeUrl }}" class="btn btn-primary">
+      Prenota lo studio arredato
+    </a>
+    <a href="{{ '/it/parking/#reservation' | relativeUrl }}" class="btn btn-primary">
+      Prenota il posto auto per camper / van
+    </a>
+  </div>
+</section>
+
+<!-- Schema.org per la page about -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "AboutPage",
+  "name": "Chi siamo",
+  "description": "Scoprite chi siamo e la nostra passione per i viaggi che ci ha spinto a creare questo studio.",
+  "url": "https://candc.ch/it/about/",
+  "mainEntity": {
+    "@type": "Organization",
+    "name": "C&C Eco Studio",
+    "description": "Una delle nostre passioni comuni è viaggiare. Abbiamo creato questo monolocale per poter viaggiare anche restando a casa, grazie all'incontro con viaggiatori come voi!",
+    "foundingDate": "2024",
+    "founders": [
+      {
+        "@type": "Person",
+        "name": "Céline",
+        "jobTitle": "Co-fondatrice"
+      },
+      {
+        "@type": "Person",
+        "name": "Cédric",
+        "jobTitle": "Co-fondatore"
+      }
+    ],
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Impasse de la Pommeraie 5",
+      "addressLocality": "Formangueires",
+      "postalCode": "1782",
+      "addressCountry": "CH"
+    },
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": "+41763456789",
+      "email": "cedricjourney@gmail.com",
+      "contactType": "Customer Service"
+    },
+    "url": "https://candc.ch",
+    "logo": "https://candc.ch/assets/img/logo-cc.jpg"
+  }
+}
+</script>
+
+<style>
+  .hero-section {
+    position: relative;
+    width: 100%;
+    height: 60vh;
+    min-height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: -7rem;
+  }
+
+  .hero-background {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(45, 80, 22, 0.4);
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    color: var(--white);
+    padding-left: var(--spacing-xl);
+    padding-right: var(--spacing-xl);
+    max-width: 56rem;
+    margin: 0 auto;
+  }
+
+  .hero-content h1 {
+    font-size: 2.25rem;
+    font-weight: 700;
+    margin-bottom: var(--spacing-lg);
+    color: var(--white);
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  }
+
+  .hero-content p {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--white);
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  .content-section {
+    max-width: 56rem;
+    margin: 0 auto;
+    padding: var(--spacing-3xl) var(--spacing-xl);
+    gap: var(--spacing-xl);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .prose {
+    font-size: 1.125rem;
+    line-height: 1.75;
+    color: var(--text-muted);
+    max-width: none;
+    gap: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .prose p {
+    margin-bottom: var(--spacing-lg);
+  }
+
+  @container (min-width: 768px) {
+    .hero-content h1 {
+      font-size: 3.75rem;
+    }
+
+    .hero-content p {
+      font-size: 1.875rem;
+    }
+
+    .content-section {
+      padding: var(--spacing-3xl) var(--spacing-3xl);
+    }
+  }
+</style>

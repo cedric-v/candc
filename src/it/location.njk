@@ -1,0 +1,350 @@
+---
+layout: base.njk
+title: Posizione - Dove trovarci
+description: Scoprite la posizione ideale di C&C Eco Studio vicino a Friburgo, Svizzera. Facile accesso in treno, auto e trasporti pubblici.
+locale: it
+permalink: /it/location/
+ogImage: assets/img/logo-cc.jpg
+---
+
+{% set t = translations[locale] or translations['fr'] %}
+
+<style>
+  .location-container {
+    max-width: 56rem;
+    margin: 0 auto;
+    padding: var(--spacing-3xl) var(--spacing-xl);
+    gap: var(--spacing-2xl);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .location-hero {
+    text-align: center;
+    gap: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .location-hero h1 {
+    font-size: clamp(2.25rem, 5vw, 3rem);
+    font-weight: 700;
+    color: var(--primary-color);
+  }
+
+  .location-hero p {
+    font-size: 1.125rem;
+    color: var(--text-muted);
+  }
+
+  .location-card {
+    border-radius: var(--border-radius-xl);
+    border: 1px solid rgba(45, 80, 22, 0.15);
+    background: var(--white);
+    box-shadow: var(--shadow);
+    padding: var(--spacing-2xl);
+    gap: var(--spacing-xl);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .location-card h2 {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .address-card {
+    background: rgba(107, 142, 35, 0.1);
+    border: 2px solid var(--secondary-color);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-xl);
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+  }
+
+  .address-card h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-md);
+  }
+
+  .address-card p {
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: var(--text-color);
+    margin: var(--spacing-xs) 0;
+  }
+
+  .maps-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    background: var(--secondary-color);
+    color: var(--white);
+    padding: var(--spacing-md) var(--spacing-xl);
+    border-radius: var(--border-radius-full);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all var(--transition-fast);
+    margin-top: var(--spacing-lg);
+  }
+
+  .maps-link:hover {
+    background: color-mix(in srgb, var(--secondary-color), black 10%);
+    transform: translateY(-2px);
+  }
+
+  .location-content {
+    gap: var(--spacing-xl);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .location-section h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .location-section p {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--text-muted);
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .travel-times {
+    background: rgba(156, 175, 136, 0.1);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-xl);
+    margin-bottom: var(--spacing-xl);
+  }
+
+  .travel-times h4 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-md);
+  }
+
+  .travel-times ul {
+    gap: var(--spacing-sm);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .travel-times li {
+    font-size: 1rem;
+    color: var(--text-color);
+    padding: var(--spacing-xs) 0;
+  }
+
+  .attractions-grid {
+    gap: var(--spacing-lg);
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .attraction-card {
+    background: rgba(201, 125, 96, 0.1);
+    border: 1px solid rgba(201, 125, 96, 0.2);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-lg);
+  }
+
+  .attraction-card h4 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--terracotta-color);
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .attraction-card ul {
+    gap: var(--spacing-xs);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .attraction-card li {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+  }
+
+  @container (min-width: 768px) {
+    .location-container {
+      padding: var(--spacing-3xl) var(--spacing-3xl);
+    }
+
+    .attractions-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>
+
+<section class="location-container">
+  <div class="location-hero">
+    <h1>Dove si trova?</h1>
+    <p>Scoprite la posizione ideale di C&C Eco Studio e C&C Parking vicino a Friburgo</p>
+  </div>
+
+  <div class="location-card">
+    <div class="address-card">
+      <h3>C&C Eco Studio e C&C Parking si trovano al seguente indirizzo:</h3>
+      <p><strong>Impasse de la Pommeraie 5</strong></p>
+      <p><strong>1782 Formangueires</strong></p>
+      <p><strong>Svizzera</strong></p>
+
+      <a href="{{ t.googleMapsStudioLink }}" target="_blank" rel="noopener noreferrer" class="maps-link">
+        {{ t.googleMapsFindUs }}
+      </a>
+    </div>
+
+    <div class="location-content">
+      <div class="location-section">
+        <h3>La nostra posizione</h3>
+        <p>Siamo situati in un piccolo paradiso di pace a meno di 5 minuti da 2 accessi all'autostrada A12 (Friburgo-Nord e Friburgo-Sud) e a solo 1 chilometro da una stazione ferroviaria ben servita (Belfaux-Village, a pochi minuti dalla stazione di Friburgo) che permette di raggiungere le principali città svizzere (Ginevra, Zurigo, Basilea) in meno di 1h30.</p>
+
+        <p>Lo studio e lo spazio di parcheggio si trovano in un villaggio ben posizionato vicino alla città di Friburgo. <br><br><strong>A 1 km (10-15 minuti a piedi, 5 minuti in bicicletta) dalla stazione Belfaux-Village e a 1,5 km dalla stazione Belfaux-SBB, servite (tra le 2 stazioni) ogni 15 minuti circa con treni per Friburgo.</strong><br><br>Questo permette di raggiungere il centro di Friburgo (4 minuti di viaggio) che è poi ben collegato con le altre grandi città svizzere (Berna è a 20 minuti, Ginevra a 1h30m, Zurigo a 1h30m, Basilea a 1h30m).</p>
+
+        <p>Se avete o noleggiate un'auto, l'appartamento è a meno di 5 minuti da 2 ingressi autostradali ("Friburgo-Nord" e "Friburgo-Sud").</p>
+      </div>
+
+      <div class="travel-times">
+        <h4>Le grandi mete turistiche svizzere sono accessibili rapidamente grazie a una posizione ben centrata:</h4>
+        <ul>
+          <li><strong>Berna:</strong> 25 minuti</li>
+          <li><strong>Lucerna:</strong> 1h</li>
+          <li><strong>Zurigo:</strong> 1h30</li>
+          <li><strong>Ginevra:</strong> 1h30</li>
+          <li><strong>Basilea:</strong> 1h30</li>
+        </ul>
+      </div>
+
+      <div class="location-section">
+        <h3>Avete inoltre facile accesso a:</h3>
+      </div>
+
+      <div class="attractions-grid">
+        <div class="attraction-card">
+          <h4>Città e cultura</h4>
+          <ul>
+            <li><strong>La città di Friburgo e la sua famosa città bassa/vecchia:</strong> 5-10 minuti</li>
+            <li><strong>Forum Fribourg (padiglione fieristico e altri eventi) e BCF Arena (sala concerti e pista di ghiaccio):</strong> 5 minuti</li>
+          </ul>
+        </div>
+
+        <div class="attraction-card">
+          <h4>Natura e trekking</h4>
+          <ul>
+            <li><strong>La Valle del Gottéron:</strong> una passeggiata di mezza giornata con partenza da Friburgo</li>
+          </ul>
+        </div>
+
+        <div class="attraction-card">
+          <h4>Gastronomia</h4>
+          <ul>
+            <li><strong>Decine di ristoranti nelle vicinanze:</strong> 4 a Belfaux (meno di un km) e decine nella città di Friburgo a meno di 10 minuti con i trasporti pubblici o in auto</li>
+            <li><strong>La fabbrica di cioccolato Maison Cailler a Broc:</strong> 32 minuti</li>
+          </ul>
+        </div>
+
+        <div class="attraction-card">
+          <h4>Castelli e patrimonio</h4>
+          <ul>
+            <li><strong>Il castello di Gruyères:</strong> 34 minuti</li>
+          </ul>
+        </div>
+
+        <div class="attraction-card">
+          <h4>Sport invernali</h4>
+          <ul>
+            <li><strong>Lo Schwarzsee (Lac Noir):</strong> 30 minuti</li>
+            <li><strong>Charmey:</strong> 35 minuti</li>
+            <li><strong>Moléson:</strong> 40 minuti</li>
+            <li><strong>Les Paccots:</strong> 40 minuti</li>
+          </ul>
+        </div>
+
+        <div class="attraction-card">
+          <h4>Bagni termali</h4>
+          <ul>
+            <li><strong>I bagni di Charmey:</strong> 35 minuti</li>
+            <li><strong>Yverdon-les-Bains:</strong> 35 minuti</li>
+            <li><strong>Lavey-les-Bains:</strong> 45 minuti</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-12 flex flex-wrap justify-center gap-md">
+      <a href="{{ '/it/eco-studio/#reservation' | relativeUrl }}" class="btn btn-primary">
+        Prenota lo studio arredato
+      </a>
+      <a href="{{ '/it/parking/#reservation' | relativeUrl }}" class="btn btn-primary">
+        Prenota il posto auto per camper / van
+      </a>
+    </div>
+  </div>
+
+  <!-- Schema.org per la page location -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TouristDestination",
+    "name": "La Sonnaz - Regione di Friburgo",
+    "description": "Scoprite la posizione ideale del C&C Eco Studio vicino a Friburgo, Svizzera. Facile accesso in treno, auto e trasporti pubblici verso le principali attrazioni turistiche.",
+    "url": "https://candc.ch/it/location/",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "La Sonnaz",
+      "addressRegion": "Friburgo",
+      "addressCountry": "CH"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": "46.6931",
+      "longitude": "7.1694"
+    },
+    "touristType": "Natura, Cultura, Gastronomia",
+    "includesAttraction": [
+      {
+        "@type": "TouristAttraction",
+        "name": "Città di Friburgo",
+        "description": "Città storica con la sua città vecchia dichiarata patrimonio dell'umanità dall'UNESCO"
+      },
+      {
+        "@type": "TouristAttraction",
+        "name": "Valle del Gottéron",
+        "description": "Bella escursione di mezza giornata con partenza da Friburgo"
+      },
+      {
+        "@type": "TouristAttraction",
+        "name": "Castello di Gruyères",
+        "description": "Castello medievale famoso in tutto il mondo"
+      },
+      {
+        "@type": "TouristAttraction",
+        "name": "Schwarzsee (Lac Noir)",
+        "description": "Stazione sciistica ed escursioni in montagna"
+      }
+    ],
+    "provider": {
+      "@type": "Organization",
+      "name": "C&C Eco Studio",
+      "url": "https://candc.ch",
+      "logo": "https://candc.ch/assets/img/logo-cc.jpg",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Impasse de la Pommeraie 5",
+        "addressLocality": "Formangueires",
+        "postalCode": "1782",
+        "addressCountry": "CH"
+      }
+    }
+  }
+  </script>
+</section>

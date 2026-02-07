@@ -47,6 +47,8 @@
       {%- set ogLocale = 'de_DE' -%}
     {%- elif locale == 'es' -%}
       {%- set ogLocale = 'es_ES' -%}
+    {%- elif locale == 'it' -%}
+      {%- set ogLocale = 'it_IT' -%}
     {%- else -%}
       {%- set ogLocale = 'pt_PT' -%}
     {%- endif -%}
@@ -60,18 +62,20 @@
     <meta name="twitter:description" content="{{ pageDescription }}">
     <meta name="twitter:image" content="{{ ogImageUrl }}">
     
-    {# Générer les balises hreflang pour les 5 langues #}
-    {% set languages = ['fr', 'en', 'de', 'es', 'pt'] %}
+    {# Générer les balises hreflang pour les 6 langues #}
+    {% set languages = ['fr', 'en', 'de', 'es', 'pt', 'it'] %}
     {% for lang in languages %}
       {% if lang == 'fr' %}
-        {% set langUrl = canonicalUrl | replace('/en/', '/') | replace('/de/', '/') | replace('/es/', '/') | replace('/pt/', '/') %}
+        {% set langUrl = canonicalUrl | replace('/en/', '/') | replace('/de/', '/') | replace('/es/', '/') | replace('/pt/', '/') | replace('/it/', '/') %}
         {% if langUrl == '' %}{% set langUrl = '/' %}{% endif %}
       {% else %}
         {% set langPrefix = '/' + lang + '/' %}
         {% if canonicalUrl == '/' %}
           {% set langUrl = langPrefix %}
+        {% elif locale == lang %}
+          {% set langUrl = canonicalUrl %}
         {% else %}
-          {% set langUrl = canonicalUrl | replace('/fr/', langPrefix) | replace('/en/', langPrefix) | replace('/de/', langPrefix) | replace('/es/', langPrefix) | replace('/pt/', langPrefix) %}
+          {% set langUrl = canonicalUrl | replace('/fr/', langPrefix) | replace('/en/', langPrefix) | replace('/de/', langPrefix) | replace('/es/', langPrefix) | replace('/pt/', langPrefix) | replace('/it/', langPrefix) %}
           {% if langUrl == canonicalUrl %}
             {% set langUrl = '/' + lang + canonicalUrl %}
           {% endif %}

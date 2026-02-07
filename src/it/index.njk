@@ -1,0 +1,121 @@
+---
+layout: base.njk
+title: Eco Studio e parcheggio per van/camper a La Sonnaz, Friburgo, Svizzera
+description: Eco Studio e parcheggio per van/camper a La Sonnaz, Friburgo, Svizzera. Base centrale ideale per visitare tutta la Svizzera.
+locale: it
+permalink: /it/
+ogImage: assets/img/logo-cc.jpg
+---
+
+{% set t = translations[locale] or translations['fr'] %}
+
+<section class="page-section">
+  <div class="section-header">
+    <h1 class="hero-title">{{ t.siteName }}</h1>
+    <p class="text-xl text-muted">{{ t.siteDescription }}</p>
+  </div>
+
+  <div class="main-grid">
+    <!-- Eco Studio Card -->
+    <div class="card studio-gradient text-white">
+      <a href="{{ '/it/eco-studio/' | relativeUrl }}" class="card-link-wrapper">
+        {% image "assets/img/fond-hero-studio.jpg", "Eco Studio La Sonnaz", "card-hero-image" %}
+        <h2 class="section-title text-white mb-4">{{ t.studio.title }}</h2>
+      </a>
+      <p class="mb-4 text-white/90">{{ t.studio.subtitle }}</p>
+      <p class="mb-2 text-white/80 text-sm">{{ t.studio.size }} • {{ t.studio.minStay }}</p>
+      <p class="mb-6 text-white/90">{{ t.studio.description }}</p>
+      <a href="{{ '/it/eco-studio/' | relativeUrl }}" class="btn btn-white">
+        {{ t.homeEcoStudioBtn }}
+      </a>
+    </div>
+
+    <!-- Parking Card -->
+    <div class="card parking-gradient text-white">
+      <a href="{{ '/it/parking/' | relativeUrl }}" class="card-link-wrapper">
+        {% image "assets/img/fond-hero-parking.jpg", "Parking La Sonnaz", "card-hero-image" %}
+        <h2 class="section-title text-white mb-4">{{ t.parking.title }}</h2>
+      </a>
+      <p class="mb-4 text-white/90">{{ t.parking.subtitle }}</p>
+      <p class="mb-6 text-white/90">{{ t.parking.description }}</p>
+      <a href="{{ '/it/parking/' | relativeUrl }}" class="btn btn-white">
+        {{ t.homeParkingBtn }}
+      </a>
+    </div>
+  </div>
+
+  {% include "superhost.njk" %}
+
+  <!-- SEO Section -->
+  <div class="card mt-12">
+    <h2 class="section-title mb-6">Perché La Sonnaz?</h2>
+    <ul class="space-y-md">
+      <li>
+        <span>📍</span>
+        <span>{{ t.seo.baseCentral }}</span>
+      </li>
+      <li>
+        <span>🛣️</span>
+        <span>{{ t.seo.highway }}</span>
+      </li>
+      <li>
+        <span>🚌</span>
+        <span>{{ t.seo.publicTransport }}</span>
+      </li>
+      <li>
+        <span>🏟️</span>
+        <span>{{ t.seo.forum }}</span>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "C & C Eco Studio",
+  "description": "Eco Studio e parcheggio per van/camper a La Sonnaz, Friburgo, Svizzera",
+  "url": "https://candc.ch/it/",
+  "logo": "https://candc.ch/assets/img/logo-cc.jpg",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Impasse de la Pommeraie 5",
+    "addressLocality": "Formangueires",
+    "postalCode": "1782",
+    "addressCountry": "CH"
+  },
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "+41-XX-XXX-XX-XX",
+    "contactType": "customer service",
+    "availableLanguage": ["French", "English", "German", "Spanish", "Portuguese", "Italian"]
+  },
+  "sameAs": [
+    "https://www.booking.com/hotel/ch/cedric-studio.fr.html",
+    "https://fr.airbnb.ch/rooms/4116019"
+  ],
+  "hasOfferCatalog": {
+    "@type": "OfferCatalog",
+    "name": "Servizi di affitto",
+    "itemListElement": [
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "LodgingBusiness",
+          "name": "Eco Studio La Sonnaz",
+          "description": "Monolocale arredato di 34m² con vista sui campi"
+        }
+      },
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "AutomotiveBusiness",
+          "name": "Parcheggio La Sonnaz",
+          "description": "Posto auto per camper vicino a Friburgo"
+        }
+      }
+    ]
+  }
+}
+</script>

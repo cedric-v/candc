@@ -35,20 +35,20 @@
         <div class="footer-column">
           <h3>Langue / Language</h3>
           <ul class="language-list">
-            {% set languages = ['fr', 'en', 'de', 'es', 'pt'] %}
-            {% set langFullNames = {'fr': 'Français', 'en': 'English', 'de': 'Deutsch', 'es': 'Español', 'pt': 'Português'} %}
+            {% set languages = ['fr', 'en', 'de', 'es', 'pt', 'it'] %}
+            {% set langFullNames = {'fr': 'Français', 'en': 'English', 'de': 'Deutsch', 'es': 'Español', 'pt': 'Português', 'it': 'Italiano'} %}
             {% for lang in languages %}
               {% if lang != locale %}
                 {% set currentUrl = page.url %}
                 {% if lang == 'fr' %}
-                  {% set targetUrl = currentUrl | replace('/en/', '/fr/') | replace('/de/', '/fr/') | replace('/es/', '/fr/') | replace('/pt/', '/fr/') %}
+                  {% set targetUrl = currentUrl | replace('/en/', '/fr/') | replace('/de/', '/fr/') | replace('/es/', '/fr/') | replace('/pt/', '/fr/') | replace('/it/', '/fr/') %}
                   {% if targetUrl == '' %}{% set targetUrl = '/fr/' %}{% endif %}
                 {% else %}
                   {% set langPrefix = '/' + lang + '/' %}
                   {% if currentUrl == '/' %}
                     {% set targetUrl = langPrefix %}
                   {% else %}
-                    {% set targetUrl = currentUrl | replace('/fr/', langPrefix) | replace('/en/', langPrefix) | replace('/de/', langPrefix) | replace('/es/', langPrefix) | replace('/pt/', langPrefix) %}
+                    {% set targetUrl = currentUrl | replace('/fr/', langPrefix) | replace('/en/', langPrefix) | replace('/de/', langPrefix) | replace('/es/', langPrefix) | replace('/pt/', langPrefix) | replace('/it/', langPrefix) %}
                     {% if targetUrl == currentUrl %}
                       {% set targetUrl = '/' + lang + currentUrl %}
                     {% endif %}

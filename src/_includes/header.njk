@@ -9,8 +9,8 @@
     <a href="{{ '/de/' | relativeUrl }}" class="logo-link">
     {% elif locale == 'es' %}
     <a href="{{ '/es/' | relativeUrl }}" class="logo-link">
-    {% elif locale == 'pt' %}
-    <a href="{{ '/pt/' | relativeUrl }}" class="logo-link">
+    {% elif locale == 'it' %}
+    <a href="{{ '/it/' | relativeUrl }}" class="logo-link">
     {% else %}
     <a href="{{ '/fr/' | relativeUrl }}" class="logo-link">
     {% endif %}
@@ -31,8 +31,8 @@
       <a href="{{ '/' + locale + '/contact/' | relativeUrl }}" class="nav-link">{{ t.contact }}</a>
 
       <div class="language-selector">
-        <button class="lang-toggle" data-lang-toggle aria-label="Changer de langue">
-          {% set langNames = {'fr': 'FR', 'en': 'EN', 'de': 'DE', 'es': 'ES', 'pt': 'PT'} %}
+        <button class="lang-toggle" data-lang-toggle aria-label="{{ t.changeLanguage }}">
+          {% set langNames = {'fr': 'FR', 'en': 'EN', 'de': 'DE', 'es': 'ES', 'pt': 'PT', 'it': 'IT'} %}
           {{ langNames[locale] }}
           <svg class="lang-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none">
             <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -40,20 +40,20 @@
         </button>
 
         <div class="lang-dropdown">
-          {% set languages = ['fr', 'en', 'de', 'es', 'pt'] %}
-          {% set langFullNames = {'fr': 'Français', 'en': 'English', 'de': 'Deutsch', 'es': 'Español', 'pt': 'Português'} %}
+          {% set languages = ['fr', 'en', 'de', 'es', 'pt', 'it'] %}
+          {% set langFullNames = {'fr': 'Français', 'en': 'English', 'de': 'Deutsch', 'es': 'Español', 'pt': 'Português', 'it': 'Italiano'} %}
           {% for lang in languages %}
             {% if lang != locale %}
               {% set currentUrl = page.url %}
               {% if lang == 'fr' %}
-                {% set targetUrl = currentUrl | replace('/en/', '/fr/') | replace('/de/', '/fr/') | replace('/es/', '/fr/') | replace('/pt/', '/fr/') %}
+                {% set targetUrl = currentUrl | replace('/en/', '/fr/') | replace('/de/', '/fr/') | replace('/es/', '/fr/') | replace('/pt/', '/fr/') | replace('/it/', '/fr/') %}
                 {% if targetUrl == '' %}{% set targetUrl = '/fr/' %}{% endif %}
               {% else %}
                 {% set langPrefix = '/' + lang + '/' %}
                 {% if currentUrl == '/' %}
                   {% set targetUrl = langPrefix %}
                 {% else %}
-                  {% set targetUrl = currentUrl | replace('/fr/', langPrefix) | replace('/en/', langPrefix) | replace('/de/', langPrefix) | replace('/es/', langPrefix) | replace('/pt/', langPrefix) %}
+                  {% set targetUrl = currentUrl | replace('/fr/', langPrefix) | replace('/en/', langPrefix) | replace('/de/', langPrefix) | replace('/es/', langPrefix) | replace('/pt/', langPrefix) | replace('/it/', langPrefix) %}
                   {% if targetUrl == currentUrl %}
                     {% set targetUrl = '/' + lang + currentUrl %}
                   {% endif %}
@@ -80,7 +80,7 @@
 
     <div class="mobile-language-selector">
       <button class="mobile-lang-toggle" data-mobile-lang-toggle>
-        {% set langNames = {'fr': 'FR', 'en': 'EN', 'de': 'DE', 'es': 'ES', 'pt': 'PT'} %}
+        {% set langNames = {'fr': 'FR', 'en': 'EN', 'de': 'DE', 'es': 'ES', 'pt': 'PT', 'it': 'IT'} %}
         <span>{{ langNames[locale] }}</span>
         <svg class="mobile-lang-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none">
           <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -88,13 +88,13 @@
       </button>
 
       <div class="mobile-lang-dropdown">
-        {% set languages = ['fr', 'en', 'de', 'es', 'pt'] %}
-        {% set langFullNames = {'fr': 'Français', 'en': 'English', 'de': 'Deutsch', 'es': 'Español', 'pt': 'Português'} %}
+        {% set languages = ['fr', 'en', 'de', 'es', 'pt', 'it'] %}
+        {% set langFullNames = {'fr': 'Français', 'en': 'English', 'de': 'Deutsch', 'es': 'Español', 'pt': 'Português', 'it': 'Italiano'} %}
         {% for lang in languages %}
           {% if lang != locale %}
             {% set currentUrl = page.url %}
             {% if lang == 'fr' %}
-              {% set targetUrl = currentUrl | replace('/en/', '/fr/') | replace('/de/', '/fr/') | replace('/es/', '/fr/') | replace('/pt/', '/fr/') %}
+              {% set targetUrl = currentUrl | replace('/en/', '/fr/') | replace('/de/', '/fr/') | replace('/es/', '/fr/') | replace('/pt/', '/fr/') | replace('/it/', '/fr/') %}
               {% if targetUrl == currentUrl %}
                  {# If no replacement happened, check if we are at root /en/ or similar which might have been handled, or if we are at a page that needs prefixing #}
                  {# But actually, checking if targetUrl == currentUrl suggests we might be on a page that doesn't have the prefix yet? No, we are generating links FOR other languages FROM current page. #}
@@ -110,7 +110,7 @@
               {% if currentUrl == '/' %}
                 {% set targetUrl = langPrefix %}
               {% else %}
-                {% set targetUrl = currentUrl | replace('/fr/', langPrefix) | replace('/en/', langPrefix) | replace('/de/', langPrefix) | replace('/es/', langPrefix) | replace('/pt/', langPrefix) %}
+                {% set targetUrl = currentUrl | replace('/fr/', langPrefix) | replace('/en/', langPrefix) | replace('/de/', langPrefix) | replace('/es/', langPrefix) | replace('/pt/', langPrefix) | replace('/it/', langPrefix) %}
                 {% if targetUrl == currentUrl %}
                   {% set targetUrl = '/' + lang + currentUrl %}
                 {% endif %}
