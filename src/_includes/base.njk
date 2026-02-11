@@ -103,7 +103,60 @@
     
     {% include "footer.njk" %}
 
+    {# Cookie Banner #}
+    <div id="cookie-banner" class="cookie-banner">
+      <div class="cookie-banner-content">
+        <h4 class="text-primary font-bold mb-2">{{ t.cookies.title }}</h4>
+        <p class="text-sm text-muted mb-4">{{ t.cookies.description }}</p>
+      </div>
+      <div class="cookie-banner-actions">
+        <button id="cookie-accept" class="btn btn-primary">{{ t.cookies.accept }}</button>
+        <button id="cookie-decline" class="btn btn-secondary">{{ t.cookies.decline }}</button>
+      </div>
+    </div>
+
 <script>
+  // Cookie Banner Logic
+  (function() {
+    const banner = document.getElementById('cookie-banner');
+    const acceptBtn = document.getElementById('cookie-accept');
+    const declineBtn = document.getElementById('cookie-decline');
+    const GA_ID = 'G-XXXXXXXXXX'; // TODO: Replace with real GA ID
+
+    function loadGA() {
+      const script = document.createElement('script');
+      script.async = true;
+      script.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+      document.head.appendChild(script);
+
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', GA_ID);
+    }
+
+    const consent = localStorage.getItem('cookie-consent');
+
+    if (consent === 'accepted') {
+      loadGA();
+    } else if (consent === null) {
+      setTimeout(() => {
+        banner.classList.add('show');
+      }, 1000);
+    }
+
+    acceptBtn.addEventListener('click', () => {
+      localStorage.setItem('cookie-consent', 'accepted');
+      banner.classList.remove('show');
+      loadGA();
+    });
+
+    declineBtn.addEventListener('click', () => {
+      localStorage.setItem('cookie-consent', 'declined');
+      banner.classList.remove('show');
+    });
+  })();
+
   const toggle = document.querySelector('[data-menu-toggle]');
   const mobileMenu = document.querySelector('[data-menu-mobile]');
   if (toggle && mobileMenu) {

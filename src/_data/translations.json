@@ -39,10 +39,10 @@
     "businessTitle": "Eco Studio Business / Corporate",
     "businessSubtitle": "Location au mois pour professionnels (octobre à février)",
     "businessFeatures": {
-      "wifi": "Wi-Fi haut débit",
+      "wifi": "Wi-Fi haut débit (fibre optique)",
       "quiet": "Calme et tranquillité",
-      "office": "Espace bureau",
-      "location": "Proche des pôles économiques (Fribourg, Berne, Bulle)",
+      "office": "Grande table stable et chaises confortables, idéale pour servir de bureau",
+      "location": "Proche des pôles économiques :<br>- Fribourg et son agglomération à moins de 10 minutes : Villars-sûr-Glâne, Givisiez, Granges-Paccot, Corminboeuf, Belfaux, Matran, Avry, Düdingen<br>- Berne à 30 minutes<br>- Bulle à 20 minutes",
       "monthly": "Location au mois"
     },
     "seo": {
@@ -62,13 +62,16 @@
       "kitchen": "Cuisine moderne et tout équipée (lave-vaisselle, four, micro-ondes, réfrigérateur avec congélateur, machine à café, plaque vitrocéramique)",
       "bathroom": "Salle de bain avec toilette, douche moderne et sèche-cheveux",
       "laundry": "Lave-linge et sèche-linge modernes",
-      "entertainment": "TV avec 250+ chaînes, Apple TV (Netflix, Disney+, YouTube), PlayStation 4, Chromecast",
+      "entertainment": "TV avec 250+ chaînes, Apple TV (Netflix, Disney+, YouTube), PlayStation 4, Chromecast (permet de projeter facilement du contenu depuis votre téléphone ou ordinateur)",
       "internet": "Internet sans fil très haut débit (10 Gbits symétrique via fibre optique)",
       "parking": "Place de stationnement incluse avec possibilité de recharge voiture électrique",
       "terrace": "Terrasse de gazon dédiée",
       "eco": "Électricité photovoltaïque, eau chauffée par panneaux thermiques, chauffage par pompe à chaleur géothermique",
       "children": "Lit parapluie et jouets disponibles sur demande",
-      "location": "Petit village calme, moins de 5 minutes de 2 accès A12 (Fribourg-Nord et Fribourg-Sud), 1 km de la gare Belfaux-Village"
+      "location": "Petit village calme, moins de 5 minutes de 2 accès A12 (Fribourg-Nord et Fribourg-Sud), 1 km de la gare Belfaux-Village",
+      "noPets": "Animaux non acceptés",
+      "smokingOutdoor": "Fumeurs acceptés uniquement à l'extérieur (cendrier à disposition sur la terrasse)",
+      "rules": "Règlement"
     },
     "parking": {
       "title": "Aire de stationnement pour van / camping-car / motorhome",
@@ -77,11 +80,29 @@
       "equipment": "Place de stationnement, prise électrique, gestion des déchets, Wi-Fi rapide, robinet extérieur avec eau potable, terrasse avec vue",
       "note": "Le camping-car / van n'est pas fourni, c'est à vous d'arriver avec le vôtre",
       "toilet": "Accès à une toilette et une douche disponibles sur demande entre 7 h et 21 h, lorsque nous sommes sur place. Service optionnel moyennant 10 CHF de frais de nettoyage pour tout le séjour. Merci de vérifier la disponibilité en nous écrivant.",
-      "evCharging": "Recharge voiture électrique : 15 CHF (10h) ou 30 CHF (journée/nuit complète)",
+      "evChargingTitle": "🔌 Recharge voiture électrique",
+      "evCharging": "Recharge voiture électrique (charge lente) : 15 CHF (10h) ou 30 CHF (journée/nuit complète)",
+      "evCable": "Câble compatible Type 13 (220V, 10A) avec connecteur Type 2",
       "noChemicalToilet": "Nous n'avons pas l'infrastructure pour vidanger les toilettes chimiques",
       "ratesTitle": "Tarif",
       "ratesMain": "20 CHF / nuitée + 3 CHF de taxe de séjour par adulte / nuitée (*)",
       "ratesNote": "* : le tarif peut être plus élevé en cas de forte demande ou d'événements proches"
+    },
+    "cancellationPolicy": {
+      "title": "Annulation flexible :",
+      "freeUntil": "Gratuite jusqu'à 48h avant votre arrivée.",
+      "fullRefund": "Remboursement intégral sans frais.",
+      "note": "Note : les réservations effectuées via des offres spéciales \"Non-Remboursables\" ne bénéficient pas de cette flexibilité."
+    },
+    "footer": {
+      "legal": "Mentions Légales & CGV"
+    },
+    "cookies": {
+      "title": "Respect de votre vie privée",
+      "description": "Nous utilisons des cookies pour analyser l'audience et améliorer votre expérience. Vous pouvez accepter ou refuser les cookies non essentiels.",
+      "accept": "Tout accepter",
+      "decline": "Refuser",
+      "manage": "Gérer"
     },
     "about": {
       "title": "Qui sommes-nous ?",
@@ -111,7 +132,9 @@
       "parkingSpot": "Emplacement pour stationner",
       "terraceFieldView": "Terrasse avec vue sur les champs",
       "terraceParkView": "Terrasse avec vue sur la place",
-      "toilet": "Toilettes et douche"
+      "toilet": "Toilettes et douche",
+      "waterFaucet": "Robinet d'eau potable et gestion des déchets",
+      "indoorToiletShower": "WC-douche intérieure sur demande et avec supplément de nettoyage"
     },
     "payment": {
       "title": "Moyens de paiement",
@@ -164,10 +187,10 @@
     "businessTitle": "Eco Studio Business / Corporate",
     "businessSubtitle": "Monthly rental for professionals (October to February)",
     "businessFeatures": {
-      "wifi": "High-speed Wi-Fi",
-      "quiet": "Quiet and peaceful",
-      "office": "Office space",
-      "location": "Close to business hubs (Fribourg, Bern, Bulle)",
+      "wifi": "High-speed Wi-Fi (fiber optics)",
+      "quiet": "Peace and quiet",
+      "office": "Large stable table and comfortable chairs, ideal for use as an office",
+      "location": "Close to business hubs:<br>- Fribourg and its agglomeration in less than 10 minutes: Villars-sûr-Glâne, Givisiez, Granges-Paccot, Corminboeuf, Belfaux, Matran, Avry, Düdingen<br>- Bern at 30 minutes<br>- Bulle at 20 minutes",
       "monthly": "Monthly rental"
     },
     "seo": {
@@ -186,13 +209,16 @@
       "kitchen": "Modern and fully equipped kitchen (conventional oven, microwave, refrigerator with freezer, coffee machine, ceramic hob)",
       "bathroom": "Bathroom with toilet, modern shower and hair dryer",
       "laundry": "Modern washing machine and tumble dryer",
-      "entertainment": "TV with 250+ channels, Apple TV (Netflix, Disney+, YouTube), PlayStation 4, Chromecast",
+      "entertainment": "TV with 250+ channels, Apple TV (Netflix, Disney+, YouTube), PlayStation 4, Chromecast (allows you to easily cast content from your phone or computer)",
       "internet": "Wireless internet access with very high speed connection (10 Gbits symmetrical via fibre optics)",
       "parking": "Parking space included with possibility to charge electric car",
       "terrace": "Dedicated grass terrace",
       "eco": "Photovoltaic electricity, water heated by thermal panels, heating by geothermal heat pump",
       "children": "Cot and toys available on request",
-      "location": "Small quiet village, less than 5 minutes from 2 A12 accesses (Fribourg-Nord and Fribourg-Sud), 1 km from Belfaux-Village station"
+      "location": "Small quiet village, less than 5 minutes from 2 A12 accesses (Fribourg-Nord and Fribourg-Sud), 1 km from Belfaux-Village station",
+      "noPets": "Pets not allowed",
+      "smokingOutdoor": "Smoking allowed outdoors only (ashtray available on the terrace)",
+      "rules": "House Rules"
     },
     "parking": {
       "title": "Parking area for van / camping-car / motorhome / RV",
@@ -201,11 +227,29 @@
       "equipment": "Parking space, electrical outlet, waste management, fast WiFi, outside tap with drinking water, terrace with view",
       "note": "The motorhome / RV / van is not provided; you have to bring your own",
       "toilet": "Access to a toilet and shower available on request between 7 a.m. and 9 p.m., when we are on site. Optional service for a 10 CHF cleaning fee for the entire stay. Please check availability by writing to us.",
-      "evCharging": "Electric car charging: CHF 15 (10h) or CHF 30 (whole day or night)",
+      "evChargingTitle": "🔌 Electric car charging",
+      "evCharging": "Electric vehicle charging (slow charge): 15 CHF (10h) or 30 CHF (full day/night)",
+      "evCable": "Type 13 compatible cable (220V, 10A) with Type 2 connector",
       "noChemicalToilet": "We do not have the infrastructure to empty chemical toilets from motorhomes / RV",
       "ratesTitle": "Rates",
       "ratesMain": "20 CHF / night + 3 CHF tourist tax per adult / night (*)",
       "ratesNote": "* : rate may be higher during high demand or nearby events"
+    },
+    "cancellationPolicy": {
+      "title": "Flexible cancellation:",
+      "freeUntil": "Free until 48h before your arrival.",
+      "fullRefund": "Full refund with no fees.",
+      "note": "Note: reservations made via \"Non-Refundable\" special offers do not benefit from this flexibility."
+    },
+    "footer": {
+      "legal": "Legal Notice & T&C"
+    },
+    "cookies": {
+      "title": "We respect your privacy",
+      "description": "We use cookies to analyze audience and improve your experience. You can accept or decline non-essential cookies.",
+      "accept": "Accept all",
+      "decline": "Decline",
+      "manage": "Manage"
     },
     "about": {
       "title": "About us",
@@ -234,8 +278,10 @@
       "parkingFrontView": "General view of the space",
       "parkingSpot": "Parking spot",
       "terraceFieldView": "Terrace with field view",
-      "terraceParkView": "Terrace with park view",
-      "toilet": "Toilet and shower"
+      "terraceParkView": "Terrace with view of the spot",
+      "toilet": "Toilet and shower",
+      "waterFaucet": "Drinking water tap and waste management",
+      "indoorToiletShower": "Indoor toilet/shower on request and with cleaning fee"
     },
     "payment": {
       "title": "Payment methods",
@@ -288,10 +334,10 @@
     "businessTitle": "Eco Studio Business / Corporate",
     "businessSubtitle": "Monatsmiete für Berufstätige (Oktober bis Februar)",
     "businessFeatures": {
-      "wifi": "Hochgeschwindigkeits-WLAN",
-      "quiet": "Ruhig und friedlich",
-      "office": "Büroraum",
-      "location": "Nah zu Wirtschaftszentren (Freiburg, Bern, Bulle)",
+      "wifi": "Hochgeschwindigkeits-WLAN (Glasfaser)",
+      "quiet": "Ruhe und Frieden",
+      "office": "Großer stabiler Tisch und bequeme Stühle, ideal als Büro nutzbar",
+      "location": "Nah zu Wirtschaftszentren:<br>- Freiburg und Umgebung in weniger als 10 Minuten: Villars-sûr-Glâne, Givisiez, Granges-Paccot, Corminboeuf, Belfaux, Matran, Avry, Düdingen<br>- Bern in 30 Minuten<br>- Bulle in 20 Minuten",
       "monthly": "Monatsmiete"
     },
     "seo": {
@@ -310,26 +356,47 @@
       "kitchen": "Moderne und voll ausgestattete Küche (Backofen, Mikrowelle, Kühlschrank mit Gefrierfach, Kaffeemaschine, Keramikkochfeld)",
       "bathroom": "Badezimmer mit Toilette, moderne Dusche und Haartrockner",
       "laundry": "Moderne Waschmaschine und Trockner",
-      "entertainment": "TV mit 250+ Kanälen, Apple TV (Netflix, Disney+, YouTube), PlayStation 4, Chromecast",
+      "entertainment": "TV mit 250+ Kanälen, Apple TV (Netflix, Disney+, YouTube), PlayStation 4, Chromecast (ermöglicht das einfache Streaming von Inhalten von Ihrem Handy oder Computer)",
       "internet": "Drahtloser Internetzugang mit sehr schneller Verbindung (10 Gbits symmetrisch über Glasfaser)",
       "parking": "Parkplatz inklusive mit Möglichkeit zum Laden von Elektroautos",
       "terrace": "Eigene Rasenterrasse",
       "eco": "Photovoltaik-Strom, Wasser durch thermische Paneele beheizt, Heizung durch geothermische Wärmepumpe",
       "children": "Reisebett und Spielzeug auf Anfrage verfügbar",
-      "location": "Kleines ruhiges Dorf, weniger als 5 Minuten von 2 A12-Zugängen (Freiburg-Nord und Freiburg-Süd), 1 km vom Bahnhof Belfaux-Village"
+      "location": "Kleines ruhiges Dorf, weniger als 5 Minuten von 2 A12-Zugängen (Fribourg-Nord und Fribourg-Sud), 1 km vom Bahnhof Belfaux-Village",
+      "noPets": "Haustiere nicht erlaubt",
+      "smokingOutdoor": "Rauchen nur im Freien erlaubt (Aschenbecher auf der Terrasse vorhanden)",
+      "rules": "Hausordnung"
     },
     "parking": {
       "title": "Stellplatz für Van / Camping-Car / Motorhome",
       "subtitle": "Einzelstellplatz für Van / Camping-Car / Motorhome in der Nähe von Freiburg (Schweiz)",
       "description": "Voll ausgestatteter Stellplatz am Dorfrand mit Blick auf Felder",
-      "equipment": "Stellplatz, Steckdose, Abfallentsorgung, schnelles WiFi, Außenwasserhahn mit Trinkwasser, Terrasse mit Aussicht",
+      "equipment": "Stellplatz, Steckdose, Abfallentsorgung, schnelles WiFi, Außenwasserhahn mit Trinkwasser, Außenwasserhahn mit Trinkwasser, Terrasse mit Aussicht",
       "note": "Das Motorhome / Van wird nicht gestellt; Sie müssen Ihr eigenes mitbringen",
       "toilet": "Zugang zu einer Toilette und einer Dusche auf Anfrage zwischen 7:00 und 21:00 Uhr möglich, wenn wir vor Ort sind. Optionaler Service gegen eine Reinigungsgebühr von 10 CHF für den gesamten Aufenthalt. Bitte prüfen Sie die Verfügbarkeit, indem Sie uns schreiben.",
-      "evCharging": "Elektroauto-Ladung: 15 CHF (10h) ou 30 CHF (ganzer Tag oder Nacht)",
+      "evChargingTitle": "🔌 Elektroauto-Ladung",
+      "evCharging": "Laden von Elektroautos (langsames Laden): 15 CHF (10h) oder 30 CHF (ganzer Tag/Nacht)",
+      "evCable": "Typ 13 kompatibles Kabel (220V, 10A) mit Typ 2 Stecker",
       "noChemicalToilet": "Wir haben keine Infrastruktur zum Entleeren von Chemietoiletten von Motorhomes",
       "ratesTitle": "Tarife",
       "ratesMain": "20 CHF / Nacht + 3 CHF Kurtaxe pro Erwachsener / Nacht (*)",
       "ratesNote": "* : Der Preis kann bei hoher Nachfrage oder Veranstaltungen in der Nähe höher sein"
+    },
+    "cancellationPolicy": {
+      "title": "Flexible Stornierung:",
+      "freeUntil": "Kostenlos bis 48 Stunden vor Ihrer Ankunft.",
+      "fullRefund": "Vollständige Rückerstattung ohne Gebühren.",
+      "note": "Hinweis: Buchungen über spezielle \"nicht erstattungsfähige\" Angebote profitieren nicht von dieser Flexibilität."
+    },
+    "footer": {
+      "legal": "Impressum & AGB"
+    },
+    "cookies": {
+      "title": "Wir respektieren Ihre Privatsphäre",
+      "description": "Wir verwenden Cookies, um die Zielgruppe zu analysieren und Ihre Erfahrung zu verbessern. Sie können nicht wesentliche Cookies akzeptieren oder ablehnen.",
+      "accept": "Alle akzeptieren",
+      "decline": "Ablehnen",
+      "manage": "Verwalten"
     },
     "about": {
       "title": "Über uns",
@@ -359,7 +426,9 @@
       "parkingSpot": "Parkplatz",
       "terraceFieldView": "Terrasse mit Blick auf die Felder",
       "terraceParkView": "Terrasse mit Blick auf den Platz",
-      "toilet": "Toilette und Dusche"
+      "toilet": "Toilette und Dusche",
+      "waterFaucet": "Trinkwasserhahn und Abfallentsorgung",
+      "indoorToiletShower": "Innen-WC/Dusche auf Anfrage und gegen Reinigungsgebühr"
     },
     "payment": {
       "title": "Zahlungsmethoden",
@@ -412,10 +481,10 @@
     "businessTitle": "Eco Studio Business / Corporate",
     "businessSubtitle": "Alquiler mensual para profesionales (octubre a febrero)",
     "businessFeatures": {
-      "wifi": "Wi-Fi de alta velocidad",
-      "quiet": "Tranquilo y pacífico",
-      "office": "Espacio de oficina",
-      "location": "Cerca de centros económicos (Friburgo, Berna, Bulle)",
+      "wifi": "Wi-Fi de alta velocidad (fibra óptica)",
+      "quiet": "Paz y tranquilidad",
+      "office": "Mesa grande y estable y sillas cómodas, ideal para usar como oficina",
+      "location": "Cerca de centros económicos:<br>- Friburgo y su aglomeración en menos de 10 minutos: Villars-sûr-Glâne, Givisiez, Granges-Paccot, Corminboeuf, Belfaux, Matran, Avry, Düdingen<br>- Berna a 30 minutos<br>- Bulle a 20 minutos",
       "monthly": "Alquiler mensual"
     },
     "seo": {
@@ -434,26 +503,47 @@
       "kitchen": "Cocina moderna y totalmente equipada (horno, microondas, nevera con congelador, cafetera, placa vitrocerámica)",
       "bathroom": "Baño con inodoro, ducha moderna y secador de pelo",
       "laundry": "Lavadora y secadora modernas",
-      "entertainment": "TV con 250+ canales, Apple TV (Netflix, Disney+, YouTube), PlayStation 4, Chromecast",
+      "entertainment": "TV con 250+ canales, Apple TV (Netflix, Disney+, YouTube), PlayStation 4, Chromecast (permite proyectar fácilmente contenido desde su teléfono u ordenador)",
       "internet": "Acceso a Internet inalámbrico con conexión de muy alta velocidad (10 Gbits simétricos vía fibra óptica)",
       "parking": "Plaza de aparcamiento incluida con posibilidad de cargar coche eléctrico",
       "terrace": "Terraza de césped dedicada",
       "eco": "Electricidad fotovoltaica, agua calentada por paneles térmicos, calefacción por bomba de calor geotérmica",
       "children": "Cuna y juguetes disponibles bajo petición",
-      "location": "Pequeño pueblo tranquilo, a menos de 5 minutos de 2 accesos A12 (Friburgo-Norte y Friburgo-Sur), a 1 km de la estación Belfaux-Village"
+      "location": "Pequeño pueblo tranquilo, a menos de 5 minutos de 2 accesos A12 (Friburgo-Norte y Friburgo-Sur), a 1 km de la estación Belfaux-Village",
+      "noPets": "No se admiten mascotas",
+      "smokingOutdoor": "Solo se permite fumar en el exterior (cenicero disponible en la terraza)",
+      "rules": "Reglamento"
     },
     "parking": {
       "title": "Aparcamiento para furgoneta / caravana / autocaravana",
       "subtitle": "Plaza individual para furgoneta / caravana / autocaravana cerca de Friburgo (Suiza)",
-      "description": "Plaza de aparcamiento totalmente equipada ubicada en el borde de un pueblo, con vistas a los campos",
+      "description": "Plaza de aparcamiento totalmente equipada situada en el borde de un pueblo, con vistas a los campos",
       "equipment": "Plaza de aparcamiento, toma de corriente, gestión de residuos, WiFi rápido, grifo exterior con agua potable, terraza con vistas",
       "note": "La autocaravana / furgoneta no se proporciona; debe traer la suya propia",
       "toilet": "Acceso a un aseo y una ducha disponibles bajo petición entre las 7:00 y las 21:00, cuando estemos presentes. Servicio opcional con un cargo de limpieza de 10 CHF para toda la estancia. Por favor, compruebe la disponibilidad escribiéndonos.",
-      "evCharging": "Carga de coche eléctrico: 15 CHF (10h) o 30 CHF (día o noche completa)",
+      "evChargingTitle": "🔌 Carga de coche eléctrico",
+      "evCharging": "Carga de coche eléctrico (carga lenta): 15 CHF (10h) o 30 CHF (día/noche completa)",
+      "evCable": "Cable compatible con Tipo 13 (220V, 10A) con conector Tipo 2",
       "noChemicalToilet": "No tenemos la infraestructura para vaciar las toilettes químicas de las autocaravanas",
       "ratesTitle": "Tarifas",
       "ratesMain": "20 CHF / noche + 3 CHF de tasa turística por adulto / noche (*)",
       "ratesNote": "* : la tarifa puede ser superior en caso de alta demanda o eventos cercanos"
+    },
+    "cancellationPolicy": {
+      "title": "Cancelación flexible:",
+      "freeUntil": "Gratis hasta 48 horas antes de su llegada.",
+      "fullRefund": "Reembolso total sin gastos.",
+      "note": "Nota: las reservas realizadas a través de ofertas especiales \"No reembolsables\" no se benefician de esta flexibilidad."
+    },
+    "footer": {
+      "legal": "Aviso Legal y TyC"
+    },
+    "cookies": {
+      "title": "Respetamos su privacidad",
+      "description": "Utilizamos cookies para analizar la audiencia y mejorar su experiencia. Puede aceptar o rechazar las cookies no esenciales.",
+      "accept": "Aceptar todo",
+      "decline": "Rechazar",
+      "manage": "Gestionar"
     },
     "about": {
       "title": "Quiénes somos",
@@ -483,7 +573,9 @@
       "parkingSpot": "Lugar para estacionar",
       "terraceFieldView": "Terraza con vista al campo",
       "terraceParkView": "Terraza con vista a la plaza",
-      "toilet": "Baño y ducha"
+      "toilet": "Inodoro y ducha",
+      "waterFaucet": "Grifo de agua potable y gestión de residuos",
+      "indoorToiletShower": "WC/ducha interior bajo petición y con suplemento de limpieza"
     },
     "payment": {
       "title": "Métodos de pago",
@@ -536,10 +628,10 @@
     "businessTitle": "Eco Studio Business / Corporate",
     "businessSubtitle": "Aluguel mensal para profissionais (outubro a fevereiro)",
     "businessFeatures": {
-      "wifi": "Wi-Fi de alta velocidade",
-      "quiet": "Silencioso e tranquilo",
-      "office": "Espaço de escritório",
-      "location": "Perto de centros econômicos (Friburgo, Berna, Bulle)",
+      "wifi": "Wi-Fi de alta velocidade (fibra ótica)",
+      "quiet": "Paz e tranquilidade",
+      "office": "Mesa grande e estável e cadeiras confortáveis, ideal para usar como escritório",
+      "location": "Perto de centros econômicos:<br>- Friburgo e sua aglomeração em menos de 10 minutos: Villars-sûr-Glâne, Givisiez, Granges-Paccot, Corminboeuf, Belfaux, Matran, Avry, Düdingen<br>- Berna em 30 minutos<br>- Bulle em 20 minutos",
       "monthly": "Aluguel mensal"
     },
     "seo": {
@@ -558,13 +650,16 @@
       "kitchen": "Cozinha moderna e totalmente equipada (forno, microondas, frigorífico com congelador, máquina de café, placa vitrocerâmica)",
       "bathroom": "Casa de banho com sanita, duche moderno e secador de cabelo",
       "laundry": "Máquina de lavar e secar modernas",
-      "entertainment": "TV com 250+ canais, Apple TV (Netflix, Disney+, YouTube), PlayStation 4, Chromecast",
+      "entertainment": "TV com 250+ canais, Apple TV (Netflix, Disney+, YouTube), PlayStation 4, Chromecast (permite projetar facilmente conteúdo do seu telefone ou computador)",
       "internet": "Acesso à Internet sem fios com ligação de muito alta velocidade (10 Gbits simétricos via fibra óptica)",
       "parking": "Lugar de estacionamento incluído com possibilidade de carregar carro elétrico",
       "terrace": "Terraço de relva dedicado",
       "eco": "Eletricidade fotovoltaica, água aquecida por painéis térmicos, aquecimento por bomba de calor geotérmica",
       "children": "Berço e brinquedos disponíveis mediante pedido",
-      "location": "Pequena aldeia tranquila, a menos de 5 minutos de 2 acessos A12 (Friburgo-Norte e Friburgo-Sul), a 1 km da estação Belfaux-Village"
+      "location": "Pequena aldeia tranquila, a menos de 5 minutos de 2 acessos A12 (Friburgo-Norte e Friburgo-Sud), a 1 km da estação Belfaux-Village",
+      "noPets": "Animais de estimação não são permitidos",
+      "smokingOutdoor": "Apenas é permitido fumar no exterior (cinzeiro disponível no terraço)",
+      "rules": "Regulamento"
     },
     "parking": {
       "title": "Estacionamento para carrinha / caravana / autocaravana",
@@ -573,11 +668,29 @@
       "equipment": "Lugar de estacionamento, tomada elétrica, gestão de resíduos, WiFi rápido, torneira exterior com água potável, terraço com vista",
       "note": "A autocaravana / carrinha não é fornecida; tem de trazer a sua própria",
       "toilet": "Acesso a uma sanita e um duche disponíveis mediante pedido entre as 7h e as 21h, quando estivermos no local. Serviço opcional com uma taxa de limpeza de 10 CHF para toda a estadia. Por favor, verifique a disponibilidade escrevendo-nos.",
-      "evCharging": "Carregamento de carro elétrico: 15 CHF (10h) ou 30 CHF (dia ou noite completa)",
+      "evChargingTitle": "🔌 Carregamento de carro elétrico",
+      "evCharging": "Carregamento de carro elétrico (charge lente): 15 CHF (10h) ou 30 CHF (dia/noite completa)",
+      "evCable": "Cabo compatível com Tipo 13 (220V, 10A) com conector Tipo 2",
       "noChemicalToilet": "Não temos a infraestrutura para esvaziar as sanitas químicas das autocaravanas",
       "ratesTitle": "Tarifas",
       "ratesMain": "20 CHF / noite + 3 CHF de taxa turística por adulto / noite (*)",
       "ratesNote": "* : a tarifa pode ser superior em caso de forte procura ou eventos próximos"
+    },
+    "cancellationPolicy": {
+      "title": "Cancelamento flexível:",
+      "freeUntil": "Gratuito até 48 horas antes da sua chegada.",
+      "fullRefund": "Reembolso integral sem taxas.",
+      "note": "Nota: as reservas efectuadas através de ofertas especiais \"Não Reembolsáveis\" não beneficiam desta flexibilidade."
+    },
+    "footer": {
+      "legal": "Avisos Legais e Termos"
+    },
+    "cookies": {
+      "title": "Respeitamos a sua privacidade",
+      "description": "Utilizamos cookies para analisar a audiência e melhorar a sua experiência. Pode aceitar ou recusar os cookies não essenciais.",
+      "accept": "Aceitar tudo",
+      "decline": "Recusar",
+      "manage": "Gerir"
     },
     "about": {
       "title": "Quem somos",
@@ -606,8 +719,10 @@
       "parkingFrontView": "Vista geral do espaço",
       "parkingSpot": "Lugar para estacionar",
       "terraceFieldView": "Terraço com vista para o campo",
-      "terraceParkView": "Terraço com vista para a praça",
-      "toilet": "Casa de banho e duche"
+      "terraceParkView": "Terraço com vista para o lugar",
+      "toilet": "Sanitário e duche",
+      "waterFaucet": "Torneira de água potável e gestão de resíduos",
+      "indoorToiletShower": "WC/duche interior mediante pedido e com taxa de limpeza"
     },
     "payment": {
       "title": "Métodos de pagamento",
@@ -660,10 +775,10 @@
     "businessTitle": "Eco Studio Business / Corporate",
     "businessSubtitle": "Affitto mensile per professionisti (da ottobre a febbraio)",
     "businessFeatures": {
-      "wifi": "Wi-Fi ad alta velocità",
-      "quiet": "Calma e tranquillità",
-      "office": "Spazio ufficio",
-      "location": "Vicino ai poli economici (Friburgo, Berna, Bulle)",
+      "wifi": "Wi-Fi ad alta velocità (fibra ottica)",
+      "quiet": "Pace e tranquillità",
+      "office": "Grande tavolo stabile e sedie comode, ideale per essere usato come ufficio",
+      "location": "Vicino ai poli economici:<br>- Friburgo e la sua agglomerazione in meno di 10 minuti: Villars-sûr-Glâne, Givisiez, Granges-Paccot, Corminboeuf, Belfaux, Matran, Avry, Düdingen<br>- Berna a 30 minuti<br>- Bulle a 20 minuti",
       "monthly": "Affitto mensile"
     },
     "seo": {
@@ -682,13 +797,16 @@
       "kitchen": "Cucina moderna e completamente attrezzata (forno, microonde, frigorifero con congelatore, macchina da caffè, piano cottura in vetroceramica)",
       "bathroom": "Bagno con WC, doccia moderna e asciugacapelli",
       "laundry": "Lavatrice e asciugatrice moderne",
-      "entertainment": "TV con oltre 250 canali, Apple TV (Netflix, Disney+, YouTube), PlayStation 4, Chromecast",
+      "entertainment": "TV con oltre 250 canali, Apple TV (Netflix, Disney+, YouTube), PlayStation 4, Chromecast (consente di proiettare facilmente contenuti dal tuo telefono o computer)",
       "internet": "Accesso Internet wireless con connessione ad altissima velocità (10 Gbits simmetrici tramite fibra ottica)",
       "parking": "Posto auto incluso con possibilità di ricarica auto elettrica",
       "terrace": "Terrazza in erba dedicata",
       "eco": "Elettricità fotovoltaica, acqua riscaldata da pannelli termici, riscaldamento tramite pompa di calore geotermica",
       "children": "Culla e giocattoli disponibili su richiesta",
-      "location": "Piccolo villaggio tranquillo, a meno di 5 minuti da 2 accessi A12 (Friburgo-Nord e Friburgo-Sud), a 1 km dalla stazione di Belfaux-Village"
+      "location": "Piccolo villaggio tranquillo, a meno di 5 minuti da 2 accessi A12 (Friburgo-Nord e Friburgo-Sud), a 1 km dalla stazione di Belfaux-Village",
+      "noPets": "Animali non ammessi",
+      "smokingOutdoor": "È consentito fumare solo all'aperto (posacenere disponibile sulla terrazza)",
+      "rules": "Regolamento"
     },
     "parking": {
       "title": "Area di parcheggio per van / caravan / camper",
@@ -697,11 +815,29 @@
       "equipment": "Posto auto, presa elettrica, gestione dei rifiuti, Wi-Fi veloce, rubinetto esterno con acqua potabile, terrazza con vista",
       "note": "Il camper / van non viene fornito; devi portare il tuo",
       "toilet": "Accesso a un bagno e una doccia disponibili su richiesta tra le 7:00 e le 21:00, quando siamo presenti. Servizio opzionale con un supplemento per la pulizia di 10 CHF per l'intero soggiorno. Si prega di verificare la disponibilità scrivendoci.",
-      "evCharging": "Ricarica auto elettrica: 15 CHF (10h) o 30 CHF (giorno o notte completa)",
+      "evChargingTitle": "🔌 Ricarica auto elettrica",
+      "evCharging": "Ricarica auto elettrica (ricarica lenta): 15 CHF (10h) o 30 CHF (giorno/notte completa)",
+      "evCable": "Cavo compatibile Tipo 13 (220V, 10A) con connettore Tipo 2",
       "noChemicalToilet": "Non abbiamo l'infrastruttura per svuotare i bagni chimici dei camper",
       "ratesTitle": "Tariffe",
       "ratesMain": "20 CHF / notte + 3 CHF di tassa di soggiorno per adulto / notte (*)",
-      "ratesNote": "* : la tariffa può essere superiore in caso di alta domanda o eventi nelle vicinanze"
+      "ratesNote": "* : la tariffa può essere più alta in caso di forte richiesta o eventi vicini"
+    },
+    "cancellationPolicy": {
+      "title": "Cancellazione flessibile:",
+      "freeUntil": "Gratuita fino a 48 ore prima del vostro arrivo.",
+      "fullRefund": "Rimborso integrale senza spese.",
+      "note": "Nota: le prenotazioni effettuate tramite offerte speciali \"Non rimborsabili\" non beneficiano di questa flessibilità."
+    },
+    "footer": {
+      "legal": "Note Legali e CGV"
+    },
+    "cookies": {
+      "title": "Rispettiamo la tua privacy",
+      "description": "Utilizziamo i cookie per analizzare il pubblico e migliorare la tua esperienza. Puoi accettare o rifiutare i cookie non essenziali.",
+      "accept": "Accetta tutto",
+      "decline": "Rifiuta",
+      "manage": "Gestisci"
     },
     "about": {
       "title": "Chi siamo",
@@ -730,8 +866,10 @@
       "parkingFrontView": "Vista generale del posto",
       "parkingSpot": "Posto per parcheggiare",
       "terraceFieldView": "Terrazza con vista sui campi",
-      "terraceParkView": "Terrazza con vista sulla piazza",
-      "toilet": "Bagno e doccia"
+      "terraceParkView": "Terrazza con vista sulla piazzola",
+      "toilet": "WC e doccia",
+      "waterFaucet": "Rubinetto dell'acqua potabile e gestione dei rifiuti",
+      "indoorToiletShower": "WC-doccia interna su richiesta e con supplemento di pulizia"
     },
     "payment": {
       "title": "Metodi di pagamento",

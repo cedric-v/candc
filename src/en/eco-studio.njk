@@ -96,18 +96,38 @@ ogImage: assets/img/logo-cc.jpg
         <p class="text-muted">{{ t.studio.children }}</p>
       </div>
 
-      <div>
+      <div class="equipment-section">
         <h3 class="text-lg font-semibold text-primary mb-2">Location</h3>
         <p class="text-muted">{{ t.studio.location }}</p>
+      </div>
+
+      <div class="equipment-section">
+        <h3 class="text-lg font-semibold text-primary mb-4">{{ t.studio.rules }}</h3>
+        <ul class="space-y-sm">
+          <li class="flex items-start gap-sm">
+            <span>🚫🐾</span>
+            <span class="text-muted">{{ t.studio.noPets }}</span>
+          </li>
+          <li class="flex items-start gap-sm">
+            <span>🚬</span>
+            <span class="text-muted">{{ t.studio.smokingOutdoor }}</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="service-box charging mt-8">
+        <h3 class="text-lg font-semibold text-primary mb-2">{{ t.parking.evChargingTitle }}</h3>
+        <p class="text-muted">{{ t.parking.evCharging }}</p>
+        <p class="text-sm text-light mt-2">{{ t.parking.evCable }}</p>
       </div>
     </div>
 
     <div class="section-header align-center mt-12" id="reservation">
       <div class="flex flex-wrap justify-center gap-lg">
-        <a href="https://www.booking.com/hotel/ch/cedric-studio.fr.html" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
+        <a href="https://www.booking.com/hotel/ch/cedric-studio.fr.html" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
           {{ t.bookOnBooking }}
         </a>
-        <a href="https://www.airbnb.co.uk/rooms/4116019" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
+        <a href="https://www.airbnb.co.uk/rooms/4116019" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
           {{ t.bookOnAirbnb }}
         </a>
       </div>
@@ -115,6 +135,12 @@ ogImage: assets/img/logo-cc.jpg
         <a href="{{ t.googleMapsStudioLink }}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
           🗺️ {{ t.getDirections }}
         </a>
+      </div>
+      <div class="service-box policy mt-6 max-w-xl mx-auto">
+        <p class="font-bold mb-2">{{ t.cancellationPolicy.title }}</p>
+        <p class="text-sm mb-1">{{ t.cancellationPolicy.freeUntil }}</p>
+        <p class="text-sm mb-2 text-primary font-semibold">{{ t.cancellationPolicy.fullRefund }}</p>
+        <p class="text-xs text-light italic">{{ t.cancellationPolicy.note }}</p>
       </div>
     </div>
   </div>
@@ -140,7 +166,7 @@ ogImage: assets/img/logo-cc.jpg
       </li>
       <li class="flex items-start gap-sm">
         <span class="text-primary font-bold">✓</span>
-        <span class="text-muted">{{ t.businessFeatures.location }}</span>
+        <span class="text-muted">{{ t.businessFeatures.location | safe }}</span>
       </li>
       <li class="flex items-start gap-sm">
         <span class="text-primary font-bold">✓</span>
@@ -165,7 +191,7 @@ ogImage: assets/img/logo-cc.jpg
         { src: 'assets/img/gallery/studio/gallerie-studio-outside-parking.jpg', caption: t.gallery.parkingSpace },
         { src: 'assets/img/gallery/studio/gallerie-studio-1.jpg', caption: t.gallery.highSpeedWifi },
         { src: 'assets/img/gallery/studio/gallerie-studio-2.jpg', caption: t.gallery.independentEntry },
-        { src: 'assets/img/gallery/studio/gallerie-studio-3.jpg', caption: t.gallery.clearView }
+        { src: 'assets/img/gallery/studio/gallerie-studio-3.jpg', caption: t.gallery.bathroom }
       ] %}
 
       {% for item in galleryImages %}
@@ -333,8 +359,8 @@ ogImage: assets/img/logo-cc.jpg
   "@context": "https://schema.org",
   "@type": "LodgingBusiness",
   "name": "C & C Eco Studio La Sonnaz",
-  "description": "34m² furnished studio with countryside view, near Fribourg",
-  "url": "https://candc.ch/en/eco-studio/",
+  "description": "{{ t.studio.description }}",
+  "url": "https://candc.ch/{{ locale }}/eco-studio/",
   "address": {
     "@type": "PostalAddress",
     "streetAddress": "Impasse de la Pommeraie 5",
@@ -374,6 +400,16 @@ ogImage: assets/img/logo-cc.jpg
       "@type": "LocationFeatureSpecification",
       "name": "Laundry",
       "value": true
+    },
+    {
+      "@type": "LocationFeatureSpecification",
+      "name": "EV Charging",
+      "value": true
+    },
+    {
+      "@type": "LocationFeatureSpecification",
+      "name": "Cancellation Policy",
+      "value": "Free up to 48h before arrival"
     }
   ],
   "aggregateRating": {
@@ -385,8 +421,6 @@ ogImage: assets/img/logo-cc.jpg
     "https://www.booking.com/hotel/ch/cedric-studio.fr.html",
     "https://www.airbnb.co.uk/rooms/4116019"
   ],
-    "name": "C & C Eco Studio"
-  },
   "review": [
     {% for testimonial in testimonials.studio[locale] or testimonials.studio['en'] %}
     {
