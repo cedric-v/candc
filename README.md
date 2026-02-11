@@ -11,6 +11,7 @@ Multilingual website for C & C, featuring an Eco Studio and Parking in La Sonnaz
 - German (DE) - `/de/`
 - Spanish (ES) - `/es/`
 - Portuguese (PT) - `/pt/`
+- Italian (IT) - `/it/`
 
 ## Installation
 

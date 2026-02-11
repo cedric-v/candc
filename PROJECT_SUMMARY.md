@@ -3,13 +3,13 @@
 ## ✅ Fonctionnalités implémentées
 
 ### 1. Architecture multilingue (5 langues)
-- ✅ FR, EN, DE, ES, PT configurées
-- ✅ Structure d'URL : `/fr/`, `/en/`, `/de/`, `/es/`, `/pt/`
+- ✅ FR, EN, DE, ES, PT, IT configurées
+- ✅ Structure d'URL : `/fr/`, `/en/`, `/de/`, `/es/`, `/pt/`, `/it/`
 - ✅ Fichier `src/_data/translations.json` centralisé
 - ✅ Navigation multilingue dans le header
 
 ### 2. Pages principales
-- ✅ Pages d'accueil pour les 5 langues
+- ✅ Pages d'accueil pour les 6 langues
 - ✅ Pages Eco Studio (avec section Business/Corporate saisonnière)
 - ✅ Pages Parking
 - ✅ Pages Contact
@@ -30,7 +30,7 @@
 - ✅ Boutons Booking.com et Airbnb sur toutes les pages pertinentes
 - ✅ Email obfusqué (bonjour@candc.ch) avec protection anti-spam
 - ✅ Bouton WhatsApp intégré
-- ✅ Netlify Forms pour parking et contact (routés vers bonjour@candc.ch)
+- ✅ Cloudflare Pages pour l'hébergement et la gestion des redirections
 
 ### 6. Design & Performance
 - ✅ Couleurs Studio : Vert Sauge (#9CAF88) / Terracotta (#C97D60)
@@ -40,9 +40,9 @@
 
 ### 7. Tests & Pipeline
 - ✅ Scripts de smoke tests (`scripts/smoke-tests.js`)
-- ✅ Configuration Netlify (`netlify.toml`)
 - ✅ Headers de sécurité configurés
-- ✅ Redirection automatique `/` → `/fr/`
+- ✅ Redirection automatique `/` (root) → `/fr/`
+- ✅ Redirection `/eco-studio/` et `/parking/` → Langue du navigateur (FR par défaut, EN, DE, ES, PT, IT supportés)
 
 ## 📁 Structure du projet
 
@@ -65,6 +65,7 @@ candc-ch/
 │   ├── de/                        # Pages allemandes
 │   ├── es/                        # Pages espagnoles
 │   ├── pt/                        # Pages portugaises
+│   ├── it/                        # Pages italiennes
 │   ├── index.njk                  # Redirection racine
 │   ├── sitemap.njk                # Génération sitemap
 │   ├── robots.txt
@@ -73,24 +74,22 @@ candc-ch/
 │   └── smoke-tests.js             # Tests de validation
 ├── eleventy.config.js             # Configuration Eleventy
 ├── package.json
-├── netlify.toml                   # Configuration Netlify
 └── README.md
 
 ```
 
 ## 🚀 Prochaines étapes
 
-1. **Ajouter le logo** : Placer `logo-cc.jpg` dans `src/assets/img/`
-2. **Ajouter le favicon** : Remplacer `src/favicon.ico`
-3. **Tester localement** : `npm install && npm start`
-4. **Vérifier les tests** : `npm test` (après build)
-5. **Déployer sur Netlify** : Connecter le repo GitHub
+1. [x] **Vérifier les URLs réelles** : Booking.com, Airbnb, WhatsApp (actuellement configurées avec des liens spécifiques).
+2. [x] **Intégration de la licence** : Terminé (CC BY-NC-SA 4.0).
+3. [x] **Support multilingue** : Terminé (6 langues dont l'italien).
+4. **Déployer sur Cloudflare Pages** : Connecter le repo GitHub (action requise de l'utilisateur).
 
 ## 📝 Notes importantes
 
-- Les URLs Booking.com et Airbnb sont des placeholders - à remplacer par les vraies URLs
-- Le numéro WhatsApp est celui du projet source - à vérifier/adapter
-- Les formulaires Netlify enverront les emails à `bonjour@candc.ch` (configurer dans Netlify)
+- Les URLs Booking.com, Airbnb et WhatsApp sont configurées avec des liens de production — à vérifier une dernière fois avant diffusion.
+- Le logo (`logo-cc.jpg`) et le favicon sont déjà en place.
+- Les emails sont obfusqués via JavaScript pour éviter le spam
 - La section Business n'apparaît que d'octobre à février (logique saisonnière)
 
 ## 🔧 Commandes utiles

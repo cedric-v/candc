@@ -23,11 +23,11 @@ layout: null
             {%- set lastmod = "now" | date("YYYY-MM-DD") -%}
           {%- endif -%}
           {%- set changefreq = "monthly" -%}
-          {%- if cleanUrl == "/fr/" or cleanUrl == "/en/" or cleanUrl == "/de/" or cleanUrl == "/es/" or cleanUrl == "/pt/" -%}
+          {%- if cleanUrl == "/fr/" or cleanUrl == "/en/" or cleanUrl == "/de/" or cleanUrl == "/es/" or cleanUrl == "/pt/" or cleanUrl == "/it/" -%}
             {%- set changefreq = "weekly" -%}
           {%- endif -%}
           {%- set priority = "0.6" -%}
-          {%- if cleanUrl == "/fr/" or cleanUrl == "/en/" or cleanUrl == "/de/" or cleanUrl == "/es/" or cleanUrl == "/pt/" -%}
+          {%- if cleanUrl == "/fr/" or cleanUrl == "/en/" or cleanUrl == "/de/" or cleanUrl == "/es/" or cleanUrl == "/pt/" or cleanUrl == "/it/" -%}
             {%- set priority = "1.0" -%}
           {%- endif -%}
   <url>
@@ -35,16 +35,16 @@ layout: null
     <lastmod>{{ lastmod }}</lastmod>
     <changefreq>{{ changefreq }}</changefreq>
     <priority>{{ priority }}</priority>
-    {%- set languages = ['fr', 'en', 'de', 'es', 'pt'] -%}
+    {%- set languages = ['fr', 'en', 'de', 'es', 'pt', 'it'] -%}
     {%- for lang in languages -%}
       {%- if lang == 'fr' -%}
-        {%- set langUrl = cleanUrl | replace('/en/', '/') | replace('/de/', '/') | replace('/es/', '/') | replace('/pt/', '/') -%}
+        {%- set langUrl = cleanUrl | replace('/en/', '/') | replace('/de/', '/') | replace('/es/', '/') | replace('/pt/', '/') | replace('/it/', '/') -%}
         {%- if langUrl == '' %}{% set langUrl = '/' %}{% endif -%}
       {%- else -%}
         {%- set langPrefix = '/' + lang + '/' -%}
         {%- if cleanUrl == '/' -%}
           {%- set langUrl = langPrefix -%}
-        {%- elif cleanUrl == '/fr/' or cleanUrl == '/en/' or cleanUrl == '/de/' or cleanUrl == '/es/' or cleanUrl == '/pt/' -%}
+        {%- elif cleanUrl == '/fr/' or cleanUrl == '/en/' or cleanUrl == '/de/' or cleanUrl == '/es/' or cleanUrl == '/pt/' or cleanUrl == '/it/' -%}
           {%- set langUrl = langPrefix -%}
         {%- elif '/fr/' in cleanUrl -%}
           {%- set langUrl = cleanUrl | replace('/fr/', langPrefix) -%}
@@ -56,6 +56,8 @@ layout: null
           {%- set langUrl = cleanUrl | replace('/es/', langPrefix) -%}
         {%- elif '/pt/' in cleanUrl -%}
           {%- set langUrl = cleanUrl | replace('/pt/', langPrefix) -%}
+        {%- elif '/it/' in cleanUrl -%}
+          {%- set langUrl = cleanUrl | replace('/it/', langPrefix) -%}
         {%- else -%}
           {%- set langUrl = '/' + lang + cleanUrl -%}
         {%- endif -%}
