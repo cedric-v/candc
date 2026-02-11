@@ -206,29 +206,13 @@ ogImage: assets/img/logo-cc.jpg
       <p class="text-muted">{{ t.testimonials.intro }}</p>
     </div>
     <div class="gallery-grid" id="testimonials-grid">
-      {% set testimonialImages = [
-        'assets/img/testimonials/testimonial-01.jpg',
-        'assets/img/testimonials/testimonial-02.jpg',
-        'assets/img/testimonials/testimonial-04.jpg',
-        'assets/img/testimonials/testimonial-07.jpg',
-        'assets/img/testimonials/testimonial-13.jpg',
-        'assets/img/testimonials/testimonial-14.jpg',
-        'assets/img/testimonials/testimonial-15.jpg',
-        'assets/img/testimonials/testimonial-16.jpg',
-        'assets/img/testimonials/testimonial-17.jpg',
-        'assets/img/testimonials/testimonial-18.jpg',
-        'assets/img/testimonials/testimonial-19.jpg',
-        'assets/img/testimonials/testimonial-20.jpg',
-        'assets/img/testimonials/testimonial-21.jpg',
-        'assets/img/testimonials/testimonial-22.jpg',
-        'assets/img/testimonials/testimonial-23.jpg',
-        'assets/img/testimonials/testimonial-24.jpg',
-        'assets/img/testimonials/testimonial-25.jpg'
-      ] %}
-      
-      {% for image in testimonialImages %}
-      <div class="gallery-item lightbox-trigger" data-image="/{{ image }}">
-        <img src="/{{ image }}" alt="Depoimento de hóspede" class="gallery-image" loading="lazy">
+      {% set localTestimonials = testimonials.studio[locale] or testimonials.studio['pt'] %}
+      {% for testimonial in localTestimonials %}
+      <div class="gallery-item lightbox-trigger" data-image="/{{ testimonial.image }}" data-caption="{{ testimonial.author }}: {{ testimonial.caption }}">
+        <img src="/{{ testimonial.image }}" alt="{{ testimonial.alt }}" class="gallery-image" loading="lazy">
+        <div class="gallery-caption-overlay">
+          <span>{{ testimonial.author }}</span>
+        </div>
       </div>
       {% endfor %}
     </div>

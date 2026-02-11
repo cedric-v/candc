@@ -214,7 +214,7 @@ ogImage: assets/img/logo-cc.jpg
     <div class="gallery-grid" id="testimonials-grid">
       {% set localTestimonials = testimonials.studio[locale] or testimonials.studio['en'] %}
       {% for testimonial in localTestimonials %}
-      <div class="gallery-item lightbox-trigger" data-image="/{{ testimonial.image }}" data-caption="{{ testimonial.author }}: {{ testimonial.alt }}">
+      <div class="gallery-item lightbox-trigger" data-image="/{{ testimonial.image }}" data-caption="{{ testimonial.author }}: {{ testimonial.caption }}">
         <img src="/{{ testimonial.image }}" alt="{{ testimonial.alt }}" class="gallery-image" loading="lazy">
         <div class="gallery-caption-overlay">
           <span>{{ testimonial.author }}</span>
