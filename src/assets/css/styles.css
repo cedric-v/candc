@@ -937,7 +937,13 @@ a:hover {
   z-index: 50;
   box-shadow: var(--shadow);
   overflow: visible;
-  transition: all var(--transition-normal);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color var(--transition-normal), height var(--transition-normal), box-shadow var(--transition-normal);
+  will-change: transform;
+}
+
+.site-header.header-hidden {
+  transform: translateY(-100%);
+  box-shadow: none;
 }
 
 .header-container {

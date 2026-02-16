@@ -212,22 +212,48 @@
     }
   });
 
-  // Effet de menu au scroll
+  // Effet de menu au scroll (Partiellement persistant)
   (function() {
     const header = document.querySelector('.site-header');
+    const mobileMenu = document.querySelector('[data-menu-mobile]');
+    const langSelector = document.querySelector('.language-selector');
+    const mobileLangSelector = document.querySelector('.mobile-language-selector');
+    
     if (!header) return;
     
     let lastScrollY = window.scrollY;
     let ticking = false;
     
+    // Configurable thresholds for UX 2026
+    const SCROLL_UP_THRESHOLD = 8;     // Small scroll up to show
+    const SCROLL_DOWN_THRESHOLD = 50;   // Moderate scroll down to hide (avoid flicker)
+    const HIDE_MIN_SCROLL = 100;       // Don't hide at the very top
+    
     function updateHeader() {
       const scrollY = window.scrollY;
-      const isScrolled = scrollY > 50;
+      const scrollDiff = scrollY - lastScrollY;
       
-      if (isScrolled) {
+      // Basic scrolled state (for logo size/background etc)
+      if (scrollY > 50) {
         header.classList.add('header-scrolled');
       } else {
         header.classList.remove('header-scrolled');
+      }
+
+      // Logic for hiding/showing header
+      const isMenuOpen = (mobileMenu && !mobileMenu.classList.contains('hidden')) || 
+                         (langSelector && langSelector.classList.contains('open')) ||
+                         (mobileLangSelector && mobileLangSelector.classList.contains('open'));
+
+      if (isMenuOpen || scrollY <= HIDE_MIN_SCROLL) {
+        // Always show if menu is open or we are at top
+        header.classList.remove('header-hidden');
+      } else if (scrollDiff > SCROLL_DOWN_THRESHOLD) {
+        // Hiding: scrolling down more than threshold
+        header.classList.add('header-hidden');
+      } else if (scrollDiff < -SCROLL_UP_THRESHOLD) {
+        // Showing: scrolling up more than threshold
+        header.classList.remove('header-hidden');
       }
       
       lastScrollY = scrollY;
