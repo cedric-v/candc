@@ -937,8 +937,8 @@ a:hover {
   z-index: 50;
   box-shadow: var(--shadow);
   overflow: visible;
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color var(--transition-normal), height var(--transition-normal), box-shadow var(--transition-normal);
-  will-change: transform;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), background-color var(--transition-normal), height var(--transition-normal), box-shadow var(--transition-normal);
+  will-change: transform, background-color;
 }
 
 .site-header.header-hidden {
@@ -954,28 +954,33 @@ a:hover {
   align-items: center;
   justify-content: space-between;
   position: relative;
-  height: 3.5rem;
+  height: 4rem;
+  /* Standardized height */
 }
 
 .logo-link {
   display: flex;
   align-items: center;
+  justify-content: center;
   height: 100%;
+  padding: 4px 0;
   text-decoration: none;
   z-index: 60;
 }
 
 .header-logo {
-  height: 60px;
-  /* Logo slightly taller than header-container to create the overlap effect but controlled */
+  height: 56px;
+  /* Slightly smaller to fit better */
   width: auto;
+  min-width: 56px;
+  /* Avoid layout shift */
   object-fit: contain;
-  transition: transform var(--transition-normal);
+  transition: height 0.4s cubic-bezier(0.16, 1, 0.3, 1), filter 0.4s ease;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
 }
 
-.header-scrolled .header-logo {
-  height: 48px;
+#main-header.header-scrolled .header-logo {
+  height: 44px;
 }
 
 .mobile-menu-toggle {
