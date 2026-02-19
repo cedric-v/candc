@@ -1,1 +1,10 @@
+http://candc.ch/* https://candc.ch/:splat 301!
+https://www.candc.ch/* https://candc.ch/:splat 301!
 / /fr/ 301
+/pt/pt /pt/ 301
+/pt/pt/ /pt/ 301
+/en/legal/ /fr/legal/ 301
+/de/legal/ /fr/legal/ 301
+/es/legal/ /fr/legal/ 301
+/pt/legal/ /fr/legal/ 301
+/it/legal/ /fr/legal/ 301

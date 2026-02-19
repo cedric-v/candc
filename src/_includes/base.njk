@@ -64,9 +64,13 @@
     
     {# Générer les balises hreflang pour les 6 langues #}
     {% set languages = ['fr', 'en', 'de', 'es', 'pt', 'it'] %}
-    {% for lang in languages %}
+    {% set pageAvailableLocales = availableLocales or (page.data and page.data.availableLocales) or languages %}
+    {% if canonicalUrl == '/fr/legal/' %}
+      {% set pageAvailableLocales = ['fr'] %}
+    {% endif %}
+    {% for lang in pageAvailableLocales %}
       {% if lang == 'fr' %}
-        {% set langUrl = canonicalUrl | replace('/en/', '/') | replace('/de/', '/') | replace('/es/', '/') | replace('/pt/', '/') | replace('/it/', '/') %}
+        {% set langUrl = canonicalUrl | replace('/en/', '/fr/') | replace('/de/', '/fr/') | replace('/es/', '/fr/') | replace('/pt/', '/fr/') | replace('/it/', '/fr/') %}
         {% if langUrl == '' %}{% set langUrl = '/' %}{% endif %}
       {% else %}
         {% set langPrefix = '/' + lang + '/' %}
@@ -83,7 +87,11 @@
       {% endif %}
       <link rel="alternate" hreflang="{{ lang }}" href="https://candc.ch{{ langUrl }}">
     {% endfor %}
-    <link rel="alternate" hreflang="x-default" href="https://candc.ch{{ canonicalUrl }}">
+    {% set xDefaultUrl = canonicalUrl %}
+    {% if 'fr' in pageAvailableLocales %}
+      {% set xDefaultUrl = canonicalUrl | replace('/en/', '/fr/') | replace('/de/', '/fr/') | replace('/es/', '/fr/') | replace('/pt/', '/fr/') | replace('/it/', '/fr/') %}
+    {% endif %}
+    <link rel="alternate" hreflang="x-default" href="https://candc.ch{{ xDefaultUrl }}">
     
     <!-- CSS -->
     <link rel="stylesheet" href="{{ '/assets/css/styles.css' | relativeUrl }}?v=1.0.1">

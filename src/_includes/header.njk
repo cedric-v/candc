@@ -11,6 +11,8 @@
     <a href="{{ '/es/' | relativeUrl }}" class="logo-link">
     {% elif locale == 'it' %}
     <a href="{{ '/it/' | relativeUrl }}" class="logo-link">
+    {% elif locale == 'pt' %}
+    <a href="{{ '/pt/' | relativeUrl }}" class="logo-link">
     {% else %}
     <a href="{{ '/fr/' | relativeUrl }}" class="logo-link">
     {% endif %}
@@ -41,8 +43,12 @@
 
         <div class="lang-dropdown">
           {% set languages = ['fr', 'en', 'de', 'es', 'pt', 'it'] %}
+          {% set pageAvailableLocales = availableLocales or (page.data and page.data.availableLocales) or languages %}
+          {% if page.url == '/fr/legal/' %}
+            {% set pageAvailableLocales = ['fr'] %}
+          {% endif %}
           {% set langFullNames = {'fr': 'Français', 'en': 'English', 'de': 'Deutsch', 'es': 'Español', 'pt': 'Português', 'it': 'Italiano'} %}
-          {% for lang in languages %}
+          {% for lang in pageAvailableLocales %}
             {% if lang != locale %}
               {% set currentUrl = page.url %}
               {% if lang == 'fr' %}
@@ -89,8 +95,12 @@
 
       <div class="mobile-lang-dropdown">
         {% set languages = ['fr', 'en', 'de', 'es', 'pt', 'it'] %}
+        {% set pageAvailableLocales = availableLocales or (page.data and page.data.availableLocales) or languages %}
+        {% if page.url == '/fr/legal/' %}
+          {% set pageAvailableLocales = ['fr'] %}
+        {% endif %}
         {% set langFullNames = {'fr': 'Français', 'en': 'English', 'de': 'Deutsch', 'es': 'Español', 'pt': 'Português', 'it': 'Italiano'} %}
-        {% for lang in languages %}
+        {% for lang in pageAvailableLocales %}
           {% if lang != locale %}
             {% set currentUrl = page.url %}
             {% if lang == 'fr' %}

@@ -10,12 +10,14 @@ layout: null
   {%- if page.url -%}
     {%- if page.url != "/sitemap.xml" -%}
       {%- if page.url != "/404.html" -%}
+        {%- if not page.data.redirectTo -%}
         {%- set hasJson = false -%}
         {%- if ".json" in page.url -%}
           {%- set hasJson = true -%}
         {%- endif -%}
         {%- if not hasJson -%}
           {%- set cleanUrl = page.url -%}
+          {%- if cleanUrl != "/" -%}
           {%- set fullUrl = "https://candc.ch" + cleanUrl -%}
           {%- if page.date -%}
             {%- set lastmod = page.date | date("YYYY-MM-DD") -%}
@@ -36,9 +38,13 @@ layout: null
     <changefreq>{{ changefreq }}</changefreq>
     <priority>{{ priority }}</priority>
     {%- set languages = ['fr', 'en', 'de', 'es', 'pt', 'it'] -%}
-    {%- for lang in languages -%}
+    {%- set pageAvailableLocales = availableLocales or (page.data and page.data.availableLocales) or languages -%}
+    {%- if cleanUrl == '/fr/legal/' -%}
+      {%- set pageAvailableLocales = ['fr'] -%}
+    {%- endif -%}
+    {%- for lang in pageAvailableLocales -%}
       {%- if lang == 'fr' -%}
-        {%- set langUrl = cleanUrl | replace('/en/', '/') | replace('/de/', '/') | replace('/es/', '/') | replace('/pt/', '/') | replace('/it/', '/') -%}
+        {%- set langUrl = cleanUrl | replace('/en/', '/fr/') | replace('/de/', '/fr/') | replace('/es/', '/fr/') | replace('/pt/', '/fr/') | replace('/it/', '/fr/') -%}
         {%- if langUrl == '' %}{% set langUrl = '/' %}{% endif -%}
       {%- else -%}
         {%- set langPrefix = '/' + lang + '/' -%}
@@ -64,8 +70,14 @@ layout: null
       {%- endif -%}
     <xhtml:link rel="alternate" hreflang="{{ lang }}" href="https://candc.ch{{ langUrl }}" />
     {%- endfor -%}
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://candc.ch{{ cleanUrl }}" />
+    {%- set xDefaultUrl = cleanUrl -%}
+    {%- if 'fr' in pageAvailableLocales -%}
+      {%- set xDefaultUrl = cleanUrl | replace('/en/', '/fr/') | replace('/de/', '/fr/') | replace('/es/', '/fr/') | replace('/pt/', '/fr/') | replace('/it/', '/fr/') -%}
+    {%- endif -%}
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://candc.ch{{ xDefaultUrl }}" />
   </url>
+          {%- endif -%}
+        {%- endif -%}
         {%- endif -%}
       {%- endif -%}
     {%- endif -%}

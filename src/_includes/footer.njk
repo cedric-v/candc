@@ -36,8 +36,12 @@
           <h3>Langue / Language</h3>
           <ul class="language-list">
             {% set languages = ['fr', 'en', 'de', 'es', 'pt', 'it'] %}
+            {% set pageAvailableLocales = availableLocales or (page.data and page.data.availableLocales) or languages %}
+            {% if page.url == '/fr/legal/' %}
+              {% set pageAvailableLocales = ['fr'] %}
+            {% endif %}
             {% set langFullNames = {'fr': 'Français', 'en': 'English', 'de': 'Deutsch', 'es': 'Español', 'pt': 'Português', 'it': 'Italiano'} %}
-            {% for lang in languages %}
+            {% for lang in pageAvailableLocales %}
               {% if lang != locale %}
                 {% set currentUrl = page.url %}
                 {% if lang == 'fr' %}
