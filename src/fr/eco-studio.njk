@@ -12,7 +12,7 @@ ogImage: assets/img/logo-cc.jpg
 
 
 <section class="page-section">
-  {% image "assets/img/fond-hero-studio.jpg", "Eco Studio La Sonnaz", "page-hero-image", "eager" %}
+  {% image "assets/img/fond-hero-studio.jpg", "Eco Studio La Sonnaz", "page-hero-image", "eager", "(max-width: 1200px) 100vw, 1200px" %}
   <div class="section-header">
     <h1 class="hero-title">{{ t.studio.title }}</h1>
     <p class="text-xl text-muted">{{ t.studio.subtitle }}</p>
@@ -20,13 +20,13 @@ ogImage: assets/img/logo-cc.jpg
     <p class="text-base font-semibold text-primary">{{ t.studio.minStay }}</p>
     <div class="gallery-grid mt-4" style="grid-template-columns: repeat(3, 1fr);">
       <div class="gallery-item lightbox-trigger" data-image="/assets/img/gallery/studio/gallerie-studio-1.jpg" data-caption="Wifi haut débit">
-        {% image "assets/img/gallery/studio/gallerie-studio-1.jpg", "Aperçu studio", "gallery-image", "eager" %}
+        {% image "assets/img/gallery/studio/gallerie-studio-1.jpg", "Aperçu studio", "gallery-image", "eager", "(max-width: 768px) 33vw, 400px" %}
       </div>
       <div class="gallery-item lightbox-trigger" data-image="/assets/img/gallery/studio/gallerie-studio-2.jpg" data-caption="Canapé-lit et lit double">
-        {% image "assets/img/gallery/studio/gallerie-studio-2.jpg", "Aperçu studio", "gallery-image", "eager" %}
+        {% image "assets/img/gallery/studio/gallerie-studio-2.jpg", "Aperçu studio", "gallery-image", "eager", "(max-width: 768px) 33vw, 400px" %}
       </div>
       <div class="gallery-item lightbox-trigger" data-image="/assets/img/gallery/studio/gallerie-studio-3.jpg" data-caption="WC douche et colonne de lavage-séchage">
-        {% image "assets/img/gallery/studio/gallerie-studio-3.jpg", "Aperçu studio", "gallery-image", "eager" %}
+        {% image "assets/img/gallery/studio/gallerie-studio-3.jpg", "Aperçu studio", "gallery-image", "eager", "(max-width: 768px) 33vw, 400px" %}
       </div>
     </div>
   </div>
@@ -198,7 +198,7 @@ ogImage: assets/img/logo-cc.jpg
 
       {% for item in galleryImages %}
       <div class="gallery-item lightbox-trigger" data-image="/{{ item.src }}" data-caption="{{ item.caption }}">
-        {% image item.src, item.caption, "gallery-image", "lazy" %}
+        {% image item.src, item.caption, "gallery-image", "lazy", "(max-width: 768px) 50vw, 300px" %}
         <div class="gallery-caption-overlay">
           <span>{{ item.caption }}</span>
         </div>

@@ -19,7 +19,7 @@ ogImage: assets/img/logo-cc.jpg
   <div class="main-grid">
     <div class="card studio-gradient text-white">
       <a href="{{ '/es/eco-studio/' | relativeUrl }}" class="card-link-wrapper">
-        {% image "assets/img/fond-hero-studio.jpg", "Eco Studio La Sonnaz", "card-hero-image" %}
+        {% image "assets/img/fond-hero-studio.jpg", "Eco Studio La Sonnaz", "card-hero-image", "lazy", "(max-width: 768px) 100vw, 550px" %}
         <h2 class="section-title text-white mb-4">{{ t.studio.title }}</h2>
       </a>
       <p class="mb-4 text-white/90">{{ t.studio.subtitle }}</p>
@@ -31,7 +31,7 @@ ogImage: assets/img/logo-cc.jpg
     </div>
     <div class="card parking-gradient text-white">
       <a href="{{ '/es/parking/' | relativeUrl }}" class="card-link-wrapper">
-        {% image "assets/img/fond-hero-parking.jpg", "Aparcamiento La Sonnaz", "card-hero-image" %}
+        {% image "assets/img/fond-hero-parking.jpg", "Parking La Sonnaz", "card-hero-image", "lazy", "(max-width: 768px) 100vw, 550px" %}
         <h2 class="section-title text-white mb-4">{{ t.parking.title }}</h2>
       </a>
       <p class="mb-4 text-white/90">{{ t.parking.subtitle }}</p>

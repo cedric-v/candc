@@ -10,7 +10,7 @@ const PATH_PREFIX = process.env.ELEVENTY_ENV === 'prod' ? "" : "";
 module.exports = function (eleventyConfig) {
 
   // 1. Gestion des Images avec eleventy-img (WebP responsive)
-  eleventyConfig.addShortcode("image", async function (src, alt, cls = "", loading = "lazy", fetchpriority = "", width = "", height = "") {
+  eleventyConfig.addShortcode("image", async function (src, alt, cls = "", loading = "lazy", sizes = "100vw", fetchpriority = "", width = "", height = "") {
     if (!src) return '';
 
     const cleanSrc = src.startsWith('/') ? src.slice(1) : src;
@@ -21,11 +21,6 @@ module.exports = function (eleventyConfig) {
       return `<img src="${src}" alt="${alt}" class="${cls}" ${loading ? `loading="${loading}"` : ''} ${fetchpriority ? `fetchpriority="${fetchpriority}"` : ''} ${width ? `width="${width}"` : ''} ${height ? `height="${height}"` : ''}>`;
     }
 
-    const loadingAttr = loading ? `loading="${loading}"` : '';
-    const fetchpriorityAttr = fetchpriority ? `fetchpriority="${fetchpriority}"` : '';
-    const widthAttr = width ? `width="${width}"` : '';
-    const heightAttr = height ? `height="${height}"` : '';
-
     try {
       const metadata = await Image(fullSrc, {
         widths: [300, 600, 900, 1200],
@@ -34,16 +29,22 @@ module.exports = function (eleventyConfig) {
         urlPath: `/${path.dirname(cleanSrc)}/`,
       });
 
-      const webp = metadata.webp[metadata.webp.length - 1];
-      const jpeg = metadata.jpeg[metadata.jpeg.length - 1];
+      let imageAttributes = {
+        alt,
+        sizes,
+        loading,
+        decoding: "async",
+        class: cls,
+      };
 
-      return `<picture>
-        <source srcset="${webp.srcset}" type="image/webp">
-        <img src="${jpeg.url}" alt="${alt}" class="${cls}" ${loadingAttr} ${fetchpriorityAttr} ${widthAttr} ${heightAttr}>
-      </picture>`;
+      if (fetchpriority) imageAttributes.fetchpriority = fetchpriority;
+      if (width) imageAttributes.width = width;
+      if (height) imageAttributes.height = height;
+
+      return Image.generateHTML(metadata, imageAttributes);
     } catch (error) {
       console.error(`Error processing image ${src}:`, error);
-      return `<img src="${src}" alt="${alt}" class="${cls}" ${loadingAttr} ${fetchpriorityAttr} ${widthAttr} ${heightAttr}>`;
+      return `<img src="${src}" alt="${alt}" class="${cls}" ${loading ? `loading="${loading}"` : ''} ${fetchpriority ? `fetchpriority="${fetchpriority}"` : ''} ${width ? `width="${width}"` : ''} ${height ? `height="${height}"` : ''}>`;
     }
   });
 

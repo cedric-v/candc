@@ -10,23 +10,23 @@ ogImage: assets/img/logo-cc.jpg
 {% set t = translations[locale] or translations['fr'] %}
 
 <section class="page-section">
-  {% image "assets/img/fond-hero-parking.jpg", "Parking La Sonnaz", "page-hero-image", "eager" %}
+  {% image "assets/img/fond-hero-parking.jpg", "Parking La Sonnaz", "page-hero-image", "eager", "(max-width: 1200px) 100vw, 1200px" %}
   <div class="section-header">
     <h1 class="hero-title">{{ t.parking.title }}</h1>
     <p class="text-xl text-muted">{{ t.parking.subtitle }}</p>
     <p class="text-lg text-light">{{ t.parking.description }}</p>
     <div class="gallery-grid mt-4" style="grid-template-columns: repeat(4, 1fr);">
       <div class="gallery-item lightbox-trigger" data-image="/assets/img/gallery/parking/cc-parking-space-front-view.jpg" data-caption="{{ t.gallery.parkingFrontView }}">
-        {% image "assets/img/gallery/parking/cc-parking-space-front-view.jpg", "Aperçu parking", "gallery-image", "eager" %}
+        {% image "assets/img/gallery/parking/cc-parking-space-front-view.jpg", "Aperçu parking", "gallery-image", "eager", "(max-width: 768px) 25vw, 300px" %}
       </div>
       <div class="gallery-item lightbox-trigger" data-image="/assets/img/gallery/parking/cc-parking-space-park-here.jpg" data-caption="{{ t.gallery.parkingSpot }}">
-        {% image "assets/img/gallery/parking/cc-parking-space-park-here.jpg", "Aperçu parking", "gallery-image", "eager" %}
+        {% image "assets/img/gallery/parking/cc-parking-space-park-here.jpg", "Aperçu parking", "gallery-image", "eager", "(max-width: 768px) 25vw, 300px" %}
       </div>
       <div class="gallery-item lightbox-trigger" data-image="/assets/img/gallery/parking/cc-parking-space-terrace-with-field-view.jpg" data-caption="{{ t.gallery.terraceFieldView }}">
-        {% image "assets/img/gallery/parking/cc-parking-space-terrace-with-field-view.jpg", "Aperçu parking", "gallery-image", "eager" %}
+        {% image "assets/img/gallery/parking/cc-parking-space-terrace-with-field-view.jpg", "Aperçu parking", "gallery-image", "eager", "(max-width: 768px) 25vw, 300px" %}
       </div>
       <div class="gallery-item lightbox-trigger" data-image="/assets/img/gallery/parking/cc-parking-space-terrace-with-park-view.jpg" data-caption="{{ t.gallery.terraceParkView }}">
-        {% image "assets/img/gallery/parking/cc-parking-space-terrace-with-park-view.jpg", "Aperçu parking", "gallery-image", "eager" %}
+        {% image "assets/img/gallery/parking/cc-parking-space-terrace-with-park-view.jpg", "Aperçu parking", "gallery-image", "eager", "(max-width: 768px) 25vw, 300px" %}
       </div>
     </div>
   </div>
@@ -98,6 +98,8 @@ ogImage: assets/img/logo-cc.jpg
 
   </div>
 
+  {% include "superhost.njk" %}
+
   <!-- Galerie Photos -->
   <section class="mt-2xl">
     <div class="section-header">
@@ -115,7 +117,7 @@ ogImage: assets/img/logo-cc.jpg
 
       {% for item in galleryImages %}
       <div class="gallery-item lightbox-trigger" data-image="/{{ item.src }}" data-caption="{{ item.caption }}">
-        {% image item.src, item.caption, "gallery-image", "lazy" %}
+        {% image item.src, item.caption, "gallery-image", "lazy", "(max-width: 768px) 50vw, 300px" %}
         <div class="gallery-caption-overlay">
           <span>{{ item.caption }}</span>
         </div>
