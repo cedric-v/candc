@@ -30,11 +30,11 @@ ogImage: assets/img/logo-cc.jpg
   {% include "superhost.njk" %}
 
   <div class="mt-12 flex flex-wrap justify-center gap-md">
-    <a href="{{ '/fr/eco-studio/#reservation' | relativeUrl }}" class="btn btn-primary">
-      Réserver le studio meublé
+    <a href="{{ ('/' + locale + '/eco-studio/#reservation') | relativeUrl }}" class="btn btn-primary">
+      {{ t.bookStudio }}
     </a>
-    <a href="{{ '/fr/parking/#reservation' | relativeUrl }}" class="btn btn-primary">
-      Réserver la place de stationnement pour camping-car / van
+    <a href="{{ ('/' + locale + '/parking/#reservation') | relativeUrl }}" class="btn btn-primary">
+      {{ t.bookParking }}
     </a>
   </div>
 </section>

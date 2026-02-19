@@ -49,7 +49,7 @@
       "baseCentral": "Base centrale idéale pour visiter toute la Suisse ou travailler à Fribourg et son agglomération (Givisiez, Granges-Paccots, Villars-sur-Glâne, etc.), juste à côté de la ville de Fribourg / Freiburg",
       "highway": "Proche autoroute A12 : à quelques minutes de 2 entrées d'autoroute (\"Fribourg-Nord\" et \"Fribourg-Sud\")",
       "publicTransport": "Transports publics à proximité : à 1 km de l'arrêt de train Belfaux-Village et 1,5 km de Belfaux-CFF",
-      "forum": "Proche du Forum Fribourg (salle de foire et autres événements) et de la BCF Arena (patinoire)"
+      "forum": "Proche du Forum Fribourg (salle de foire et autres événements) et de la BCF Arena (patinoire Saint-Léonard)"
     },
     "studio": {
       "title": "Joli studio meublé en campagne",
@@ -196,7 +196,8 @@
     "seo": {
       "baseCentral": "Ideal central base to visit all of Switzerland",
       "highway": "Close to A12 highway",
-      "publicTransport": "Public transport nearby"
+      "publicTransport": "Public transport nearby",
+      "forum": "Close to Forum Fribourg (exhibition hall and other events) and BCF Arena (Saint-Léonard ice rink)"
     },
     "studio": {
       "title": "Lovely furnished studio in the countryside",
@@ -343,7 +344,8 @@
     "seo": {
       "baseCentral": "Ideale zentrale Basis, um die ganze Schweiz zu besuchen",
       "highway": "Nah zur Autobahn A12",
-      "publicTransport": "Öffentliche Verkehrsmittel in der Nähe"
+      "publicTransport": "Öffentliche Verkehrsmittel in der Nähe",
+      "forum": "Nah am Forum Freiburg (Messehalle und andere Veranstaltungen) und der BCF Arena (Eishalle Saint-Léonard)"
     },
     "studio": {
       "title": "Schönes möbliertes Studio auf dem Land",
@@ -490,7 +492,8 @@
     "seo": {
       "baseCentral": "Base central ideal para visitar toda Suiza",
       "highway": "Cerca de la autopista A12",
-      "publicTransport": "Transporte público cercano"
+      "publicTransport": "Transporte público cercano",
+      "forum": "Cerca del Forum Friburgo (pabellón de exposiciones y otros eventos) y del BCF Arena (pista de hielo Saint-Léonard)"
     },
     "studio": {
       "title": "Encantador estudio amueblado en el campo",
@@ -637,7 +640,8 @@
     "seo": {
       "baseCentral": "Base central ideal para visitar toda a Suíça",
       "highway": "Perto da rodovia A12",
-      "publicTransport": "Transporte público próximo"
+      "publicTransport": "Transporte público próximo",
+      "forum": "Perto do Forum Friburgo (pavilhão de exposições e outros eventos) e da BCF Arena (rinque de gelo Saint-Léonard)"
     },
     "studio": {
       "title": "Estúdio mobiliado encantador no campo",
@@ -784,7 +788,8 @@
     "seo": {
       "baseCentral": "Base centrale ideale per visitare tutta la Svizzera",
       "highway": "Vicino all'autostrada A12",
-      "publicTransport": "Trasporti pubblici nelle vicinanze"
+      "publicTransport": "Trasporti pubblici nelle vicinanze",
+      "forum": "Vicino al Forum Fribourg (padiglione fieristico e altri eventi) e alla BCF Arena (pista di ghiaccio Saint-Léonard)"
     },
     "studio": {
       "title": "Incantevole monolocale arredato in campagna",

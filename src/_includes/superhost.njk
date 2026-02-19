@@ -1,4 +1,6 @@
+{% if not hideSuperhostLink %}
 <a href="https://www.airbnb.ch/rooms/4116019" target="_blank" rel="noopener noreferrer" class="superhost-link no-underline hover:opacity-90 transition-opacity">
+{% endif %}
   <div class="superhost-badge mt-12 mb-12 flex items-center justify-center gap-md">
     {% image "assets/img/cedric-superhote-airbnb.jpg", "Superhost Airbnb", "superhost-image rounded-lg shadow-sm", "lazy", "(max-width: 768px) 100vw, 480px" %}
     <div class="text-left">
@@ -6,4 +8,6 @@
       <p class="text-muted">{{ t.superhost.subtext }}</p>
     </div>
   </div>
+{% if not hideSuperhostLink %}
 </a>
+{% endif %}
