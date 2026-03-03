@@ -45,7 +45,7 @@
         </button>
 
         <div class="lang-dropdown">
-          {% set languages = ['fr', 'en', 'de', 'es', 'nl', 'pt', 'it'] %}
+          {% set languages = ['fr', 'en', 'nl', 'de', 'es', 'pt', 'it'] %}
           {% set pageAvailableLocales = availableLocales or (page.data and page.data.availableLocales) or languages %}
           {% if page.url == '/fr/legal/' %}
             {% set pageAvailableLocales = ['fr'] %}
@@ -97,7 +97,7 @@
       </button>
 
       <div class="mobile-lang-dropdown">
-        {% set languages = ['fr', 'en', 'de', 'es', 'nl', 'pt', 'it'] %}
+        {% set languages = ['fr', 'en', 'nl', 'de', 'es', 'pt', 'it'] %}
         {% set pageAvailableLocales = availableLocales or (page.data and page.data.availableLocales) or languages %}
         {% if page.url == '/fr/legal/' %}
           {% set pageAvailableLocales = ['fr'] %}

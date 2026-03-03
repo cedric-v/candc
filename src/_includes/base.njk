@@ -65,7 +65,7 @@
     <meta name="twitter:image" content="{{ ogImageUrl }}">
     
     {# Générer les balises hreflang pour les 6 langues #}
-    {% set languages = ['fr', 'en', 'de', 'es', 'nl', 'pt', 'it'] %}
+    {% set languages = ['fr', 'en', 'nl', 'de', 'es', 'pt', 'it'] %}
     {% set pageAvailableLocales = availableLocales or (page.data and page.data.availableLocales) or languages %}
     {% if canonicalUrl == '/fr/legal/' %}
       {% set pageAvailableLocales = ['fr'] %}
