@@ -1121,6 +1121,8 @@ a:hover {
   gap: 0;
   padding: var(--spacing-md);
   box-shadow: var(--shadow);
+  max-height: calc(100vh - 4rem);
+  overflow-y: auto;
 }
 
 .mobile-nav.hidden {
@@ -1183,7 +1185,7 @@ a:hover {
 
 .mobile-language-selector.open .mobile-lang-dropdown {
   opacity: 1;
-  max-height: 200px;
+  max-height: 500px;
 }
 
 .mobile-lang-option {
