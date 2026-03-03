@@ -1,13 +1,13 @@
 ---
 layout: base.njk
-title: Aparcamiento - Plaza individual para furgoneta/caravana
-description: Plaza de aparcamiento totalmente equipada para furgoneta/caravana/autocaravana en La Sonnaz, Friburgo. Toma de corriente, WiFi, agua potable.
-locale: es
-permalink: /es/parking/
+title: Parking - Individual van/camper parking space
+description: Fully equipped parking space for van/camping-car/motorhome/RV in La Sonnaz, Fribourg. Electrical outlet, WiFi, drinking water.
+locale: nl
+permalink: /nl/parking/
 ogImage: assets/img/logo-cc.jpg
 ---
 
-{% set t = translations[locale] or translations['es'] %}
+{% set t = translations[locale] or translations['en'] %}
 
 <section class="page-section">
   {% image "assets/img/fond-hero-parking.jpg", "Parking La Sonnaz", "page-hero-image", "eager", "(max-width: 1200px) 100vw, 1200px" %}
@@ -17,51 +17,51 @@ ogImage: assets/img/logo-cc.jpg
     <p class="text-lg text-light">{{ t.parking.description }}</p>
     <div class="gallery-grid mt-4" style="grid-template-columns: repeat(4, 1fr);">
       <div class="gallery-item lightbox-trigger" data-image="/assets/img/gallery/parking/cc-parking-space-front-view.jpg" data-caption="{{ t.gallery.parkingFrontView }}">
-        {% image "assets/img/gallery/parking/cc-parking-space-front-view.jpg", "Vista previa parking", "gallery-image", "eager", "(max-width: 768px) 25vw, 300px" %}
+        {% image "assets/img/gallery/parking/cc-parking-space-front-view.jpg", "Parking preview", "gallery-image", "eager", "(max-width: 768px) 25vw, 300px" %}
       </div>
       <div class="gallery-item lightbox-trigger" data-image="/assets/img/gallery/parking/cc-parking-space-park-here.jpg" data-caption="{{ t.gallery.parkingSpot }}">
-        {% image "assets/img/gallery/parking/cc-parking-space-park-here.jpg", "Vista previa parking", "gallery-image", "eager", "(max-width: 768px) 25vw, 300px" %}
+        {% image "assets/img/gallery/parking/cc-parking-space-park-here.jpg", "Parking preview", "gallery-image", "eager", "(max-width: 768px) 25vw, 300px" %}
       </div>
       <div class="gallery-item lightbox-trigger" data-image="/assets/img/gallery/parking/cc-parking-space-terrace-with-field-view.jpg" data-caption="{{ t.gallery.terraceFieldView }}">
-        {% image "assets/img/gallery/parking/cc-parking-space-terrace-with-field-view.jpg", "Vista previa parking", "gallery-image", "eager", "(max-width: 768px) 25vw, 300px" %}
+        {% image "assets/img/gallery/parking/cc-parking-space-terrace-with-field-view.jpg", "Parking preview", "gallery-image", "eager", "(max-width: 768px) 25vw, 300px" %}
       </div>
       <div class="gallery-item lightbox-trigger" data-image="/assets/img/gallery/parking/cc-parking-space-terrace-with-park-view.jpg" data-caption="{{ t.gallery.terraceParkView }}">
-        {% image "assets/img/gallery/parking/cc-parking-space-terrace-with-park-view.jpg", "Vista previa parking", "gallery-image", "eager", "(max-width: 768px) 25vw, 300px" %}
+        {% image "assets/img/gallery/parking/cc-parking-space-terrace-with-park-view.jpg", "Parking preview", "gallery-image", "eager", "(max-width: 768px) 25vw, 300px" %}
       </div>
     </div>
   </div>
 
   <div class="card">
-    <h2 class="section-title mb-8">Lo que proporcionamos</h2>
+    <h2 class="section-title mb-8">What we provide</h2>
     <ul class="features-list">
       <li>
         <span class="text-xl">🅿️</span>
-        <span class="text-muted">Plaza de aparcamiento</span>
+        <span class="text-muted">Parking space</span>
       </li>
       <li>
         <span class="text-xl">⚡</span>
-        <span class="text-muted">Toma de corriente</span>
+        <span class="text-muted">Electrical outlet</span>
       </li>
       <li>
         <span class="text-xl">🗑️</span>
-        <span class="text-muted">Gestión de residuos</span>
+        <span class="text-muted">Waste management</span>
       </li>
       <li>
         <span class="text-xl">📶</span>
-        <span class="text-muted">WiFi rápido</span>
+        <span class="text-muted">Fast WiFi</span>
       </li>
       <li>
         <span class="text-xl">💧</span>
-        <span class="text-muted">Grifo exterior con agua potable</span>
+        <span class="text-muted">Outside tap with drinking water</span>
       </li>
       <li>
         <span class="text-xl">🌄</span>
-        <span class="text-muted">Terraza con vistas</span>
+        <span class="text-muted">Terrace with view</span>
       </li>
     </ul>
 
     <div class="note-box mt-12">
-      <p><strong class="text-primary">Nota importante :</strong> {{ t.parking.note }}</p>
+      <p><strong class="text-primary">Important note:</strong> {{ t.parking.note }}</p>
     </div>
 
     <div class="warning-box mt-12 mb-12">
@@ -70,7 +70,7 @@ ogImage: assets/img/logo-cc.jpg
 
     <div class="space-y-lg mb-12">
       <div class="service-box toilet">
-        <h3 class="text-lg font-semibold text-primary mb-2">🚿 Acceso a baño y ducha</h3>
+        <h3 class="text-lg font-semibold text-primary mb-2">🚿 Toilet and shower access</h3>
         <p class="text-muted">{{ t.parking.toilet }}</p>
       </div>
 
@@ -101,7 +101,7 @@ ogImage: assets/img/logo-cc.jpg
   {% set hideSuperhostLink = true %}
   {% include "superhost.njk" %}
 
-  <!-- Galería de Fotos -->
+  <!-- Photo Gallery -->
   <section class="mt-2xl">
     <div class="section-header">
       <h2 class="section-title">{{ t.gallery.title }}</h2>
@@ -146,7 +146,7 @@ ogImage: assets/img/logo-cc.jpg
     </div>
   </section>
 
-  <!-- Tarifas -->
+  <!-- Rates -->
   <section class="mt-3xl text-center">
     <h2 class="section-title mb-4">{{ t.parking.ratesTitle }}</h2>
     <div class="card max-w-2xl mx-auto">
@@ -159,7 +159,7 @@ ogImage: assets/img/logo-cc.jpg
     </div>
   </section>
 
-  <!-- Métodos de pago -->
+  <!-- Payment methods -->
   <section class="mt-3xl text-center">
     <h2 class="section-title mb-4">{{ t.payment.title }}</h2>
     <p class="text-muted mb-8">
@@ -185,9 +185,9 @@ ogImage: assets/img/logo-cc.jpg
 
   <!-- Lightbox -->
   <div id="parking-lightbox" class="lightbox">
-    <button id="lightbox-close" class="lightbox-close" aria-label="Cerrar">×</button>
-    <button id="lightbox-prev" class="lightbox-prev" aria-label="Anterior">‹</button>
-    <button id="lightbox-next" class="lightbox-next" aria-label="Siguiente">›</button>
+    <button id="lightbox-close" class="lightbox-close" aria-label="Close">×</button>
+    <button id="lightbox-prev" class="lightbox-prev" aria-label="Previous">‹</button>
+    <button id="lightbox-next" class="lightbox-next" aria-label="Next">›</button>
     <div class="lightbox-container">
       <img id="lightbox-image" src="" alt="Photo">
     </div>
@@ -324,9 +324,9 @@ ogImage: assets/img/logo-cc.jpg
 {
   "@context": "https://schema.org",
   "@type": "ParkingFacility",
-  "name": "C&C Eco Studio - Aparcamiento",
-  "description": "Plaza individual de aparcamiento totalmente equipada para furgoneta/caravana/autocaravana cerca de Friburgo, Suiza. Toma de corriente, WiFi, gestión de residuos.",
-  "url": "https://candc.ch/es/parking/",
+  "name": "C&C Eco Studio - Parking",
+  "description": "Fully equipped individual parking space for van/camping-car/motorhome near Fribourg, Switzerland. Electrical outlet, WiFi, waste management.",
+  "url": "https://candc.ch/en/parking/",
   "address": {
     "@type": "PostalAddress",
     "streetAddress": "Impasse de la Pommeraie 5",
@@ -344,32 +344,32 @@ ogImage: assets/img/logo-cc.jpg
   "amenityFeature": [
     {
       "@type": "LocationFeatureSpecification",
-      "name": "Plaza de aparcamiento",
+      "name": "Parking space",
       "value": "true"
     },
     {
       "@type": "LocationFeatureSpecification",
-      "name": "Toma de corriente",
+      "name": "Electrical outlet",
       "value": "true"
     },
     {
       "@type": "LocationFeatureSpecification",
-      "name": "WiFi rápido",
+      "name": "Fast WiFi",
       "value": "true"
     },
     {
       "@type": "LocationFeatureSpecification",
-      "name": "Gestión de residuos",
+      "name": "Waste management",
       "value": "true"
     },
     {
       "@type": "LocationFeatureSpecification",
-      "name": "Agua potable",
+      "name": "Drinking water",
       "value": "true"
     }
   ],
   "priceRange": "CHF 10-30",
-  "paymentAccepted": "Efectivo, Tarjeta de crédito",
+  "paymentAccepted": "Cash, Credit Card",
   "currenciesAccepted": "CHF, EUR",
   "provider": {
     "@type": "Organization",
@@ -378,7 +378,7 @@ ogImage: assets/img/logo-cc.jpg
     "logo": "https://candc.ch/assets/img/logo-cc.jpg"
   },
   "review": [
-    {% for testimonial in testimonials.parking[locale] or testimonials.parking['es'] %}
+    {% for testimonial in testimonials.parking[locale] or testimonials.parking['en'] %}
     {
       "@type": "Review",
       "author": {

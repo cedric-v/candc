@@ -49,6 +49,8 @@
       {%- set ogLocale = 'es_ES' -%}
     {%- elif locale == 'it' -%}
       {%- set ogLocale = 'it_IT' -%}
+    {%- elif locale == 'nl' -%}
+      {%- set ogLocale = 'nl_NL' -%}
     {%- else -%}
       {%- set ogLocale = 'pt_PT' -%}
     {%- endif -%}
@@ -63,14 +65,14 @@
     <meta name="twitter:image" content="{{ ogImageUrl }}">
     
     {# Générer les balises hreflang pour les 6 langues #}
-    {% set languages = ['fr', 'en', 'de', 'es', 'pt', 'it'] %}
+    {% set languages = ['fr', 'en', 'de', 'es', 'nl', 'pt', 'it'] %}
     {% set pageAvailableLocales = availableLocales or (page.data and page.data.availableLocales) or languages %}
     {% if canonicalUrl == '/fr/legal/' %}
       {% set pageAvailableLocales = ['fr'] %}
     {% endif %}
     {% for lang in pageAvailableLocales %}
       {% if lang == 'fr' %}
-        {% set langUrl = canonicalUrl | replace('/en/', '/fr/') | replace('/de/', '/fr/') | replace('/es/', '/fr/') | replace('/pt/', '/fr/') | replace('/it/', '/fr/') %}
+        {% set langUrl = canonicalUrl | replace('/en/', '/fr/') | replace('/de/', '/fr/') | replace('/es/', '/fr/') | replace('/pt/', '/fr/') | replace('/it/', '/fr/') | replace('/nl/', '/fr/') %}
         {% if langUrl == '' %}{% set langUrl = '/' %}{% endif %}
       {% else %}
         {% set langPrefix = '/' + lang + '/' %}
@@ -79,7 +81,7 @@
         {% elif locale == lang %}
           {% set langUrl = canonicalUrl %}
         {% else %}
-          {% set langUrl = canonicalUrl | replace('/fr/', langPrefix) | replace('/en/', langPrefix) | replace('/de/', langPrefix) | replace('/es/', langPrefix) | replace('/pt/', langPrefix) | replace('/it/', langPrefix) %}
+          {% set langUrl = canonicalUrl | replace('/fr/', langPrefix) | replace('/en/', langPrefix) | replace('/de/', langPrefix) | replace('/es/', langPrefix) | replace('/pt/', langPrefix) | replace('/it/', langPrefix) | replace('/nl/', langPrefix) %}
           {% if langUrl == canonicalUrl %}
             {% set langUrl = '/' + lang + canonicalUrl %}
           {% endif %}
@@ -89,7 +91,7 @@
     {% endfor %}
     {% set xDefaultUrl = canonicalUrl %}
     {% if 'fr' in pageAvailableLocales %}
-      {% set xDefaultUrl = canonicalUrl | replace('/en/', '/fr/') | replace('/de/', '/fr/') | replace('/es/', '/fr/') | replace('/pt/', '/fr/') | replace('/it/', '/fr/') %}
+      {% set xDefaultUrl = canonicalUrl | replace('/en/', '/fr/') | replace('/de/', '/fr/') | replace('/es/', '/fr/') | replace('/pt/', '/fr/') | replace('/it/', '/fr/') | replace('/nl/', '/fr/') %}
     {% endif %}
     <link rel="alternate" hreflang="x-default" href="https://candc.ch{{ xDefaultUrl }}">
     

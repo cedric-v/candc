@@ -166,6 +166,10 @@ ogImage: assets/img/logo-cc.jpg
       </li>
       <li class="flex items-start gap-sm">
         <span class="text-primary font-bold">✓</span>
+        <span class="text-muted">{{ t.businessFeatures.unifr }}</span>
+      </li>
+      <li class="flex items-start gap-sm">
+        <span class="text-primary font-bold">✓</span>
         <span class="text-muted">{{ t.businessFeatures.monthly }}</span>
       </li>
     </ul>
@@ -209,7 +213,7 @@ ogImage: assets/img/logo-cc.jpg
       {% set localTestimonials = testimonials.studio[locale] or testimonials.studio['pt'] %}
       {% for testimonial in localTestimonials %}
       <div class="gallery-item lightbox-trigger" data-image="/{{ testimonial.image }}" data-caption="{{ testimonial.author }}: {{ testimonial.caption }}">
-        <img src="/{{ testimonial.image }}" alt="{{ testimonial.alt }}" class="gallery-image" loading="lazy">
+        {% image testimonial.image, testimonial.alt, "gallery-image", "lazy" %}
         <div class="gallery-caption-overlay">
           <span>{{ testimonial.author }}</span>
         </div>

@@ -43,6 +43,7 @@
       "quiet": "Calme et tranquillité",
       "office": "Grande table stable et chaises confortables, idéale pour servir de bureau",
       "location": "Proche des pôles économiques :<br>- Fribourg et son agglomération à moins de 10 minutes : Villars-sûr-Glâne, Givisiez, Granges-Paccot, Corminboeuf, Belfaux, Matran, Avry, Düdingen<br>- Berne à 30 minutes<br>- Bulle à 20 minutes",
+      "unifr": "Proche de l'Université de Fribourg (Unifr) : à une vingtaine de minutes à pied puis en train ou à 15 minutes de vélo",
       "monthly": "Location au mois"
     },
     "seo": {
@@ -191,6 +192,7 @@
       "quiet": "Peace and quiet",
       "office": "Large stable table and comfortable chairs, ideal for use as an office",
       "location": "Close to business hubs:<br>- Fribourg and its agglomeration in less than 10 minutes: Villars-sûr-Glâne, Givisiez, Granges-Paccot, Corminboeuf, Belfaux, Matran, Avry, Düdingen<br>- Bern at 30 minutes<br>- Bulle at 20 minutes",
+      "unifr": "Close to the University of Fribourg (Unifr): about twenty minutes on foot then by train or 15 minutes by bike",
       "monthly": "Monthly rental"
     },
     "seo": {
@@ -339,6 +341,7 @@
       "quiet": "Ruhe und Frieden",
       "office": "Großer stabiler Tisch und bequeme Stühle, ideal als Büro nutzbar",
       "location": "Nah zu Wirtschaftszentren:<br>- Freiburg und Umgebung in weniger als 10 Minuten: Villars-sûr-Glâne, Givisiez, Granges-Paccot, Corminboeuf, Belfaux, Matran, Avry, Düdingen<br>- Bern in 30 Minuten<br>- Bulle in 20 Minuten",
+      "unifr": "In der Nähe der Universität Freiburg (Unifr): etwa zwanzig Minuten zu Fuß, dann mit dem Zug, oder 15 Minuten mit dem Fahrrad",
       "monthly": "Monatsmiete"
     },
     "seo": {
@@ -487,6 +490,7 @@
       "quiet": "Paz y tranquilidad",
       "office": "Mesa grande y estable y sillas cómodas, ideal para usar como oficina",
       "location": "Cerca de centros económicos:<br>- Friburgo y su aglomeración en menos de 10 minutos: Villars-sûr-Glâne, Givisiez, Granges-Paccot, Corminboeuf, Belfaux, Matran, Avry, Düdingen<br>- Berna a 30 minutos<br>- Bulle a 20 minutos",
+      "unifr": "Cerca de la Universidad de Friburgo (Unifr): a unos veinte minutos a pie y luego en tren o 15 minutos en bicicleta",
       "monthly": "Alquiler mensual"
     },
     "seo": {
@@ -635,6 +639,7 @@
       "quiet": "Paz e tranquilidade",
       "office": "Mesa grande e estável e cadeiras confortáveis, ideal para usar como escritório",
       "location": "Perto de centros econômicos:<br>- Friburgo e sua aglomeração em menos de 10 minutos: Villars-sûr-Glâne, Givisiez, Granges-Paccot, Corminboeuf, Belfaux, Matran, Avry, Düdingen<br>- Berna em 30 minutos<br>- Bulle em 20 minutos",
+      "unifr": "Perto da Universidade de Friburgo (Unifr): a cerca de vinte minutos a pé e depois de comboio ou a 15 minutos de bicicleta",
       "monthly": "Aluguel mensal"
     },
     "seo": {
@@ -783,6 +788,7 @@
       "quiet": "Pace e tranquillità",
       "office": "Grande tavolo stabile e sedie comode, ideale per essere usato come ufficio",
       "location": "Vicino ai poli economici:<br>- Friburgo e la sua agglomerazione in meno di 10 minuti: Villars-sûr-Glâne, Givisiez, Granges-Paccot, Corminboeuf, Belfaux, Matran, Avry, Düdingen<br>- Berna a 30 minuti<br>- Bulle a 20 minuti",
+      "unifr": "Vicino all'Università di Friburgo (Unifr): a circa venti minuti a piedi e poi in treno, oppure a 15 minuti in bicicletta",
       "monthly": "Affitto mensile"
     },
     "seo": {
@@ -886,5 +892,154 @@
       "subtext": "È segno di un'accoglienza di qualità."
     },
     "changeLanguage": "Cambia lingua"
+  },
+  "nl": {
+    "siteName": "C & C",
+    "location": "Locatie",
+    "siteDescription": "Eco Studio en camper / busje parkeerplaats in La Sonnaz, Fribourg, Zwitserland",
+    "businessName": "C & C",
+    "businessDescription": "Eco Studio en camper / busje parkeerplaats in La Sonnaz, Fribourg, Zwitserland. Gemeubileerd appartement en beveiligde parkeerplaats.",
+    "streetAddress": "La Sonnaz",
+    "home": "Home",
+    "ecoStudio": "Eco Studio",
+    "homeEcoStudioBtn": "C&C Eco Studio",
+    "menuParking": "Parkeren",
+    "homeParkingBtn": "C&C Parkeerplaats",
+    "contact": "Contact",
+    "menuAbout": "Over ons",
+    "menuTestimonials": "Beoordelingen",
+    "booking": "Reserveren",
+    "email": "E-mail",
+    "whatsapp": "WhatsApp",
+    "address": "Adres",
+    "phone": "Telefoon",
+    "bookNow": "Nu reserveren",
+    "checkAvailability": "Controleer beschikbaarheid en tarieven",
+    "requestReservation": "Reservering aanvragen",
+    "bookStudio": "Boek de gemeubileerde studio",
+    "bookParking": "Boek de camper / busje parkeerplaats",
+    "bookOnBooking": "Boek op Booking.com",
+    "bookOnAirbnb": "Boek op Airbnb",
+    "getDirections": "Bekijk de route op Google Maps",
+    "googleMapsStudioLink": "https://maps.app.goo.gl/HAGiaSdfLJq73Pme6",
+    "googleMapsParkingLink": "https://maps.app.goo.gl/GQEArnNF6nscdBtz7",
+    "googleMapsFindUs": "🗺️ Op Google Maps bent u ons gemakkelijk te vinden door te zoeken op \"C&C Eco Studio\" of \"C&C Parking Space\"",
+    "addressButton": "Klik hier voor het exacte adres en de Google Maps link",
+    "contactUs": "Neem contact met ons op",
+    "sendMessage": "Bericht verzenden",
+    "name": "Naam",
+    "message": "Bericht",
+    "submit": "Verzenden",
+    "businessTitle": "Eco Studio Business / Corporate",
+    "businessSubtitle": "Maandelijkse huur voor professionals (oktober tot februari)",
+    "businessFeatures": {
+      "wifi": "Snelle Wi-Fi (glasvezel)",
+      "quiet": "Rust en stilte",
+      "office": "Grote stabiele tafel en comfortabele stoelen, ideaal als kantoor",
+      "location": "Dichtbij economische centra:<br>- Fribourg en de agglomeratie in minder dan 10 minuten: Villars-sûr-Glâne, Givisiez, Granges-Paccot, Corminboeuf, Belfaux, Matran, Avry, Düdingen<br>- Bern op 30 minuten<br>- Bulle op 20 minuten",
+      "unifr": "Dichtbij de Universiteit van Fribourg (Unifr): ongeveer twintig minuten lopen en dan met de trein of 15 minuten op de fiets",
+      "monthly": "Maandelijkse huur"
+    },
+    "seo": {
+      "baseCentral": "Ideale centrale uitvalsbasis om heel Zwitserland te bezoeken",
+      "highway": "Dichtbij de A12 snelweg",
+      "publicTransport": "Openbaar vervoer in de buurt",
+      "forum": "Dichtbij Forum Fribourg (beurshal en andere evenementen) en BCF Arena (ijshal Saint-Léonard)"
+    },
+    "studio": {
+      "title": "Mooie gemeubileerde studio op het platteland",
+      "subtitle": "Gemeubileerde accommodatie op het platteland nabij Fribourg (Zwitserland)",
+      "description": "34 m² studio met uitzicht op velden, bos op 5 minuten lopen",
+      "size": "34 vierkante meter",
+      "minStay": "Minimum verblijf: 5 nachten",
+      "bedroom": "180 cm breed tweepersoonsbed (2 personen) met verstelbare hoofdeinden",
+      "sofaBed": "Slaapbank (1 volwassene of 2 kinderen)",
+      "kitchen": "Moderne en volledig uitgeruste keuken (oven, magnetron, koelkast met vriesvak, koffiezetapparaat, keramische kookplaat)",
+      "bathroom": "Badkamer met toilet, moderne douche en haardroger",
+      "laundry": "Moderne wasmachine en droger",
+      "entertainment": "TV met 250+ zenders, Apple TV (Netflix, Disney+, YouTube), PlayStation 4, Chromecast (hiermee kunt u eenvoudig content vanaf uw telefoon of computer streamen)",
+      "internet": "Draadloze internettoegang met zeer snelle verbinding (10 Gbits symmetrisch via glasvezel)",
+      "parking": "Inclusief parkeerplaats met mogelijkheid om elektrische auto op te laden",
+      "terrace": "Eigen grasterras",
+      "eco": "Zonne-energie, water verwarmd door thermische panelen, verwarming door middel van geothermische warmtepomp",
+      "children": "Reiswieg en speelgoed beschikbaar op aanvraag",
+      "location": "Klein rustig dorp, op minder dan 5 minuten van 2 A12-toegangen (Fribourg-Nord en Fribourg-Sud), 1 km van het station Belfaux-Village",
+      "noPets": "Huisdieren zijn niet toegestaan",
+      "smokingOutdoor": "Roken is alleen buitenshuis toegestaan (asbak beschikbaar op het terras)",
+      "rules": "Huisregels"
+    },
+    "parking": {
+      "title": "Parkeerplaats voor busje / camper / motorhome",
+      "subtitle": "Individuele parkeerplaats voor camper / busje / motorhome nabij Fribourg (Zwitserland)",
+      "description": "Volledig uitgeruste parkeerplaats gelegen aan de rand van een dorp, met uitzicht op de velden",
+      "equipment": "Parkeerplaats, stopcontact, afvalbeheer, snelle WiFi, buitenkraan met drinkwater, terras met uitzicht",
+      "note": "De camper / busje is niet inbegrepen; u dient uw eigen mee te nemen",
+      "toilet": "Toegang tot toilet en douche op aanvraag beschikbaar tussen 7.00 en 21.00 uur, wanneer we aanwezig zijn. Optionele service met 10 CHF schoonmaakkosten voor het gehele verblijf. Controleer de beschikbaarheid door ons te schrijven.",
+      "evChargingTitle": "🔌 Opladen van elektrische auto's",
+      "evCharging": "Opladen van elektrische voertuigen (langzaam laden): 15 CHF (10u) of 30 CHF (volledige dag/nacht)",
+      "evCable": "Type 13 compatibele kabel (220V, 10A) met Type 2 connector",
+      "noChemicalToilet": "We hebben niet de infrastructuur om chemische toiletten van campers te legen",
+      "ratesTitle": "Tarieven",
+      "ratesMain": "20 CHF / nacht + 3 CHF toeristenbelasting per volwassene / nacht (*)",
+      "ratesNote": "* : het tarief kan hoger zijn in geval van grote vraag of evenementen in de buurt"
+    },
+    "cancellationPolicy": {
+      "title": "Flexibele annulering:",
+      "freeUntil": "Gratis tot 48 uur voor uw aankomst.",
+      "fullRefund": "Volledige terugbetaling zonder kosten.",
+      "note": "Let op: boekingen die via \"Niet-terugbetaalbare\" speciale aanbiedingen zijn gemaakt, profiteren niet van deze flexibiliteit."
+    },
+    "footer": {
+      "legal": "Juridische kennisgeving & Algemene voorwaarden"
+    },
+    "cookies": {
+      "title": "Wij respecteren uw privacy",
+      "description": "We gebruiken cookies om het publiek te analyseren en uw ervaring te verbeteren. U kunt niet-essentiële cookies accepteren of weigeren.",
+      "accept": "Alles accepteren",
+      "decline": "Weigeren",
+      "manage": "Beheren"
+    },
+    "about": {
+      "title": "Over ons",
+      "names": "Céline en Cédric",
+      "text1": "Een van onze gedeelde passies is reizen.",
+      "text2": "We hebben deze studio gecreëerd om te kunnen reizen terwijl we thuis blijven, dankzij ontmoetingen met reizigers zoals u!",
+      "text3": "We kijken ernaar uit u te ontmoeten."
+    },
+    "testimonials": {
+      "title": "Beoordelingen",
+      "intro": "Enkele beoordelingen achtergelaten op Airbnb, Booking of Google Maps"
+    },
+    "gallery": {
+      "title": "Fotogalerij",
+      "studioIntro": "Ontdek onze Eco Studio in foto's",
+      "parkingIntro": "De parkeerplaats en de omgeving",
+      "doubleBed": "Comfortabel 180 cm tweepersoonsbed (2 pers.)",
+      "livingArea": "Woongedeelte met tv (+ Chromecast & PS4) en slaapbank",
+      "kitchen": "Volledig uitgeruste keuken",
+      "bathroom": "WC met douche en was-droogkolom",
+      "outsideTerrace": "Grasterras",
+      "parkingSpace": "Parkeerplaats zonder extra kosten",
+      "highSpeedWifi": "Snelle wifi (10 GB symmetrische glasvezel)",
+      "independentEntry": "Slaapbank en tweepersoonsbed",
+      "clearView": "WC douche en was-droogkolom",
+      "parkingFrontView": "Algemeen overzicht van de plaats",
+      "parkingSpot": "Parkeerplaats",
+      "terraceFieldView": "Terras met uitzicht op het veld",
+      "terraceParkView": "Terras met uitzicht op de parkeerplaats",
+      "toilet": "Toilet en douche",
+      "waterFaucet": "Drinkwaterkraan en afvalbeheer",
+      "indoorToiletShower": "Binnen WC/douche op aanvraag en tegen schoonmaakkosten"
+    },
+    "payment": {
+      "title": "Betaalmethoden",
+      "methods": "Wij accepteren creditcards en contant geld (CHF of EUR).",
+      "alt": "Geaccepteerde betaalmethoden"
+    },
+    "superhost": {
+      "text": "Wij zijn Superhosts op Airbnb",
+      "subtext": "Dit is een teken van een gastvrij onthaal van hoge kwaliteit."
+    },
+    "changeLanguage": "Taal wijzigen"
   }
 }

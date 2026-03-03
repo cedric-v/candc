@@ -119,6 +119,13 @@
         "author": "Joey",
         "rating": 5,
         "caption": "J'ai séjourné ici pendant plus d'un mois"
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-26.jpg",
+        "alt": "Cédric et Céline sont des hôtes incroyables et ont toujours été ravis d'aider. J'ai séjourné assez longtemps dans le studio et il est extrêmement bien équipé, propre, spacieux et très bien situé dans une belle région avec des liaisons de transport. Un vrai bijou 😁",
+        "author": "Guest",
+        "rating": 5,
+        "caption": "Cédric et Céline sont des hôtes incroyables et ont toujours été ravis d'aider"
       }
     ],
     "en": [
@@ -240,6 +247,13 @@
         "author": "Joey",
         "rating": 5,
         "caption": "I stayed here for over a month"
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-26.jpg",
+        "alt": "Cédric and Céline are amazing hosts and were always happy to help. I stayed for for a relatively long time in the studio and it's extremely well equipped, clean, spacious and well located in a beautiful area with transport links. Truly a gem 😁",
+        "author": "Guest",
+        "rating": 5,
+        "caption": "Cédric and Céline are amazing hosts and were always happy to help."
       }
     ],
     "de": [
@@ -361,6 +375,13 @@
         "author": "Joey",
         "rating": 5,
         "caption": "Ich war über einen Monat hier"
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-26.jpg",
+        "alt": "Cédric und Céline sind fantastische Gastgeber und haben immer gerne geholfen. Ich war für eine relativ lange Zeit im Studio und es ist extrem gut ausgestattet, sauber, geräumig und sehr gut gelegen in einer wunderschönen Gegend mit Verkehrsanbindung. Ein wahres Juwel 😁",
+        "author": "Guest",
+        "rating": 5,
+        "caption": "Cédric und Céline sind fantastische Gastgeber und haben immer gerne geholfen"
       }
     ],
     "es": [
@@ -482,6 +503,13 @@
         "author": "Joey",
         "rating": 5,
         "caption": "Me quedé aquí por más de un mes"
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-26.jpg",
+        "alt": "Cédric y Céline son anfitriones increíbles y siempre estuvieron dispuestos a ayudar. Me alojé durante bastante tiempo en el estudio y está extremadamente bien equipado, limpio, espacioso y bien situado en una hermosa zona con conexiones de transporte. Una verdadera joya 😁",
+        "author": "Guest",
+        "rating": 5,
+        "caption": "Cédric y Céline son anfitriones increíbles y siempre estuvieron dispuestos a ayudar"
       }
     ],
     "pt": [
@@ -603,6 +631,13 @@
         "author": "Joey",
         "rating": 5,
         "caption": "Fiquei aqui mais de um mês"
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-26.jpg",
+        "alt": "Cédric e Céline são anfitriões incríveis e estiveram sempre prontos a ajudar. Fiquei no estúdio por um período relativamente longo e é extremamente bem equipado, limpo, espaçoso e bem localizado numa área bonita com ligações de transporte. Uma verdadeira joia 😁",
+        "author": "Guest",
+        "rating": 5,
+        "caption": "Cédric e Céline são anfitriões incríveis e estiveram sempre prontos a ajudar"
       }
     ],
     "it": [
@@ -724,6 +759,141 @@
         "author": "Joey",
         "rating": 5,
         "caption": "Ho soggiornato qui per più di un mese"
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-26.jpg",
+        "alt": "Cédric e Céline sono padroni di casa incredibili e sono sempre stati felici di aiutare. Ho soggiornato nello studio per un periodo relativamente lungo ed è estremamente ben attrezzato, pulito, spazioso e ben posizionato in una bellissima zona con collegamenti di trasporto. Un vero gioiello 😁",
+        "author": "Guest",
+        "rating": 5,
+        "caption": "Cédric e Céline sono padroni di casa incredibili e sono sempre stati felici di aiutare"
+      }
+    ],
+    "nl": [
+      {
+        "image": "assets/img/testimonials/testimonial-01.jpg",
+        "alt": "Cédric is an excellent host. We stayed at the studio for roughly ~3 months. First, the location is beautiful - peace is what you will find there. It is conveniently close to a supermarket, a restaurants, and train stop (13 min walk) Walking from the studio to the train stop, you will meet goats, sheep, cows and horses while appreciating the Fribourgeois landscape. Cedric was always attentive and was fully invested in assisting us whenever we needed, and it is easy to have a nice conversation with him. With his guidance, we learned so much about the area, where to find, how to get around, etc. If you are looking to explore Switzerland 🇨🇭 and/or you consider staying in Fribourg, I give my strongest recommendation to C&C Eco Studio!",
+        "author": "Etienne Palos",
+        "rating": 5,
+        "caption": "Cédric is an excellent host"
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-02.jpg",
+        "alt": "Very friendly and responsive host. We will come back. Very peaceful and charming place.",
+        "author": "Florence Berguerre",
+        "rating": 5,
+        "caption": "Very friendly and responsive host"
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-04.jpg",
+        "alt": "Value for Money. A very complete studio, just feel like home and you have what you need. A very complete kitchen facility. Not really... things were really fine.",
+        "author": "Cheong7",
+        "rating": 5,
+        "caption": "Value for Money"
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-07.jpg",
+        "alt": "Superbe studio dans un quartier calme avec tout le confort. Propriétaires très sympathiques. Logement tout équipé avec lave-vaisselle, lave-linge et sèche-linge. Lit confortable.",
+        "author": "Joao",
+        "rating": 5,
+        "caption": "Superbe studio dans un quartier calme avec tout le confort"
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-13.jpg",
+        "alt": "Excellent rapport qualité-prix, idéal pour visiter la Suisse romande. Calme, au milieu des animaux. Gentillesse des propriétaires, lave-linge, lave-vaisselle et cuisine équipée.",
+        "author": "Laura",
+        "rating": 5,
+        "caption": "Excellent rapport qualité-prix, idéal pour visiter la Suisse romande"
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-14.jpg",
+        "alt": "Nice little apartment with everything you need. I would love to come back.",
+        "author": "Christian",
+        "rating": 5,
+        "caption": "Nice little apartment with everything you need"
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-15.jpg",
+        "alt": "Great studio in a quiet area with all amenities. Friendly owners. Fully equipped accommodation with dishwasher, washing machine and dryer. Comfortable bed.",
+        "author": "Joao",
+        "rating": 5,
+        "caption": "Great studio in a quiet area with all amenities"
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-16.jpg",
+        "alt": "Top hosts, always available. Small studio on the ground floor, ideal for a couple with 2 children. Photos are 100% accurate. Located in the countryside, very quiet and close to everything.",
+        "author": "Pedro",
+        "rating": 5,
+        "caption": "Top hosts, always available"
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-17.jpg",
+        "alt": "Fabulous. The location and the calm. Close to everything",
+        "author": "Buckinx-finck",
+        "rating": 5,
+        "caption": "Fabulous"
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-18.jpg",
+        "alt": "Exceptional. Very peaceful location... very well equipped apartment, thanks to Cédric for the little toys for our 6 year old son.",
+        "author": "Zakia",
+        "rating": 5,
+        "caption": "Exceptional"
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-19.jpg",
+        "alt": "In the countryside and yet 5 minutes from the city. Very quiet. The hosts were very helpful and just great. Great apartment equipped with everything. I would love to come back.",
+        "author": "Monika",
+        "rating": 5,
+        "caption": "In the countryside and yet 5 minutes from the city"
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-20.jpg",
+        "alt": "Happy with the stay at Cédric's family, welcoming and attentive. Ideal for tranquility and landscapes.",
+        "author": "Slim",
+        "rating": 5,
+        "caption": "Happy with the stay at Cédric's family, welcoming and attentive"
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-21.jpg",
+        "alt": "We had a great stay at C&C Eco Studio. Cédric and Céline are superb very welcoming and friendly hosts. The studio is perfectly equipped to live independently both short and long term. I would highly recommend, you will not be disappointed!",
+        "author": "Paul",
+        "rating": 5,
+        "caption": "We had a great stay at C&C Eco Studio"
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-22.jpg",
+        "alt": "First of all, I want to thank Cédric and his family for their welcome, sympathy and their great sense of hospitality as well as their presence and discretion. The apartment is very well located in a quiet area. The motorway is less than 10 mins away. And the station, shops and post office about ten minutes away on foot. Having stayed in this apartment several times, I can only recommend it with a score of 10/10!!!",
+        "author": "Danila",
+        "rating": 5,
+        "caption": "First of all, I want to thank Cédric and his family for their welcome, sympat..."
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-23.jpg",
+        "alt": "Wonderful place to stay. It’s in an absolutely stunning area and the studio didn’t feel like a studio, it felt much bigger and it had everything I needed.",
+        "author": "Fabienne",
+        "rating": 5,
+        "caption": "Wonderful place to stay"
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-24.jpg",
+        "alt": "I can only recommend it. I was there for work, but everything was very pleasant.",
+        "author": "Helmut",
+        "rating": 5,
+        "caption": "I can only recommend it"
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-25.jpg",
+        "alt": "Ik verbleef hier meer dan een maand. Je vindt alles wat je nodig hebt in de studio. Een zeer goed uitgeruste keuken, televisie met Chromecast en Apple TV, een goede douche, wasmachine, droger. Voor mij was het perfect!",
+        "author": "Joey",
+        "rating": 5,
+        "caption": "Ik verbleef hier meer dan een maand"
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-26.jpg",
+        "alt": "Cédric en Céline zijn fantastische gastheren en hielpen altijd graag. Ik ben relatief lang in de studio gebleven en het is extreem goed uitgerust, schoon, ruim en goed gelegen in een prachtige omgeving met goede verbindingen. Werkelijk een pareltje 😁",
+        "author": "Guest",
+        "rating": 5,
+        "caption": "Cédric en Céline zijn fantastische gastheren en hielpen altijd graag."
       }
     ]
   },
@@ -1284,6 +1454,99 @@
         "author": "Sophie rb",
         "rating": 5,
         "caption": "Siamo stati accolti molto bene da Cédric e dalla sua famiglia"
+      }
+    ],
+    "nl": [
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-1.jpg",
+        "alt": "Quiet place in the countryside. Friendly welcome from the owners. Services available 👍",
+        "author": "Lisa",
+        "rating": 5,
+        "caption": "Quiet place in the countryside"
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-2.jpg",
+        "alt": "Super spot, super hosts, we feel at home in our van but with more comfort thanks to the toilets, wifi and terrace available. :) Cyril and Céline are very friendly. I would definitely come back!",
+        "author": "Marie Bretaudeau",
+        "rating": 5,
+        "caption": "Super spot, super hosts, we feel at home in our van but with more comfort tha..."
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-3.jpg",
+        "alt": "Impeccable! Access to toilet and shower + socket as well as a beautiful terrace. Easy welcome and wide parking space.",
+        "author": "Mathieu",
+        "rating": 5,
+        "caption": "Impeccable"
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-4.jpg",
+        "alt": "Exceptional. This customer did not leave a comment.",
+        "author": "Marika",
+        "rating": 5,
+        "caption": "Exceptional"
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-5.jpg",
+        "alt": "Just as described. We spent two very comfortable and quiet nights with our motorhome. Both hosts were very kind and gave us all the necessary information. We definitely recommend!",
+        "author": "Gonzalo Pelaez",
+        "rating": 5,
+        "caption": "Just as described"
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-6.jpg",
+        "alt": "The location was great for us and our plans. Nice hosts, and a very beautiful landscape from the patio. They do not have a place to empty black water, and the WiFi was weak.",
+        "author": "Biton",
+        "rating": 5,
+        "caption": "The location was great for us and our plans"
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-7-en.jpg",
+        "alt": "Great spot for a quiet night. High speed wifi works well.",
+        "author": "Traveler",
+        "rating": 5,
+        "caption": "Great spot for a quiet night"
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-8.jpg",
+        "alt": "I would definitely prefer their place for my next trip. Cedric was really helpful with all aspects of the booking. Village is located in the heart of Swiss countryside so I enjoyed a lot of fresh air and lovely scenery for walking. Cycling to and from Fribourg center and shopping area was also a nice experience.",
+        "author": "Onur",
+        "rating": 5,
+        "caption": "I would definitely prefer their place for my next trip"
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-9.jpg",
+        "alt": "Quiet and pleasant environment. The location is practical and pleasant, Cedrick and his family are very kind.",
+        "author": "Natacha",
+        "rating": 5,
+        "caption": "Quiet and pleasant environment"
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-10.jpg",
+        "alt": "A very kind welcome, Cédric gave us all the necessary information, a very pleasant plot, quiet near the pastures and farm animals, ideal for walking our dogs. Thanks again to Cedric.",
+        "author": "jean-philippe worms",
+        "rating": 5,
+        "caption": "A very kind welcome, Cédric gave us all the necessary information, a very ple..."
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-11.jpg",
+        "alt": "Parking space available for the summer season. Pleasant host. I highly recommend",
+        "author": "Ayoub (\"L'inspecteur\")",
+        "rating": 5,
+        "caption": "Parking space available for the summer season"
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-12.jpg",
+        "alt": "My husband and I stayed with our 7 Meter camper at Cedric and Céline's house and enjoyed every minute. They are both extremely nice and kind and help you out with anything you need. You can hookup to water and electricity very easily and they have a nice terrace to sit and have a sunny breakfast/lunch overlooking the beautiful countryside horizons of Fribourg. You can use the train within a walking distance to get to Fribourg/Bern. A very good price for a very good value. We will definitely come again.",
+        "author": "Shiri Amir",
+        "rating": 5,
+        "caption": "My husband and I stayed with our 7 Meter camper at Cedric and Céline's house ..."
+      },
+      {
+        "image": "assets/img/testimonials/parking/temoignage-parking-cc-13.jpg",
+        "alt": "We were very well received by Cédric and his family. The place is functional and perfect for a stay at the gates of Fribourg. We will definitely come back with great pleasure!",
+        "author": "Sophie rb",
+        "rating": 5,
+        "caption": "We were very well received by Cédric and his family"
       }
     ]
   }

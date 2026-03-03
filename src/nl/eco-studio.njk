@@ -1,13 +1,13 @@
 ---
 layout: base.njk
-title: Eco Studio - Möblierte Wohnung
-description: 34 m² Studio auf dem Land in der Nähe von Freiburg. Mindestaufenthalt 5 Nächte. Moderne und ökologische Ausstattung.
-locale: de
-permalink: /de/eco-studio/
+title: Eco Studio - Furnished Apartment Rental
+description: 34 m² studio in the countryside near Fribourg. Minimum stay 5 nights. Modern and eco-friendly equipment.
+locale: nl
+permalink: /nl/eco-studio/
 ogImage: assets/img/logo-cc.jpg
 ---
 
-{% set t = translations[locale] or translations['de'] %}
+{% set t = translations[locale] or translations['en'] %}
 
 <section class="page-section">
   {% image "assets/img/fond-hero-studio.jpg", "Eco Studio La Sonnaz", "page-hero-image", "eager", "(max-width: 1200px) 100vw, 1200px" %}
@@ -30,11 +30,11 @@ ogImage: assets/img/logo-cc.jpg
   </div>
 
   <div class="card">
-    <h2 class="section-title mb-8">Ausstattung</h2>
+    <h2 class="section-title mb-8">Equipment</h2>
     
     <div class="space-y-xl">
       <div>
-        <h3 class="text-lg font-semibold text-primary mb-4">Schlafzimmer</h3>
+        <h3 class="text-lg font-semibold text-primary mb-4">Bedroom</h3>
         <ul class="space-y-sm">
           <li class="flex items-start gap-sm">
             <span class="text-xl">🛏️</span>
@@ -48,22 +48,22 @@ ogImage: assets/img/logo-cc.jpg
       </div>
 
       <div>
-        <h3 class="text-lg font-semibold text-primary mb-2">Küche</h3>
+        <h3 class="text-lg font-semibold text-primary mb-2">Kitchen</h3>
         <p class="text-muted">{{ t.studio.kitchen }}</p>
       </div>
 
       <div>
-        <h3 class="text-lg font-semibold text-primary mb-2">Badezimmer</h3>
+        <h3 class="text-lg font-semibold text-primary mb-2">Bathroom</h3>
         <p class="text-muted">{{ t.studio.bathroom }}</p>
       </div>
 
       <div>
-        <h3 class="text-lg font-semibold text-primary mb-2">Wäsche</h3>
+        <h3 class="text-lg font-semibold text-primary mb-2">Laundry</h3>
         <p class="text-muted">{{ t.studio.laundry }}</p>
       </div>
 
       <div>
-        <h3 class="text-lg font-semibold text-primary mb-2">Unterhaltung</h3>
+        <h3 class="text-lg font-semibold text-primary mb-2">Entertainment</h3>
         <p class="text-muted">{{ t.studio.entertainment }}</p>
       </div>
 
@@ -73,7 +73,7 @@ ogImage: assets/img/logo-cc.jpg
       </div>
 
       <div>
-        <h3 class="text-lg font-semibold text-primary mb-4">Außen</h3>
+        <h3 class="text-lg font-semibold text-primary mb-4">Outside</h3>
         <ul class="space-y-sm">
           <li class="flex items-start gap-sm">
             <span class="text-xl">🚗</span>
@@ -87,17 +87,17 @@ ogImage: assets/img/logo-cc.jpg
       </div>
 
       <div>
-        <h3 class="text-lg font-semibold text-primary mb-2">Ökologie</h3>
+        <h3 class="text-lg font-semibold text-primary mb-2">Ecology</h3>
         <p class="text-muted">{{ t.studio.eco }}</p>
       </div>
 
       <div>
-        <h3 class="text-lg font-semibold text-primary mb-2">Familie</h3>
+        <h3 class="text-lg font-semibold text-primary mb-2">Family</h3>
         <p class="text-muted">{{ t.studio.children }}</p>
       </div>
 
       <div class="equipment-section">
-        <h3 class="text-lg font-semibold text-primary mb-2">Lage</h3>
+        <h3 class="text-lg font-semibold text-primary mb-2">Location</h3>
         <p class="text-muted">{{ t.studio.location }}</p>
       </div>
 
@@ -122,10 +122,14 @@ ogImage: assets/img/logo-cc.jpg
       </div>
     </div>
 
-    <div class="section-header align-center mt-12">
+    <div class="section-header align-center mt-12" id="reservation">
       <div class="flex flex-wrap justify-center gap-lg">
-        <a href="https://www.booking.com/hotel/ch/cedric-studio.fr.html" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">{{ t.bookOnBooking }}</a>
-        <a href="https://fr.airbnb.ch/rooms/4116019" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">{{ t.bookOnAirbnb }}</a>
+        <a href="https://www.booking.com/hotel/ch/cedric-studio.fr.html" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
+          {{ t.bookOnBooking }}
+        </a>
+        <a href="https://www.airbnb.co.uk/rooms/4116019" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
+          {{ t.bookOnAirbnb }}
+        </a>
       </div>
       <div class="mt-6">
         <a href="{{ t.googleMapsStudioLink }}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
@@ -176,7 +180,7 @@ ogImage: assets/img/logo-cc.jpg
   </div>
   {% endif %}
 
-  <!-- Fotogalerie -->
+  <!-- Photo Gallery -->
   <section class="mt-2xl">
     <div class="section-header">
       <h2 class="section-title">{{ t.gallery.title }}</h2>
@@ -185,9 +189,8 @@ ogImage: assets/img/logo-cc.jpg
     <div class="gallery-grid">
       {% set galleryImages = [
         { src: 'assets/img/gallery/studio/gallerie-studio-bed.jpg', caption: t.gallery.doubleBed },
-        { src: 'assets/img/gallery/studio/gallerie-studio-living-room.jpg', caption: t.gallery.livingArea },
+        { src: 'assets/img/gallery/studio/gallerie-studio-living-room.jpg', caption: t.gallery.independentEntry },
         { src: 'assets/img/gallery/studio/gallerie-studio-kitchen.jpg', caption: t.gallery.kitchen },
-        { src: 'assets/img/gallery/studio/gallerie-studio-toilet-tumbler.jpg', caption: t.gallery.bathroom },
         { src: 'assets/img/gallery/studio/gallerie-studio-outside-terrace.jpg', caption: t.gallery.outsideTerrace },
         { src: 'assets/img/gallery/studio/gallerie-studio-outside-parking.jpg', caption: t.gallery.parkingSpace },
         { src: 'assets/img/gallery/studio/gallerie-studio-1.jpg', caption: t.gallery.highSpeedWifi },
@@ -197,20 +200,23 @@ ogImage: assets/img/logo-cc.jpg
 
       {% for item in galleryImages %}
       <div class="gallery-item lightbox-trigger" data-image="/{{ item.src }}" data-caption="{{ item.caption }}">
-        {% image item.src, "Photo Eco Studio", "gallery-image", "lazy" %}
+        {% image item.src, item.caption, "gallery-image", "lazy" %}
+        <div class="gallery-caption-overlay">
+          <span>{{ item.caption }}</span>
+        </div>
       </div>
       {% endfor %}
     </div>
   </section>
 
-  <!-- Bewertungen -->
+  <!-- Testimonials -->
   <section id="testimonials" class="mt-2xl">
     <div class="section-header">
       <h2 class="section-title">{{ t.testimonials.title }}</h2>
       <p class="text-muted">{{ t.testimonials.intro }}</p>
     </div>
     <div class="gallery-grid" id="testimonials-grid">
-      {% set localTestimonials = testimonials.studio[locale] or testimonials.studio['de'] %}
+      {% set localTestimonials = testimonials.studio[locale] or testimonials.studio['en'] %}
       {% for testimonial in localTestimonials %}
       <div class="gallery-item lightbox-trigger" data-image="/{{ testimonial.image }}" data-caption="{{ testimonial.author }}: {{ testimonial.caption }}">
         {% image testimonial.image, testimonial.alt, "gallery-image", "lazy" %}
@@ -219,16 +225,18 @@ ogImage: assets/img/logo-cc.jpg
         </div>
       </div>
       {% endfor %}
+      
+
     </div>
   </section>
 
   <!-- Lightbox -->
   <div id="eco-lightbox" class="lightbox">
-    <button id="lightbox-close" class="lightbox-close" aria-label="Schließen">×</button>
-    <button id="lightbox-prev" class="lightbox-prev" aria-label="Vorherige">‹</button>
-    <button id="lightbox-next" class="lightbox-next" aria-label="Nächste">›</button>
+    <button id="lightbox-close" class="lightbox-close" aria-label="Close">×</button>
+    <button id="lightbox-prev" class="lightbox-prev" aria-label="Previous">‹</button>
+    <button id="lightbox-next" class="lightbox-next" aria-label="Next">›</button>
     <div class="lightbox-container">
-      <img id="lightbox-image" src="" alt="Foto">
+      <img id="lightbox-image" src="" alt="Photo">
     </div>
   </div>
 
@@ -259,6 +267,7 @@ ogImage: assets/img/logo-cc.jpg
       let touchEndX = 0;
 
       function openLightbox(trigger) {
+        // Group by the parent .gallery-grid or #testimonials-grid
         const container = trigger.closest('.gallery-grid, #testimonials-grid');
         activeTriggers = Array.from(container.querySelectorAll('.lightbox-trigger'));
         currentIndex = activeTriggers.indexOf(trigger);
@@ -283,8 +292,8 @@ ogImage: assets/img/logo-cc.jpg
       }
       
       function closeLightbox() {
-        lightbox.classList.remove('flex');
         lightbox.classList.add('hidden');
+        lightbox.classList.remove('flex');
         document.body.style.overflow = '';
       }
       
@@ -305,16 +314,15 @@ ogImage: assets/img/logo-cc.jpg
         if (touchEndX > touchStartX + 50) prev();
       }
 
-      triggers.forEach((trigger) => {
-        trigger.addEventListener('click', (e) => {
-          e.preventDefault();
-          openLightbox(trigger);
-        });
-      });
+      triggers.forEach(t => t.addEventListener('click', (e) => {
+        e.preventDefault();
+        openLightbox(t);
+      }));
       
       closeBtn.onclick = closeLightbox;
-      prevBtn.onclick = (e) => { e.stopPropagation(); prev(); };
+      
       nextBtn.onclick = (e) => { e.stopPropagation(); next(); };
+      prevBtn.onclick = (e) => { e.stopPropagation(); prev(); };
       
       lightbox.onclick = (e) => {
         if (e.target === lightbox || e.target.classList.contains('lightbox-container')) {
@@ -332,7 +340,7 @@ ogImage: assets/img/logo-cc.jpg
       }, {passive: true});
       
       document.addEventListener('keydown', (e) => {
-        if (lightbox.classList.contains('flex')) {
+        if (!lightbox.classList.contains('hidden')) {
           if (e.key === 'Escape') closeLightbox();
           if (e.key === 'ArrowLeft') prev();
           if (e.key === 'ArrowRight') next();
@@ -340,6 +348,14 @@ ogImage: assets/img/logo-cc.jpg
       });
     })();
   </script>
+  <div class="mt-12 text-center pb-12">
+    <h2 class="text-xl font-bold text-primary mb-6">{{ t.bookNow }}</h2>
+    <div class="flex justify-center">
+      <a href="#reservation" class="btn btn-primary">
+        {{ t.checkAvailability }}
+      </a>
+    </div>
+  </div>
 </section>
 
 <script type="application/ld+json">
@@ -407,10 +423,10 @@ ogImage: assets/img/logo-cc.jpg
   },
   "sameAs": [
     "https://www.booking.com/hotel/ch/cedric-studio.fr.html",
-    "https://fr.airbnb.ch/rooms/4116019"
+    "https://www.airbnb.co.uk/rooms/4116019"
   ],
   "review": [
-    {% for testimonial in testimonials.studio[locale] or testimonials.studio['de'] %}
+    {% for testimonial in testimonials.studio[locale] or testimonials.studio['en'] %}
     {
       "@type": "Review",
       "author": {

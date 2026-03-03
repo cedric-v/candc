@@ -11,6 +11,8 @@
     <a href="{{ '/es/' | relativeUrl }}" class="logo-link">
     {% elif locale == 'it' %}
     <a href="{{ '/it/' | relativeUrl }}" class="logo-link">
+    {% elif locale == 'nl' %}
+    <a href="{{ '/nl/' | relativeUrl }}" class="logo-link">
     {% elif locale == 'pt' %}
     <a href="{{ '/pt/' | relativeUrl }}" class="logo-link">
     {% else %}
@@ -35,7 +37,7 @@
 
       <div class="language-selector">
         <button class="lang-toggle" data-lang-toggle aria-label="{{ t.changeLanguage }}">
-          {% set langNames = {'fr': 'FR', 'en': 'EN', 'de': 'DE', 'es': 'ES', 'pt': 'PT', 'it': 'IT'} %}
+          {% set langNames = {'fr': 'FR', 'en': 'EN', 'de': 'DE', 'es': 'ES', 'pt': 'PT', 'it': 'IT', 'nl': 'NL'} %}
           {{ langNames[locale] }}
           <svg class="lang-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none">
             <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -43,24 +45,24 @@
         </button>
 
         <div class="lang-dropdown">
-          {% set languages = ['fr', 'en', 'de', 'es', 'pt', 'it'] %}
+          {% set languages = ['fr', 'en', 'de', 'es', 'nl', 'pt', 'it'] %}
           {% set pageAvailableLocales = availableLocales or (page.data and page.data.availableLocales) or languages %}
           {% if page.url == '/fr/legal/' %}
             {% set pageAvailableLocales = ['fr'] %}
           {% endif %}
-          {% set langFullNames = {'fr': 'Français', 'en': 'English', 'de': 'Deutsch', 'es': 'Español', 'pt': 'Português', 'it': 'Italiano'} %}
+          {% set langFullNames = {'fr': 'Français', 'en': 'English', 'de': 'Deutsch', 'es': 'Español', 'pt': 'Português', 'it': 'Italiano', 'nl': 'Nederlands'} %}
           {% for lang in pageAvailableLocales %}
             {% if lang != locale %}
               {% set currentUrl = page.url %}
               {% if lang == 'fr' %}
-                {% set targetUrl = currentUrl | replace('/en/', '/fr/') | replace('/de/', '/fr/') | replace('/es/', '/fr/') | replace('/pt/', '/fr/') | replace('/it/', '/fr/') %}
+                {% set targetUrl = currentUrl | replace('/en/', '/fr/') | replace('/de/', '/fr/') | replace('/es/', '/fr/') | replace('/pt/', '/fr/') | replace('/it/', '/fr/') | replace('/nl/', '/fr/') %}
                 {% if targetUrl == '' %}{% set targetUrl = '/fr/' %}{% endif %}
               {% else %}
                 {% set langPrefix = '/' + lang + '/' %}
                 {% if currentUrl == '/' %}
                   {% set targetUrl = langPrefix %}
                 {% else %}
-                  {% set targetUrl = currentUrl | replace('/fr/', langPrefix) | replace('/en/', langPrefix) | replace('/de/', langPrefix) | replace('/es/', langPrefix) | replace('/pt/', langPrefix) | replace('/it/', langPrefix) %}
+                  {% set targetUrl = currentUrl | replace('/fr/', langPrefix) | replace('/en/', langPrefix) | replace('/de/', langPrefix) | replace('/es/', langPrefix) | replace('/pt/', langPrefix) | replace('/it/', langPrefix) | replace('/nl/', langPrefix) %}
                   {% if targetUrl == currentUrl %}
                     {% set targetUrl = '/' + lang + currentUrl %}
                   {% endif %}
@@ -87,7 +89,7 @@
 
     <div class="mobile-language-selector">
       <button class="mobile-lang-toggle" data-mobile-lang-toggle>
-        {% set langNames = {'fr': 'FR', 'en': 'EN', 'de': 'DE', 'es': 'ES', 'pt': 'PT', 'it': 'IT'} %}
+        {% set langNames = {'fr': 'FR', 'en': 'EN', 'de': 'DE', 'es': 'ES', 'pt': 'PT', 'it': 'IT', 'nl': 'NL'} %}
         <span>{{ langNames[locale] }}</span>
         <svg class="mobile-lang-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none">
           <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -95,17 +97,17 @@
       </button>
 
       <div class="mobile-lang-dropdown">
-        {% set languages = ['fr', 'en', 'de', 'es', 'pt', 'it'] %}
+        {% set languages = ['fr', 'en', 'de', 'es', 'nl', 'pt', 'it'] %}
         {% set pageAvailableLocales = availableLocales or (page.data and page.data.availableLocales) or languages %}
         {% if page.url == '/fr/legal/' %}
           {% set pageAvailableLocales = ['fr'] %}
         {% endif %}
-        {% set langFullNames = {'fr': 'Français', 'en': 'English', 'de': 'Deutsch', 'es': 'Español', 'pt': 'Português', 'it': 'Italiano'} %}
+        {% set langFullNames = {'fr': 'Français', 'en': 'English', 'de': 'Deutsch', 'es': 'Español', 'pt': 'Português', 'it': 'Italiano', 'nl': 'Nederlands'} %}
         {% for lang in pageAvailableLocales %}
           {% if lang != locale %}
             {% set currentUrl = page.url %}
             {% if lang == 'fr' %}
-              {% set targetUrl = currentUrl | replace('/en/', '/fr/') | replace('/de/', '/fr/') | replace('/es/', '/fr/') | replace('/pt/', '/fr/') | replace('/it/', '/fr/') %}
+              {% set targetUrl = currentUrl | replace('/en/', '/fr/') | replace('/de/', '/fr/') | replace('/es/', '/fr/') | replace('/pt/', '/fr/') | replace('/it/', '/fr/') | replace('/nl/', '/fr/') %}
               {% if targetUrl == currentUrl %}
                  {# If no replacement happened, check if we are at root /en/ or similar which might have been handled, or if we are at a page that needs prefixing #}
                  {# But actually, checking if targetUrl == currentUrl suggests we might be on a page that doesn't have the prefix yet? No, we are generating links FOR other languages FROM current page. #}
@@ -121,7 +123,7 @@
               {% if currentUrl == '/' %}
                 {% set targetUrl = langPrefix %}
               {% else %}
-                {% set targetUrl = currentUrl | replace('/fr/', langPrefix) | replace('/en/', langPrefix) | replace('/de/', langPrefix) | replace('/es/', langPrefix) | replace('/pt/', langPrefix) | replace('/it/', langPrefix) %}
+                {% set targetUrl = currentUrl | replace('/fr/', langPrefix) | replace('/en/', langPrefix) | replace('/de/', langPrefix) | replace('/es/', langPrefix) | replace('/pt/', langPrefix) | replace('/it/', langPrefix) | replace('/nl/', langPrefix) %}
                 {% if targetUrl == currentUrl %}
                   {% set targetUrl = '/' + lang + currentUrl %}
                 {% endif %}
