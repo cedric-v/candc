@@ -133,6 +133,11 @@
     const declineBtn = document.getElementById('cookie-decline');
     const GA_ID = 'G-XXXXXXXXXX'; // TODO: Replace with real GA ID
 
+    window.showCookiePreferences = function() {
+      localStorage.removeItem('cookie-consent');
+      banner.classList.add('show');
+    };
+
     function loadGA() {
       const script = document.createElement('script');
       script.async = true;
