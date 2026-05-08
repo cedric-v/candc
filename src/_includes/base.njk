@@ -16,6 +16,9 @@
     <title>{{ t.home }} | {{ t.siteName }}</title>
     {% endif %}
     <meta name="description" content="{{ description or t.siteDescription }}">
+    <meta name="robots" content="{{ (robots ~ ', max-image-preview:large') if robots else 'index, follow, max-image-preview:large' }}">
+    <link rel="alternate" href="https://candc.ch/llms.txt" type="text/plain" title="LLMs.txt">
+    <link rel="describedby" href="https://candc.ch/.well-known/site-context.json" type="application/json">
     
     {% set originalUrl = (page.url or '/') | canonicalUrl %}
     {% set canonicalUrl = originalUrl %}

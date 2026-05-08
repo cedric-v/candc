@@ -1,0 +1,27 @@
+# C and C
+
+Site multilingue sur un eco studio meuble et un parking pour van ou camping-car a La Sonnaz, pres de Fribourg en Suisse.
+
+Langues:
+- fr
+- en
+- de
+- es
+- pt
+- it
+- nl
+
+Pages importantes:
+- Accueil FR: https://candc.ch/fr/
+- Eco Studio FR: https://candc.ch/fr/eco-studio/
+- Parking FR: https://candc.ch/fr/parking/
+- Contact FR: https://candc.ch/fr/contact/
+
+Flux et index:
+- Sitemap: https://candc.ch/sitemap.xml
+- Site context: https://candc.ch/.well-known/site-context.json
+
+Informations utiles:
+- Le site est multilingue avec hreflang
+- Activite locale en Suisse, region de Fribourg
+

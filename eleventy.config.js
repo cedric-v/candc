@@ -8,6 +8,8 @@ const path = require("path");
 const PATH_PREFIX = process.env.ELEVENTY_ENV === 'prod' ? "" : "";
 
 module.exports = function (eleventyConfig) {
+  eleventyConfig.addPassthroughCopy({ "src/llms.txt": "llms.txt" });
+  eleventyConfig.addPassthroughCopy({ "src/.well-known": ".well-known" });
 
   // 1. Gestion des Images avec eleventy-img (WebP responsive)
   eleventyConfig.addShortcode("image", async function (src, alt, cls = "", loading = "lazy", sizes = "100vw", fetchpriority = "", width = "", height = "") {

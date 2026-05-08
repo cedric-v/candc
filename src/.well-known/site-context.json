@@ -1,0 +1,32 @@
+{
+  "name": "C and C",
+  "url": "https://candc.ch",
+  "language": "fr",
+  "availableLanguages": [
+    "fr",
+    "en",
+    "de",
+    "es",
+    "pt",
+    "it",
+    "nl"
+  ],
+  "type": "multilingual hospitality website",
+  "topics": [
+    "eco studio",
+    "parking van",
+    "camping-car",
+    "Fribourg",
+    "Switzerland"
+  ],
+  "keyPages": [
+    "https://candc.ch/fr/",
+    "https://candc.ch/fr/eco-studio/",
+    "https://candc.ch/fr/parking/",
+    "https://candc.ch/fr/contact/"
+  ],
+  "sitemap": "https://candc.ch/sitemap.xml",
+  "relatedSites": [
+    "https://cedricv.com/"
+  ]
+}
