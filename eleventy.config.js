@@ -161,7 +161,6 @@ module.exports = function (eleventyConfig) {
       "contactPoint": {
         "@type": "ContactPoint",
         "contactType": "Customer Service",
-        "email": "bonjour@candc.ch",
         "availableLanguage": ["French", "English", "German", "Spanish", "Portuguese"]
       },
       "areaServed": {
