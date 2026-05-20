@@ -18,10 +18,13 @@
   const successPaymentWrap = document.getElementById("booking-success-payment-link-wrap");
   const successPaymentLink = document.getElementById("booking-success-payment-link");
   const nonRefundableCheckbox = document.getElementById("booking-non-refundable");
+  const calendarShell = document.querySelector(".booking-calendar-shell");
   const calendarGrid = document.getElementById("booking-calendar-grid");
   const calendarSync = document.getElementById("booking-calendar-sync");
   const calendarPrevButton = document.getElementById("booking-calendar-prev");
   const calendarNextButton = document.getElementById("booking-calendar-next");
+  const calendarHelpText =
+    document.querySelector(".booking-calendar-help")?.textContent?.trim() || "";
 
   const texts = {
     enterDates: root.dataset.msgEnterDates || "",
@@ -81,6 +84,7 @@
   let blockedDates = new Set();
   let nightlyRateByDate = new Map();
   let minimumStayNights = 1;
+  let calendarDataState = "loading";
 
   initializeDateInputs();
   wireEvents();
@@ -90,11 +94,8 @@
 
   function initializeDateInputs() {
     const today = new Date();
-    const tomorrow = new Date(today);
-    tomorrow.setDate(today.getDate() + 1);
-
     const minCheckIn = toDateInputValue(today);
-    const minCheckOut = toDateInputValue(tomorrow);
+    const minCheckOut = getDefaultCheckOutMin();
 
     fields.checkInDate.min = minCheckIn;
     fields.checkOutDate.min = minCheckOut;
@@ -121,9 +122,12 @@
         const minCheckOut = toDateInputValue(nextDay);
         fields.checkOutDate.min = minCheckOut;
 
-        if (!fields.checkOutDate.value || fields.checkOutDate.value <= fields.checkInDate.value) {
-          fields.checkOutDate.value = minCheckOut;
+        if (fields.checkOutDate.value && fields.checkOutDate.value <= fields.checkInDate.value) {
+          fields.checkOutDate.value = "";
         }
+      } else {
+        fields.checkOutDate.value = "";
+        fields.checkOutDate.min = getDefaultCheckOutMin();
       }
 
       renderCalendars();
@@ -160,6 +164,9 @@
     calendarController = new AbortController();
     const windowStart = formatDateKey(startOfMonth(currentMonthCursor));
     const windowEnd = formatDateKey(endOfMonth(addMonths(currentMonthCursor, 1)));
+    calendarDataState = "loading";
+    syncCalendarVisualState();
+    renderCalendars();
 
     try {
       const availability = await fetchJson(
@@ -174,8 +181,13 @@
         (availability.nightlyRates || []).map((night) => [night.date, Number(night.rate)]),
       );
       minimumStayNights = Number(availability.unit?.minStayNights || 1);
+      calendarDataState = "ready";
+      syncCalendarVisualState();
       renderCalendarSync(availability.lastCalendarSyncAt);
       renderCalendars();
+      if (!hasCoreFields()) {
+        setAvailabilityGuidance();
+      }
     } catch (error) {
       if (error.name === "AbortError") {
         return;
@@ -183,8 +195,13 @@
 
       blockedDates = new Set();
       nightlyRateByDate = new Map();
+      calendarDataState = "error";
+      syncCalendarVisualState();
       renderCalendarSync(null);
       renderCalendars();
+      if (!hasCoreFields()) {
+        setAvailabilityGuidance();
+      }
     }
   }
 
@@ -195,7 +212,7 @@
 
     if (!hasCoreFields()) {
       latestQuote = null;
-      setAvailabilityStatus(texts.enterDates, "neutral");
+      setAvailabilityGuidance();
       resetSummary();
       return;
     }
@@ -392,6 +409,7 @@
     const button = document.createElement("button");
     const dateKey = formatDateKey(date);
     const isPast = dateKey < fields.checkInDate.min;
+    const isCalendarUnavailable = calendarDataState !== "ready";
     const isBlocked = blockedDates.has(dateKey);
     const isMinStayBlocked = !isPast && !isBlocked && !canStartStayOn(dateKey);
     const isSelectedStart = dateKey === fields.checkInDate.value;
@@ -401,7 +419,7 @@
     button.type = "button";
     button.className = "booking-day";
 
-    if (isPast || isBlocked || isMinStayBlocked) {
+    if (isPast || isBlocked || isMinStayBlocked || isCalendarUnavailable) {
       button.classList.add("booking-day-disabled");
       button.disabled = true;
     }
@@ -412,6 +430,8 @@
       button.classList.add("booking-day-blocked");
     } else if (isMinStayBlocked) {
       button.classList.add("booking-day-blocked");
+    } else if (isCalendarUnavailable) {
+      button.classList.add("booking-day-unavailable-data");
     } else if (inSelectedRange) {
       button.classList.add("booking-day-in-range");
     }
@@ -427,7 +447,7 @@
       year: "numeric",
     }).format(date));
 
-    if (!(isPast || isBlocked || isMinStayBlocked)) {
+    if (!(isPast || isBlocked || isMinStayBlocked || isCalendarUnavailable)) {
       button.addEventListener("click", () => handleCalendarSelection(dateKey));
     }
 
@@ -442,6 +462,8 @@
       state.textContent = texts.calendarArrival;
     } else if (isSelectedEnd) {
       state.textContent = texts.calendarDeparture;
+    } else if (isCalendarUnavailable) {
+      state.textContent = "";
     } else if (isBlocked || isMinStayBlocked) {
       state.textContent = texts.calendarBlockedShort;
     } else if (nightlyRateByDate.has(dateKey)) {
@@ -458,21 +480,29 @@
     const hasStart = Boolean(fields.checkInDate.value);
     const hasEnd = Boolean(fields.checkOutDate.value);
 
-    if (!hasStart || hasEnd) {
+    if (!hasStart) {
       fields.checkInDate.value = dateKey;
-      fields.checkOutDate.value = nextAvailableDate(dateKey);
-    } else if (dateKey <= fields.checkInDate.value) {
-      fields.checkInDate.value = dateKey;
-      fields.checkOutDate.value = nextAvailableDate(dateKey);
-    } else if (rangeContainsBlockedDate(fields.checkInDate.value, dateKey)) {
-      fields.checkInDate.value = dateKey;
-      fields.checkOutDate.value = nextAvailableDate(dateKey);
+      fields.checkOutDate.value = "";
+    } else if (!hasEnd) {
+      if (dateKey === fields.checkInDate.value) {
+        fields.checkInDate.value = "";
+        fields.checkOutDate.value = "";
+      } else if (dateKey < fields.checkInDate.value || rangeContainsBlockedDate(fields.checkInDate.value, dateKey)) {
+        fields.checkInDate.value = dateKey;
+        fields.checkOutDate.value = "";
+      } else {
+        fields.checkOutDate.value = dateKey;
+      }
     } else {
-      fields.checkOutDate.value = dateKey;
+      fields.checkInDate.value = dateKey;
+      fields.checkOutDate.value = "";
     }
 
-    fields.checkOutDate.min = nextAvailableDate(fields.checkInDate.value);
+    fields.checkOutDate.min = fields.checkInDate.value
+      ? nextAvailableDate(fields.checkInDate.value)
+      : getDefaultCheckOutMin();
     renderCalendars();
+    setAvailabilityGuidance();
     handleQuoteRefresh();
   }
 
@@ -578,6 +608,20 @@
     submitButton.disabled = true;
   }
 
+  function setAvailabilityGuidance() {
+    if (calendarDataState === "error") {
+      setAvailabilityStatus(texts.quoteError, "error");
+      return;
+    }
+
+    if (fields.checkInDate.value && !fields.checkOutDate.value) {
+      setAvailabilityStatus(calendarHelpText || texts.enterDates, "neutral");
+      return;
+    }
+
+    setAvailabilityStatus(texts.enterDates, "neutral");
+  }
+
   function setAvailabilityStatus(message, tone) {
     availabilityStatus.textContent = message;
     availabilityStatus.className = `booking-status booking-status-${tone}`;
@@ -635,6 +679,12 @@
 
   function toDateInputValue(date) {
     return date.toISOString().slice(0, 10);
+  }
+
+  function getDefaultCheckOutMin() {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return toDateInputValue(tomorrow);
   }
 
   function formatDateKey(date) {
@@ -695,6 +745,14 @@
     }).format(new Date(isoDateTime));
 
     calendarSync.textContent = `${texts.calendarLastSyncPrefix}: ${formatted}`;
+  }
+
+  function syncCalendarVisualState() {
+    if (!calendarShell) {
+      return;
+    }
+
+    calendarShell.dataset.state = calendarDataState;
   }
 
   function formatDate(isoDate) {

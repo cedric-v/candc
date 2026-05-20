@@ -86,6 +86,32 @@ wrangler d1 create candc-booking
 wrangler d1 execute candc-booking --file=./migrations/0001_booking_schema.sql
 ```
 
+### Binding D1 obligatoire sur Cloudflare Pages
+
+Important :
+
+- le code attend un binding D1 nomme exactement `DB`
+- sans ce binding, l'API renvoie une erreur du type `Missing D1 binding: DB`
+- apres ajout du binding, il faut redeployer le projet Pages
+
+Etapes dans l'interface Cloudflare Pages :
+
+1. ouvrir `Workers & Pages`
+2. selectionner le projet `candc.ch`
+3. aller dans `Settings` -> `Bindings`
+4. cliquer `Add` -> `D1 database`
+5. mettre `DB` comme `Variable name`
+6. selectionner la base D1 de reservation
+7. enregistrer
+8. redeployer le projet
+
+Si tu utilises les environnements `Production` et `Preview`, verifie le binding dans les deux environnements si necessaire.
+
+Sources :
+
+- [Cloudflare Pages bindings](https://developers.cloudflare.com/pages/functions/bindings/)
+- [Cloudflare Pages Wrangler configuration](https://developers.cloudflare.com/pages/functions/wrangler-configuration/)
+
 ## Variables et secrets a configurer
 
 Variables non secretes possibles :

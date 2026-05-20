@@ -124,6 +124,41 @@ Si la base D1 existe deja et a ete creee avant le passage aux calendriers Google
 wrangler d1 execute candc-booking --file=./migrations/0002_unit_scoped_calendar_config.sql
 ```
 
+## Binding D1 a faire dans Cloudflare Pages
+
+Le projet de reservation ne peut pas fonctionner en production sans binding D1 sur le projet Pages.
+
+Le binding attendu par le code est :
+
+- nom exact : `DB`
+
+Sans cela, les routes comme :
+
+- `GET /api/booking/availability`
+- `POST /api/booking/quote`
+- `POST /api/booking/reservations`
+
+renverront une erreur de type :
+
+- `Missing D1 binding: DB`
+
+Etapes manuelles dans Cloudflare :
+
+1. ouvrir `Workers & Pages`
+2. ouvrir le projet Pages du site
+3. aller dans `Settings` -> `Bindings`
+4. `Add` -> `D1 database`
+5. definir `DB` comme `Variable name`
+6. selectionner la base `candc-booking` ou la base D1 equivalente
+7. enregistrer
+8. redeployer le projet
+
+Verifier ensuite :
+
+- que les migrations ont bien ete executees
+- que le binding existe bien sur l'environnement `Production`
+- et si besoin aussi sur `Preview`
+
 ## Etat actuel
 
 Le scaffold couvre :
