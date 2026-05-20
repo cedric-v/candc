@@ -3,7 +3,8 @@ main = "index.js"
 compatibility_date = "2026-05-20"
 
 [triggers]
-crons = ["0 * * * *"]
+crons = ["0 * * * *", "5 * * * *"]
 
 [vars]
 SYNC_URL = "https://candc.ch/api/internal/jobs/run"
+TIMEZONE = "Europe/Zurich"

@@ -11,6 +11,15 @@ const languages = ['fr', 'en', 'de', 'es', 'pt', 'it', 'nl'];
 const pages = ['', 'eco-studio', 'parking', 'contact'];
 const bookingPages = ['parking/booking', 'eco-studio/booking'];
 const baseDir = path.join(__dirname, '..', '_site');
+const studioSelfCheckInMarkers = {
+  fr: "Arrivée autonome 24 h/24",
+  en: "Self check-in 24/7",
+  de: "Autonome Anreise rund um die Uhr",
+  es: "Llegada autónoma 24/7",
+  pt: "Chegada autónoma 24/7",
+  it: "Arrivo autonomo 24/7",
+  nl: "Autonome aankomst 24/7",
+};
 
 let errors = [];
 let warnings = [];
@@ -66,6 +75,23 @@ for (const lang of languages) {
 
         if (!hasDirectBookingCta && !hasOtaLink) {
           warnings.push(`${pagePath}: Missing booking CTA`);
+        }
+      }
+
+      if (page === 'eco-studio') {
+        if (!content.includes('featured-testimonial-card')) {
+          warnings.push(`${pagePath}: Missing featured studio testimonial`);
+        }
+
+        const selfCheckInMarker = studioSelfCheckInMarkers[lang];
+        if (selfCheckInMarker && !content.includes(selfCheckInMarker)) {
+          warnings.push(`${pagePath}: Missing localized self check-in reassurance block`);
+        }
+      }
+
+      if (page === 'parking') {
+        if (!content.includes('featured-testimonial-card')) {
+          warnings.push(`${pagePath}: Missing featured parking testimonials`);
         }
       }
 

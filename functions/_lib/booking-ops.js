@@ -7,6 +7,8 @@ import {
   insertSyncLog,
   updateReservationGoogleCalendarEventId,
 } from "./db.js";
+import { getCurrentIsoDateInZone, getCurrentTimePartsInZone } from "./date.js";
+import { getConfig } from "./env.js";
 import { isEmailConfigured, sendTransactionalEmail } from "./email.js";
 import { isGoogleCalendarConfigured, upsertReservationEvent } from "./google-calendar.js";
 
@@ -87,4 +89,38 @@ export async function sendReservationEmail(env, reservationId, emailType, option
     });
     throw error;
   }
+}
+
+export async function sendImmediateArrivalEmailIfNeeded(env, reservationId) {
+  const config = getConfig(env);
+  const reservation = await getReservationForEmail(env, reservationId);
+
+  if (!reservation) {
+    return { ok: false, reason: "reservation_not_found" };
+  }
+
+  if (!["confirmed", "modified", "refund_due", "pending_refund"].includes(reservation.status)) {
+    return { ok: false, reason: "reservation_not_eligible" };
+  }
+
+  const today = getCurrentIsoDateInZone(config.timeZone);
+  if (reservation.check_in_date !== today) {
+    return { ok: false, reason: "not_same_day_arrival" };
+  }
+
+  const nowParts = getCurrentTimePartsInZone(config.timeZone);
+  if (nowParts.hour < 8) {
+    return { ok: false, reason: "before_arrival_email_window" };
+  }
+
+  const response = await sendReservationEmail(env, reservationId, "arrival_instructions", {
+    dedupe: true,
+    forDate: today,
+  });
+
+  return {
+    ok: true,
+    skipped: Boolean(response.skipped),
+    reason: response.reason || null,
+  };
 }

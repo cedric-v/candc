@@ -232,6 +232,10 @@ Le scaffold couvre :
 - page client de gestion de reservation via lien magique
 - mini interface admin protegee par token
 - endpoint interne unifie pour lancer les jobs Booking ICS et arrival emails
+- worker cron dedie dans `sync-worker/` avec deux responsabilites separees :
+  - sync OTA horaire
+  - e-mails d'arrivee via un cron separe, declenche uniquement pendant la fenetre locale de `08:00 Europe/Zurich`
+- fallback d'e-mail d'arrivee immediat pour les reservations confirmees le jour meme apres 08:00 locale
 
 Le scaffold ne couvre pas encore :
 

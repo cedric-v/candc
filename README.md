@@ -32,7 +32,7 @@ Still to complete:
 
 - automatic SumUp refunds
 - production Google Calendar credentials and optional re-enablement
-- final Cloudflare cron deployment for internal jobs
+- final validation of Cloudflare cron deployment per target environment
 
 ## Supported languages
 
@@ -174,9 +174,9 @@ Each unit can have:
 
 Operational sync note:
 
-- the admin UI exposes `Run Booking.com sync`
-- there is intentionally no separate `Run Airbnb sync` action
-- Airbnb is expected to remain synchronized downstream from Booking.com instead of acting as a second imported source
+- the admin UI exposes `Run calendar sync`
+- there is intentionally no separate `Run Airbnb sync` action in the admin UI
+- the sync job imports all active OTA calendar sources configured in the system, including `booking` and `airbnb` when present for a unit
 
 Current payment fee assumption for the parking funnel:
 

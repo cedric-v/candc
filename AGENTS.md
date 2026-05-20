@@ -34,7 +34,7 @@ Current seeded units:
 
 Important:
 
-- parking is the currently exposed booking funnel
+- parking is exposed through a public booking funnel
 - studio is also exposed through a public booking funnel
 
 ## Editing guidance

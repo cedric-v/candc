@@ -66,6 +66,7 @@ Le repository contient maintenant deux couches principales :
 - mini interface admin par token
 - endpoint interne pour jobs de sync et d'e-mails, y compris le mail d'arrivee localise
 - couche agent-ready avec `llms.txt`, `site-context.json` et WebMCP sur les parcours publics de reservation parking et studio
+- logique d'e-mail d'arrivee adaptee aux reservations de derniere minute : si la reservation est confirmee le jour meme apres 8h locale, l'e-mail d'arrivee part immediatement au lieu d'attendre le cron du lendemain
 
 ## Ce qui est important architecturalement
 
@@ -108,7 +109,7 @@ Le back-office admin n'est pas expose comme surface WebMCP publique.
 ## Ce qui manque encore
 
 - remboursement automatique SumUp
-- declenchement cron reel cote Cloudflare (mis en place via le Worker candc-cron-sync)
+- verification finale du deploiement cron cote Cloudflare selon l'environnement cible
 - reactivation eventuelle de Google Calendar avec credentials finalises
 
 ## Fichiers de reference

@@ -51,7 +51,7 @@ npm test
 Les smoke tests valident :
 
 - les pages marketing principales
-- les pages de reservation parking
+- les pages de reservation parking et studio
 - le sitemap hreflang
 - `robots.txt`
 
@@ -226,7 +226,12 @@ Variables :
 Important :
 
 - le backend des jobs est pret
-- le declenchement automatique est assure par le Worker Cloudflare `candc-cron-sync` (situe dans `sync-worker/`) qui s'execute toutes les heures. Ce Worker requiert la variable secrete `INTERNAL_SYNC_TOKEN`.
+- le declenchement automatique est assure par le Worker Cloudflare `candc-cron-sync` (situe dans `sync-worker/`)
+- ce Worker separe maintenant :
+  - un cron horaire de sync calendrier
+  - un cron distinct pour les e-mails d'arrivee, filtre sur `08:00` locale `Europe/Zurich`
+- ce Worker requiert la variable secrete `INTERNAL_SYNC_TOKEN`
+- en cas de reservation confirmee le jour meme apres 08:00 locale, l'e-mail d'arrivee est envoye immediatement par fallback sans attendre le prochain cron
 
 ## Notes importantes
 

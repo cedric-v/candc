@@ -74,6 +74,10 @@ function getTimePartsInZone(date, timeZone) {
   return values;
 }
 
+export function getCurrentTimePartsInZone(timeZone) {
+  return getTimePartsInZone(new Date(), timeZone);
+}
+
 export function getWallClockEpochMsForNow(timeZone) {
   const parts = getTimePartsInZone(new Date(), timeZone);
   return Date.UTC(

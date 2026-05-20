@@ -1,21 +1,25 @@
-async function runSync(env) {
-  const url = env.SYNC_URL || "https://candc.ch/api/internal/jobs/run";
+function getAuthHeaders(env) {
   const token = env.INTERNAL_SYNC_TOKEN;
 
   if (!token) {
     throw new Error("Missing INTERNAL_SYNC_TOKEN environment variable.");
   }
 
-  console.log(`Triggering calendar synchronization job at ${url}...`);
+  return {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${token}`,
+  };
+}
+
+async function runJob(env, action) {
+  const url = env.SYNC_URL || "https://candc.ch/api/internal/jobs/run";
+  console.log(`Triggering ${action} job at ${url}...`);
 
   const response = await fetch(url, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${token}`
-    },
+    headers: getAuthHeaders(env),
     body: JSON.stringify({
-      action: "booking_ics"
+      action,
     })
   });
 
@@ -26,13 +30,47 @@ async function runSync(env) {
   };
 }
 
+function isArrivalEmailWindow(env) {
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: env.TIMEZONE || "Europe/Zurich",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(new Date());
+
+  const values = {};
+  for (const part of parts) {
+    if (part.type !== "literal") {
+      values[part.type] = Number(part.value);
+    }
+  }
+
+  return values.hour === 8;
+}
+
 export default {
   async scheduled(controller, env, ctx) {
     try {
-      const res = await runSync(env);
-      console.log(`Cron sync complete: status ${res.status}, response: ${res.body}`);
+      if (controller.cron === "0 * * * *") {
+        const res = await runJob(env, "booking_ics");
+        console.log(`Calendar sync complete: status ${res.status}, response: ${res.body}`);
+        return;
+      }
+
+      if (controller.cron === "5 * * * *") {
+        if (!isArrivalEmailWindow(env)) {
+          console.log("Skipping arrival email cron outside the 08:00 local window.");
+          return;
+        }
+
+        const res = await runJob(env, "arrival_emails");
+        console.log(`Arrival email cron complete: status ${res.status}, response: ${res.body}`);
+        return;
+      }
+
+      console.log(`No handler configured for cron ${controller.cron}`);
     } catch (err) {
-      console.error(`Cron sync failed: ${err.message}`);
+      console.error(`Scheduled job failed: ${err.message}`);
     }
   },
 
@@ -45,9 +83,11 @@ export default {
     }
 
     try {
-      const res = await runSync(env);
+      const action = urlObj.searchParams.get("action") || "booking_ics";
+      const res = await runJob(env, action);
       return new Response(JSON.stringify({
         success: true,
+        action,
         status: res.status,
         response: JSON.parse(res.body)
       }, null, 2), {

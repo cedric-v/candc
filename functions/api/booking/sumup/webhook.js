@@ -3,7 +3,7 @@ import {
   updatePaymentByCheckoutId,
   updateReservationAndCalendarStatus,
 } from "../../../_lib/db.js";
-import { syncReservationToGoogleCalendar } from "../../../_lib/booking-ops.js";
+import { sendImmediateArrivalEmailIfNeeded, syncReservationToGoogleCalendar } from "../../../_lib/booking-ops.js";
 import { isGoogleCalendarConfigured } from "../../../_lib/google-calendar.js";
 import { badRequest, json, serverError } from "../../../_lib/http.js";
 import { getCheckout, mapCheckoutStatus } from "../../../_lib/sumup.js";
@@ -64,6 +64,14 @@ export async function onRequestPost(context) {
       mappedStatus.reservationStatus,
       mappedStatus.calendarBlockStatus,
     );
+
+    if (mappedStatus.reservationStatus === "confirmed") {
+      try {
+        await sendImmediateArrivalEmailIfNeeded(context.env, reservation.id);
+      } catch {
+        // Email dedupe / send failures should not block webhook processing.
+      }
+    }
 
     if (mappedStatus.reservationStatus === "confirmed" && isGoogleCalendarConfigured(context.env)) {
       try {
