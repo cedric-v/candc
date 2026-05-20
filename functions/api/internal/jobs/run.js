@@ -1,6 +1,7 @@
 import { hasValidInternalToken } from "../../../_lib/auth.js";
 import { badRequest, json, serverError, unauthorized } from "../../../_lib/http.js";
 import { runArrivalEmails, runBookingIcsSync } from "../../../_lib/jobs.js";
+import { releaseExpiredPendingPayments } from "../../../_lib/db.js";
 
 export async function onRequest(context) {
   try {
@@ -31,6 +32,7 @@ export async function onRequest(context) {
     }
 
     if (action === "all") {
+      await releaseExpiredPendingPayments(context.env);
       const bookingSync = await runBookingIcsSync(context.env, payload.unitCode || null);
       const arrivalEmails = await runArrivalEmails(context.env, payload.targetDate || null);
 

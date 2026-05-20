@@ -275,7 +275,7 @@ export async function getAvailabilityConflicts(env, unitId, startDate, endDate) 
         SELECT id, unit_id, source, external_uid, reservation_id, start_date, end_date, status
         FROM calendar_blocks
         WHERE unit_id IS ?
-          AND status IN ('active', 'confirmed', 'pending_payment')
+          AND (status IN ('active', 'confirmed') OR (status = 'pending_payment' AND created_at >= strftime('%Y-%m-%dT%H:%M:%SZ', 'now', '-30 minutes')))
           AND start_date < ?
           AND end_date > ?
         ORDER BY start_date ASC
@@ -301,7 +301,7 @@ export async function getAvailabilityConflictsExcludingReservation(
         SELECT id, unit_id, source, external_uid, reservation_id, start_date, end_date, status
         FROM calendar_blocks
         WHERE unit_id IS ?
-          AND status IN ('active', 'confirmed', 'pending_payment')
+          AND (status IN ('active', 'confirmed') OR (status = 'pending_payment' AND created_at >= strftime('%Y-%m-%dT%H:%M:%SZ', 'now', '-30 minutes')))
           AND start_date < ?
           AND end_date > ?
           AND (reservation_id IS NULL OR reservation_id != ?)
@@ -1032,6 +1032,27 @@ export async function cancelReservation(env, reservationId) {
         `,
       )
       .bind(nowIso, reservationId),
+  ]);
+}
+
+export async function releaseExpiredPendingPayments(env) {
+  const db = requireDb(env);
+  const nowIso = new Date().toISOString();
+
+  // Expire blocks older than 30 minutes
+  await db.batch([
+    db.prepare(`
+      UPDATE calendar_blocks
+      SET status = 'released', updated_at = ?
+      WHERE status = 'pending_payment'
+        AND created_at < strftime('%Y-%m-%dT%H:%M:%SZ', 'now', '-30 minutes')
+    `).bind(nowIso),
+    db.prepare(`
+      UPDATE reservations
+      SET status = 'payment_setup_failed', updated_at = ?, remarks = TRIM(COALESCE(remarks, '') || ?)
+      WHERE status = 'pending_payment'
+        AND created_at < strftime('%Y-%m-%dT%H:%M:%SZ', 'now', '-30 minutes')
+    `).bind(nowIso, "\n[automatic_release] Stale pending payment block released.")
   ]);
 }
 
