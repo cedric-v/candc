@@ -25,11 +25,11 @@ layout: null
             {%- set lastmod = "now" | date("YYYY-MM-DD") -%}
           {%- endif -%}
           {%- set changefreq = "monthly" -%}
-          {%- if cleanUrl == "/fr/" or cleanUrl == "/en/" or cleanUrl == "/de/" or cleanUrl == "/es/" or cleanUrl == "/pt/" or cleanUrl == "/it/" -%}
+          {%- if cleanUrl == "/fr/" or cleanUrl == "/en/" or cleanUrl == "/de/" or cleanUrl == "/es/" or cleanUrl == "/pt/" or cleanUrl == "/it/" or cleanUrl == "/nl/" -%}
             {%- set changefreq = "weekly" -%}
           {%- endif -%}
           {%- set priority = "0.6" -%}
-          {%- if cleanUrl == "/fr/" or cleanUrl == "/en/" or cleanUrl == "/de/" or cleanUrl == "/es/" or cleanUrl == "/pt/" or cleanUrl == "/it/" -%}
+          {%- if cleanUrl == "/fr/" or cleanUrl == "/en/" or cleanUrl == "/de/" or cleanUrl == "/es/" or cleanUrl == "/pt/" or cleanUrl == "/it/" or cleanUrl == "/nl/" -%}
             {%- set priority = "1.0" -%}
           {%- endif -%}
   <url>
@@ -37,20 +37,20 @@ layout: null
     <lastmod>{{ lastmod }}</lastmod>
     <changefreq>{{ changefreq }}</changefreq>
     <priority>{{ priority }}</priority>
-    {%- set languages = ['fr', 'en', 'de', 'es', 'pt', 'it'] -%}
+    {%- set languages = ['fr', 'en', 'de', 'es', 'pt', 'it', 'nl'] -%}
     {%- set pageAvailableLocales = availableLocales or (page.data and page.data.availableLocales) or languages -%}
     {%- if cleanUrl == '/fr/legal/' -%}
       {%- set pageAvailableLocales = ['fr'] -%}
     {%- endif -%}
     {%- for lang in pageAvailableLocales -%}
       {%- if lang == 'fr' -%}
-        {%- set langUrl = cleanUrl | replace('/en/', '/fr/') | replace('/de/', '/fr/') | replace('/es/', '/fr/') | replace('/pt/', '/fr/') | replace('/it/', '/fr/') -%}
+        {%- set langUrl = cleanUrl | replace('/en/', '/fr/') | replace('/de/', '/fr/') | replace('/es/', '/fr/') | replace('/pt/', '/fr/') | replace('/it/', '/fr/') | replace('/nl/', '/fr/') -%}
         {%- if langUrl == '' %}{% set langUrl = '/' %}{% endif -%}
       {%- else -%}
         {%- set langPrefix = '/' + lang + '/' -%}
         {%- if cleanUrl == '/' -%}
           {%- set langUrl = langPrefix -%}
-        {%- elif cleanUrl == '/fr/' or cleanUrl == '/en/' or cleanUrl == '/de/' or cleanUrl == '/es/' or cleanUrl == '/pt/' or cleanUrl == '/it/' -%}
+        {%- elif cleanUrl == '/fr/' or cleanUrl == '/en/' or cleanUrl == '/de/' or cleanUrl == '/es/' or cleanUrl == '/pt/' or cleanUrl == '/it/' or cleanUrl == '/nl/' -%}
           {%- set langUrl = langPrefix -%}
         {%- elif '/fr/' in cleanUrl -%}
           {%- set langUrl = cleanUrl | replace('/fr/', langPrefix) -%}
@@ -64,6 +64,8 @@ layout: null
           {%- set langUrl = cleanUrl | replace('/pt/', langPrefix) -%}
         {%- elif '/it/' in cleanUrl -%}
           {%- set langUrl = cleanUrl | replace('/it/', langPrefix) -%}
+        {%- elif '/nl/' in cleanUrl -%}
+          {%- set langUrl = cleanUrl | replace('/nl/', langPrefix) -%}
         {%- else -%}
           {%- set langUrl = '/' + lang + cleanUrl -%}
         {%- endif -%}
@@ -72,7 +74,7 @@ layout: null
     {%- endfor -%}
     {%- set xDefaultUrl = cleanUrl -%}
     {%- if 'fr' in pageAvailableLocales -%}
-      {%- set xDefaultUrl = cleanUrl | replace('/en/', '/fr/') | replace('/de/', '/fr/') | replace('/es/', '/fr/') | replace('/pt/', '/fr/') | replace('/it/', '/fr/') -%}
+      {%- set xDefaultUrl = cleanUrl | replace('/en/', '/fr/') | replace('/de/', '/fr/') | replace('/es/', '/fr/') | replace('/pt/', '/fr/') | replace('/it/', '/fr/') | replace('/nl/', '/fr/') -%}
     {%- endif -%}
     <xhtml:link rel="alternate" hreflang="x-default" href="https://candc.ch{{ xDefaultUrl }}" />
   </url>

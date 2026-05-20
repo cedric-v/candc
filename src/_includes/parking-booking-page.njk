@@ -1,0 +1,221 @@
+{% set t = translations[locale] or translations['fr'] %}
+{% set b = booking_ui[locale] or booking_ui['en'] %}
+
+<section class="page-section">
+  <div class="booking-hero">
+    <p class="booking-kicker">{{ b.pageKicker }}</p>
+    <h1 class="hero-title">{{ b.title }}</h1>
+    <p class="text-lg text-muted booking-intro">{{ b.intro }}</p>
+  </div>
+
+  <div
+    class="booking-shell"
+    id="parking-booking-app"
+    data-locale="{{ locale }}"
+    data-unit-code="parking-space"
+    data-api-base="/api/booking"
+    data-msg-enter-dates="{{ b.availabilityEnterDates }}"
+    data-msg-checking="{{ b.checkingAvailability }}"
+    data-msg-available="{{ b.datesAvailable }}"
+    data-msg-unavailable="{{ b.datesUnavailable }}"
+    data-msg-quote-error="{{ b.quoteError }}"
+    data-msg-reservation-error="{{ b.reservationError }}"
+    data-msg-config="{{ b.reservationPendingConfig }}"
+    data-msg-created="{{ b.reservationCreated }}"
+    data-msg-redirecting="{{ b.redirecting }}"
+    data-msg-terms="{{ b.termsRequired }}"
+  >
+    <div class="card booking-main-card">
+      <form id="parking-booking-form" class="booking-form">
+        <section class="booking-section">
+          <div class="booking-section-head">
+            <h2 class="booking-section-title">{{ b.availabilityTitle }}</h2>
+            <p class="text-sm text-muted">{{ b.datesHelp }}</p>
+          </div>
+          <div class="grid grid-cols-2 booking-two-cols">
+            <div>
+              <label class="form-label" for="booking-check-in">{{ b.checkIn }}</label>
+              <input class="form-input" type="date" id="booking-check-in" name="checkInDate" required>
+            </div>
+            <div>
+              <label class="form-label" for="booking-check-out">{{ b.checkOut }}</label>
+              <input class="form-input" type="date" id="booking-check-out" name="checkOutDate" required>
+            </div>
+          </div>
+          <div class="booking-status" id="booking-availability-status">{{ b.availabilityEnterDates }}</div>
+        </section>
+
+        <section class="booking-section">
+          <div class="booking-section-head">
+            <h2 class="booking-section-title">{{ b.partyTitle }}</h2>
+          </div>
+          <div class="grid grid-cols-3 booking-three-cols">
+            <div>
+              <label class="form-label" for="booking-adults">{{ b.adults }}</label>
+              <input class="form-input" type="number" id="booking-adults" name="adults" min="1" max="8" value="1" required>
+            </div>
+            <div>
+              <label class="form-label" for="booking-children">{{ b.children }}</label>
+              <input class="form-input" type="number" id="booking-children" name="children" min="0" max="8" value="0" required>
+            </div>
+            <div>
+              <label class="form-label" for="booking-vehicle">{{ b.vehicleType }}</label>
+              <select class="form-input" id="booking-vehicle" name="vehicleType" required>
+                <option value="">{{ b.vehicleType }}</option>
+                <option value="standard_car">{{ b.vehicleOptions.standard_car }}</option>
+                <option value="car_roof_tent">{{ b.vehicleOptions.car_roof_tent }}</option>
+                <option value="van">{{ b.vehicleOptions.van }}</option>
+                <option value="caravan">{{ b.vehicleOptions.caravan }}</option>
+                <option value="motorhome_upto_6_5m">{{ b.vehicleOptions.motorhome_upto_6_5m }}</option>
+                <option value="motorhome_over_6_5m">{{ b.vehicleOptions.motorhome_over_6_5m }}</option>
+              </select>
+            </div>
+          </div>
+        </section>
+
+        <section class="booking-section">
+          <div class="booking-section-head">
+            <h2 class="booking-section-title">{{ b.optionsTitle }}</h2>
+          </div>
+          <label class="booking-checkbox">
+            <input type="checkbox" id="booking-wc-shower" name="wcShowerRequested">
+            <span>{{ b.wcShower }}</span>
+          </label>
+          <p class="text-sm text-light booking-inline-note">{{ b.wcShowerNote }}</p>
+
+          <label class="booking-checkbox">
+            <input type="checkbox" id="booking-non-refundable" name="nonRefundableSelected">
+            <span>{{ b.nonRefundable }}</span>
+          </label>
+          <p class="text-sm text-light booking-inline-note">{{ b.nonRefundableHint }}</p>
+        </section>
+
+        <section class="booking-section">
+          <div class="booking-section-head">
+            <h2 class="booking-section-title">{{ b.guestTitle }}</h2>
+          </div>
+          <div class="grid grid-cols-2 booking-two-cols">
+            <div>
+              <label class="form-label" for="booking-first-name">{{ b.firstName }}</label>
+              <input class="form-input" type="text" id="booking-first-name" name="guestFirstName" required>
+            </div>
+            <div>
+              <label class="form-label" for="booking-last-name">{{ b.lastName }}</label>
+              <input class="form-input" type="text" id="booking-last-name" name="guestLastName" required>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 booking-two-cols">
+            <div>
+              <label class="form-label" for="booking-email">{{ b.email }}</label>
+              <input class="form-input" type="email" id="booking-email" name="guestEmail" required>
+            </div>
+            <div>
+              <label class="form-label" for="booking-phone">{{ b.phone }}</label>
+              <input class="form-input" type="tel" id="booking-phone" name="guestPhone">
+            </div>
+          </div>
+          <div>
+            <label class="form-label" for="booking-remarks">{{ b.remarks }}</label>
+            <textarea class="form-input booking-textarea" id="booking-remarks" name="remarks" rows="4" placeholder="{{ b.remarksPlaceholder }}"></textarea>
+          </div>
+        </section>
+
+        <section class="booking-section">
+          <label class="booking-checkbox booking-checkbox-terms">
+            <input type="checkbox" id="booking-terms" name="acceptedTerms" required>
+            <span>{{ b.terms }}</span>
+          </label>
+          <div class="booking-actions">
+            <button class="btn btn-primary booking-submit" type="submit" id="booking-submit">
+              {{ b.reserveAndPay }}
+            </button>
+            <a href="/{{ locale }}/contact/" class="btn btn-secondary">{{ t.contactUs }}</a>
+          </div>
+          <div id="booking-submit-status" class="booking-submit-status" aria-live="polite"></div>
+        </section>
+      </form>
+    </div>
+
+    <aside class="booking-summary-column">
+      <div class="card booking-summary-card">
+        <div class="booking-summary-sticky">
+          <h2 class="booking-summary-title">{{ b.summaryTitle }}</h2>
+          <div class="booking-summary-stay">
+            <span class="booking-summary-label">{{ b.stayLabel }}</span>
+            <strong id="booking-stay-label">-</strong>
+          </div>
+
+          <dl class="booking-breakdown" id="booking-breakdown">
+            <div>
+              <dt>{{ b.baseRateLabel }}</dt>
+              <dd id="booking-base-amount">-</dd>
+            </div>
+            <div>
+              <dt>{{ b.touristTaxLabel }}</dt>
+              <dd id="booking-tax-amount">-</dd>
+            </div>
+            <div>
+              <dt>{{ b.wcShowerLabel }}</dt>
+              <dd id="booking-options-amount">-</dd>
+            </div>
+            <div class="booking-discount-row">
+              <dt>{{ b.longStayDiscountLabel }}</dt>
+              <dd id="booking-long-stay-discount">-</dd>
+            </div>
+            <div class="booking-discount-row">
+              <dt>{{ b.nonRefundableDiscountLabel }}</dt>
+              <dd id="booking-non-refundable-discount">-</dd>
+            </div>
+            <div>
+              <dt>{{ b.paymentFeeLabel }}</dt>
+              <dd id="booking-payment-fee">-</dd>
+            </div>
+            <div class="booking-total-row">
+              <dt>{{ b.totalLabel }}</dt>
+              <dd id="booking-total-amount">-</dd>
+            </div>
+          </dl>
+
+          <div class="booking-summary-block">
+            <h3>{{ b.includedTitle }}</h3>
+            <ul class="booking-muted-list">
+              {% for item in b.includedList %}
+              <li>{{ item }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+
+          <div class="booking-summary-block">
+            <h3>{{ b.policyTitle }}</h3>
+            <ul class="booking-muted-list">
+              <li>{{ b.policyFlexible }}</li>
+              <li>{{ b.policyNonRefundable }}</li>
+            </ul>
+          </div>
+
+          <div class="booking-summary-block">
+            <h3>{{ b.supportTitle }}</h3>
+            <p class="text-sm text-muted">{{ b.supportBody }}</p>
+            <div class="booking-summary-links">
+              <a href="/{{ locale }}/contact/">{{ t.contactUs }}</a>
+              <a href="https://wa.me/41766738311" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+            </div>
+          </div>
+
+          <div id="booking-success-card" class="booking-success-card hidden">
+            <h3>{{ b.referenceLabel }}</h3>
+            <p id="booking-success-reference" class="booking-success-reference"></p>
+            <p class="text-sm text-muted">
+              <a id="booking-success-manage-link" href="#">{{ b.manageLink }}</a>
+            </p>
+            <p class="text-sm text-muted hidden" id="booking-success-payment-link-wrap">
+              <a id="booking-success-payment-link" href="#" target="_blank" rel="noopener noreferrer">{{ b.paymentButtonFallback }}</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<script src="/assets/js/parking-booking.js" defer></script>

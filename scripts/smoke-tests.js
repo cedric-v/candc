@@ -7,8 +7,9 @@
 const fs = require('fs');
 const path = require('path');
 
-const languages = ['fr', 'en', 'de', 'es', 'pt', 'it'];
+const languages = ['fr', 'en', 'de', 'es', 'pt', 'it', 'nl'];
 const pages = ['', 'eco-studio', 'parking', 'contact'];
+const bookingPages = ['parking/booking'];
 const baseDir = path.join(__dirname, '..', '_site');
 
 let errors = [];
@@ -27,6 +28,17 @@ console.log('📄 Checking pages exist...');
 for (const lang of languages) {
   for (const page of pages) {
     const pagePath = page === '' ? `/${lang}/index.html` : `/${lang}/${page}/index.html`;
+    const fullPath = path.join(baseDir, pagePath);
+
+    if (!fs.existsSync(fullPath)) {
+      errors.push(`Missing page: ${pagePath}`);
+    } else {
+      console.log(`  ✓ ${pagePath}`);
+    }
+  }
+
+  for (const page of bookingPages) {
+    const pagePath = `/${lang}/${page}/index.html`;
     const fullPath = path.join(baseDir, pagePath);
 
     if (!fs.existsSync(fullPath)) {

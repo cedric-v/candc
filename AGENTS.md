@@ -1,0 +1,88 @@
+# AGENTS.md
+
+## Purpose
+
+This repository contains:
+
+- a multilingual Eleventy marketing site
+- an in-progress direct booking platform for C & C
+
+Use this file as a quick operational guide before editing code.
+
+## Current architecture
+
+- `src/` public site content, templates, assets, translations
+- `functions/` Cloudflare Pages Functions and booking logic
+- `migrations/` D1 schema
+- `scripts/` smoke tests
+
+Core booking docs:
+
+- `BOOKING_SYSTEM_SPEC.md`
+- `BOOKING_TECH_SETUP.md`
+- `PROJECT_SUMMARY.md`
+
+## Product model
+
+The booking engine is multi-unit.
+
+Current seeded units:
+
+- `parking-space`
+- `eco-studio`
+
+Important:
+
+- parking is the currently exposed booking funnel
+- studio support is intentionally prepared in schema and logic but not fully surfaced in UI yet
+
+## Editing guidance
+
+- preserve existing multilingual structure
+- do not assume booking logic is parking-only unless the file is explicitly parking UI
+- prefer extending unit-level settings instead of hardcoding business rules
+- keep public site content static-friendly unless a dynamic flow is clearly required
+- avoid adding direct GA/GTM snippets; analytics is managed through Cloudflare Zaraz
+
+## Booking-specific guidance
+
+When changing booking behavior, check all of:
+
+- `functions/_lib/validation.js`
+- `functions/_lib/pricing.js`
+- `functions/_lib/db.js`
+- `functions/_lib/catalog.js`
+- `migrations/0001_booking_schema.sql`
+
+When changing sync behavior, also check:
+
+- `functions/api/internal/sync/booking-ics.js`
+- `functions/api/internal/sync/google-calendar.js`
+- `functions/api/booking/sumup/webhook.js`
+
+## Verification
+
+Run after meaningful changes:
+
+```bash
+npm run build
+npm test
+```
+
+If editing functions-only logic, import checks via Node ESM are also useful.
+
+## Known unfinished areas
+
+- transactional emails
+- customer booking management page
+- admin UI
+- full studio booking funnel
+- production credential wiring
+
+## Contributor note
+
+If you add a new rentable unit, update:
+
+- `rentable_units` seed data
+- any relevant `external_calendar_sources`
+- front funnel entrypoints if the unit should be customer-facing

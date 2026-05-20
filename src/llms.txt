@@ -1,8 +1,17 @@
 # C and C
 
-Site multilingue sur un eco studio meuble et un parking pour van ou camping-car a La Sonnaz, pres de Fribourg en Suisse.
+Site multilingue pour :
 
-Langues:
+- un eco studio meuble
+- une place de parking reservable pour van, caravane ou camping-car
+
+Le projet comprend maintenant :
+
+- le site public marketing
+- un moteur de reservation en cours d'integration
+
+## Langues
+
 - fr
 - en
 - de
@@ -11,17 +20,44 @@ Langues:
 - it
 - nl
 
-Pages importantes:
+## Pages publiques importantes
+
 - Accueil FR: https://candc.ch/fr/
 - Eco Studio FR: https://candc.ch/fr/eco-studio/
 - Parking FR: https://candc.ch/fr/parking/
+- Reservation Parking FR: https://candc.ch/fr/parking/booking/
 - Contact FR: https://candc.ch/fr/contact/
 
-Flux et index:
+## Booking system
+
+Le moteur de reservation est pense pour plusieurs unites reservables.
+
+Unites deja preparees :
+
+- `parking-space`
+- `eco-studio`
+
+Le funnel parking est deja expose cote site.
+Le funnel studio n'est pas encore expose, mais l'architecture le prevoit deja.
+
+## Integrations prevues
+
+- Booking.com ICS comme source de disponibilite externe
+- export ICS des reservations directes
+- SumUp pour le paiement
+- Google Calendar pour le calendrier interne partage
+
+## Flux et index
+
 - Sitemap: https://candc.ch/sitemap.xml
 - Site context: https://candc.ch/.well-known/site-context.json
 
-Informations utiles:
-- Le site est multilingue avec hreflang
-- Activite locale en Suisse, region de Fribourg
+## Notes utiles pour les agents IA
 
+- ne pas supposer que le moteur de reservation est limite au parking
+- les regles metier peuvent varier par unite
+- la documentation de reference locale est dans :
+  - `README.md`
+  - `BOOKING_SYSTEM_SPEC.md`
+  - `BOOKING_TECH_SETUP.md`
+  - `AGENTS.md`

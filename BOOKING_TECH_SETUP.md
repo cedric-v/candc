@@ -1,0 +1,285 @@
+# Booking Tech Setup
+
+## Vue d'ensemble
+
+Cette base technique ajoute :
+
+- `functions/api/booking/*` pour les endpoints Pages Functions
+- `functions/_lib/*` pour la logique partagee
+- `migrations/0001_booking_schema.sql` pour initialiser D1
+- `wrangler.toml.example` comme point de depart de configuration Cloudflare
+
+L'architecture est maintenant concue autour d'un concept d'`unite reservable`.
+
+Un parking et un studio peuvent donc partager :
+
+- le meme moteur de reservation
+- la meme base D1
+- les memes primitives paiement / agenda / emails
+
+tout en gardant :
+
+- des calendriers separes
+- des tarifs separes
+- des flux ICS separes
+- des regles metier qui peuvent diverger par unite
+- des options et contraintes specifiques par unite via `settings_json`
+
+## Endpoints MVP poses
+
+- `GET /api/booking/availability?from=YYYY-MM-DD&to=YYYY-MM-DD`
+- `POST /api/booking/quote`
+- `POST /api/booking/reservations`
+- `GET /api/booking/ics/:feedToken`
+- `POST /api/booking/sumup/webhook`
+- `POST /api/internal/sync/booking-ics`
+- `POST /api/internal/sync/google-calendar`
+
+## Variables d'environnement attendues
+
+- `PUBLIC_BASE_URL`
+- `DEFAULT_BOOKING_UNIT_CODE`
+- `DEFAULT_BASE_RATE_CHF`
+- `TOURIST_TAX_ADULT_CHF`
+- `WC_SHOWER_CLEANING_FEE_CHF`
+- `PAYMENT_FEE_RATE`
+- `PAYMENT_FEE_FIXED_CHF`
+- `TIMEZONE`
+- `DEFAULT_CHECK_IN_TIME`
+- `DEFAULT_CHECK_OUT_TIME`
+- `BOOKING_ICS_FEED_TOKEN`
+- `BOOKING_ICS_IMPORT_URL`
+- `ADMIN_EMAIL`
+- `SUMUP_API_BASE_URL`
+- `SUMUP_MERCHANT_CODE`
+- `SUMUP_API_KEY`
+- `INTERNAL_SYNC_TOKEN`
+- `GOOGLE_CALENDAR_ID`
+- `GOOGLE_SERVICE_ACCOUNT_EMAIL`
+- `GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY`
+
+## Recuperer le `SUMUP_MERCHANT_CODE`
+
+Le plus rapide et le plus fiable est de le recuperer via l'API SumUp avec la cle API privee.
+
+Exemple :
+
+```bash
+curl https://api.sumup.com/v0.1/me \
+  -H "Authorization: Bearer TON_SUMUP_API_KEY"
+```
+
+Dans la reponse JSON :
+
+- utiliser `merchant_profile.merchant_code`
+
+Exemple de valeur :
+
+- `REPLACE_WITH_SUMUP_MERCHANT_CODE`
+
+Important :
+
+- utiliser la cle API privee creee dans `Cles API`
+- ne pas utiliser la `Cle API publique`
+
+## Frais de paiement actuellement appliques
+
+Configuration produit retenue pour le parking :
+
+- `PAYMENT_FEE_RATE = 0.025`
+- `PAYMENT_FEE_FIXED_CHF = 0`
+
+Justification :
+
+- cartes de debit SumUp : `1.5 %`
+- cartes de credit SumUp : `2.5 %`
+- comme le type de carte n'est pas connu de facon exploitable avant paiement dans le funnel actuel, le systeme applique `2.5 %` a tous les paiements
+
+## Mise en place locale suggeree
+
+1. Copier `wrangler.toml.example` vers `wrangler.toml`
+2. Remplacer le `database_id`
+3. Creer la base D1
+4. Executer la migration SQL
+5. Configurer les variables d'environnement Pages / Workers
+
+## Exemple de commandes
+
+```bash
+cp wrangler.toml.example wrangler.toml
+wrangler d1 create candc-booking
+wrangler d1 execute candc-booking --file=./migrations/0001_booking_schema.sql
+```
+
+## Etat actuel
+
+Le scaffold couvre :
+
+- le modele multi-unite pour accueillir plus tard le studio sans refonte majeure
+- des regles metier parametrables par unite via `rentable_units.settings_json`
+- validation des payloads
+- calcul des prix
+- gestion des periodes tarifaires par unite
+- creation d'une reservation `pending_payment`
+- blocage calendrier associe a une unite
+- generation d'un token de gestion
+- export ICS de base par unite
+- creation d'un Hosted Checkout SumUp si les credentials sont configures
+- webhook SumUp pour confirmer ou liberer la reservation selon le statut de paiement
+- import Booking.com ICS par endpoint interne authentifie
+- remplacement des blocages externes importes par unite
+- journalisation des synchronisations dans `sync_logs`
+- synchro Google Calendar par reservation confirmee
+- mise a jour automatique Google Calendar depuis le webhook SumUp si la configuration est presente
+
+Le scaffold ne couvre pas encore :
+
+- page publique de gestion de reservation
+- e-mails transactionnels
+- admin UI
+
+## Charges utiles attendues
+
+### `POST /api/booking/quote`
+
+```json
+{
+  "unitCode": "parking-space",
+  "locale": "fr",
+  "checkInDate": "2026-06-10",
+  "checkOutDate": "2026-06-12",
+  "vehicleType": "van",
+  "adults": 2,
+  "children": 1,
+  "wcShowerRequested": true,
+  "nonRefundableSelected": false
+}
+```
+
+### `POST /api/booking/reservations`
+
+```json
+{
+  "unitCode": "parking-space",
+  "locale": "fr",
+  "checkInDate": "2026-06-10",
+  "checkOutDate": "2026-06-12",
+  "vehicleType": "van",
+  "adults": 2,
+  "children": 1,
+  "wcShowerRequested": true,
+  "nonRefundableSelected": false,
+  "guestFirstName": "Jean",
+  "guestLastName": "Dupont",
+  "guestEmail": "jean@example.com",
+  "guestPhone": "+41790000000",
+  "remarks": "Arrivee vers 18h",
+  "acceptedTerms": true
+}
+```
+
+## Etape recommandee suivante
+
+1. renseigner les vraies URLs ICS Booking.com dans `external_calendar_sources` ou `BOOKING_ICS_IMPORT_URL`
+2. configurer le service account Google Calendar et partager le calendrier avec son e-mail
+3. brancher un cron ou un appel interne securise vers `POST /api/internal/sync/booking-ics`
+4. ajouter les e-mails transactionnels
+
+## Extension future studio
+
+Pour brancher ensuite le studio, la base est deja prete pour :
+
+- creer des periodes tarifaires propres au studio
+- avoir un flux Booking.com ICS dedie au studio
+- gerer un agenda interne separe
+- exposer un funnel front avec `unitCode: "eco-studio"`
+
+La principale evolution restante sera metier et UX :
+
+- champs specifiques studio
+- pricing specifique studio
+- politiques de sejour propres au studio
+
+## Verification studio readiness
+
+Etat actuel :
+
+- pret pour un autre agenda Booking.com par unite
+- pret pour d'autres tarifs via `rate_periods`
+- pret pour des regles propres au studio via `settings_json`
+- pret pour ne pas exiger les donnees vehicule sur les unites non parking
+
+Ce qui restera a faire pour activer vraiment le studio :
+
+- creer le funnel front studio
+- definir les options et conditions propres au studio
+- ajuster le contenu des e-mails pour le studio
+
+## Synchronisation Booking ICS
+
+Le flux d'import fonctionne par unite reservable.
+
+Sources d'URL prises en charge :
+
+- prioritairement `external_calendar_sources.import_url`
+- sinon `BOOKING_ICS_IMPORT_URL` pour l'unite par defaut
+
+Authentification requise :
+
+- header `Authorization: Bearer <INTERNAL_SYNC_TOKEN>`
+- ou header `x-internal-sync-token: <INTERNAL_SYNC_TOKEN>`
+
+Exemple de charge utile :
+
+```json
+{
+  "unitCode": "parking-space"
+}
+```
+
+Si le body est vide, l'endpoint tente de synchroniser toutes les sources actives `booking` declarees en base.
+
+Comportement :
+
+- telecharge le flux ICS Booking
+- parse les `VEVENT`
+- remplace les blocages externes existants pour l'unite concernee
+- journalise le resultat dans `sync_logs`
+
+## Synchronisation Google Calendar
+
+Le calendrier interne partage est alimente reservation par reservation.
+
+Configuration necessaire :
+
+- `GOOGLE_CALENDAR_ID`
+- `GOOGLE_SERVICE_ACCOUNT_EMAIL`
+- `GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY`
+
+Important :
+
+- il faut partager le Google Calendar cible avec l'adresse e-mail du service account
+- le service account doit avoir le droit de modifier les evenements
+
+Declenchement :
+
+- automatique apres paiement confirme via le webhook SumUp
+- manuel ou de rattrapage via `POST /api/internal/sync/google-calendar`
+
+Exemple de charge utile :
+
+```json
+{
+  "reservationId": "REPLACE_WITH_RESERVATION_ID"
+}
+```
+
+Contenu envoye dans l'evenement :
+
+- nom complet du voyageur
+- type de vehicule
+- adultes et enfants
+- remarques
+- total et statut de paiement
+- reference de reservation
+- unite reservee
