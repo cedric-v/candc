@@ -221,6 +221,7 @@ Variables :
 - `POST /api/internal/jobs/run` peut lancer :
   - le sync Booking.com ICS
   - les e-mails d'arrivee
+  - la validation manuelle des feeds OTA
   - les deux en une seule execution
 
 Important :
@@ -232,6 +233,10 @@ Important :
   - un cron distinct pour les e-mails d'arrivee, filtre sur `08:00` locale `Europe/Zurich`
 - ce Worker requiert la variable secrete `INTERNAL_SYNC_TOKEN`
 - en cas de reservation confirmee le jour meme apres 08:00 locale, l'e-mail d'arrivee est envoye immediatement par fallback sans attendre le prochain cron
+- l'interface admin expose aussi :
+  - un tableau de sante des sources calendaires
+  - l'etat des derniers jobs operationnels
+  - une action `Validate OTA feeds` pour verifier import et export ICS sans attendre un cron
 
 ## Notes importantes
 

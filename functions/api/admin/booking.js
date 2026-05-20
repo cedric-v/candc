@@ -1,12 +1,14 @@
 import { hasValidAdminToken } from "../../_lib/auth.js";
 import {
+  listCalendarHealthForAdmin,
   listAdminReservations,
+  listOperationalJobHealth,
   listRatePeriods,
   listRecentSyncLogs,
   listUnitsForAdmin,
   upsertRatePeriod,
 } from "../../_lib/db.js";
-import { runArrivalEmails, runBookingIcsSync } from "../../_lib/jobs.js";
+import { runArrivalEmails, runBookingIcsSync, validateCalendarSources } from "../../_lib/jobs.js";
 import { badRequest, json, serverError, unauthorized } from "../../_lib/http.js";
 import { isIsoDateString } from "../../_lib/date.js";
 
@@ -16,11 +18,14 @@ export async function onRequestGet(context) {
       return unauthorized("Missing or invalid admin token");
     }
 
-    const [units, reservations, ratePeriods, syncLogs] = await Promise.all([
+    const [units, reservations, ratePeriods, syncLogs, calendarHealth, operationalHealth] =
+      await Promise.all([
       listUnitsForAdmin(context.env),
       listAdminReservations(context.env, 60),
       listRatePeriods(context.env),
       listRecentSyncLogs(context.env, 25),
+      listCalendarHealthForAdmin(context.env),
+      listOperationalJobHealth(context.env),
     ]);
 
     return json({
@@ -28,6 +33,8 @@ export async function onRequestGet(context) {
       reservations,
       ratePeriods,
       syncLogs,
+      calendarHealth,
+      operationalHealth,
     });
   } catch (error) {
     return serverError("Failed to load admin dashboard", error.message);
@@ -79,6 +86,10 @@ export async function onRequestPost(context) {
 
     if (action === "run_arrival_emails") {
       return json(await runArrivalEmails(context.env, payload.targetDate || null));
+    }
+
+    if (action === "validate_calendar_sources") {
+      return json(await validateCalendarSources(context.env, payload.unitCode || null));
     }
 
     return badRequest("Unsupported admin action");

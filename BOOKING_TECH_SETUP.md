@@ -231,16 +231,18 @@ Le scaffold couvre :
 - e-mails de modification, annulation et rappel d'arrivee
 - page client de gestion de reservation via lien magique
 - mini interface admin protegee par token
-- endpoint interne unifie pour lancer les jobs Booking ICS et arrival emails
+- endpoint interne unifie pour lancer les jobs Booking ICS, arrival emails et validation OTA
 - worker cron dedie dans `sync-worker/` avec deux responsabilites separees :
   - sync OTA horaire
   - e-mails d'arrivee via un cron separe, declenche uniquement pendant la fenetre locale de `08:00 Europe/Zurich`
 - fallback d'e-mail d'arrivee immediat pour les reservations confirmees le jour meme apres 08:00 locale
+- remboursements automatiques SumUp pour les cas eligibles, avec fallback `manual_refund_due` si la transaction n'est pas remboursable automatiquement
+- tests metier dedies dans `scripts/booking-logic-tests.mjs`
 
 Le scaffold ne couvre pas encore :
 
-- remboursement automatique SumUp
-- cron Cloudflare effectivement deployee depuis ce repo
+- la reactivation Google Calendar avec credentials complets
+- l'observation continue des flux OTA tiers si un fournisseur renvoie un ICS vide ou incomplet
 
 ## Charges utiles attendues
 

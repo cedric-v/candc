@@ -25,11 +25,16 @@ export function onRequestGet() {
         <h2>Quick actions</h2>
         <div class="actions">
           <button class="btn-secondary" type="button" id="sync-booking-button">Run calendar sync</button>
+          <button class="btn-secondary" type="button" id="validate-calendar-button">Validate OTA feeds</button>
           <button class="btn-secondary" type="button" id="send-arrival-button">Send today's arrival emails</button>
         </div>
         <p class="small">These actions reuse the same backend jobs that will later be called by automated triggers. They sync all active imported OTA calendars configured in the system.</p>
       </section>
     </div>
+    <section class="card stack" style="margin-top:18px">
+      <h2>Operational health</h2>
+      <div id="admin-operational-health" class="small">No data loaded yet.</div>
+    </section>
     <section class="card stack" style="margin-top:18px">
       <h2>Special pricing period</h2>
       <form id="rate-period-form" class="stack">
@@ -75,6 +80,10 @@ export function onRequestGet() {
       <div id="admin-rate-periods" class="small">No data loaded yet.</div>
     </section>
     <section class="card stack" style="margin-top:18px">
+      <h2>Calendar source health</h2>
+      <div id="admin-calendar-health" class="small">No data loaded yet.</div>
+    </section>
+    <section class="card stack" style="margin-top:18px">
       <h2>Recent sync logs</h2>
       <div id="admin-sync-logs" class="small">No data loaded yet.</div>
     </section>
@@ -88,7 +97,10 @@ export function onRequestGet() {
         const reservationsWrap = document.getElementById('admin-reservations');
         const ratePeriodsWrap = document.getElementById('admin-rate-periods');
         const syncLogsWrap = document.getElementById('admin-sync-logs');
+        const calendarHealthWrap = document.getElementById('admin-calendar-health');
+        const operationalHealthWrap = document.getElementById('admin-operational-health');
         const syncBookingButton = document.getElementById('sync-booking-button');
+        const validateCalendarButton = document.getElementById('validate-calendar-button');
         const sendArrivalButton = document.getElementById('send-arrival-button');
         let adminToken = sessionStorage.getItem('candcAdminToken') || '';
 
@@ -118,6 +130,43 @@ export function onRequestGet() {
             return '<p class="small">No data yet.</p>';
           }
           return '<table><thead><tr>' + headers.map((header) => '<th>' + header.label + '</th>').join('') + '</tr></thead><tbody>' + rows.map((row) => '<tr>' + headers.map((header) => '<td>' + (row[header.key] ?? '-') + '</td>').join('') + '</tr>').join('') + '</tbody></table>';
+        }
+
+        function computeHealthBadge(item) {
+          if (!item) {
+            return 'Unknown';
+          }
+
+          if (item.last_status === 'failed') {
+            return 'Failed';
+          }
+
+          if (!item.last_synced_at) {
+            return 'Never synced';
+          }
+
+          const ageHours = (Date.now() - new Date(item.last_synced_at).getTime()) / 3600000;
+          if (ageHours > 6) {
+            return 'Stale';
+          }
+
+          return 'Healthy';
+        }
+
+        function renderOperationalHealth(data) {
+          const rows = [
+            ['Calendar sync job', data?.calendarSyncJob],
+            ['Arrival email job', data?.arrivalEmailJob],
+            ['Feed validation', data?.calendarValidationJob],
+          ];
+
+          operationalHealthWrap.innerHTML = rows.map(([label, item]) => {
+            if (!item) {
+              return '<div class="meta-row"><span class="label">' + label + '</span><span class="value">No run recorded yet.</span></div>';
+            }
+
+            return '<div class="meta-row"><span class="label">' + label + '</span><span class="value">' + [item.status, item.created_at, item.message].filter(Boolean).join(' · ') + '</span></div>';
+          }).join('');
         }
 
         async function loadDashboard() {
@@ -158,6 +207,27 @@ export function onRequestGet() {
                 { key: 'rate', label: 'Nightly rate' },
                 { key: 'label', label: 'Label' },
                 { key: 'priority', label: 'Priority' },
+              ],
+            );
+            renderOperationalHealth(data.operationalHealth);
+            calendarHealthWrap.innerHTML = renderTable(
+              data.calendarHealth.map((item) => ({
+                unit: item.unit_display_name,
+                source: item.source_code,
+                health: computeHealthBadge(item),
+                synced: item.last_synced_at || '-',
+                imported: String(item.future_block_count ?? 0),
+                lastStatus: item.last_status || '-',
+                lastMessage: item.last_message || '-',
+              })),
+              [
+                { key: 'unit', label: 'Unit' },
+                { key: 'source', label: 'Source' },
+                { key: 'health', label: 'Health' },
+                { key: 'synced', label: 'Last synced' },
+                { key: 'imported', label: 'Future blocks' },
+                { key: 'lastStatus', label: 'Last status' },
+                { key: 'lastMessage', label: 'Last message' },
               ],
             );
             syncLogsWrap.innerHTML = renderTable(
@@ -218,6 +288,18 @@ export function onRequestGet() {
             adminNotice.className = 'notice info';
             adminNotice.textContent = 'Running calendar sync…';
             await apiFetch('POST', { action: 'run_booking_sync' });
+            await loadDashboard();
+          } catch (error) {
+            adminNotice.className = 'notice error';
+            adminNotice.textContent = error.message;
+          }
+        });
+
+        validateCalendarButton.addEventListener('click', async () => {
+          try {
+            adminNotice.className = 'notice info';
+            adminNotice.textContent = 'Validating OTA feeds…';
+            await apiFetch('POST', { action: 'validate_calendar_sources' });
             await loadDashboard();
           } catch (error) {
             adminNotice.className = 'notice error';

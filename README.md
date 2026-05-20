@@ -30,9 +30,8 @@ Implemented today:
 
 Still to complete:
 
-- automatic SumUp refunds
 - production Google Calendar credentials and optional re-enablement
-- final validation of Cloudflare cron deployment per target environment
+- deeper end-to-end production monitoring over time
 
 ## Supported languages
 
@@ -144,6 +143,13 @@ Smoke tests currently verify:
 - sitemap hreflang output
 - robots.txt
 
+Business logic tests now also verify:
+
+- studio 4-night minimum stay
+- studio max occupancy
+- parking/studio pricing rules and discounts
+- automatic refund allocation logic
+
 ## Project structure
 
 - `src/` site pages, templates, assets, translations
@@ -175,8 +181,14 @@ Each unit can have:
 Operational sync note:
 
 - the admin UI exposes `Run calendar sync`
+- the admin UI also exposes `Validate OTA feeds`
 - there is intentionally no separate `Run Airbnb sync` action in the admin UI
 - the sync job imports all active OTA calendar sources configured in the system, including `booking` and `airbnb` when present for a unit
+
+Refund note:
+
+- eligible paid SumUp charges are now refunded automatically for self-service cancellations and negative booking deltas
+- if a transaction reference is missing or SumUp refunding fails mid-flow, the system falls back to a manual refund-due record
 
 Current payment fee assumption for the parking funnel:
 

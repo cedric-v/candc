@@ -1,6 +1,6 @@
 import { hasValidInternalToken } from "../../../_lib/auth.js";
 import { badRequest, json, serverError, unauthorized } from "../../../_lib/http.js";
-import { runArrivalEmails, runBookingIcsSync } from "../../../_lib/jobs.js";
+import { runArrivalEmails, runBookingIcsSync, validateCalendarSources } from "../../../_lib/jobs.js";
 import { releaseExpiredPendingPayments } from "../../../_lib/db.js";
 
 export async function onRequest(context) {
@@ -29,6 +29,10 @@ export async function onRequest(context) {
 
     if (action === "arrival_emails") {
       return json(await runArrivalEmails(context.env, payload.targetDate || null));
+    }
+
+    if (action === "validate_calendars") {
+      return json(await validateCalendarSources(context.env, payload.unitCode || null));
     }
 
     if (action === "all") {

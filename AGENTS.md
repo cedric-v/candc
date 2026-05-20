@@ -94,8 +94,8 @@ If editing functions-only logic, import checks via Node ESM are also useful.
 ## Known unfinished areas
 
 - production credential wiring
-- automatic refund execution through SumUp
-- actual cron deployment for internal jobs depending on Cloudflare deployment mode
+- Google Calendar remains optional and disabled by default in production until credentials are finalized
+- automatic refunds now exist, but fallback to manual follow-up if SumUp transaction coverage is incomplete or a refund API call fails
 
 ## Contributor note
 

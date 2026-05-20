@@ -128,7 +128,9 @@ export function onRequestGet(context) {
             const data = await fetchJson(apiUrl);
             reservation = data.reservation;
             notice.className = 'notice info';
-            notice.textContent = data.notices[0] || 'Your booking is ready to be managed below.';
+            notice.innerHTML = data.notices.length
+              ? data.notices.map((item) => '<div>' + item + '</div>').join('')
+              : 'Your booking is ready to be managed below.';
             setMeta(meta, [
               ['Reference', reservation.publicReference],
               ['Unit', reservation.unitDisplayName],
@@ -210,9 +212,12 @@ export function onRequestGet(context) {
             if (data.payment && data.payment.hostedCheckoutUrl) {
               quoteNotice.className = 'notice warn';
               quoteNotice.innerHTML = 'Your changes need an extra payment. <a href="' + data.payment.hostedCheckoutUrl + '">Open the payment page</a>.';
+            } else if (data.deltaAmount < 0 && data.refund?.fullyRefunded) {
+              quoteNotice.className = 'notice success';
+              quoteNotice.textContent = 'Your changes were saved and the refund was triggered automatically.';
             } else if (data.deltaAmount < 0) {
               quoteNotice.className = 'notice warn';
-              quoteNotice.textContent = 'Your changes were saved. A manual refund is now due.';
+              quoteNotice.textContent = 'Your changes were saved. A refund still needs follow-up.';
             } else {
               quoteNotice.className = 'notice success';
               quoteNotice.textContent = 'Your reservation has been updated.';

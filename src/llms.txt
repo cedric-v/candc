@@ -76,6 +76,8 @@ Notes :
 - export ICS des reservations directes
 - SumUp pour le paiement
 - Google Calendar en option, desactive par defaut
+- remboursements automatiques SumUp pour les cas eligibles, avec fallback manuel si necessaire
+- worker cron Cloudflare deployee pour sync OTA et e-mails d'arrivee
 
 ## Flux et index
 

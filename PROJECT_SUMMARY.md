@@ -65,6 +65,9 @@ Le repository contient maintenant deux couches principales :
 - page client de gestion via lien magique
 - mini interface admin par token
 - endpoint interne pour jobs de sync et d'e-mails, y compris le mail d'arrivee localise
+- remboursements automatiques SumUp pour les annulations flexibles et les diminutions de total, avec fallback manuel si la couverture transactionnelle est insuffisante
+- tableau de sante admin pour les sources calendaires et les jobs operationnels
+- validation OTA manuelle via l'admin pour verifier import et export ICS
 - couche agent-ready avec `llms.txt`, `site-context.json` et WebMCP sur les parcours publics de reservation parking et studio
 - logique d'e-mail d'arrivee adaptee aux reservations de derniere minute : si la reservation est confirmee le jour meme apres 8h locale, l'e-mail d'arrivee part immediatement au lieu d'attendre le cron du lendemain
 
@@ -108,9 +111,8 @@ Le back-office admin n'est pas expose comme surface WebMCP publique.
 
 ## Ce qui manque encore
 
-- remboursement automatique SumUp
-- verification finale du deploiement cron cote Cloudflare selon l'environnement cible
 - reactivation eventuelle de Google Calendar avec credentials finalises
+- observation continue en production des flux OTA reels, en particulier si un fournisseur renvoie un ICS vide
 
 ## Fichiers de reference
 

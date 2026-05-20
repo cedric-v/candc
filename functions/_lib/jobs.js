@@ -25,6 +25,24 @@ async function fetchIcs(importUrl) {
   return response.text();
 }
 
+function buildValidationResultStatus(results) {
+  if (!results.length) {
+    return "skipped";
+  }
+
+  const healthyStatuses = new Set(["success", "sent", "skipped", "shared"]);
+
+  if (results.every((result) => healthyStatuses.has(result.status))) {
+    return "success";
+  }
+
+  if (results.some((result) => healthyStatuses.has(result.status))) {
+    return "partial";
+  }
+
+  return "failed";
+}
+
 export async function runBookingIcsSync(env, unitCode = null) {
   const bookingSources = await getImportCalendarSources(env, "booking", unitCode);
   const airbnbSources = await getImportCalendarSources(env, "airbnb", unitCode);
@@ -97,8 +115,19 @@ export async function runBookingIcsSync(env, unitCode = null) {
     }
   }
 
+  await insertSyncLog(env, {
+    unitId: null,
+    syncType: "calendar_sync_job",
+    status: buildValidationResultStatus(results),
+    message: `Processed ${results.length} active OTA calendar source(s)`,
+    payloadSummary: {
+      unitCode: unitCode || null,
+      results,
+    },
+  });
+
   return {
-    ok: results.every((result) => result.status === "success"),
+    ok: results.every((result) => ["success", "shared"].includes(result.status)),
     results,
   };
 }
@@ -130,9 +159,103 @@ export async function runArrivalEmails(env, targetDate = null) {
     }
   }
 
+  await insertSyncLog(env, {
+    unitId: null,
+    syncType: "arrival_email_job",
+    status: buildValidationResultStatus(results),
+    message: `Processed ${results.length} arrival reservation(s) for ${isoDate}`,
+    payloadSummary: {
+      targetDate: isoDate,
+      results,
+    },
+  });
+
   return {
     ok: results.every((result) => result.status !== "failed"),
     targetDate: isoDate,
+    results,
+  };
+}
+
+export async function validateCalendarSources(env, unitCode = null) {
+  const bookingSources = await getImportCalendarSources(env, "booking", unitCode);
+  const airbnbSources = await getImportCalendarSources(env, "airbnb", unitCode);
+  const sources = [...bookingSources, ...airbnbSources];
+  const config = getConfig(env);
+  const exportChecksSeen = new Set();
+  const results = [];
+
+  for (const sourceRecord of sources) {
+    const result = {
+      unitCode: sourceRecord.unit_code,
+      unitDisplayName: sourceRecord.display_name,
+      sourceCode: sourceRecord.source_code,
+      importUrl: sourceRecord.import_url || null,
+      importStatus: "skipped",
+      importEventCount: 0,
+      exportStatus: "skipped",
+      exportEventCount: 0,
+      errors: [],
+    };
+
+    if (sourceRecord.import_url) {
+      try {
+        const importIcs = await fetchIcs(sourceRecord.import_url);
+        result.importEventCount = parseIcsEvents(importIcs).length;
+        result.importStatus = "success";
+      } catch (error) {
+        result.importStatus = "failed";
+        result.errors.push(`import:${error.message}`);
+      }
+    } else {
+      result.errors.push("import:missing_import_url");
+    }
+
+    const exportFeedToken = sourceRecord.export_feed_token || null;
+    const exportCacheKey = `${sourceRecord.unit_code}:${exportFeedToken || ""}`;
+    if (exportFeedToken && !exportChecksSeen.has(exportCacheKey)) {
+      exportChecksSeen.add(exportCacheKey);
+      const exportUrl = `${config.publicBaseUrl}/api/booking/ics/${encodeURIComponent(exportFeedToken)}`;
+      result.exportUrl = exportUrl;
+      try {
+        const exportIcs = await fetchIcs(exportUrl);
+        result.exportEventCount = parseIcsEvents(exportIcs).length;
+        result.exportStatus = "success";
+      } catch (error) {
+        result.exportStatus = "failed";
+        result.errors.push(`export:${error.message}`);
+      }
+    } else if (exportFeedToken) {
+      result.exportStatus = "shared";
+      result.exportUrl = `${config.publicBaseUrl}/api/booking/ics/${encodeURIComponent(exportFeedToken)}`;
+    } else {
+      result.errors.push("export:missing_feed_token");
+    }
+
+    result.status =
+      result.importStatus === "success" &&
+      ["success", "shared"].includes(result.exportStatus)
+        ? "success"
+        : result.importStatus === "failed" || result.exportStatus === "failed"
+          ? "failed"
+          : "skipped";
+
+    results.push(result);
+  }
+
+  await insertSyncLog(env, {
+    unitId: null,
+    syncType: "calendar_source_validation",
+    status: buildValidationResultStatus(results),
+    message: `Validated ${results.length} OTA calendar source(s)`,
+    payloadSummary: {
+      unitCode: unitCode || null,
+      results,
+    },
+  });
+
+  return {
+    ok: results.every((result) => result.status === "success"),
     results,
   };
 }

@@ -79,6 +79,40 @@ export async function getCheckout(env, checkoutId) {
   return response.json();
 }
 
+export async function refundTransaction(env, transactionId, amount = null) {
+  const config = getConfig(env);
+
+  if (!config.sumUpApiKey || !config.sumUpMerchantCode) {
+    throw new Error("sumup_not_configured");
+  }
+
+  const body = amount === null || amount === undefined ? {} : { amount };
+  const response = await fetch(
+    `${config.sumUpApiBaseUrl}/v1.0/merchants/${encodeURIComponent(config.sumUpMerchantCode)}/payments/${encodeURIComponent(transactionId)}/refunds`,
+    {
+      method: "POST",
+      headers: buildHeaders(config.sumUpApiKey),
+      body: JSON.stringify(body),
+    },
+  );
+
+  if (!response.ok) {
+    const details = await parseErrorResponse(response);
+    throw new Error(`sumup_refund_failed:${response.status}:${JSON.stringify(details)}`);
+  }
+
+  const responseText = await response.text();
+  if (!responseText) {
+    return {};
+  }
+
+  try {
+    return JSON.parse(responseText);
+  } catch {
+    return { raw: responseText };
+  }
+}
+
 export function mapCheckoutStatus(status) {
   switch (status) {
     case "PAID":

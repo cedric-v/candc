@@ -2,6 +2,7 @@ import { buildQuote } from "../../../_lib/pricing.js";
 import {
   cancelReservation,
   getAvailabilityConflictsExcludingReservation,
+  getPaymentsForReservation,
   getReservationForManageToken,
   getUnitByCode,
   insertPaymentRecord,
@@ -12,8 +13,9 @@ import { isArrivalWithin48Hours } from "../../../_lib/date.js";
 import { getConfig } from "../../../_lib/env.js";
 import { badRequest, json, notFound, serverError } from "../../../_lib/http.js";
 import { sendReservationEmail, syncReservationToGoogleCalendar } from "../../../_lib/booking-ops.js";
+import { buildAutomaticRefundPlan } from "../../../_lib/refunds.js";
 import { generateOpaqueToken, sha256Hex } from "../../../_lib/security.js";
-import { createHostedCheckout, isSumUpConfigured } from "../../../_lib/sumup.js";
+import { createHostedCheckout, isSumUpConfigured, refundTransaction } from "../../../_lib/sumup.js";
 import { normalizeBookingInput, validateBookingInput } from "../../../_lib/validation.js";
 
 function toManageResponse(reservation, env) {
@@ -37,6 +39,19 @@ function toManageResponse(reservation, env) {
   const hasFlexibleCancellation =
     reservation.refundable_policy_type === "flexible_48h" ||
     reservation.refundable_policy_type === "flexible_24h";
+
+  const notices = [];
+  if (paymentPending) {
+    notices.push(
+      "This reservation is still waiting for payment. Use the payment button below to confirm it. Date changes stay disabled until payment is completed.",
+    );
+  }
+  if (reservation.status === "pending_refund") {
+    notices.push("A refund is being processed or still needs follow-up. We will email you once it is completed.");
+  }
+  if (reservation.payment_status === "refunded") {
+    notices.push("A refund has already been recorded for this reservation.");
+  }
 
   return {
     reservation: {
@@ -76,11 +91,7 @@ function toManageResponse(reservation, env) {
       paymentPending,
       canResumePayment,
     },
-    notices: paymentPending
-      ? [
-          "This reservation is still waiting for payment. Use the payment button below to confirm it. Date changes stay disabled until payment is completed.",
-        ]
-      : [],
+    notices,
   };
 }
 
@@ -112,6 +123,128 @@ function buildEditablePayload(reservation, rawBody) {
   });
 
   return normalized;
+}
+
+function roundMoney(value) {
+  return Math.round((Number(value || 0) + Number.EPSILON) * 100) / 100;
+}
+
+async function recordManualRefundDue(env, reservation, amount, reason, meta = {}) {
+  await insertPaymentRecord(env, {
+    reservationId: reservation.id,
+    provider: "sumup",
+    providerCheckoutId: null,
+    providerPaymentReference: null,
+    type: "refund",
+    status: "manual_refund_due",
+    amount: roundMoney(amount),
+    currency: reservation.currency,
+    rawPayload: {
+      reason,
+      refundMode: "manual",
+      ...meta,
+    },
+  });
+
+  return {
+    mode: "manual",
+    amount: roundMoney(amount),
+  };
+}
+
+async function attemptAutomaticRefund(env, reservation, amount, reason, meta = {}) {
+  const targetAmount = roundMoney(amount);
+  if (!(targetAmount > 0)) {
+    return {
+      mode: "none",
+      amount: 0,
+      remainingAmount: 0,
+      fullyRefunded: true,
+    };
+  }
+
+  if (!isSumUpConfigured(env)) {
+    const manual = await recordManualRefundDue(env, reservation, targetAmount, reason, meta);
+    return {
+      ...manual,
+      remainingAmount: targetAmount,
+      fullyRefunded: false,
+    };
+  }
+
+  const payments = await getPaymentsForReservation(env, reservation.id);
+  const refundPlan = buildAutomaticRefundPlan(payments, targetAmount);
+
+  if (!refundPlan.canFullyRefund) {
+    const manual = await recordManualRefundDue(
+      env,
+      reservation,
+      targetAmount,
+      reason,
+      {
+        ...meta,
+        refundPlan,
+      },
+    );
+
+    return {
+      ...manual,
+      remainingAmount: targetAmount,
+      fullyRefunded: false,
+    };
+  }
+
+  let refundedAmount = 0;
+
+  for (const item of refundPlan.items) {
+    try {
+      const refundResponse = await refundTransaction(env, item.providerPaymentReference, item.amount);
+      refundedAmount = roundMoney(refundedAmount + item.amount);
+
+      await insertPaymentRecord(env, {
+        reservationId: reservation.id,
+        provider: "sumup",
+        providerCheckoutId: item.checkoutId,
+        providerPaymentReference: item.providerPaymentReference,
+        type: "refund",
+        status: "refunded",
+        amount: item.amount,
+        currency: item.currency || reservation.currency,
+        rawPayload: {
+          reason,
+          refundMode: "automatic",
+          refundedPaymentReference: item.providerPaymentReference,
+          sourcePaymentId: item.sourcePaymentId,
+          sumUpResponse: refundResponse,
+          ...meta,
+        },
+      });
+    } catch (error) {
+      const remainingAmount = roundMoney(targetAmount - refundedAmount);
+      if (remainingAmount > 0) {
+        await recordManualRefundDue(env, reservation, remainingAmount, reason, {
+          ...meta,
+          automaticRefundFailure: error.message,
+          partialAutomaticRefundAmount: refundedAmount,
+          refundPlan,
+        });
+      }
+
+      return {
+        mode: refundedAmount > 0 ? "partial_automatic_then_manual" : "manual",
+        amount: refundedAmount,
+        remainingAmount: remainingAmount > 0 ? remainingAmount : 0,
+        fullyRefunded: false,
+      };
+    }
+  }
+
+  return {
+    mode: "automatic",
+    amount: refundedAmount,
+    remainingAmount: 0,
+    fullyRefunded: true,
+  };
 }
 
 export async function onRequestGet(context) {
@@ -164,20 +297,21 @@ export async function onRequestPost(context) {
         }
       }
 
-      if (reservation.payment_status === "paid" && reservation.status !== "pending_payment") {
-        await insertPaymentRecord(context.env, {
-          reservationId: reservation.id,
-          provider: "sumup",
-          providerCheckoutId: null,
-          providerPaymentReference: null,
-          type: "refund",
-          status: "manual_refund_due",
-          amount: Number(reservation.total_amount || 0),
-          currency: reservation.currency,
-          rawPayload: {
-            reason: "customer_self_service_cancellation",
-          },
-        });
+      if (reservation.status !== "pending_payment") {
+        const payments = await getPaymentsForReservation(context.env, reservation.id);
+        const hasPaidCharges = payments.some(
+          (payment) =>
+            ["initial", "adjustment"].includes(payment.type) && payment.status === "paid",
+        );
+
+        if (hasPaidCharges) {
+        await attemptAutomaticRefund(
+          context.env,
+          reservation,
+          Number(reservation.total_amount || 0),
+          "customer_self_service_cancellation",
+        );
+        }
       }
 
       await cancelReservation(context.env, reservation.id);
@@ -329,6 +463,7 @@ export async function onRequestPost(context) {
     let reservationStatus = deltaAmount < 0 ? "refund_due" : "modified";
     let calendarBlockStatus = "confirmed";
     let payment = null;
+    let refund = null;
 
     if (deltaAmount > 0) {
       reservationStatus = "pending_adjustment_payment";
@@ -401,21 +536,29 @@ export async function onRequestPost(context) {
         };
       }
     } else if (deltaAmount < 0) {
-      await insertPaymentRecord(context.env, {
-        reservationId: reservation.id,
-        provider: "sumup",
-        providerCheckoutId: null,
-        providerPaymentReference: null,
-        type: "refund",
-        status: "manual_refund_due",
-        amount: Math.abs(deltaAmount),
-        currency: quote.currency,
-        rawPayload: {
-          reason: "customer_self_service_modification",
+      refund = await attemptAutomaticRefund(
+        context.env,
+        reservation,
+        Math.abs(deltaAmount),
+        "customer_self_service_modification",
+        {
           previousTotal: currentTotal,
           nextTotal,
         },
-      });
+      );
+
+      if (refund.fullyRefunded) {
+        reservationStatus = "modified";
+      } else {
+        reservationStatus = refund.mode === "automatic" ? "modified" : "pending_refund";
+      }
+
+      await updateReservationAndCalendarStatus(
+        context.env,
+        reservation.id,
+        reservationStatus,
+        "confirmed",
+      );
     }
 
     try {
@@ -441,6 +584,7 @@ export async function onRequestPost(context) {
       reservationStatus,
       quote,
       payment,
+      refund,
     });
   } catch (error) {
     if (error instanceof SyntaxError) {

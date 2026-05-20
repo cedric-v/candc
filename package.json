@@ -5,7 +5,9 @@
   "scripts": {
     "start": "eleventy --serve",
     "build": "cross-env ELEVENTY_ENV=prod eleventy",
-    "test": "node scripts/smoke-tests.js"
+    "test:smoke": "node scripts/smoke-tests.js",
+    "test:logic": "node scripts/booking-logic-tests.mjs",
+    "test": "npm-run-all test:logic test:smoke"
   },
   "keywords": [],
   "author": "C & C",

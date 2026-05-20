@@ -1201,6 +1201,99 @@ export async function listUnitsForAdmin(env) {
   return results || [];
 }
 
+export async function listCalendarHealthForAdmin(env) {
+  const db = requireDb(env);
+  const { results } = await db
+    .prepare(
+      `
+        SELECT
+          external_calendar_sources.id,
+          external_calendar_sources.unit_id,
+          external_calendar_sources.source_code,
+          external_calendar_sources.import_url,
+          external_calendar_sources.export_feed_token,
+          external_calendar_sources.is_reference,
+          external_calendar_sources.last_synced_at,
+          rentable_units.code AS unit_code,
+          rentable_units.display_name AS unit_display_name,
+          (
+            SELECT sync_logs.status
+            FROM sync_logs
+            WHERE sync_logs.unit_id = external_calendar_sources.unit_id
+              AND sync_logs.sync_type = external_calendar_sources.source_code || '_ics_import'
+            ORDER BY sync_logs.created_at DESC
+            LIMIT 1
+          ) AS last_status,
+          (
+            SELECT sync_logs.message
+            FROM sync_logs
+            WHERE sync_logs.unit_id = external_calendar_sources.unit_id
+              AND sync_logs.sync_type = external_calendar_sources.source_code || '_ics_import'
+            ORDER BY sync_logs.created_at DESC
+            LIMIT 1
+          ) AS last_message,
+          (
+            SELECT sync_logs.created_at
+            FROM sync_logs
+            WHERE sync_logs.unit_id = external_calendar_sources.unit_id
+              AND sync_logs.sync_type = external_calendar_sources.source_code || '_ics_import'
+            ORDER BY sync_logs.created_at DESC
+            LIMIT 1
+          ) AS last_log_at,
+          (
+            SELECT COUNT(*)
+            FROM calendar_blocks
+            WHERE calendar_blocks.unit_id = external_calendar_sources.unit_id
+              AND calendar_blocks.source = external_calendar_sources.source_code
+              AND calendar_blocks.external_uid IS NOT NULL
+              AND calendar_blocks.status IN ('active', 'confirmed')
+              AND calendar_blocks.end_date >= date('now')
+          ) AS future_block_count
+        FROM external_calendar_sources
+        INNER JOIN rentable_units ON rentable_units.id = external_calendar_sources.unit_id
+        WHERE external_calendar_sources.source_kind = 'ics'
+          AND external_calendar_sources.is_active = 1
+          AND rentable_units.is_active = 1
+        ORDER BY rentable_units.display_name ASC, external_calendar_sources.source_code ASC
+      `,
+    )
+    .all();
+
+  return results || [];
+}
+
+export async function listOperationalJobHealth(env) {
+  const db = requireDb(env);
+  const { results } = await db
+    .prepare(
+      `
+        SELECT
+          sync_type,
+          status,
+          message,
+          payload_summary,
+          created_at
+        FROM sync_logs
+        WHERE sync_type IN ('calendar_sync_job', 'arrival_email_job', 'calendar_source_validation')
+        ORDER BY created_at DESC
+      `,
+    )
+    .all();
+
+  const latestByType = new Map();
+  for (const row of results || []) {
+    if (!latestByType.has(row.sync_type)) {
+      latestByType.set(row.sync_type, row);
+    }
+  }
+
+  return {
+    calendarSyncJob: latestByType.get("calendar_sync_job") || null,
+    arrivalEmailJob: latestByType.get("arrival_email_job") || null,
+    calendarValidationJob: latestByType.get("calendar_source_validation") || null,
+  };
+}
+
 export async function listRatePeriods(env, unitCode = null) {
   const db = requireDb(env);
   const sql = unitCode

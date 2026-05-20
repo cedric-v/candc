@@ -17,6 +17,11 @@ export async function buildQuote(env, input) {
   }
 
   const nightlyRates = await getNightlyRates(env, unit, input.checkInDate, input.checkOutDate);
+  return calculateQuoteFromResolvedUnit(unit, nightlyRates, input, config);
+}
+
+export function calculateQuoteFromResolvedUnit(unit, nightlyRates, input, config) {
+  const nights = diffNights(input.checkInDate, input.checkOutDate);
   const unitSettings = unit.settings || {};
   const adultTouristTaxChf =
     unitSettings.adultTouristTaxChf ?? config.touristTaxAdultChf;
