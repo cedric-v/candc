@@ -279,6 +279,25 @@ a:hover {
   margin: 0 auto;
 }
 
+.booking-overview-link-wrap {
+  margin-bottom: 0;
+}
+
+.booking-overview-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--primary-color);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.booking-overview-link:hover {
+  color: var(--secondary-color);
+}
+
 .booking-shell {
   display: grid;
   gap: var(--spacing-xl);

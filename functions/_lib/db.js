@@ -103,7 +103,7 @@ export async function getUnitByFeedToken(env, feedToken) {
     .bind(feedToken)
     .first();
 
-  return record ? normalizeUnitRecord(record) : null;
+  return record ? normalizeUnitRecord(record, env) : null;
 }
 
 export async function getImportCalendarSources(env, sourceCode = "booking", unitCode = null) {

@@ -495,7 +495,7 @@
       state.textContent = texts.calendarDeparture;
     } else if (isCalendarUnavailable) {
       state.textContent = "";
-    } else if (isBlocked || isMinStayBlocked) {
+    } else if (isBlocked || isMinStayBlocked || isPast) {
       state.textContent = "";
     } else if (nightlyRateByDate.has(dateKey)) {
       state.textContent = formatDayPrice(nightlyRateByDate.get(dateKey));

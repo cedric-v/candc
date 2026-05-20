@@ -4,6 +4,8 @@ const overrides = {
   fr: {
     title: "Réservez votre studio en ligne",
     intro: "Réservation directe d'un studio près de Fribourg : choisissez vos dates et le nombre de voyageurs. Le prix se met à jour instantanément avant paiement.",
+    overviewLinkLabel: "Voir les photos et équipements du studio",
+    overviewLinkHref: "/fr/eco-studio/",
     datesHelp:
       "Le tarif de base inclut 1 adulte, 1 place de parking, la terrasse privative et les équipements du studio.",
     partyTitle: "Voyageurs",
@@ -34,6 +36,8 @@ const overrides = {
   en: {
     title: "Book your studio online",
     intro: "Direct booking for an eco studio near Fribourg: choose your dates and the number of guests. Pricing updates instantly before payment.",
+    overviewLinkLabel: "See the studio photos and facilities",
+    overviewLinkHref: "/en/eco-studio/",
     datesHelp:
       "The base rate includes 1 adult, free parking for 1 vehicle, the private terrace, and the studio facilities.",
     partyTitle: "Guests",
@@ -63,6 +67,8 @@ const overrides = {
   de: {
     title: "Buchen Sie Ihr Studio online",
     intro: "Wählen Sie Ihre Daten und die Anzahl der Reisenden. Der Preis aktualisiert sich sofort vor der Zahlung.",
+    overviewLinkLabel: "Fotos und Ausstattung des Studios ansehen",
+    overviewLinkHref: "/de/eco-studio/",
     datesHelp:
       "Der Grundpreis umfasst 1 Erwachsenen, einen kostenlosen Parkplatz für 1 Fahrzeug, die private Terrasse und die Ausstattung des Studios.",
     partyTitle: "Reisende",
@@ -92,6 +98,8 @@ const overrides = {
   es: {
     title: "Reserva tu estudio en linea",
     intro: "Elige tus fechas y el número de viajeros. El precio se actualiza al instante antes del pago.",
+    overviewLinkLabel: "Ver fotos y equipamiento del estudio",
+    overviewLinkHref: "/es/eco-studio/",
     datesHelp:
       "La tarifa base incluye 1 adulto, aparcamiento gratuito para 1 vehículo, la terraza privada y el equipamiento del estudio.",
     partyTitle: "Viajeros",
@@ -121,6 +129,8 @@ const overrides = {
   pt: {
     title: "Reserve o seu estudio online",
     intro: "Escolha as suas datas e o número de viajantes. O preço atualiza-se instantaneamente antes do pagamento.",
+    overviewLinkLabel: "Ver fotos e equipamentos do estúdio",
+    overviewLinkHref: "/pt/eco-studio/",
     datesHelp:
       "A tarifa base inclui 1 adulto, estacionamento gratuito para 1 veículo, o terraço privativo e os equipamentos do estúdio.",
     partyTitle: "Viajantes",
@@ -150,6 +160,8 @@ const overrides = {
   it: {
     title: "Prenota il tuo studio online",
     intro: "Scegli le date e il numero di viaggiatori. Il prezzo si aggiorna istantaneamente prima del pagamento.",
+    overviewLinkLabel: "Vedi foto e dotazioni dello studio",
+    overviewLinkHref: "/it/eco-studio/",
     datesHelp:
       "La tariffa base include 1 adulto, parcheggio gratuito per 1 veicolo, terrazza privata e dotazioni dello studio.",
     partyTitle: "Viaggiatori",
@@ -179,6 +191,8 @@ const overrides = {
   nl: {
     title: "Boek je studio online",
     intro: "Kies je data en het aantal reizigers. De prijs wordt direct bijgewerkt vóór betaling.",
+    overviewLinkLabel: "Bekijk foto's en voorzieningen van de studio",
+    overviewLinkHref: "/nl/eco-studio/",
     datesHelp:
       "Het basistarief omvat 1 volwassene, gratis parking voor 1 voertuig, het privéterras en de studio-uitrusting.",
     partyTitle: "Reizigers",

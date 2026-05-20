@@ -11,6 +11,11 @@
     <p class="booking-kicker">{{ b.pageKicker }}</p>
     <h1 class="hero-title">{{ b.title }}</h1>
     <p class="text-lg text-muted booking-intro">{{ b.intro }}</p>
+    {% if b.overviewLinkLabel and b.overviewLinkHref %}
+    <p class="booking-overview-link-wrap">
+      <a class="booking-overview-link" href="{{ b.overviewLinkHref }}">{{ b.overviewLinkLabel }}</a>
+    </p>
+    {% endif %}
   </div>
 
   <div
