@@ -52,7 +52,7 @@ export const DEFAULT_UNITS = [
       nonRefundableDiscountRate: 0.1,
       weeklyStayDiscountRate: 0.05,
       weeklyStayThresholdNights: 7,
-      minStayNights: 1,
+      minStayNights: 4,
       maxGuests: 4,
       supportsInfants: true,
     },

@@ -466,12 +466,17 @@ a:hover {
 .booking-day {
   position: relative;
   min-height: 3rem;
-  padding: 0.45rem 0.35rem;
+  padding: 0.3rem 0.1rem;
   border-radius: 1rem;
   border: 1px solid rgba(91, 110, 125, 0.14);
   background: rgba(255, 255, 255, 0.98);
   color: var(--text-color);
   cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
   transition:
     transform var(--transition-fast),
     border-color var(--transition-fast),
@@ -486,18 +491,22 @@ a:hover {
 
 .booking-day-number {
   display: block;
-  text-align: right;
+  text-align: center;
   font-weight: 700;
   font-size: 0.92rem;
 }
 
 .booking-day-state {
   display: block;
-  margin-top: 0.35rem;
-  font-size: 0.7rem;
+  margin-top: 0.15rem;
+  font-size: 0.62rem;
   color: var(--text-light);
-  text-align: left;
+  text-align: center;
   min-height: 1em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
+  max-width: 100%;
 }
 
 .booking-day-in-range {
@@ -529,6 +538,8 @@ a:hover {
   cursor: wait;
   background: rgba(91, 110, 125, 0.05);
   color: rgba(91, 110, 125, 0.72);
+  pointer-events: none;
+  opacity: 0.38;
 }
 
 .booking-day-unavailable-data .booking-day-state {
@@ -542,6 +553,8 @@ a:hover {
     linear-gradient(135deg, transparent 0 46%, rgba(91, 110, 125, 0.34) 46% 54%, transparent 54% 100%),
     rgba(91, 110, 125, 0.08);
   color: var(--text-lighter);
+  pointer-events: none;
+  opacity: 0.38;
 }
 
 .booking-day-blocked .booking-day-state,

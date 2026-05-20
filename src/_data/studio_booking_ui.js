@@ -3,7 +3,7 @@ const parkingUi = require("./booking_ui.json");
 const overrides = {
   fr: {
     title: "Réservez votre studio en ligne",
-    intro: "Choisissez vos dates et le nombre de voyageurs. Le prix se met à jour instantanément avant paiement.",
+    intro: "Réservation directe d'un studio près de Fribourg : choisissez vos dates et le nombre de voyageurs. Le prix se met à jour instantanément avant paiement.",
     datesHelp:
       "Le tarif de base inclut 1 adulte, 1 place de parking, la terrasse privative et les équipements du studio.",
     partyTitle: "Voyageurs",
@@ -31,7 +31,7 @@ const overrides = {
   },
   en: {
     title: "Book your studio online",
-    intro: "Choose your dates and the number of guests. Pricing updates instantly before payment.",
+    intro: "Direct booking for an eco studio near Fribourg: choose your dates and the number of guests. Pricing updates instantly before payment.",
     datesHelp:
       "The base rate includes 1 adult, free parking for 1 vehicle, the private terrace, and the studio facilities.",
     partyTitle: "Guests",

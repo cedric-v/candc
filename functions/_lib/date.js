@@ -93,10 +93,18 @@ export function getWallClockEpochMsForLocalDateTime(isoDate, time = "00:00:00") 
   return Date.UTC(year, month - 1, day, hour, minute, second);
 }
 
-export function isArrivalWithin24Hours(checkInDate, checkInTime, timeZone) {
+export function isArrivalWithinHours(checkInDate, checkInTime, timeZone, hours) {
   const arrivalMs = getWallClockEpochMsForLocalDateTime(checkInDate, checkInTime);
   const nowMs = getWallClockEpochMsForNow(timeZone);
-  return arrivalMs - nowMs < 24 * 60 * 60 * 1000;
+  return arrivalMs - nowMs < hours * 60 * 60 * 1000;
+}
+
+export function isArrivalWithin24Hours(checkInDate, checkInTime, timeZone) {
+  return isArrivalWithinHours(checkInDate, checkInTime, timeZone, 24);
+}
+
+export function isArrivalWithin48Hours(checkInDate, checkInTime, timeZone) {
+  return isArrivalWithinHours(checkInDate, checkInTime, timeZone, 48);
 }
 
 export function rangesOverlap(startA, endA, startB, endB) {

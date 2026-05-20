@@ -8,7 +8,7 @@ import {
   updateReservationAndCalendarStatus,
   updateReservationBookingDetails,
 } from "../../../_lib/db.js";
-import { isArrivalWithin24Hours } from "../../../_lib/date.js";
+import { isArrivalWithin48Hours } from "../../../_lib/date.js";
 import { getConfig } from "../../../_lib/env.js";
 import { badRequest, json, notFound, serverError } from "../../../_lib/http.js";
 import { sendReservationEmail, syncReservationToGoogleCalendar } from "../../../_lib/booking-ops.js";
@@ -16,7 +16,7 @@ import { generateOpaqueToken, sha256Hex } from "../../../_lib/security.js";
 import { createHostedCheckout, isSumUpConfigured } from "../../../_lib/sumup.js";
 import { normalizeBookingInput, validateBookingInput } from "../../../_lib/validation.js";
 
-function toManageResponse(reservation) {
+function toManageResponse(reservation, env) {
   const canSelfManage = ["confirmed", "modified", "refund_due", "pending_refund"].includes(
     reservation.status,
   );
@@ -25,6 +25,18 @@ function toManageResponse(reservation) {
     (reservation.status === "cancelled" && reservation.payment_status !== "paid") ||
     reservation.status === "payment_setup_failed";
   const canResumePayment = paymentPending;
+  const within48h =
+    reservation.status === "pending_payment"
+      ? false
+      : isArrivalWithin48Hours(
+          reservation.check_in_date,
+          reservation.check_in_start_time,
+          getConfig(env).timeZone,
+        );
+
+  const hasFlexibleCancellation =
+    reservation.refundable_policy_type === "flexible_48h" ||
+    reservation.refundable_policy_type === "flexible_24h";
 
   return {
     reservation: {
@@ -60,8 +72,7 @@ function toManageResponse(reservation) {
       canUpdate: canSelfManage,
       canCancel:
         reservation.status !== "cancelled" &&
-        (reservation.status === "pending_payment" ||
-          reservation.refundable_policy_type === "flexible_24h"),
+        (reservation.status === "pending_payment" || (hasFlexibleCancellation && !within48h)),
       paymentPending,
       canResumePayment,
     },
@@ -111,7 +122,7 @@ export async function onRequestGet(context) {
       return notFound("Unknown or expired booking link");
     }
 
-    return json(toManageResponse(reservation));
+    return json(toManageResponse(reservation, context.env));
   } catch (error) {
     return serverError("Failed to load reservation", error.message);
   }
@@ -138,13 +149,17 @@ export async function onRequestPost(context) {
       }
 
       if (reservation.status !== "pending_payment") {
-        const within24h = isArrivalWithin24Hours(
+        const within48h = isArrivalWithin48Hours(
           reservation.check_in_date,
           reservation.check_in_start_time,
           getConfig(context.env).timeZone,
         );
 
-        if (reservation.refundable_policy_type !== "flexible_24h" || within24h) {
+        const hasFlexibleCancellation =
+          reservation.refundable_policy_type === "flexible_48h" ||
+          reservation.refundable_policy_type === "flexible_24h";
+
+        if (!hasFlexibleCancellation || within48h) {
           return badRequest("This reservation is no longer eligible for self-service cancellation");
         }
       }

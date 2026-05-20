@@ -2,7 +2,7 @@
   "fr": {
     "pageKicker": "Réservation directe",
     "title": "Réservez votre place de parking en ligne",
-    "intro": "Sélectionnez vos dates, votre type de véhicule et vos options. Le prix se met à jour instantanément avant paiement.",
+    "intro": "Réservation directe d'un emplacement van ou camping-car près de Fribourg : sélectionnez vos dates, votre type de véhicule et vos options. Le prix se met à jour instantanément avant paiement.",
     "availabilityTitle": "Séjour",
     "datesHelp": "Le tarif de base inclut l'emplacement, l'électricité, l'eau potable, la gestion des déchets et la terrasse privative.",
     "calendarTitle": "Disponibilités",
@@ -86,7 +86,7 @@
   "en": {
     "pageKicker": "Direct booking",
     "title": "Book your parking space online",
-    "intro": "Choose your dates, vehicle type and options. Pricing updates instantly before payment.",
+    "intro": "Direct booking for a van, camper or motorhome parking space near Fribourg: choose your dates, vehicle type and options. Pricing updates instantly before payment.",
     "availabilityTitle": "Stay",
     "datesHelp": "The base rate includes the pitch, electricity, drinking water, waste disposal and the private terrace.",
     "calendarTitle": "Availability",
@@ -145,7 +145,7 @@
       "Private terrace"
     ],
     "policyTitle": "Key conditions",
-    "policyFlexible": "Flexible cancellation with full refund if you cancel more than 24 hours before arrival.",
+    "policyFlexible": "Flexible cancellation with full refund if you cancel more than 48 hours before arrival.",
     "policyNonRefundable": "Bookings made less than 24 hours before arrival are automatically non-refundable.",
     "supportTitle": "Need help?",
     "supportBody": "If you have any doubt before paying, you can still contact us through the contact page or WhatsApp.",
@@ -225,7 +225,7 @@
       "Private Terrasse"
     ],
     "policyTitle": "Wichtige Bedingungen",
-    "policyFlexible": "Flexible Stornierung mit voller Erstattung bei Stornierung mehr als 24 Stunden vor Anreise.",
+    "policyFlexible": "Flexible Stornierung mit voller Erstattung bei Stornierung mehr als 48 Stunden vor Anreise.",
     "policyNonRefundable": "Buchungen weniger als 24 Stunden vor Anreise sind automatisch nicht erstattbar.",
     "supportTitle": "Brauchen Sie Hilfe?",
     "supportBody": "Wenn Sie vor der Zahlung unsicher sind, konnen Sie uns weiterhin uber die Kontaktseite oder WhatsApp schreiben.",
@@ -305,7 +305,7 @@
       "Terraza privada"
     ],
     "policyTitle": "Condiciones clave",
-    "policyFlexible": "Cancelacion flexible con reembolso total si cancelas mas de 24 horas antes de la llegada.",
+    "policyFlexible": "Cancelacion flexible con reembolso total si cancelas mas de 48 horas antes de la llegada.",
     "policyNonRefundable": "Las reservas realizadas menos de 24 horas antes de la llegada son automaticamente no reembolsables.",
     "supportTitle": "Necesitas ayuda?",
     "supportBody": "Si tienes alguna duda antes de pagar, siempre puedes escribirnos por la pagina de contacto o por WhatsApp.",
@@ -385,7 +385,7 @@
       "Terraco privativo"
     ],
     "policyTitle": "Condicoes principais",
-    "policyFlexible": "Cancelamento flexivel com reembolso integral se cancelar mais de 24 horas antes da chegada.",
+    "policyFlexible": "Cancelamento flexivel com reembolso integral se cancelar mais de 48 horas antes da chegada.",
     "policyNonRefundable": "As reservas efetuadas menos de 24 horas antes da chegada sao automaticamente nao reembolsaveis.",
     "supportTitle": "Precisa de ajuda?",
     "supportBody": "Se tiver alguma duvida antes de pagar, pode sempre contactar-nos pela pagina de contacto ou via WhatsApp.",
@@ -465,7 +465,7 @@
       "Terrazza privata"
     ],
     "policyTitle": "Condizioni principali",
-    "policyFlexible": "Cancellazione flessibile con rimborso totale se annulli piu di 24 ore prima dell'arrivo.",
+    "policyFlexible": "Cancellazione flessibile con rimborso totale se annulli piu di 48 ore prima dell'arrivo.",
     "policyNonRefundable": "Le prenotazioni effettuate meno di 24 ore prima dell'arrivo sono automaticamente non rimborsabili.",
     "supportTitle": "Hai bisogno di aiuto?",
     "supportBody": "Se hai dubbi prima di pagare, puoi sempre scriverci tramite la pagina contatti o WhatsApp.",
@@ -545,7 +545,7 @@
       "Prive-terras"
     ],
     "policyTitle": "Belangrijke voorwaarden",
-    "policyFlexible": "Flexibele annulering met volledige terugbetaling als u meer dan 24 uur voor aankomst annuleert.",
+    "policyFlexible": "Flexibele annulering met volledige terugbetaling als u meer dan 48 uur voor aankomst annuleert.",
     "policyNonRefundable": "Boekingen minder dan 24 uur voor aankomst zijn automatisch niet terugbetaalbaar.",
     "supportTitle": "Hulp nodig?",
     "supportBody": "Als u nog twijfelt voor de betaling, kunt u ons altijd schrijven via de contactpagina of WhatsApp.",

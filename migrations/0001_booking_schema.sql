@@ -231,7 +231,7 @@ INSERT OR IGNORE INTO rentable_units (
     '10:00:00',
     1,
     '["free_parking_one_vehicle","private_terrace"]',
-    '{"requiresVehicleType":false,"allowsWcShowerOption":false,"adultTouristTaxChf":3,"wcShowerCleaningFeeChf":0,"includedAdultsCount":1,"extraAdultNightlyRateChf":7,"extraChildNightlyRateChf":5,"longStayDiscountRate":0.15,"nonRefundableDiscountRate":0.1,"weeklyStayDiscountRate":0.05,"weeklyStayThresholdNights":7,"minStayNights":1,"maxGuests":4,"supportsInfants":true}',
+    '{"requiresVehicleType":false,"allowsWcShowerOption":false,"adultTouristTaxChf":3,"wcShowerCleaningFeeChf":0,"includedAdultsCount":1,"extraAdultNightlyRateChf":7,"extraChildNightlyRateChf":5,"longStayDiscountRate":0.15,"nonRefundableDiscountRate":0.1,"weeklyStayDiscountRate":0.05,"weeklyStayThresholdNights":7,"minStayNights":4,"maxGuests":4,"supportsInfants":true}',
     1,
     '2026-05-20T00:00:00.000Z',
     '2026-05-20T00:00:00.000Z'

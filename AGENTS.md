@@ -59,7 +59,7 @@ When changing booking behavior, check all of:
 When changing public booking UI, also check:
 
 - `src/_includes/parking-booking-page.njk`
-- `src/assets/js/parking-booking.js`
+- `src/assets/js/booking-flow.js`
 - `src/llms.txt`
 - `src/.well-known/site-context.json`
 

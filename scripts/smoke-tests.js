@@ -99,6 +99,17 @@ if (fs.existsSync(sitemapPath)) {
     }
   }
 
+  const requiredBookingUrls = [
+    'https://candc.ch/fr/parking/booking/',
+    'https://candc.ch/fr/eco-studio/booking/',
+  ];
+
+  for (const url of requiredBookingUrls) {
+    if (!sitemap.includes(`<loc>${url}</loc>`)) {
+      errors.push(`Sitemap missing booking URL ${url}`);
+    }
+  }
+
   console.log('  ✓ sitemap.xml exists with hreflang');
 } else {
   errors.push('sitemap.xml not found');

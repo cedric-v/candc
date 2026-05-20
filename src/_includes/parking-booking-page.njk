@@ -15,7 +15,7 @@
 
   <div
     class="booking-shell"
-    id="parking-booking-app"
+    id="booking-app"
     data-locale="{{ locale }}"
     data-unit-code="{{ unitCode }}"
     data-requires-vehicle="{{ 'true' if showVehicle else 'false' }}"
@@ -47,7 +47,7 @@
   >
     <div class="card booking-main-card">
       <form
-        id="parking-booking-form"
+        id="booking-form"
         class="booking-form"
         toolname="{{ b.webMcpCheckoutToolName or 'start_parking_reservation_checkout' }}"
         tooldescription="{{ b.webMcpCheckoutToolDescription or 'Prepare a direct reservation checkout for the parking space, collect traveller details, create the reservation, and send the traveller to payment.' }}"
@@ -293,4 +293,4 @@
   </div>
 </section>
 
-<script src="/assets/js/parking-booking.js?v={{ build.assetVersion }}" defer></script>
+<script src="/assets/js/booking-flow.js?v={{ build.assetVersion }}" defer></script>

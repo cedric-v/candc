@@ -1,5 +1,5 @@
 (function () {
-  const root = document.getElementById("parking-booking-app");
+  const root = document.getElementById("booking-app");
 
   if (!root) {
     return;
@@ -15,7 +15,7 @@
   const quoteToolName = root.dataset.toolQuoteName || "quote_parking_stay";
   const quoteToolDescription =
     root.dataset.toolQuoteDescription || "Calculate a direct-booking quote for the selected stay.";
-  const form = document.getElementById("parking-booking-form");
+  const form = document.getElementById("booking-form");
   const submitButton = document.getElementById("booking-submit");
   const availabilityStatus = document.getElementById("booking-availability-status");
   const submitStatus = document.getElementById("booking-submit-status");
@@ -495,7 +495,7 @@
     } else if (isCalendarUnavailable) {
       state.textContent = "";
     } else if (isBlocked || isMinStayBlocked) {
-      state.textContent = texts.calendarBlockedShort;
+      state.textContent = "";
     } else if (nightlyRateByDate.has(dateKey)) {
       state.textContent = formatDayPrice(nightlyRateByDate.get(dateKey));
     } else {

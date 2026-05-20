@@ -34,11 +34,11 @@ export async function getUnitByCode(env, unitCode) {
     .first();
 
   if (unit) {
-    return normalizeUnitRecord(unit);
+    return normalizeUnitRecord(unit, env);
   }
 
   const fallback = getDefaultUnitByCode(code);
-  return fallback
+  const normalizedFallback = fallback
     ? {
         id: null,
         code: fallback.code,
@@ -53,9 +53,21 @@ export async function getUnitByCode(env, unitCode) {
         checkOutTime: fallback.checkOutTime,
         maxConcurrentReservations: fallback.maxConcurrentReservations,
         includedBaseFeatures: fallback.includedBaseFeatures,
-        settings: fallback.settings,
+        settings: { ...fallback.settings },
       }
     : null;
+
+  if (normalizedFallback && env) {
+    const envKey = `MIN_STAY_NIGHTS_${normalizedFallback.code.toUpperCase().replace("-", "_")}`;
+    if (env[envKey] !== undefined && env[envKey] !== null && env[envKey] !== "") {
+      const val = Number(env[envKey]);
+      if (!Number.isNaN(val)) {
+        normalizedFallback.settings.minStayNights = val;
+      }
+    }
+  }
+
+  return normalizedFallback;
 }
 
 export async function getUnitByFeedToken(env, feedToken) {
@@ -164,8 +176,29 @@ export async function getLatestCalendarSyncForUnit(env, unitId, sourceCode = "bo
     .first();
 }
 
-function normalizeUnitRecord(unit) {
-  return {
+function applyUnitEnvironmentOverrides(unitRecord, env) {
+  if (!env || !unitRecord?.code) {
+    return unitRecord;
+  }
+
+  const envKey = `MIN_STAY_NIGHTS_${unitRecord.code.toUpperCase().replaceAll("-", "_")}`;
+  const rawValue = env[envKey];
+
+  if (rawValue !== undefined && rawValue !== null && rawValue !== "") {
+    const value = Number(rawValue);
+    if (!Number.isNaN(value)) {
+      unitRecord.settings = {
+        ...unitRecord.settings,
+        minStayNights: value,
+      };
+    }
+  }
+
+  return unitRecord;
+}
+
+function normalizeUnitRecord(unit, env) {
+  const normalized = {
     id: unit.id,
     code: unit.code,
     unitType: unit.unit_type,
@@ -184,6 +217,8 @@ function normalizeUnitRecord(unit) {
     includedBaseFeatures: unit.features_json ? JSON.parse(unit.features_json) : [],
     settings: unit.settings_json ? JSON.parse(unit.settings_json) : {},
   };
+
+  return applyUnitEnvironmentOverrides(normalized, env);
 }
 
 export async function getRatePeriodsForRange(env, unitId, startDate, endDate) {

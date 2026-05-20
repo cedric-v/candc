@@ -107,7 +107,7 @@ export async function buildQuote(env, input) {
     arrivalLessThan24h,
     canSelectNonRefundableDiscount,
     nonRefundableApplied: appliedNonRefundable,
-    refundablePolicyType: appliedNonRefundable ? "non_refundable" : "flexible_24h",
+    refundablePolicyType: appliedNonRefundable ? "non_refundable" : "flexible_48h",
     includedBaseFeatures: unit.includedBaseFeatures,
     appliedOptions: {
       wcShowerRequested,
