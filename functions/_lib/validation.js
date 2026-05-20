@@ -56,6 +56,21 @@ export function validateBookingInput(input, { requireGuestInfo = false, unit = n
     errors.push({ field: "children", message: "Children must be zero or more" });
   }
 
+  if (!Number.isInteger(input.infants) || input.infants < 0) {
+    errors.push({ field: "infants", message: "Infants must be zero or more" });
+  }
+
+  const maxGuests = Number(unit?.settings?.maxGuests || 0);
+  if (maxGuests > 0) {
+    const totalGuests = Number(input.adults || 0) + Number(input.children || 0) + Number(input.infants || 0);
+    if (totalGuests > maxGuests) {
+      errors.push({
+        field: "guests",
+        message: `Maximum occupancy is ${maxGuests} guest(s) for this unit`,
+      });
+    }
+  }
+
   if (requireGuestInfo) {
     if (!input.guestFirstName?.trim()) {
       errors.push({ field: "guestFirstName", message: "First name is required" });
@@ -86,6 +101,7 @@ export function normalizeBookingInput(raw) {
         : Number(raw.vehicleLengthM),
     adults: Number(raw.adults ?? 0),
     children: Number(raw.children ?? 0),
+    infants: Number(raw.infants ?? 0),
     wcShowerRequested: Boolean(raw.wcShowerRequested),
     nonRefundableSelected: Boolean(raw.nonRefundableSelected),
     remarks: typeof raw.remarks === "string" ? raw.remarks.trim() : "",

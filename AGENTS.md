@@ -15,6 +15,7 @@ Use this file as a quick operational guide before editing code.
 - `functions/` Cloudflare Pages Functions and booking logic
 - `migrations/` D1 schema
 - `scripts/` smoke tests
+- `src/llms.txt` and `src/.well-known/site-context.json` agent discovery/context files
 
 Core booking docs:
 
@@ -34,7 +35,7 @@ Current seeded units:
 Important:
 
 - parking is the currently exposed booking funnel
-- studio support is intentionally prepared in schema and logic but not fully surfaced in UI yet
+- studio is also exposed through a public booking funnel
 
 ## Editing guidance
 
@@ -43,6 +44,7 @@ Important:
 - prefer extending unit-level settings instead of hardcoding business rules
 - keep public site content static-friendly unless a dynamic flow is clearly required
 - avoid adding direct GA/GTM snippets; analytics is managed through Cloudflare Zaraz
+- preserve existing agent-ready surfaces unless you are intentionally changing discovery or WebMCP behavior
 
 ## Booking-specific guidance
 
@@ -53,6 +55,24 @@ When changing booking behavior, check all of:
 - `functions/_lib/db.js`
 - `functions/_lib/catalog.js`
 - `migrations/0001_booking_schema.sql`
+
+When changing public booking UI, also check:
+
+- `src/_includes/parking-booking-page.njk`
+- `src/assets/js/parking-booking.js`
+- `src/llms.txt`
+- `src/.well-known/site-context.json`
+
+Current WebMCP exposure:
+
+- public parking booking page exposes:
+  - declarative checkout form metadata
+  - imperative read-only availability and quote tools
+- public studio booking page exposes:
+  - declarative checkout form metadata
+  - imperative read-only availability and quote tools
+- booking management page exposes declarative update metadata
+- admin pages are intentionally not documented as public WebMCP surfaces
 
 When changing sync behavior, also check:
 
@@ -73,7 +93,6 @@ If editing functions-only logic, import checks via Node ESM are also useful.
 
 ## Known unfinished areas
 
-- full studio booking funnel
 - production credential wiring
 - automatic refund execution through SumUp
 - actual cron deployment for internal jobs depending on Cloudflare deployment mode

@@ -560,6 +560,29 @@ function bookingLabel(reservation, text) {
 
 function buildConfirmationText(reservation, token, includeWcUpsell) {
   const text = getEmailText(reservation.locale);
+
+  if (reservation.unit_type === "studio") {
+    return [
+      `Dear ${reservation.guest_first_name} ${reservation.guest_last_name},`,
+      "",
+      "Thank you for your booking.",
+      "",
+      'The studio address is "__STUDIO_ADDRESS__".',
+      'You will also find the place by searching "C & C Eco Studio" on Google Maps.',
+      "",
+      "You will find the key in a secure key box. The exact location of this box and the code to open it will be sent to you the morning of your day of arrival.",
+      "",
+      "During your arrival and your whole stay, we will remain available through this messaging system, as well as by phone (Cedric has WhatsApp/Signal/Telegram installed).",
+      "",
+      "Please let us know if you have any question.",
+      "",
+      `${text.manageReservation}: ${token}`,
+      "",
+      "We look forward meeting you.",
+      "Céline & Cédric Vonlanthen",
+    ].join("\n");
+  }
+
   const lines = [
     text.greeting(reservation.guest_first_name),
     "",
@@ -604,17 +627,42 @@ function buildArrivalText(reservation) {
 
   if (reservation.unit_type !== "parking") {
     return [
-      text.greeting(reservation.guest_first_name),
+      `Dear ${reservation.guest_first_name} ${reservation.guest_last_name},`,
       "",
-      text.arrivalStudioIntro,
+      "We hope you are well.",
       "",
-      `${text.referenceLabel}: ${reservation.public_reference}`,
-      `${text.arrivalLabel}: ${formatDateForLocale(reservation.check_in_date, reservation.locale)}`,
-      `${text.departureLabel}: ${formatDateForLocale(reservation.check_out_date, reservation.locale)}`,
+      'The studio address is "__STUDIO_ADDRESS__". You will also find the place by searching "C & C Eco Studio" on Google Maps.',
       "",
-      text.arrivalAssistance,
+      "You will find the key in the secure key box at the top of the outside stairs. The box is black, fixed to the wall of the garage.",
+      "The code is: __KEY_BOX_STUDIO_CODE__",
+      "If you enter the wrong code, slide the reset button (located between the C and D keys) and release it; then, try again.",
       "",
-      text.kindRegards,
+      "The studio's entry door is the one on the right side. You can park your car just in front of the entry.",
+      "",
+      "The terrace on the front is yours. You can take some woods to start a barbecue on the brasero which is provided if you wish.",
+      "",
+      "On the left side of the entry, you will find a big gray box. This is for recyclable materials. There is one for PET bottles (not for all the plastics, only the recyclable plastic bottles), one for aluminum cans and another for glass bottles. The rest of the box is for dry paper and cardboard.",
+      "",
+      "Just in front of the entry, you will also find a small green recipient which is for food leftovers. Everything else goes into the grey trash-bag which is in the kitchen.",
+      "",
+      "Under the oven, you will find some cutting boards and oven mitts.",
+      "",
+      "Please air the flat regularly, at least twice a day for 10 minutes.",
+      "You can do this by opening the window and turning on the toilet light at the same time (this will turn on the shower fan).",
+      "When using the tumble dryer, please leave the toilet light on so that it keeps the fan running.",
+      "",
+      'A dehumidifier is also available in the bathroom, for use after a shower, when using the tumble dryer, or when humidity levels rise too high (> 60%). When the indicator shows “tray full”, open the tray and empty the water into the shower.',
+      "",
+      'To access the more than 250 free TV channels, you will need to use the "Salt.TV" application on the Apple TV.',
+      "",
+      "You can also charge your electric car if you have one, and we are on-site.",
+      "We supply a charging cable compatible with the Type 13 socket (Swiss domestic: 220 V, 10 A) and fitted with a Type 2 connector (standard for most electric vehicles). This slow recharging service is available at an additional charge (CHF 15 for 10h, CHF 30 for the whole day or night).",
+      "",
+      "During your arrival and throughout your stay, we will remain available through this messaging system, as well as by phone (Cedric has WhatsApp, Signal, and Telegram installed).",
+      "",
+      "We wish you a pleasant stay.",
+      "",
+      "Kind Regards,",
       "Celine and Cedric",
     ].join("\n");
   }

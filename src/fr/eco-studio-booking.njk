@@ -1,0 +1,10 @@
+---
+layout: base.njk
+locale: fr
+title: Réservation studio
+description: Réservez directement le C&C Eco Studio, avec calcul du tarif en temps réel et paiement sécurisé.
+permalink: /fr/eco-studio/booking/
+---
+{% set bookingData = studio_booking_ui %}
+{% set bookingUnitCode = 'eco-studio' %}
+{% include "parking-booking-page.njk" %}

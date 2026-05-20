@@ -28,11 +28,29 @@ export async function buildQuote(env, input) {
     unitSettings.nonRefundableDiscountRate ?? 0.1;
   const allowsWcShowerOption =
     unitSettings.allowsWcShowerOption ?? true;
+  const includedAdultsCount =
+    Number(unitSettings.includedAdultsCount ?? 0);
+  const extraAdultNightlyRateChf =
+    Number(unitSettings.extraAdultNightlyRateChf ?? 0);
+  const extraChildNightlyRateChf =
+    Number(unitSettings.extraChildNightlyRateChf ?? 0);
+  const weeklyStayDiscountRate =
+    Number(unitSettings.weeklyStayDiscountRate ?? 0);
+  const weeklyStayThresholdNights =
+    Number(unitSettings.weeklyStayThresholdNights ?? 0);
   const wcShowerRequested = allowsWcShowerOption ? Boolean(input.wcShowerRequested) : false;
   const baseAmount = roundMoney(nightlyRates.reduce((sum, night) => sum + night.rate, 0));
+  const extraAdultCount = Math.max(0, Number(input.adults || 0) - includedAdultsCount);
+  const guestSurchargeAmount = roundMoney(
+    (extraAdultCount * extraAdultNightlyRateChf * nights) +
+    (Number(input.children || 0) * extraChildNightlyRateChf * nights),
+  );
   const touristTaxAmount = roundMoney(adultTouristTaxChf * input.adults * nights);
   const optionsAmount = wcShowerRequested ? roundMoney(wcShowerCleaningFeeChf) : 0;
-  const longStayDiscountAmount = nights >= 30 ? roundMoney(baseAmount * longStayDiscountRate) : 0;
+  const accommodationAmount = roundMoney(baseAmount + guestSurchargeAmount);
+  const longStayDiscountAmount = nights >= 30
+    ? roundMoney(accommodationAmount * longStayDiscountRate)
+    : 0;
   const arrivalLessThan24h = isArrivalWithin24Hours(
     input.checkInDate,
     unit.checkInStartTime || config.checkInTime,
@@ -41,18 +59,24 @@ export async function buildQuote(env, input) {
 
   const canSelectNonRefundableDiscount = !arrivalLessThan24h;
   const appliedNonRefundable = arrivalLessThan24h || Boolean(input.nonRefundableSelected);
-  const discountBase = baseAmount - longStayDiscountAmount;
+  const discountBase = accommodationAmount - longStayDiscountAmount;
   const nonRefundableDiscountAmount =
     !arrivalLessThan24h && input.nonRefundableSelected
       ? roundMoney(discountBase * nonRefundableDiscountRate)
       : 0;
+  const weeklyStayDiscountAmount =
+    weeklyStayThresholdNights > 0 && nights >= weeklyStayThresholdNights
+      ? roundMoney((discountBase - nonRefundableDiscountAmount) * weeklyStayDiscountRate)
+      : 0;
 
   const subtotalBeforeFees =
     baseAmount +
+    guestSurchargeAmount +
     touristTaxAmount +
     optionsAmount -
     longStayDiscountAmount -
-    nonRefundableDiscountAmount;
+    nonRefundableDiscountAmount -
+    weeklyStayDiscountAmount;
 
   const paymentFeeAmount = roundMoney(
     subtotalBeforeFees * config.paymentFeeRate + config.paymentFeeFixedChf,
@@ -71,10 +95,12 @@ export async function buildQuote(env, input) {
     nights,
     nightlyRates,
     baseAmount,
+    guestSurchargeAmount,
     touristTaxAmount,
     optionsAmount,
     longStayDiscountAmount,
     nonRefundableDiscountAmount,
+    weeklyStayDiscountAmount,
     paymentFeeAmount,
     subtotalBeforeFees,
     totalAmount,

@@ -40,6 +40,47 @@ tout en gardant :
 - `GET /api/admin/booking`
 - `POST /api/admin/booking`
 
+## WebMCP / agent readiness
+
+Le projet expose maintenant une couche agent-ready progressive pour les usages en navigateur :
+
+- `src/llms.txt`
+- `src/.well-known/site-context.json`
+- WebMCP declaratif sur les formulaires publics critiques
+- WebMCP imperatif pour les outils de lecture de disponibilite et de devis
+
+Surfaces actuellement exposees :
+
+- `/{locale}/parking/booking/`
+  - `check_parking_availability`
+  - `quote_parking_stay`
+  - `start_parking_reservation_checkout`
+- `/{locale}/eco-studio/booking/`
+  - `check_studio_availability`
+  - `quote_studio_stay`
+  - `start_studio_reservation_checkout`
+- `/booking/manage/{token}`
+  - `update_existing_reservation`
+
+Choix de conception :
+
+- les outils de lecture (`availability`, `quote`) sont imperatifs et `readOnly`
+- les actions sensibles de reservation et de modification restent visibles dans l'interface humaine et sont exposees via les formulaires
+- le back-office admin n'est pas expose comme surface WebMCP publique
+
+Limitation importante :
+
+- selon la documentation officielle WebMCP, un contexte navigateur visible est requis ; cette couche ne remplace donc pas les APIs JSON pour les usages headless
+
+Verification recommandee :
+
+1. activer le flag Chrome `chrome://flags/#enable-webmcp-testing`
+2. ouvrir le funnel `/{locale}/parking/booking/`
+3. verifier les outils avec l'extension `Model Context Tool Inspector`
+4. lancer Lighthouse et verifier les audits :
+   - `Registered WebMCP tools`
+   - `Forms missing declarative WebMCP`
+
 ## Variables d'environnement attendues
 
 - `PUBLIC_BASE_URL`
@@ -51,6 +92,7 @@ tout en gardant :
 - `TIMEZONE`
 - `DEFAULT_CHECK_IN_TIME`
 - `DEFAULT_CHECK_OUT_TIME`
+- `ENABLE_GOOGLE_CALENDAR_SYNC`
 - `ADMIN_ACCESS_TOKEN`
 - `ADMIN_NOTIFICATION_EMAIL`
 - `EMAIL_FROM`
@@ -122,6 +164,12 @@ Si la base D1 existe deja et a ete creee avant le passage aux calendriers Google
 wrangler d1 execute candc-booking --file=./migrations/0002_unit_scoped_calendar_config.sql
 ```
 
+Si la base D1 existe deja et doit maintenant supporter les reservations studio avec bebes et supplements invites, executer aussi :
+
+```bash
+wrangler d1 execute candc-booking --file=./migrations/0003_studio_pricing_and_infants.sql
+```
+
 ## Binding D1 a faire dans Cloudflare Pages
 
 Le projet de reservation ne peut pas fonctionner en production sans binding D1 sur le projet Pages.
@@ -176,7 +224,7 @@ Le scaffold couvre :
 - remplacement des blocages externes importes par unite
 - journalisation des synchronisations dans `sync_logs`
 - synchro Google Calendar par reservation confirmee
-- mise a jour automatique Google Calendar depuis le webhook SumUp si la configuration est presente
+- mise a jour automatique Google Calendar depuis le webhook SumUp uniquement si `ENABLE_GOOGLE_CALENDAR_SYNC=true` et si la configuration Google est complete
 - e-mail transactionnel de creation de reservation
 - e-mails de modification, annulation et rappel d'arrivee
 - page client de gestion de reservation via lien magique
@@ -187,7 +235,6 @@ Le scaffold ne couvre pas encore :
 
 - remboursement automatique SumUp
 - cron Cloudflare effectivement deployee depuis ce repo
-- parcours front dedie studio
 
 ## Charges utiles attendues
 
@@ -231,25 +278,22 @@ Le scaffold ne couvre pas encore :
 
 ## Etape recommandee suivante
 
-1. configurer le service account Google Calendar et partager le calendrier avec son e-mail
-2. configurer Resend (`RESEND_API_KEY`, `EMAIL_FROM`, `EMAIL_REPLY_TO`)
-3. creer `ADMIN_ACCESS_TOKEN`
-4. brancher un scheduler externe ou Cloudflare adapte vers `POST /api/internal/jobs/run`
+1. configurer Resend (`RESEND_API_KEY`, `EMAIL_FROM`, `EMAIL_REPLY_TO`)
+2. creer `ADMIN_ACCESS_TOKEN`
+3. brancher un scheduler externe ou Cloudflare adapte vers `POST /api/internal/jobs/run`
+4. si besoin, re-activer Google Calendar avec `ENABLE_GOOGLE_CALENDAR_SYNC=true` puis configurer le service account
 
-## Extension future studio
+## Extension studio
 
-Pour brancher ensuite le studio, la base est deja prete pour :
+Le studio est maintenant expose publiquement sur le meme moteur.
 
-- creer des periodes tarifaires propres au studio
-- avoir un flux Booking.com ICS dedie au studio
-- gerer un agenda interne separe
-- exposer un funnel front avec `unitCode: "eco-studio"`
+Le socle permet deja :
 
-La principale evolution restante sera metier et UX :
-
-- champs specifiques studio
-- pricing specifique studio
-- politiques de sejour propres au studio
+- des periodes tarifaires propres au studio
+- un flux Booking.com ICS dedie au studio
+- un agenda interne separe si Google Calendar est re-active
+- des champs specifiques studio comme les bebes
+- une tarification specifique studio via `settings_json`
 
 ## Verification studio readiness
 
@@ -260,11 +304,10 @@ Etat actuel :
 - pret pour des regles propres au studio via `settings_json`
 - pret pour ne pas exiger les donnees vehicule sur les unites non parking
 
-Ce qui restera a faire pour activer vraiment le studio :
+Ce qui restera a faire si besoin :
 
-- creer le funnel front studio
-- definir les options et conditions propres au studio
-- ajuster le contenu des e-mails pour le studio
+- completer d'eventuelles traductions dediees des e-mails studio
+- affiner les options et conditions propres au studio
 
 ## Synchronisation Booking ICS
 
@@ -304,6 +347,14 @@ Comportement :
 
 ## Synchronisation Google Calendar
 
+Par defaut, l'integration Google Calendar est desactivee pour limiter la dependance operationnelle.
+
+Le systeme peut fonctionner uniquement avec :
+
+- les e-mails transactionnels
+- l'import / export ICS
+- la mini interface admin
+
 Le calendrier interne partage est alimente reservation par reservation.
 
 Configuration necessaire :
@@ -314,6 +365,7 @@ Configuration necessaire :
 
 Important :
 
+- il faut definir `ENABLE_GOOGLE_CALENDAR_SYNC=true` pour activer cette brique
 - il faut partager le Google Calendar cible avec l'adresse e-mail du service account
 - le service account doit avoir le droit de modifier les evenements
 

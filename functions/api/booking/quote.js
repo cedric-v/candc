@@ -29,6 +29,7 @@ export async function onRequestPost(context) {
         vehicleType: payload.vehicleType,
         adults: payload.adults,
         children: payload.children,
+        infants: payload.infants,
         wcShowerRequested: payload.wcShowerRequested,
         nonRefundableSelected: payload.nonRefundableSelected,
       },

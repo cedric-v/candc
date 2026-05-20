@@ -8,6 +8,13 @@
   const apiBase = root.dataset.apiBase || "/api/booking";
   const locale = root.dataset.locale || "fr";
   const unitCode = root.dataset.unitCode || "parking-space";
+  const requiresVehicle = root.dataset.requiresVehicle === "true";
+  const availabilityToolName = root.dataset.toolAvailabilityName || "check_parking_availability";
+  const availabilityToolDescription =
+    root.dataset.toolAvailabilityDescription || "Check whether the selected stay is available.";
+  const quoteToolName = root.dataset.toolQuoteName || "quote_parking_stay";
+  const quoteToolDescription =
+    root.dataset.toolQuoteDescription || "Calculate a direct-booking quote for the selected stay.";
   const form = document.getElementById("parking-booking-form");
   const submitButton = document.getElementById("booking-submit");
   const availabilityStatus = document.getElementById("booking-availability-status");
@@ -54,6 +61,7 @@
     checkOutDate: form.elements.checkOutDate,
     adults: form.elements.adults,
     children: form.elements.children,
+    infants: form.elements.infants,
     vehicleType: form.elements.vehicleType,
     wcShowerRequested: form.elements.wcShowerRequested,
     nonRefundableSelected: form.elements.nonRefundableSelected,
@@ -69,9 +77,11 @@
     stayLabel: document.getElementById("booking-stay-label"),
     baseAmount: document.getElementById("booking-base-amount"),
     taxAmount: document.getElementById("booking-tax-amount"),
+    guestSurcharge: document.getElementById("booking-guest-surcharge"),
     optionsAmount: document.getElementById("booking-options-amount"),
     longStayDiscount: document.getElementById("booking-long-stay-discount"),
     nonRefundableDiscount: document.getElementById("booking-non-refundable-discount"),
+    weeklyDiscount: document.getElementById("booking-weekly-discount"),
     paymentFee: document.getElementById("booking-payment-fee"),
     totalAmount: document.getElementById("booking-total-amount"),
   };
@@ -85,12 +95,14 @@
   let nightlyRateByDate = new Map();
   let minimumStayNights = 1;
   let calendarDataState = "loading";
+  const webMcpController = supportsWebMcp() ? new AbortController() : null;
 
   initializeDateInputs();
   wireEvents();
   resetSummary();
   renderCalendars();
   loadCalendarAvailability();
+  registerWebMcpTools();
 
   function initializeDateInputs() {
     const today = new Date();
@@ -107,10 +119,11 @@
       fields.checkOutDate,
       fields.adults,
       fields.children,
+      fields.infants,
       fields.vehicleType,
       fields.wcShowerRequested,
       fields.nonRefundableSelected,
-    ].forEach((field) => {
+    ].filter(Boolean).forEach((field) => {
       field.addEventListener("change", handleQuoteRefresh);
       field.addEventListener("input", handleQuoteRefresh);
     });
@@ -150,6 +163,16 @@
     }
 
     form.addEventListener("submit", handleSubmit);
+
+    if (webMcpController) {
+      window.addEventListener(
+        "pagehide",
+        () => {
+          webMcpController.abort();
+        },
+        { once: true },
+      );
+    }
   }
 
   async function loadCalendarAvailability() {
@@ -339,8 +362,9 @@
       checkOutDate: fields.checkOutDate.value,
       adults: Number(fields.adults.value || 0),
       children: Number(fields.children.value || 0),
-      vehicleType: fields.vehicleType.value,
-      wcShowerRequested: fields.wcShowerRequested.checked,
+      infants: Number(fields.infants?.value || 0),
+      vehicleType: fields.vehicleType?.value || "",
+      wcShowerRequested: Boolean(fields.wcShowerRequested?.checked),
       nonRefundableSelected: fields.nonRefundableSelected.checked,
     };
 
@@ -580,6 +604,216 @@
     return canBuildQuote();
   }
 
+  function supportsWebMcp() {
+    return Boolean(
+      typeof navigator !== "undefined" &&
+      navigator.modelContext &&
+      typeof navigator.modelContext.registerTool === "function"
+    );
+  }
+
+  function registerWebMcpTools() {
+    if (!webMcpController) {
+      return;
+    }
+
+    navigator.modelContext.registerTool(
+      {
+        name: availabilityToolName,
+        description: availabilityToolDescription,
+        inputSchema: {
+          type: "object",
+          properties: {
+            checkInDate: {
+              type: "string",
+              description: "Arrival date in YYYY-MM-DD format.",
+              pattern: "^\\d{4}-\\d{2}-\\d{2}$",
+            },
+            checkOutDate: {
+              type: "string",
+              description: "Departure date in YYYY-MM-DD format.",
+              pattern: "^\\d{4}-\\d{2}-\\d{2}$",
+            },
+          },
+          required: ["checkInDate", "checkOutDate"],
+        },
+        annotations: {
+          readOnlyHint: true,
+        },
+        execute: async ({ checkInDate, checkOutDate }) => {
+          applyToolStayInputs(checkInDate, checkOutDate);
+          const availability = await fetchAvailabilityForRange(checkInDate, checkOutDate);
+
+          if (!availability.available) {
+            latestQuote = null;
+            setAvailabilityStatus(texts.unavailable, "error");
+            resetSummary();
+          } else {
+            setAvailabilityStatus(texts.available, "success");
+          }
+
+          renderCalendarSync(availability.lastCalendarSyncAt || null);
+
+          return {
+            unitCode,
+            available: availability.available,
+            minStayNights: availability.unit?.minStayNights || minimumStayNights,
+            blockedRanges: availability.blockedRanges || [],
+            nightlyRates: availability.nightlyRates || [],
+            lastCalendarSyncAt: availability.lastCalendarSyncAt || null,
+          };
+        },
+      },
+      { signal: webMcpController.signal },
+    );
+
+    navigator.modelContext.registerTool(
+      {
+        name: quoteToolName,
+        description: quoteToolDescription,
+        inputSchema: {
+          type: "object",
+          properties: {
+            checkInDate: {
+              type: "string",
+              description: "Arrival date in YYYY-MM-DD format.",
+              pattern: "^\\d{4}-\\d{2}-\\d{2}$",
+            },
+            checkOutDate: {
+              type: "string",
+              description: "Departure date in YYYY-MM-DD format.",
+              pattern: "^\\d{4}-\\d{2}-\\d{2}$",
+            },
+            adults: {
+              type: "number",
+              description: "Number of adult travellers.",
+            },
+            children: {
+              type: "number",
+              description: "Number of children under 16.",
+            },
+            infants: {
+              type: "number",
+              description: "Number of infants aged 0 to 2.",
+            },
+            vehicleType: {
+              type: "string",
+              description: "Vehicle category for the stay.",
+              enum: [
+                "standard_car",
+                "car_roof_tent",
+                "van",
+                "caravan",
+                "motorhome_upto_6_5m",
+                "motorhome_over_6_5m",
+              ],
+            },
+            wcShowerRequested: {
+              type: "boolean",
+              description: "Set to true to include indoor WC-shower access.",
+            },
+            nonRefundableSelected: {
+              type: "boolean",
+              description:
+                "Set to true only if the traveller explicitly chooses the discounted non-refundable rate when eligible.",
+            },
+          },
+          required: requiresVehicle
+            ? ["checkInDate", "checkOutDate", "adults", "vehicleType"]
+            : ["checkInDate", "checkOutDate", "adults"],
+        },
+        annotations: {
+          readOnlyHint: true,
+        },
+        execute: async (input) => {
+          applyToolQuoteInputs(input);
+          return fetchQuoteForCurrentForm();
+        },
+      },
+      { signal: webMcpController.signal },
+    );
+  }
+
+  function applyToolStayInputs(checkInDate, checkOutDate) {
+    fields.checkInDate.value = checkInDate || "";
+    fields.checkOutDate.value = checkOutDate || "";
+
+    if (fields.checkInDate.value) {
+      const nextDay = new Date(`${fields.checkInDate.value}T00:00:00`);
+      nextDay.setDate(nextDay.getDate() + 1);
+      fields.checkOutDate.min = toDateInputValue(nextDay);
+      currentMonthCursor = startOfMonth(new Date(`${fields.checkInDate.value}T00:00:00`));
+    } else {
+      fields.checkOutDate.min = getDefaultCheckOutMin();
+    }
+
+    renderCalendars();
+    loadCalendarAvailability();
+  }
+
+  function applyToolQuoteInputs(input) {
+    applyToolStayInputs(input.checkInDate, input.checkOutDate);
+    fields.adults.value = String(input.adults ?? 1);
+    fields.children.value = String(input.children ?? 0);
+    if (fields.infants) {
+      fields.infants.value = String(input.infants ?? 0);
+    }
+    if (fields.vehicleType) {
+      fields.vehicleType.value = input.vehicleType || "";
+    }
+    if (fields.wcShowerRequested) {
+      fields.wcShowerRequested.checked = Boolean(input.wcShowerRequested);
+    }
+    fields.nonRefundableSelected.checked = Boolean(input.nonRefundableSelected);
+  }
+
+  async function fetchAvailabilityForRange(checkInDate, checkOutDate) {
+    return fetchJson(
+      `${apiBase}/availability?from=${encodeURIComponent(checkInDate)}&to=${encodeURIComponent(checkOutDate)}&unitCode=${encodeURIComponent(unitCode)}`,
+    );
+  }
+
+  async function fetchQuoteForCurrentForm() {
+    const payload = buildPayload(false);
+    const availability = await fetchAvailabilityForRange(payload.checkInDate, payload.checkOutDate);
+
+    if (!availability.available) {
+      latestQuote = null;
+      setAvailabilityStatus(texts.unavailable, "error");
+      resetSummary();
+
+      return {
+        unitCode,
+        available: false,
+        blockedRanges: availability.blockedRanges || [],
+        lastCalendarSyncAt: availability.lastCalendarSyncAt || null,
+      };
+    }
+
+    setAvailabilityStatus(texts.available, "success");
+    renderCalendarSync(availability.lastCalendarSyncAt || null);
+
+    const quoteResult = await fetchJson(`${apiBase}/quote`, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    latestQuote = quoteResult.quote;
+    renderQuote(latestQuote, payload);
+    submitButton.disabled = false;
+
+    return {
+      unitCode,
+      available: true,
+      quote: quoteResult.quote,
+      bookingInput: quoteResult.bookingInput,
+      lastCalendarSyncAt: availability.lastCalendarSyncAt || null,
+    };
+  }
+
   function hasStayDates() {
     return Boolean(fields.checkInDate.value && fields.checkOutDate.value);
   }
@@ -588,7 +822,7 @@
     return (
       hasStayDates() &&
       Number(fields.adults.value || 0) >= 1 &&
-      fields.vehicleType.value
+      (!requiresVehicle || Boolean(fields.vehicleType?.value))
     );
   }
 
@@ -597,9 +831,17 @@
     summary.stayLabel.textContent = `${formatDate(payload.checkInDate)} → ${formatDate(payload.checkOutDate)} · ${quote.nights} ${nightLabel}`;
     summary.baseAmount.textContent = formatCurrency(quote.baseAmount, quote.currency);
     summary.taxAmount.textContent = formatCurrency(quote.touristTaxAmount, quote.currency);
-    summary.optionsAmount.textContent = formatCurrency(quote.optionsAmount, quote.currency);
+    if (summary.guestSurcharge) {
+      summary.guestSurcharge.textContent = formatCurrency(quote.guestSurchargeAmount || 0, quote.currency);
+    }
+    if (summary.optionsAmount) {
+      summary.optionsAmount.textContent = formatCurrency(quote.optionsAmount, quote.currency);
+    }
     summary.longStayDiscount.textContent = formatSignedCurrency(-quote.longStayDiscountAmount, quote.currency);
     summary.nonRefundableDiscount.textContent = formatSignedCurrency(-quote.nonRefundableDiscountAmount, quote.currency);
+    if (summary.weeklyDiscount) {
+      summary.weeklyDiscount.textContent = formatSignedCurrency(-(quote.weeklyStayDiscountAmount || 0), quote.currency);
+    }
     summary.paymentFee.textContent = formatCurrency(quote.paymentFeeAmount, quote.currency);
     summary.totalAmount.textContent = formatCurrency(quote.totalAmount, quote.currency);
 
@@ -613,9 +855,17 @@
     summary.stayLabel.textContent = texts.summaryEmptyStay;
     summary.baseAmount.textContent = texts.summaryPendingAmount;
     summary.taxAmount.textContent = texts.summaryPendingAmount;
-    summary.optionsAmount.textContent = texts.summaryPendingAmount;
+    if (summary.guestSurcharge) {
+      summary.guestSurcharge.textContent = texts.summaryPendingAmount;
+    }
+    if (summary.optionsAmount) {
+      summary.optionsAmount.textContent = texts.summaryPendingAmount;
+    }
     summary.longStayDiscount.textContent = texts.summaryPendingAmount;
     summary.nonRefundableDiscount.textContent = texts.summaryPendingAmount;
+    if (summary.weeklyDiscount) {
+      summary.weeklyDiscount.textContent = texts.summaryPendingAmount;
+    }
     summary.paymentFee.textContent = texts.summaryPendingAmount;
     summary.totalAmount.textContent = texts.summaryPendingAmount;
     submitButton.disabled = true;

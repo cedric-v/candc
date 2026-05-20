@@ -7,7 +7,8 @@ Multilingual marketing site and in-progress direct booking platform for:
 - `parking-space`
 - `eco-studio`
 
-The public site is built with `Eleventy`. The booking engine is being added with `Cloudflare Pages Functions`, `D1`, ICS synchronization, SumUp payments, and Google Calendar sync.
+The public site is built with `Eleventy`. The booking engine is being added with `Cloudflare Pages Functions`, `D1`, ICS synchronization, SumUp payments, and optional Google Calendar sync.
+The public booking funnel is also prepared for browser-based agent use with `llms.txt`, `.well-known/site-context.json`, and progressive `WebMCP` exposure on reservation flows.
 
 ## Current scope
 
@@ -15,20 +16,21 @@ Implemented today:
 
 - multilingual marketing site
 - dedicated parking booking funnel
+- dedicated studio booking funnel
 - booking backend scaffold with unit-aware data model
 - SumUp hosted checkout integration
 - Booking.com ICS import pipeline
-- Google Calendar sync pipeline
+- optional Google Calendar sync pipeline, disabled by default
 - multilingual transactional email pipeline
 - customer self-service booking management page
 - minimal admin interface
 - internal jobs endpoint for sync and localized arrival emails
+- WebMCP-ready public parking and studio booking flows, plus reservation management flow
 
 Still to complete:
 
-- studio-specific booking funnel
 - automatic SumUp refunds
-- production Google Calendar credentials and service account sharing
+- production Google Calendar credentials and optional re-enablement
 - final Cloudflare cron deployment for internal jobs
 
 ## Supported languages
@@ -41,6 +43,30 @@ Still to complete:
 - Italian `it`
 - Dutch `nl`
 
+## Agent readiness
+
+The repository now exposes two layers for AI agents:
+
+- discovery/context files:
+  - `https://candc.ch/llms.txt`
+  - `https://candc.ch/.well-known/site-context.json`
+- browser-native WebMCP on the live reservation experience
+
+Current public WebMCP surfaces:
+
+- `/{locale}/parking/booking/`
+  - declarative tool: `start_parking_reservation_checkout`
+  - imperative tools: `check_parking_availability`, `quote_parking_stay`
+- `/{locale}/eco-studio/booking/`
+  - declarative tool: `start_studio_reservation_checkout`
+  - imperative tools: `check_studio_availability`, `quote_studio_stay`
+- `/booking/manage/{token}`
+  - declarative tool: `update_existing_reservation`
+
+Important limitation:
+
+- WebMCP currently requires a visible browser context. It complements the public booking APIs, but does not replace them for headless use cases.
+
 ## Tech stack
 
 - `Eleventy` for the website
@@ -50,7 +76,7 @@ Still to complete:
 - `Cloudflare D1` for booking data
 - `Cloudflare Cron Triggers` for scheduled sync jobs
 - `SumUp` for payment
-- `Google Calendar API` for internal reservation visibility
+- `Google Calendar API` for optional internal reservation visibility
 
 ## Key routes
 
@@ -64,6 +90,7 @@ Marketing pages:
 Booking pages:
 
 - `/fr/parking/booking/`
+- `/fr/eco-studio/booking/`
 - equivalent routes exist for all supported languages
 
 API routes already scaffolded:
@@ -147,6 +174,18 @@ Each unit can have:
 Current payment fee assumption for the parking funnel:
 
 - `2.5 %` applied to all payments until debit vs credit card type can be differentiated reliably before payment
+
+Current studio pricing baseline:
+
+- `99 CHF` base nightly rate
+- `7 CHF` per additional adult and night
+- `5 CHF` per child and night
+- infants `0-2` free
+- free parking for `1 vehicle`
+- private terrace included
+- `15 %` discount from `30` nights
+- `10 %` discount for voluntary non-refundable bookings
+- `5 %` rebate from `7` nights
 
 ## Deployment notes
 

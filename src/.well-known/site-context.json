@@ -1,32 +1,99 @@
 {
-  "name": "C and C",
-  "url": "https://candc.ch",
-  "language": "fr",
-  "availableLanguages": [
-    "fr",
-    "en",
-    "de",
-    "es",
-    "pt",
-    "it",
-    "nl"
-  ],
-  "type": "multilingual hospitality website",
-  "topics": [
-    "eco studio",
-    "parking van",
-    "camping-car",
-    "Fribourg",
-    "Switzerland"
-  ],
-  "keyPages": [
-    "https://candc.ch/fr/",
-    "https://candc.ch/fr/eco-studio/",
-    "https://candc.ch/fr/parking/",
-    "https://candc.ch/fr/contact/"
-  ],
-  "sitemap": "https://candc.ch/sitemap.xml",
-  "relatedSites": [
-    "https://cedricv.com/"
+  "site": {
+    "name": "C&C",
+    "url": "https://candc.ch",
+    "type": "multilingual marketing site with direct booking flows"
+  },
+  "updatedAt": "2026-05-20",
+  "languages": ["fr", "en", "de", "es", "pt", "it", "nl"],
+  "bookingSystem": {
+    "status": "live_for_parking_and_studio",
+    "architecture": "multi-unit",
+    "units": [
+      {
+        "code": "parking-space",
+        "publicFunnel": true,
+        "publicBookingPagePattern": "https://candc.ch/{locale}/parking/booking/"
+      },
+      {
+        "code": "eco-studio",
+        "publicFunnel": true,
+        "publicBookingPagePattern": "https://candc.ch/{locale}/eco-studio/booking/"
+      }
+    ],
+    "publicApi": {
+      "availability": "https://candc.ch/api/booking/availability",
+      "quote": "https://candc.ch/api/booking/quote",
+      "reservations": "https://candc.ch/api/booking/reservations",
+      "managePattern": "https://candc.ch/booking/manage/{token}"
+    }
+  },
+  "agentReadiness": {
+    "llmsTxt": "https://candc.ch/llms.txt",
+    "webmcp": {
+      "status": "enabled_on_public_booking_surfaces",
+      "transport": "browser-native WebMCP on page",
+      "notes": [
+        "WebMCP is a progressive enhancement on top of the human booking UI.",
+        "A visible browser context is required; the booking tools are not headless-only APIs.",
+        "Admin flows are intentionally not exposed as public WebMCP tools."
+      ],
+      "pages": [
+        {
+          "pathPattern": "/{locale}/parking/booking/",
+          "declarativeTools": [
+            {
+              "name": "start_parking_reservation_checkout",
+              "purpose": "Prepare a direct parking reservation and send the traveller to payment."
+            }
+          ],
+          "imperativeTools": [
+            {
+              "name": "check_parking_availability",
+              "purpose": "Check whether a parking stay is available for a given date range."
+            },
+            {
+              "name": "quote_parking_stay",
+              "purpose": "Calculate a direct-booking quote for the parking space."
+            }
+          ]
+        },
+        {
+          "pathPattern": "/{locale}/eco-studio/booking/",
+          "declarativeTools": [
+            {
+              "name": "start_studio_reservation_checkout",
+              "purpose": "Prepare a direct studio reservation and send the traveller to payment."
+            }
+          ],
+          "imperativeTools": [
+            {
+              "name": "check_studio_availability",
+              "purpose": "Check whether the eco studio is available for a given date range."
+            },
+            {
+              "name": "quote_studio_stay",
+              "purpose": "Calculate a direct-booking quote for the eco studio."
+            }
+          ]
+        },
+        {
+          "pathPattern": "/booking/manage/{token}",
+          "declarativeTools": [
+            {
+              "name": "update_existing_reservation",
+              "purpose": "Update an existing reservation with new dates or options."
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "localDocs": [
+    "README.md",
+    "BOOKING_SYSTEM_SPEC.md",
+    "BOOKING_TECH_SETUP.md",
+    "AGENTS.md",
+    "PROJECT_SUMMARY.md"
   ]
 }

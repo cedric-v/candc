@@ -1,5 +1,10 @@
 {% set t = translations[locale] or translations['fr'] %}
-{% set b = booking_ui[locale] or booking_ui['en'] %}
+{% set bookingSource = bookingData or booking_ui %}
+{% set b = bookingSource[locale] or bookingSource['en'] %}
+{% set unitCode = bookingUnitCode or 'parking-space' %}
+{% set showVehicle = b.showVehicle if b.showVehicle is defined else true %}
+{% set showInfants = b.showInfants if b.showInfants is defined else false %}
+{% set showWcShower = b.showWcShower if b.showWcShower is defined else true %}
 
 <section class="page-section">
   <div class="booking-hero">
@@ -12,7 +17,12 @@
     class="booking-shell"
     id="parking-booking-app"
     data-locale="{{ locale }}"
-    data-unit-code="parking-space"
+    data-unit-code="{{ unitCode }}"
+    data-requires-vehicle="{{ 'true' if showVehicle else 'false' }}"
+    data-tool-availability-name="{{ b.webMcpAvailabilityToolName or 'check_parking_availability' }}"
+    data-tool-availability-description="{{ b.webMcpAvailabilityToolDescription or 'Check whether the parking space is available for a specific stay.' }}"
+    data-tool-quote-name="{{ b.webMcpQuoteToolName or 'quote_parking_stay' }}"
+    data-tool-quote-description="{{ b.webMcpQuoteToolDescription or 'Calculate a direct-booking quote for the parking space.' }}"
     data-api-base="/api/booking"
     data-msg-enter-dates="{{ b.availabilityEnterDates }}"
     data-msg-checking="{{ b.checkingAvailability }}"
@@ -36,7 +46,12 @@
     data-msg-calendar-blocked-short="{{ b.calendarBlockedShort or b.calendarLegendBlocked or 'Unavailable' }}"
   >
     <div class="card booking-main-card">
-      <form id="parking-booking-form" class="booking-form">
+      <form
+        id="parking-booking-form"
+        class="booking-form"
+        toolname="{{ b.webMcpCheckoutToolName or 'start_parking_reservation_checkout' }}"
+        tooldescription="{{ b.webMcpCheckoutToolDescription or 'Prepare a direct reservation checkout for the parking space, collect traveller details, create the reservation, and send the traveller to payment.' }}"
+      >
         <section class="booking-section">
           <div class="booking-section-head">
             <h2 class="booking-section-title">{{ b.availabilityTitle }}</h2>
@@ -45,11 +60,11 @@
           <div class="grid grid-cols-2 booking-two-cols">
             <div>
               <label class="form-label" for="booking-check-in">{{ b.checkIn }}</label>
-              <input class="form-input" type="date" id="booking-check-in" name="checkInDate" required>
+              <input class="form-input" type="date" id="booking-check-in" name="checkInDate" required toolparamdescription="Arrival date for the stay in YYYY-MM-DD format.">
             </div>
             <div>
               <label class="form-label" for="booking-check-out">{{ b.checkOut }}</label>
-              <input class="form-input" type="date" id="booking-check-out" name="checkOutDate" required>
+              <input class="form-input" type="date" id="booking-check-out" name="checkOutDate" required toolparamdescription="Departure date for the stay in YYYY-MM-DD format.">
             </div>
           </div>
           <div class="booking-calendar-shell" aria-labelledby="booking-calendar-title">
@@ -81,15 +96,16 @@
           <div class="grid grid-cols-3 booking-three-cols">
             <div>
               <label class="form-label" for="booking-adults">{{ b.adults }}</label>
-              <input class="form-input" type="number" id="booking-adults" name="adults" min="1" max="8" value="1" required>
+              <input class="form-input" type="number" id="booking-adults" name="adults" min="1" max="8" value="1" required toolparamdescription="Number of adult travellers.">
             </div>
             <div>
               <label class="form-label" for="booking-children">{{ b.children }}</label>
-              <input class="form-input" type="number" id="booking-children" name="children" min="0" max="8" value="0" required>
+              <input class="form-input" type="number" id="booking-children" name="children" min="0" max="8" value="0" required toolparamdescription="Number of children under 16 years old.">
             </div>
             <div>
+              {% if showVehicle %}
               <label class="form-label" for="booking-vehicle">{{ b.vehicleType }}</label>
-              <select class="form-input" id="booking-vehicle" name="vehicleType" required>
+              <select class="form-input" id="booking-vehicle" name="vehicleType" required toolparamdescription="Vehicle category for the reservation.">
                 <option value="">{{ b.vehicleType }}</option>
                 <option value="standard_car">{{ b.vehicleOptions.standard_car }}</option>
                 <option value="car_roof_tent">{{ b.vehicleOptions.car_roof_tent }}</option>
@@ -98,22 +114,36 @@
                 <option value="motorhome_upto_6_5m">{{ b.vehicleOptions.motorhome_upto_6_5m }}</option>
                 <option value="motorhome_over_6_5m">{{ b.vehicleOptions.motorhome_over_6_5m }}</option>
               </select>
+              {% elif showInfants %}
+              <label class="form-label" for="booking-infants">{{ b.infants }}</label>
+              <input class="form-input" type="number" id="booking-infants" name="infants" min="0" max="4" value="0" required toolparamdescription="Number of infants aged 0 to 2 years old.">
+              {% else %}
+              <input type="hidden" id="booking-vehicle" name="vehicleType" value="">
+              <input type="hidden" id="booking-infants" name="infants" value="0">
+              {% endif %}
             </div>
           </div>
+          {% if b.partyHelp %}
+          <p class="text-sm text-light booking-inline-note">{{ b.partyHelp }}</p>
+          {% endif %}
         </section>
 
         <section class="booking-section">
           <div class="booking-section-head">
             <h2 class="booking-section-title">{{ b.optionsTitle }}</h2>
           </div>
+          {% if showWcShower %}
           <label class="booking-checkbox">
-            <input type="checkbox" id="booking-wc-shower" name="wcShowerRequested">
+            <input type="checkbox" id="booking-wc-shower" name="wcShowerRequested" toolparamdescription="Set to true to request indoor WC and shower access for the stay.">
             <span>{{ b.wcShower }}</span>
           </label>
           <p class="text-sm text-light booking-inline-note">{{ b.wcShowerNote }}</p>
+          {% else %}
+          <input type="hidden" id="booking-wc-shower" name="wcShowerRequested" value="">
+          {% endif %}
 
           <label class="booking-checkbox">
-            <input type="checkbox" id="booking-non-refundable" name="nonRefundableSelected">
+            <input type="checkbox" id="booking-non-refundable" name="nonRefundableSelected" toolparamdescription="Set to true only if the traveller explicitly chooses the discounted non-refundable rate when eligible.">
             <span>{{ b.nonRefundable }}</span>
           </label>
           <p class="text-sm text-light booking-inline-note">{{ b.nonRefundableHint }}</p>
@@ -126,32 +156,32 @@
           <div class="grid grid-cols-2 booking-two-cols">
             <div>
               <label class="form-label" for="booking-first-name">{{ b.firstName }}</label>
-              <input class="form-input" type="text" id="booking-first-name" name="guestFirstName" required>
+              <input class="form-input" type="text" id="booking-first-name" name="guestFirstName" required toolparamdescription="Guest first name.">
             </div>
             <div>
               <label class="form-label" for="booking-last-name">{{ b.lastName }}</label>
-              <input class="form-input" type="text" id="booking-last-name" name="guestLastName" required>
+              <input class="form-input" type="text" id="booking-last-name" name="guestLastName" required toolparamdescription="Guest last name.">
             </div>
           </div>
           <div class="grid grid-cols-2 booking-two-cols">
             <div>
               <label class="form-label" for="booking-email">{{ b.email }}</label>
-              <input class="form-input" type="email" id="booking-email" name="guestEmail" required>
+              <input class="form-input" type="email" id="booking-email" name="guestEmail" required toolparamdescription="Guest email address for confirmation and self-service management links.">
             </div>
             <div>
               <label class="form-label" for="booking-phone">{{ b.phone }}</label>
-              <input class="form-input" type="tel" id="booking-phone" name="guestPhone">
+              <input class="form-input" type="tel" id="booking-phone" name="guestPhone" toolparamdescription="Guest phone number, preferably mobile, for arrival coordination if needed.">
             </div>
           </div>
           <div>
             <label class="form-label" for="booking-remarks">{{ b.remarks }}</label>
-            <textarea class="form-input booking-textarea" id="booking-remarks" name="remarks" rows="4" placeholder="{{ b.remarksPlaceholder }}"></textarea>
+            <textarea class="form-input booking-textarea" id="booking-remarks" name="remarks" rows="4" placeholder="{{ b.remarksPlaceholder }}" toolparamdescription="Optional free-text remarks about the stay, arrival, or special needs."></textarea>
           </div>
         </section>
 
         <section class="booking-section">
           <label class="booking-checkbox booking-checkbox-terms">
-            <input type="checkbox" id="booking-terms" name="acceptedTerms" required>
+            <input type="checkbox" id="booking-terms" name="acceptedTerms" required toolparamdescription="Set to true only after the traveller has explicitly reviewed and accepted the booking and payment terms.">
             <span>
               {{ b.termsPrefix or '' }}<a href="/{{ locale }}/legal/" target="_blank" rel="noopener noreferrer">{{ b.termsLinkLabel or b.terms }}</a>{{ b.termsSuffix or '' }}
             </span>
@@ -185,10 +215,18 @@
               <dt>{{ b.touristTaxLabel }}</dt>
               <dd id="booking-tax-amount">{{ b.summaryPendingAmount or '-' }}</dd>
             </div>
+            {% if showInfants %}
+            <div>
+              <dt>{{ b.guestSurchargeLabel or 'Guest supplements' }}</dt>
+              <dd id="booking-guest-surcharge">{{ b.summaryPendingAmount or '-' }}</dd>
+            </div>
+            {% endif %}
+            {% if showWcShower %}
             <div>
               <dt>{{ b.wcShowerLabel }}</dt>
               <dd id="booking-options-amount">{{ b.summaryPendingAmount or '-' }}</dd>
             </div>
+            {% endif %}
             <div class="booking-discount-row">
               <dt>{{ b.longStayDiscountLabel }}</dt>
               <dd id="booking-long-stay-discount">{{ b.summaryPendingAmount or '-' }}</dd>
@@ -197,6 +235,12 @@
               <dt>{{ b.nonRefundableDiscountLabel }}</dt>
               <dd id="booking-non-refundable-discount">{{ b.summaryPendingAmount or '-' }}</dd>
             </div>
+            {% if showInfants %}
+            <div class="booking-discount-row">
+              <dt>{{ b.weeklyDiscountLabel or '7+ night rebate' }}</dt>
+              <dd id="booking-weekly-discount">{{ b.summaryPendingAmount or '-' }}</dd>
+            </div>
+            {% endif %}
             <div>
               <dt>{{ b.paymentFeeLabel }}</dt>
               <dd id="booking-payment-fee">{{ b.summaryPendingAmount or '-' }}</dd>

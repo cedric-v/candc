@@ -9,6 +9,7 @@ Le projet comprend maintenant :
 
 - le site public marketing
 - un moteur de reservation en cours d'integration
+- une couche agent-ready pour les funnels de reservation parking et studio
 
 ## Langues
 
@@ -38,14 +39,42 @@ Unites deja preparees :
 - `eco-studio`
 
 Le funnel parking est deja expose cote site.
-Le funnel studio n'est pas encore expose, mais l'architecture le prevoit deja.
+Le funnel studio est lui aussi expose cote site.
+
+## Agent readiness
+
+- `llms.txt` : https://candc.ch/llms.txt
+- `site-context.json` : https://candc.ch/.well-known/site-context.json
+- WebMCP progressif sur la reservation parking
+
+Pages actuellement exposees aux agents en contexte navigateur :
+
+- Reservation parking : https://candc.ch/fr/parking/booking/
+- Reservation studio : https://candc.ch/fr/eco-studio/booking/
+- Gestion de reservation : https://candc.ch/booking/manage/{token}
+
+Outils WebMCP publics actuellement prevus :
+
+- `check_parking_availability`
+- `quote_parking_stay`
+- `start_parking_reservation_checkout`
+- `check_studio_availability`
+- `quote_studio_stay`
+- `start_studio_reservation_checkout`
+- `update_existing_reservation`
+
+Notes :
+
+- WebMCP ici est une couche navigateur visible, ajoutee comme progressive enhancement
+- le back-office admin n'est pas expose comme outil WebMCP public
+- le funnel studio n'est pas encore agent-ready cote UI
 
 ## Integrations prevues
 
 - Booking.com ICS comme source de disponibilite externe
 - export ICS des reservations directes
 - SumUp pour le paiement
-- Google Calendar pour le calendrier interne partage
+- Google Calendar en option, desactive par defaut
 
 ## Flux et index
 

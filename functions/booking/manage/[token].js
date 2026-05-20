@@ -13,29 +13,39 @@ export function onRequestGet(context) {
         <h2>Your booking</h2>
         <div id="manage-notice" class="notice info">Loading your reservation…</div>
         <div id="manage-meta" class="meta"></div>
-        <form id="manage-form" class="stack" hidden>
+        <form
+          id="manage-form"
+          class="stack"
+          hidden
+          toolname="update_existing_reservation"
+          tooldescription="Update an existing reservation by changing stay dates, traveller counts, vehicle type for parking stays, WC-shower access, or remarks."
+        >
           <div class="field-row two">
             <div class="field">
               <label for="checkInDate">Arrival date</label>
-              <input id="checkInDate" name="checkInDate" type="date" required>
+              <input id="checkInDate" name="checkInDate" type="date" required toolparamdescription="Updated arrival date in YYYY-MM-DD format.">
             </div>
             <div class="field">
               <label for="checkOutDate">Departure date</label>
-              <input id="checkOutDate" name="checkOutDate" type="date" required>
+              <input id="checkOutDate" name="checkOutDate" type="date" required toolparamdescription="Updated departure date in YYYY-MM-DD format.">
             </div>
           </div>
-          <div class="field-row three">
+          <div class="field-row four">
             <div class="field">
               <label for="adults">Adults</label>
-              <input id="adults" name="adults" type="number" min="1" required>
+              <input id="adults" name="adults" type="number" min="1" required toolparamdescription="Updated number of adult travellers.">
             </div>
             <div class="field">
               <label for="children">Children</label>
-              <input id="children" name="children" type="number" min="0" required>
+              <input id="children" name="children" type="number" min="0" required toolparamdescription="Updated number of children under 16 years old.">
+            </div>
+            <div class="field" id="infants-wrap">
+              <label for="infants">Infants (0-2)</label>
+              <input id="infants" name="infants" type="number" min="0" required toolparamdescription="Updated number of infants aged 0 to 2.">
             </div>
             <div class="field" id="vehicle-wrap">
               <label for="vehicleType">Vehicle</label>
-              <select id="vehicleType" name="vehicleType">
+              <select id="vehicleType" name="vehicleType" toolparamdescription="Updated vehicle category for parking reservations.">
                 <option value="standard_car">Standard car</option>
                 <option value="car_roof_tent">Car with roof tent</option>
                 <option value="van">Van</option>
@@ -46,12 +56,12 @@ export function onRequestGet(context) {
             </div>
           </div>
           <label class="checkbox">
-            <input id="wcShowerRequested" name="wcShowerRequested" type="checkbox">
+            <input id="wcShowerRequested" name="wcShowerRequested" type="checkbox" toolparamdescription="Set to true to add or keep indoor WC-shower access for the reservation.">
             <span>Add or keep indoor WC-shower access (CHF 10 per stay)</span>
           </label>
           <div class="field">
             <label for="remarks">Remarks</label>
-            <textarea id="remarks" name="remarks"></textarea>
+            <textarea id="remarks" name="remarks" toolparamdescription="Updated remarks for the reservation."></textarea>
           </div>
           <div class="actions">
             <button class="btn-primary" type="button" id="pay-button" hidden>Pay now to confirm</button>
@@ -80,6 +90,7 @@ export function onRequestGet(context) {
         const payButton = document.getElementById('pay-button');
         const cancelButton = document.getElementById('cancel-button');
         const vehicleWrap = document.getElementById('vehicle-wrap');
+        const infantsWrap = document.getElementById('infants-wrap');
         let reservation = null;
 
         async function fetchJson(url, options) {
@@ -100,10 +111,12 @@ export function onRequestGet(context) {
           form.elements.checkOutDate.value = data.checkOutDate;
           form.elements.adults.value = data.adults;
           form.elements.children.value = data.children;
+          form.elements.infants.value = data.infants || 0;
           form.elements.vehicleType.value = data.vehicleType || 'van';
           form.elements.wcShowerRequested.checked = Boolean(data.wcShowerRequested);
           form.elements.remarks.value = data.remarks || '';
           vehicleWrap.hidden = data.unitType !== 'parking';
+          infantsWrap.hidden = data.unitType !== 'studio';
         }
 
         function formatMoney(value, currency) {
@@ -143,6 +156,7 @@ export function onRequestGet(context) {
             checkOutDate: form.elements.checkOutDate.value,
             adults: Number(form.elements.adults.value || 0),
             children: Number(form.elements.children.value || 0),
+            infants: Number(form.elements.infants.value || 0),
             vehicleType: form.elements.vehicleType.value,
             wcShowerRequested: form.elements.wcShowerRequested.checked,
             remarks: form.elements.remarks.value.trim(),
@@ -171,6 +185,8 @@ export function onRequestGet(context) {
               ['Base', formatMoney(data.quote.baseAmount, data.quote.currency)],
               ['Tourist tax', formatMoney(data.quote.touristTaxAmount, data.quote.currency)],
               ['Options', formatMoney(data.quote.optionsAmount, data.quote.currency)],
+              ['Guest supplements', formatMoney(data.quote.guestSurchargeAmount || 0, data.quote.currency)],
+              ['7+ night rebate', formatMoney(data.quote.weeklyStayDiscountAmount || 0, data.quote.currency)],
               ['Payment fee', formatMoney(data.quote.paymentFeeAmount, data.quote.currency)],
               ['Updated total', formatMoney(data.nextTotal, data.quote.currency)],
             ]);

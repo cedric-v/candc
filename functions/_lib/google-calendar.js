@@ -153,6 +153,7 @@ function buildEventPayload(reservation) {
 export function isGoogleCalendarConfigured(env) {
   const config = getConfig(env);
   return Boolean(
+    config.enableGoogleCalendarSync &&
     config.googleServiceAccountEmail && config.googleServiceAccountPrivateKey,
   );
 }

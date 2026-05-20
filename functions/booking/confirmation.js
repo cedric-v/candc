@@ -40,6 +40,9 @@ export async function onRequestGet(context) {
     : null;
   const copy = getConfirmationCopy(reservation);
   const manageLink = manageToken ? `/booking/manage/${encodeURIComponent(manageToken)}` : "";
+  const bookingBackLink = reservation?.unit_type === "studio"
+    ? "/fr/eco-studio/booking/"
+    : "/fr/parking/booking/";
   const body = `
     <section class="hero">
       <h1>${escapeHtml(copy.title)}</h1>
@@ -52,7 +55,7 @@ export async function onRequestGet(context) {
       <p class="small">If you need help right away, you can still reach Cédric on WhatsApp: <a href="https://wa.me/41766738311">+41 76 673 83 11</a>.</p>
       <div class="actions">
         ${manageLink ? `<a class="btn-secondary" href="${escapeHtml(manageLink)}" style="text-decoration:none">Manage reservation</a>` : ""}
-        <a class="btn-primary" href="/fr/parking/booking/" style="text-decoration:none">Back to booking page</a>
+        <a class="btn-primary" href="${escapeHtml(bookingBackLink)}" style="text-decoration:none">Back to booking page</a>
       </div>
     </section>
   `;

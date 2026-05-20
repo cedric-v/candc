@@ -115,6 +115,9 @@ export function htmlDocument({ title, body, lang = "fr" }) {
         .field-row.three {
           grid-template-columns: repeat(3, minmax(0, 1fr));
         }
+        .field-row.four {
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
       }
       label {
         font-weight: 600;

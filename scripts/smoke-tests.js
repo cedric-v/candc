@@ -9,7 +9,7 @@ const path = require('path');
 
 const languages = ['fr', 'en', 'de', 'es', 'pt', 'it', 'nl'];
 const pages = ['', 'eco-studio', 'parking', 'contact'];
-const bookingPages = ['parking/booking'];
+const bookingPages = ['parking/booking', 'eco-studio/booking'];
 const baseDir = path.join(__dirname, '..', '_site');
 
 let errors = [];
