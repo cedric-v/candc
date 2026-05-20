@@ -258,6 +258,12 @@
               <dd id="booking-options-amount">{{ b.summaryPendingAmount or '-' }}</dd>
             </div>
             {% endif %}
+            {% if showVehicle %}
+            <div>
+              <dt>{{ b.electricityLabel or 'Électricité' }}</dt>
+              <dd class="booking-discount-highlight">{{ b.includedLabel or 'Inclus' }}</dd>
+            </div>
+            {% endif %}
             {% if showInfants %}
             <div>
               <dt>{{ b.cleaningFeeLabel or 'Cleaning fee' }}</dt>

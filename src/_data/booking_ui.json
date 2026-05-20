@@ -86,7 +86,9 @@
     "paymentButtonFallback": "Ouvrir la page de paiement",
     "termsRequired": "Merci d'accepter les conditions avant de continuer.",
     "nightSingular": "nuit",
-    "nightPlural": "nuits"
+    "nightPlural": "nuits",
+    "electricityLabel": "Électricité",
+    "includedLabel": "Inclus"
   },
   "en": {
     "pageKicker": "Direct booking",
@@ -171,7 +173,9 @@
     "manageLink": "Manage link",
     "referenceLabel": "Reference",
     "paymentButtonFallback": "Open payment page",
-    "termsRequired": "Please accept the terms before continuing."
+    "termsRequired": "Please accept the terms before continuing.",
+    "electricityLabel": "Electricity",
+    "includedLabel": "Included"
   },
   "de": {
     "pageKicker": "Direktbuchung",
@@ -256,7 +260,9 @@
     "manageLink": "Verwaltungslink",
     "referenceLabel": "Referenz",
     "paymentButtonFallback": "Zahlungsseite offnen",
-    "termsRequired": "Bitte akzeptieren Sie die Bedingungen, bevor Sie fortfahren."
+    "termsRequired": "Bitte akzeptieren Sie die Bedingungen, bevor Sie fortfahren.",
+    "electricityLabel": "Strom",
+    "includedLabel": "Inklusive"
   },
   "es": {
     "pageKicker": "Reserva directa",
@@ -341,7 +347,9 @@
     "manageLink": "Enlace de gestion",
     "referenceLabel": "Referencia",
     "paymentButtonFallback": "Abrir pagina de pago",
-    "termsRequired": "Acepta las condiciones antes de continuar."
+    "termsRequired": "Acepta las condiciones antes de continuar.",
+    "electricityLabel": "Electricidad",
+    "includedLabel": "Incluido"
   },
   "pt": {
     "pageKicker": "Reserva direta",
@@ -426,7 +434,9 @@
     "manageLink": "Ligacao de gestao",
     "referenceLabel": "Referencia",
     "paymentButtonFallback": "Abrir pagina de pagamento",
-    "termsRequired": "Aceite as condicoes antes de continuar."
+    "termsRequired": "Aceite as condicoes antes de continuar.",
+    "electricityLabel": "Eletricidade",
+    "includedLabel": "Incluído"
   },
   "it": {
     "pageKicker": "Prenotazione diretta",
@@ -511,7 +521,9 @@
     "manageLink": "Link di gestione",
     "referenceLabel": "Riferimento",
     "paymentButtonFallback": "Apri la pagina di pagamento",
-    "termsRequired": "Accetta le condizioni prima di continuare."
+    "termsRequired": "Accetta le condizioni prima di continuare.",
+    "electricityLabel": "Elettricità",
+    "includedLabel": "Incluso"
   },
   "nl": {
     "pageKicker": "Rechtstreeks boeken",
@@ -596,6 +608,8 @@
     "manageLink": "Beheerlink",
     "referenceLabel": "Referentie",
     "paymentButtonFallback": "Betalingspagina openen",
-    "termsRequired": "Accepteer de voorwaarden voordat u verdergaat."
+    "termsRequired": "Accepteer de voorwaarden voordat u verdergaat.",
+    "electricityLabel": "Elektriciteit",
+    "includedLabel": "Inbegrepen"
   }
 }

@@ -814,7 +814,7 @@ a:hover {
 @media (max-width: 767px) {
   .booking-two-cols,
   .booking-three-cols {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr !important;
   }
 
   .booking-main-card,
