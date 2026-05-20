@@ -226,8 +226,7 @@ Variables :
 Important :
 
 - le backend des jobs est pret
-- le declenchement automatique reste a brancher selon le mode exact de deploiement Cloudflare
-- je n'ai pas pu deplacer ou creer ces triggers automatiquement depuis ici
+- le declenchement automatique est assure par le Worker Cloudflare `candc-cron-sync` (situe dans `sync-worker/`) qui s'execute toutes les heures. Ce Worker requiert la variable secrete `INTERNAL_SYNC_TOKEN`.
 
 ## Notes importantes
 

@@ -105,7 +105,7 @@ Le back-office admin n'est pas expose comme surface WebMCP publique.
 ## Ce qui manque encore
 
 - remboursement automatique SumUp
-- declenchement cron reel cote Cloudflare
+- declenchement cron reel cote Cloudflare (mis en place via le Worker candc-cron-sync)
 - reactivation eventuelle de Google Calendar avec credentials finalises
 
 ## Fichiers de reference
