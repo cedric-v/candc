@@ -210,7 +210,7 @@
     successPaymentWrap.classList.add("hidden");
     submitStatus.textContent = "";
 
-    if (!hasCoreFields()) {
+    if (!hasStayDates()) {
       latestQuote = null;
       setAvailabilityGuidance();
       resetSummary();
@@ -248,6 +248,12 @@
       }
 
       setAvailabilityStatus(texts.available, "success");
+
+      if (!canBuildQuote()) {
+        latestQuote = null;
+        resetSummary();
+        return;
+      }
 
       const quoteResult = await fetchJson(`${apiBase}/quote`, {
         method: "POST",
@@ -571,9 +577,16 @@
   }
 
   function hasCoreFields() {
+    return canBuildQuote();
+  }
+
+  function hasStayDates() {
+    return Boolean(fields.checkInDate.value && fields.checkOutDate.value);
+  }
+
+  function canBuildQuote() {
     return (
-      fields.checkInDate.value &&
-      fields.checkOutDate.value &&
+      hasStayDates() &&
       Number(fields.adults.value || 0) >= 1 &&
       fields.vehicleType.value
     );

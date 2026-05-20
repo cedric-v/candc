@@ -40,10 +40,10 @@ Le repository contient maintenant deux couches principales :
 - integration SumUp active
 - import Booking.com ICS active
 - Google Calendar sync pret, en attente de credentials definitifs
-- e-mails transactionnels
+- e-mails transactionnels localises selon la langue de reservation
 - page client de gestion via lien magique
 - mini interface admin par token
-- endpoint interne pour jobs de sync et d'e-mails
+- endpoint interne pour jobs de sync et d'e-mails, y compris le mail d'arrivee localise
 
 ## Ce qui est important architecturalement
 

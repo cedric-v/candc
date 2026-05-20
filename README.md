@@ -19,10 +19,10 @@ Implemented today:
 - SumUp hosted checkout integration
 - Booking.com ICS import pipeline
 - Google Calendar sync pipeline
-- transactional email pipeline
+- multilingual transactional email pipeline
 - customer self-service booking management page
 - minimal admin interface
-- internal jobs endpoint for sync and arrival emails
+- internal jobs endpoint for sync and localized arrival emails
 
 Still to complete:
 
