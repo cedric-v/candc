@@ -187,6 +187,16 @@
               {{ b.termsPrefix or '' }}<a href="/{{ locale }}/legal/" target="_blank" rel="noopener noreferrer">{{ b.termsLinkLabel or b.terms }}</a>{{ b.termsSuffix or '' }}
             </span>
           </label>
+          {% if b.bookingRulesList %}
+          <div class="booking-rules-box">
+            <h3 class="booking-rules-title">{{ b.bookingRulesTitle or b.policyTitle }}</h3>
+            <ul class="booking-muted-list">
+              {% for item in b.bookingRulesList %}
+              <li>{{ item }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+          {% endif %}
           <div class="booking-actions">
             <button class="btn btn-primary booking-submit" type="submit" id="booking-submit">
               {{ b.reserveAndPay }}

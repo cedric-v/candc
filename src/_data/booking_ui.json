@@ -30,6 +30,8 @@
       "motorhome_over_6_5m": "Camping-car de plus de 6.5 m"
     },
     "optionsTitle": "Options et conditions",
+    "bookingRulesTitle": "Conditions importantes",
+    "bookingRulesList": ["Pas de fêtes"],
     "wcShower": "Ajouter l'accès au WC-douche intérieure (10 CHF / séjour)",
     "wcShowerNote": "Disponible sur demande lorsque nous sommes sur place, généralement entre 7h00 et 21h00.",
     "nonRefundable": "Choisir le tarif non remboursable pour obtenir 10 % de remise",
@@ -115,6 +117,8 @@
       "motorhome_over_6_5m": "Motorhome over 6.5 m"
     },
     "optionsTitle": "Options and conditions",
+    "bookingRulesTitle": "Important conditions",
+    "bookingRulesList": ["No parties"],
     "wcShower": "Add indoor toilet and shower access (CHF 10 / stay)",
     "wcShowerNote": "Available on request when we are on site, usually between 7 a.m. and 9 p.m.",
     "nonRefundable": "Choose the non-refundable rate to get a 10% discount",
@@ -196,6 +200,8 @@
       "motorhome_over_6_5m": "Wohnmobil uber 6,5 m"
     },
     "optionsTitle": "Optionen und Bedingungen",
+    "bookingRulesTitle": "Wichtige Bedingungen",
+    "bookingRulesList": ["Keine Partys"],
     "wcShower": "Innen-WC und Dusche hinzufugen (10 CHF / Aufenthalt)",
     "wcShowerNote": "Auf Anfrage verfugbar, wenn wir vor Ort sind, normalerweise zwischen 7:00 und 21:00 Uhr.",
     "nonRefundable": "Nicht erstattbare Rate fur 10 % Rabatt wahlen",
@@ -277,6 +283,8 @@
       "motorhome_over_6_5m": "Autocaravana de mas de 6,5 m"
     },
     "optionsTitle": "Opciones y condiciones",
+    "bookingRulesTitle": "Condiciones importantes",
+    "bookingRulesList": ["No fiestas"],
     "wcShower": "Anadir acceso al WC-ducha interior (10 CHF / estancia)",
     "wcShowerNote": "Disponible bajo peticion cuando estamos en el lugar, normalmente entre las 7:00 y las 21:00.",
     "nonRefundable": "Elegir la tarifa no reembolsable para obtener un 10 % de descuento",
@@ -358,6 +366,8 @@
       "motorhome_over_6_5m": "Autocaravana com mais de 6,5 m"
     },
     "optionsTitle": "Opcoes e condicoes",
+    "bookingRulesTitle": "Condições importantes",
+    "bookingRulesList": ["Sem festas"],
     "wcShower": "Adicionar acesso ao WC-duche interior (10 CHF / estadia)",
     "wcShowerNote": "Disponivel mediante pedido quando estamos no local, normalmente entre as 7h00 e as 21h00.",
     "nonRefundable": "Escolher a tarifa nao reembolsavel para obter 10% de desconto",
@@ -439,6 +449,8 @@
       "motorhome_over_6_5m": "Camper oltre 6,5 m"
     },
     "optionsTitle": "Opzioni e condizioni",
+    "bookingRulesTitle": "Condizioni importanti",
+    "bookingRulesList": ["Niente feste"],
     "wcShower": "Aggiungi accesso a WC-doccia interna (10 CHF / soggiorno)",
     "wcShowerNote": "Disponibile su richiesta quando siamo sul posto, di solito tra le 7:00 e le 21:00.",
     "nonRefundable": "Scegli la tariffa non rimborsabile per ottenere il 10% di sconto",
@@ -520,6 +532,8 @@
       "motorhome_over_6_5m": "Camper langer dan 6,5 m"
     },
     "optionsTitle": "Opties en voorwaarden",
+    "bookingRulesTitle": "Belangrijke voorwaarden",
+    "bookingRulesList": ["Geen feesten"],
     "wcShower": "Toegang tot binnen-wc en douche toevoegen (10 CHF / verblijf)",
     "wcShowerNote": "Beschikbaar op aanvraag wanneer wij ter plaatse zijn, meestal tussen 7.00 en 21.00 uur.",
     "nonRefundable": "Kies het niet-terugbetaalbare tarief voor 10% korting",

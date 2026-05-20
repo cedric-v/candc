@@ -748,6 +748,20 @@ a:hover {
   font-weight: 600;
 }
 
+.booking-rules-box {
+  margin-top: var(--spacing-md);
+  padding: 0.95rem 1rem;
+  border-radius: var(--border-radius-lg);
+  background: rgba(45, 80, 22, 0.05);
+  border: 1px solid rgba(45, 80, 22, 0.12);
+}
+
+.booking-rules-title {
+  margin: 0 0 0.5rem;
+  font-size: 0.98rem;
+  color: var(--text-color);
+}
+
 .booking-success-card {
   display: grid;
   gap: var(--spacing-sm);
