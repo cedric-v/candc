@@ -315,6 +315,8 @@ a:hover {
   display: grid;
   gap: var(--spacing-xl);
   min-width: 0;
+  width: 100%;
+  max-width: 100%;
 }
 
 .booking-section {
@@ -323,6 +325,8 @@ a:hover {
   padding-bottom: var(--spacing-xl);
   border-bottom: 1px solid rgba(91, 110, 125, 0.18);
   min-width: 0;
+  width: 100%;
+  max-width: 100%;
 }
 
 .booking-section + .booking-section {
@@ -1004,6 +1008,7 @@ a:hover {
   width: 100%;
   max-width: 100%;
   min-width: 0;
+  min-inline-size: 0;
   padding: var(--spacing-md);
   border: 1px solid rgba(45, 80, 22, 0.3);
   border-radius: var(--border-radius-lg);
@@ -1011,9 +1016,25 @@ a:hover {
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
+.booking-two-cols,
+.booking-three-cols {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
 .booking-two-cols > div,
 .booking-three-cols > div {
   min-width: 0;
+  width: 100%;
+  max-width: 100%;
+}
+
+input.form-input[type="date"] {
+  inline-size: 100%;
+  block-size: auto;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .form-input:focus {

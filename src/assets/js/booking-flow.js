@@ -55,6 +55,9 @@
     calendarDeparture: root.dataset.msgCalendarDeparture || "Check-out",
     calendarBlockedShort: root.dataset.msgCalendarBlockedShort || "Unavailable",
     minimumStayTemplate: root.dataset.msgMinStayTemplate || "Minimum stay: {nights} night(s).",
+    minimumStayArrivalTemplate:
+      root.dataset.msgMinStayArrivalTemplate ||
+      "This arrival date does not allow the minimum stay of {nights} night(s).",
     complimentaryLabel: root.dataset.msgComplimentaryLabel || "Complimentary",
   };
 
@@ -883,6 +886,14 @@
     }
 
     if (fields.checkInDate.value && !fields.checkOutDate.value) {
+      if (!canStartStayOn(fields.checkInDate.value)) {
+        setAvailabilityStatus(
+          texts.minimumStayArrivalTemplate.replace("{nights}", String(minimumStayNights)),
+          "error",
+        );
+        return;
+      }
+
       setAvailabilityStatus(calendarHelpText || texts.enterDates, "neutral");
       return;
     }
