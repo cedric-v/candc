@@ -20,7 +20,12 @@
 
   {% if showInfants and b.directBookingPromoText %}
   <div class="booking-promo-banner">
-    <div class="booking-promo-icon">🎁</div>
+    <div class="booking-promo-icon">
+      <svg class="booking-promo-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M9 3C9 5.5 11 7.5 13.5 7.5C11 7.5 9 9.5 9 12C9 9.5 7 7.5 4.5 7.5C7 7.5 9 5.5 9 3Z" fill="currentColor"/>
+        <path d="M17 11C17 12.8 18.2 14 20 14C18.2 14 17 15.2 17 17C17 15.2 15.8 14 14 14C15.8 14 17 12.8 17 11Z" fill="currentColor"/>
+      </svg>
+    </div>
     <div class="booking-promo-content">
       {{ b.directBookingPromoText }}
     </div>

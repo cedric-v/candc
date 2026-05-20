@@ -2287,8 +2287,32 @@ a:hover {
 }
 
 .booking-promo-icon {
-  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
+}
+
+@keyframes booking-sparkle-glow {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 0.9;
+    filter: drop-shadow(0 0 2px rgba(16, 185, 129, 0.3));
+  }
+  50% {
+    transform: scale(1.1) rotate(4deg);
+    opacity: 1;
+    filter: drop-shadow(0 0 5px rgba(16, 185, 129, 0.6));
+  }
+}
+
+.booking-promo-svg {
+  width: 1.75rem;
+  height: 1.75rem;
+  color: #10b981; /* Emerald-500 */
+  animation: booking-sparkle-glow 3.5s ease-in-out infinite;
+  transform-origin: center;
+  display: block;
 }
 
 .booking-promo-content {
