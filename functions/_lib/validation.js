@@ -33,8 +33,13 @@ export function validateBookingInput(input, { requireGuestInfo = false, unit = n
 
   const requiresVehicleType = unit?.settings?.requiresVehicleType ?? (input.unitCode === "parking-space");
 
-  if (requiresVehicleType && !ALLOWED_VEHICLE_TYPES.has(input.vehicleType)) {
-    errors.push({ field: "vehicleType", message: "Unsupported vehicle type" });
+  if (requiresVehicleType) {
+    const hasVehicleType = typeof input.vehicleType === "string" && input.vehicleType.trim() !== "";
+    if (requireGuestInfo || hasVehicleType) {
+      if (!ALLOWED_VEHICLE_TYPES.has(input.vehicleType)) {
+        errors.push({ field: "vehicleType", message: "Unsupported vehicle type" });
+      }
+    }
   }
 
   const minStayNights = Number(unit?.settings?.minStayNights || 1);

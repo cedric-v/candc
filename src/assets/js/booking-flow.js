@@ -720,9 +720,7 @@
                 "Set to true only if the traveller explicitly chooses the discounted non-refundable rate when eligible.",
             },
           },
-          required: requiresVehicle
-            ? ["checkInDate", "checkOutDate", "adults", "vehicleType"]
-            : ["checkInDate", "checkOutDate", "adults"],
+          required: ["checkInDate", "checkOutDate", "adults"],
         },
         annotations: {
           readOnlyHint: true,
@@ -823,8 +821,7 @@
   function canBuildQuote() {
     return (
       hasStayDates() &&
-      Number(fields.adults.value || 0) >= 1 &&
-      (!requiresVehicle || Boolean(fields.vehicleType?.value))
+      Number(fields.adults.value || 0) >= 1
     );
   }
 

@@ -26,18 +26,21 @@ async function fetchIcs(importUrl) {
 }
 
 export async function runBookingIcsSync(env, unitCode = null) {
-  const sources = await getImportCalendarSources(env, "booking", unitCode);
+  const bookingSources = await getImportCalendarSources(env, "booking", unitCode);
+  const airbnbSources = await getImportCalendarSources(env, "airbnb", unitCode);
+  const sources = [...bookingSources, ...airbnbSources];
   const results = [];
 
   for (const sourceRecord of sources) {
     const importUrl = sourceRecord.import_url || null;
+    const syncType = `${sourceRecord.source_code}_ics_import`;
 
     if (!importUrl) {
       await insertSyncLog(env, {
         unitId: sourceRecord.unit_id,
-        syncType: "booking_ics_import",
+        syncType,
         status: "skipped",
-        message: "Missing import URL for Booking ICS source",
+        message: `Missing import URL for ${sourceRecord.source_code} ICS source`,
         payloadSummary: {
           unitCode: sourceRecord.unit_code,
           sourceId: sourceRecord.id,
@@ -45,6 +48,7 @@ export async function runBookingIcsSync(env, unitCode = null) {
       });
       results.push({
         unitCode: sourceRecord.unit_code,
+        sourceCode: sourceRecord.source_code,
         status: "skipped",
         reason: "missing_import_url",
       });
@@ -58,9 +62,9 @@ export async function runBookingIcsSync(env, unitCode = null) {
       await replaceExternalCalendarBlocks(env, sourceRecord, events);
       await updateCalendarSourceSync(env, sourceRecord.id, {
         unitId: sourceRecord.unit_id,
-        syncType: "booking_ics_import",
+        syncType,
         status: "success",
-        message: `Imported ${events.length} external blocks`,
+        message: `Imported ${events.length} external blocks from ${sourceRecord.source_code}`,
         payloadSummary: {
           unitCode: sourceRecord.unit_code,
           sourceId: sourceRecord.id,
@@ -69,13 +73,14 @@ export async function runBookingIcsSync(env, unitCode = null) {
       });
       results.push({
         unitCode: sourceRecord.unit_code,
+        sourceCode: sourceRecord.source_code,
         status: "success",
         importedEvents: events.length,
       });
     } catch (error) {
       await insertSyncLog(env, {
         unitId: sourceRecord.unit_id,
-        syncType: "booking_ics_import",
+        syncType,
         status: "failed",
         message: error.message,
         payloadSummary: {
@@ -85,6 +90,7 @@ export async function runBookingIcsSync(env, unitCode = null) {
       });
       results.push({
         unitCode: sourceRecord.unit_code,
+        sourceCode: sourceRecord.source_code,
         status: "failed",
         error: error.message,
       });
