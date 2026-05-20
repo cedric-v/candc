@@ -2088,6 +2088,46 @@ input.form-input[type="date"] {
   transform: scale(1.05);
 }
 
+.featured-testimonial-card {
+  max-width: 56rem;
+  margin-inline: auto;
+  padding: var(--spacing-xl);
+  border-radius: var(--border-radius-xl);
+  border: 1px solid rgba(45, 80, 22, 0.12);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.94));
+  box-shadow: var(--shadow);
+}
+
+.featured-testimonial-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+.featured-testimonial-author {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-color);
+}
+
+.featured-testimonial-meta,
+.featured-testimonial-note {
+  margin: 0;
+  color: var(--text-light);
+  font-size: 0.92rem;
+}
+
+.featured-testimonial-quote {
+  margin: 0 0 var(--spacing-md);
+  font-size: clamp(1.35rem, 2vw, 1.75rem);
+  line-height: 1.35;
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
 /* Lightbox */
 .lightbox {
   position: fixed;

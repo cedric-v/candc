@@ -18,6 +18,10 @@ ogImage: assets/img/logo-cc.jpg
     <p class="text-xl text-muted">{{ t.studio.subtitle }}</p>
     <p class="text-lg text-light">{{ t.studio.description }}</p>
     <p class="text-base font-semibold text-primary">{{ t.studio.minStay }}</p>
+    <div class="service-box policy mt-2 max-w-xl mx-auto">
+      <p class="font-bold mb-2">Arrivée autonome 24 h/24</p>
+      <p class="text-muted">Une boîte à clé sécurisée vous permet d'entrer dans les lieux dès votre arrivée, même en cas d'arrivée tardive.</p>
+    </div>
     <div class="gallery-grid mt-4" style="grid-template-columns: repeat(3, 1fr);">
       <div class="gallery-item lightbox-trigger" data-image="/assets/img/gallery/studio/gallerie-studio-1.jpg" data-caption="Wifi haut débit">
         {% image "assets/img/gallery/studio/gallerie-studio-1.jpg", "Aperçu studio", "gallery-image", "eager", "(max-width: 768px) 33vw, 400px" %}
@@ -213,6 +217,18 @@ ogImage: assets/img/logo-cc.jpg
     <div class="section-header">
       <h2 class="section-title">{{ t.testimonials.title }}</h2>
       <p class="text-muted">{{ t.testimonials.intro }}</p>
+    </div>
+    <div class="featured-testimonial-card mb-8">
+      <div class="featured-testimonial-head">
+        <div>
+          <p class="featured-testimonial-author">Fadil</p>
+          <p class="featured-testimonial-meta">Airbnb · 5/5 · il y a 4 jours</p>
+        </div>
+      </div>
+      <blockquote class="featured-testimonial-quote">
+        “Super séjour de plus d'un mois, la tranquillité et la nature. Bien équipé, une place de stationnement disponible gratuitement devant l'entrée avec une petite terrasse. L'hôte est très sympathique. Je recommande vraiment surtout au niveau tarif c'est très raisonnable.”
+      </blockquote>
+      <p class="featured-testimonial-note">Client Airbnb depuis 2 ans.</p>
     </div>
     <div class="gallery-grid" id="testimonials-grid">
       {% set localTestimonials = testimonials.studio[locale] or testimonials.studio['fr'] %}
