@@ -2,7 +2,7 @@ import { hasValidInternalToken } from "../../../_lib/auth.js";
 import { badRequest, json, serverError, unauthorized } from "../../../_lib/http.js";
 import { runBookingIcsSync } from "../../../_lib/jobs.js";
 
-export async function onRequestPost(context) {
+export async function onRequest(context) {
   const { request, env } = context;
 
   try {
@@ -10,8 +10,17 @@ export async function onRequestPost(context) {
       return unauthorized("Missing or invalid internal sync token");
     }
 
-    const rawBody = await request.text();
-    const payload = rawBody ? JSON.parse(rawBody) : {};
+    let payload = {};
+    if (request.method === "POST") {
+      const rawBody = await request.text();
+      payload = rawBody ? JSON.parse(rawBody) : {};
+    } else {
+      const url = new URL(request.url);
+      payload = {
+        unitCode: url.searchParams.get("unitCode") || null,
+      };
+    }
+
     const unitCode = typeof payload.unitCode === "string" && payload.unitCode.trim()
       ? payload.unitCode.trim()
       : null;

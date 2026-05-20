@@ -9,7 +9,18 @@ export function hasValidInternalToken(request, env) {
 
   const bearerToken = request.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
   const headerToken = request.headers.get("x-internal-sync-token");
-  return bearerToken === config.internalSyncToken || headerToken === config.internalSyncToken;
+
+  let urlToken = null;
+  try {
+    const url = new URL(request.url);
+    urlToken = url.searchParams.get("token") || url.searchParams.get("sync_token");
+  } catch {
+    // ignore
+  }
+
+  return bearerToken === config.internalSyncToken ||
+         headerToken === config.internalSyncToken ||
+         urlToken === config.internalSyncToken;
 }
 
 export function hasValidAdminToken(request, env) {
