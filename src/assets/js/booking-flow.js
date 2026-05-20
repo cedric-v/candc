@@ -55,6 +55,7 @@
     calendarDeparture: root.dataset.msgCalendarDeparture || "Check-out",
     calendarBlockedShort: root.dataset.msgCalendarBlockedShort || "Unavailable",
     minimumStayTemplate: root.dataset.msgMinStayTemplate || "Minimum stay: {nights} night(s).",
+    complimentaryLabel: root.dataset.msgComplimentaryLabel || "Complimentary",
   };
 
   const fields = {
@@ -836,7 +837,13 @@
       summary.guestSurcharge.textContent = formatCurrency(quote.guestSurchargeAmount || 0, quote.currency);
     }
     if (summary.optionsAmount) {
-      summary.optionsAmount.textContent = formatCurrency(quote.optionsAmount, quote.currency);
+      if (unitCode === "eco-studio" && quote.optionsAmount === 0) {
+        summary.optionsAmount.textContent = texts.complimentaryLabel || "Complimentary";
+        summary.optionsAmount.classList.add("booking-discount-highlight");
+      } else {
+        summary.optionsAmount.textContent = formatCurrency(quote.optionsAmount, quote.currency);
+        summary.optionsAmount.classList.remove("booking-discount-highlight");
+      }
     }
     summary.longStayDiscount.textContent = formatSignedCurrency(-quote.longStayDiscountAmount, quote.currency);
     summary.nonRefundableDiscount.textContent = formatSignedCurrency(-quote.nonRefundableDiscountAmount, quote.currency);

@@ -31,7 +31,10 @@ const overrides = {
     webMcpQuoteToolName: "quote_studio_stay",
     webMcpQuoteToolDescription: "Calculate a direct-booking quote for the eco studio, including extra guests and discounts.",
     webMcpCheckoutToolName: "start_studio_reservation_checkout",
-    webMcpCheckoutToolDescription: "Prepare a direct reservation checkout for the eco studio, collect traveller details, create the reservation, and send the traveller to payment."
+    webMcpCheckoutToolDescription: "Prepare a direct reservation checkout for the eco studio, collect traveller details, create the reservation, and send the traveller to payment.",
+    directBookingPromoText: "Profitez d'un avantage exclusif à notre site officiel : réservez en direct et les frais de ménage (d'une valeur de 64 CHF) sont offerts dès 5 nuits.",
+    cleaningFeeLabel: "Frais de ménage",
+    complimentaryLabel: "Offert"
   },
   en: {
     title: "Book your studio online",
@@ -62,7 +65,10 @@ const overrides = {
     webMcpQuoteToolName: "quote_studio_stay",
     webMcpQuoteToolDescription: "Calculate a direct-booking quote for the eco studio, including extra guests and discounts.",
     webMcpCheckoutToolName: "start_studio_reservation_checkout",
-    webMcpCheckoutToolDescription: "Prepare a direct reservation checkout for the eco studio, collect traveller details, create the reservation, and send the traveller to payment."
+    webMcpCheckoutToolDescription: "Prepare a direct reservation checkout for the eco studio, collect traveller details, create the reservation, and send the traveller to payment.",
+    directBookingPromoText: "Enjoy a benefit exclusive to our official website: book directly and cleaning fees (worth 64 CHF) are complimentary for stays of 5 nights or more.",
+    cleaningFeeLabel: "Cleaning fee",
+    complimentaryLabel: "Complimentary"
   },
   de: {
     title: "Buchen Sie Ihr Studio online",
@@ -93,7 +99,10 @@ const overrides = {
     webMcpQuoteToolName: "quote_studio_stay",
     webMcpQuoteToolDescription: "Calculate a direct-booking quote for the eco studio, including extra guests and discounts.",
     webMcpCheckoutToolName: "start_studio_reservation_checkout",
-    webMcpCheckoutToolDescription: "Prepare a direct reservation checkout for the eco studio, collect traveller details, create the reservation, and send the traveller to payment."
+    webMcpCheckoutToolDescription: "Prepare a direct reservation checkout for the eco studio, collect traveller details, create the reservation, and send the traveller to payment.",
+    directBookingPromoText: "Genießen Sie einen exklusiven Vorteil auf unserer offiziellen Website: Buchen Sie direkt und die Reinigungsgebühr (im Wert von 64 CHF) ist ab 5 Nächten kostenlos.",
+    cleaningFeeLabel: "Reinigungsgebühr",
+    complimentaryLabel: "Kostenlos"
   },
   es: {
     title: "Reserva tu estudio en linea",
@@ -124,7 +133,10 @@ const overrides = {
     webMcpQuoteToolName: "quote_studio_stay",
     webMcpQuoteToolDescription: "Calculate a direct-booking quote for the eco studio, including extra guests and discounts.",
     webMcpCheckoutToolName: "start_studio_reservation_checkout",
-    webMcpCheckoutToolDescription: "Prepare a direct reservation checkout for the eco studio, collect traveller details, create the reservation, and send the traveller to payment."
+    webMcpCheckoutToolDescription: "Prepare a direct reservation checkout for the eco studio, collect traveller details, create the reservation, and send the traveller to payment.",
+    directBookingPromoText: "Disfrute de una ventaja exclusiva de nuestro sitio web oficial: reserve directamente y los gastos de limpieza (valorados en 64 CHF) son gratuitos para estancias de 5 noches o más.",
+    cleaningFeeLabel: "Gastos de limpieza",
+    complimentaryLabel: "Cortesía"
   },
   pt: {
     title: "Reserve o seu estudio online",
@@ -155,7 +167,10 @@ const overrides = {
     webMcpQuoteToolName: "quote_studio_stay",
     webMcpQuoteToolDescription: "Calculate a direct-booking quote for the eco studio, including extra guests and discounts.",
     webMcpCheckoutToolName: "start_studio_reservation_checkout",
-    webMcpCheckoutToolDescription: "Prepare a direct reservation checkout for the eco studio, collect traveller details, create the reservation, and send the traveller to payment."
+    webMcpCheckoutToolDescription: "Prepare a direct reservation checkout for the eco studio, collect traveller details, create the reservation, and send the traveller to payment.",
+    directBookingPromoText: "Desfrute de uma vantagem exclusiva do nosso website oficial: reserve diretamente e a taxa de limpeza (no valor de 64 CHF) é gratuita para estadias de 5 noites ou mais.",
+    cleaningFeeLabel: "Taxa de limpeza",
+    complimentaryLabel: "Cortesia"
   },
   it: {
     title: "Prenota il tuo studio online",
@@ -186,7 +201,10 @@ const overrides = {
     webMcpQuoteToolName: "quote_studio_stay",
     webMcpQuoteToolDescription: "Calculate a direct-booking quote for the eco studio, including extra guests and discounts.",
     webMcpCheckoutToolName: "start_studio_reservation_checkout",
-    webMcpCheckoutToolDescription: "Prepare a direct reservation checkout for the eco studio, collect traveller details, create the reservation, and send the traveller to payment."
+    webMcpCheckoutToolDescription: "Prepare a direct reservation checkout for the eco studio, collect traveller details, create the reservation, and send the traveller to payment.",
+    directBookingPromoText: "Approfitta di un vantaggio esclusivo del nostro sito ufficiale: prenota direttamente e le spese di pulizia (del valore di 64 CHF) sono offerte per soggiorni di 5 o più notti.",
+    cleaningFeeLabel: "Spese di pulizia",
+    complimentaryLabel: "Offerto"
   },
   nl: {
     title: "Boek je studio online",
@@ -217,7 +235,10 @@ const overrides = {
     webMcpQuoteToolName: "quote_studio_stay",
     webMcpQuoteToolDescription: "Calculate a direct-booking quote for the eco studio, including extra guests and discounts.",
     webMcpCheckoutToolName: "start_studio_reservation_checkout",
-    webMcpCheckoutToolDescription: "Prepare a direct reservation checkout for the eco studio, collect traveller details, create the reservation, and send the traveller to payment."
+    webMcpCheckoutToolDescription: "Prepare a direct reservation checkout for the eco studio, collect traveller details, create the reservation, and send the traveller to payment.",
+    directBookingPromoText: "Geniet van een exclusief voordeel op onze officiële website: boek rechtstreeks en de schoonmaakkosten (t.w.v. 64 CHF) zijn gratis bij een verblijf van 5 nachten of meer.",
+    cleaningFeeLabel: "Schoonmaakkosten",
+    complimentaryLabel: "Gratis"
   }
 };
 

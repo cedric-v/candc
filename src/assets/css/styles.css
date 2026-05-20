@@ -2273,3 +2273,34 @@ a:hover {
   scroll-margin-top: 8rem;
   /* Adjust based on header height */
 }
+
+/* Booking Direct Promo Banner */
+.booking-promo-banner {
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: center;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(4, 120, 87, 0.03));
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-md) var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+}
+
+.booking-promo-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.booking-promo-content {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #065f46;
+  line-height: 1.4;
+}
+
+/* Complimentary text highlight in price summary */
+.booking-discount-highlight {
+  color: #059669;
+  font-weight: 600;
+}
+

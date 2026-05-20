@@ -38,6 +38,10 @@ export async function buildQuote(env, input) {
     Number(unitSettings.weeklyStayDiscountRate ?? 0);
   const weeklyStayThresholdNights =
     Number(unitSettings.weeklyStayThresholdNights ?? 0);
+  const cleaningFeeChf =
+    Number(unitSettings.cleaningFeeChf ?? 0);
+  const cleaningFeeThresholdNights =
+    Number(unitSettings.cleaningFeeThresholdNights ?? 0);
   const wcShowerRequested = allowsWcShowerOption ? Boolean(input.wcShowerRequested) : false;
   const baseAmount = roundMoney(nightlyRates.reduce((sum, night) => sum + night.rate, 0));
   const extraAdultCount = Math.max(0, Number(input.adults || 0) - includedAdultsCount);
@@ -46,7 +50,12 @@ export async function buildQuote(env, input) {
     (Number(input.children || 0) * extraChildNightlyRateChf * nights),
   );
   const touristTaxAmount = roundMoney(adultTouristTaxChf * input.adults * nights);
-  const optionsAmount = wcShowerRequested ? roundMoney(wcShowerCleaningFeeChf) : 0;
+
+  const cleaningFeeAmount = (cleaningFeeChf > 0 && nights < cleaningFeeThresholdNights)
+    ? roundMoney(cleaningFeeChf)
+    : 0;
+  const optionsAmount = (wcShowerRequested ? roundMoney(wcShowerCleaningFeeChf) : 0) + cleaningFeeAmount;
+
   const accommodationAmount = roundMoney(baseAmount + guestSurchargeAmount);
   const longStayDiscountAmount = nights >= 30
     ? roundMoney(accommodationAmount * longStayDiscountRate)

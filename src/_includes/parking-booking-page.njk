@@ -18,6 +18,15 @@
     {% endif %}
   </div>
 
+  {% if showInfants and b.directBookingPromoText %}
+  <div class="booking-promo-banner">
+    <div class="booking-promo-icon">🎁</div>
+    <div class="booking-promo-content">
+      {{ b.directBookingPromoText }}
+    </div>
+  </div>
+  {% endif %}
+
   <div
     class="booking-shell"
     id="booking-app"
@@ -39,6 +48,7 @@
     data-msg-created="{{ b.reservationCreated }}"
     data-msg-redirecting="{{ b.redirecting }}"
     data-msg-terms="{{ b.termsRequired }}"
+    data-msg-complimentary-label="{{ b.complimentaryLabel or 'Complimentary' }}"
     data-msg-summary-empty-stay="{{ b.summaryEmptyStay }}"
     data-msg-summary-pending-amount="{{ b.summaryPendingAmount }}"
     data-msg-night-singular="{{ b.nightSingular or 'night' }}"
@@ -240,6 +250,12 @@
             {% if showWcShower %}
             <div>
               <dt>{{ b.wcShowerLabel }}</dt>
+              <dd id="booking-options-amount">{{ b.summaryPendingAmount or '-' }}</dd>
+            </div>
+            {% endif %}
+            {% if showInfants %}
+            <div>
+              <dt>{{ b.cleaningFeeLabel or 'Cleaning fee' }}</dt>
               <dd id="booking-options-amount">{{ b.summaryPendingAmount or '-' }}</dd>
             </div>
             {% endif %}
