@@ -1,14 +1,39 @@
 import {
   getReservationByCheckoutId,
-  getReservationForCalendarSync,
-  insertSyncLog,
-  updateReservationGoogleCalendarEventId,
   updatePaymentByCheckoutId,
   updateReservationAndCalendarStatus,
 } from "../../../_lib/db.js";
-import { isGoogleCalendarConfigured, upsertReservationEvent } from "../../../_lib/google-calendar.js";
+import { syncReservationToGoogleCalendar } from "../../../_lib/booking-ops.js";
+import { isGoogleCalendarConfigured } from "../../../_lib/google-calendar.js";
 import { badRequest, json, serverError } from "../../../_lib/http.js";
 import { getCheckout, mapCheckoutStatus } from "../../../_lib/sumup.js";
+
+function mapStatusForPaymentType(checkoutStatus, paymentType) {
+  if (paymentType !== "adjustment") {
+    return mapCheckoutStatus(checkoutStatus);
+  }
+
+  switch (checkoutStatus) {
+    case "PAID":
+      return {
+        paymentStatus: "paid",
+        reservationStatus: "modified",
+        calendarBlockStatus: "confirmed",
+      };
+    case "PENDING":
+      return {
+        paymentStatus: "pending",
+        reservationStatus: "pending_adjustment_payment",
+        calendarBlockStatus: "pending_payment",
+      };
+    default:
+      return {
+        paymentStatus: checkoutStatus.toLowerCase(),
+        reservationStatus: "pending_adjustment_payment",
+        calendarBlockStatus: "pending_payment",
+      };
+  }
+}
 
 export async function onRequestPost(context) {
   try {
@@ -25,7 +50,7 @@ export async function onRequestPost(context) {
       return json({}, { status: 202 });
     }
 
-    const mappedStatus = mapCheckoutStatus(checkout.status);
+    const mappedStatus = mapStatusForPaymentType(checkout.status, reservation.payment_type);
 
     await updatePaymentByCheckoutId(context.env, payload.id, {
       providerPaymentReference: checkout.transaction_id || null,
@@ -42,33 +67,9 @@ export async function onRequestPost(context) {
 
     if (mappedStatus.reservationStatus === "confirmed" && isGoogleCalendarConfigured(context.env)) {
       try {
-        const reservationForCalendar = await getReservationForCalendarSync(context.env, reservation.id);
-
-        if (reservationForCalendar) {
-          const event = await upsertReservationEvent(context.env, reservationForCalendar);
-          await updateReservationGoogleCalendarEventId(context.env, reservation.id, event.id);
-          await insertSyncLog(context.env, {
-            unitId: reservation.unit_id || null,
-            syncType: "google_calendar_sync",
-            status: "success",
-            message: `Synced reservation ${reservation.public_reference} after payment confirmation`,
-            payloadSummary: {
-              reservationId: reservation.id,
-              googleEventId: event.id,
-            },
-          });
-        }
-      } catch (calendarError) {
-        await insertSyncLog(context.env, {
-          unitId: reservation.unit_id || null,
-          syncType: "google_calendar_sync",
-          status: "failed",
-          message: calendarError.message,
-          payloadSummary: {
-            reservationId: reservation.id,
-            publicReference: reservation.public_reference,
-          },
-        });
+        await syncReservationToGoogleCalendar(context.env, reservation.id);
+      } catch {
+        // Sync errors are logged by the shared helper.
       }
     }
 

@@ -40,6 +40,10 @@ Le repository contient maintenant deux couches principales :
 - integration SumUp scaffolded
 - import Booking.com ICS scaffolded
 - Google Calendar sync scaffolded
+- e-mails transactionnels
+- page client de gestion via lien magique
+- mini interface admin par token
+- endpoint interne pour jobs de sync et d'e-mails
 
 ## Ce qui est important architecturalement
 
@@ -57,11 +61,10 @@ Cela permet de brancher le studio plus tard sans grosse migration de schema.
 
 ## Ce qui manque encore
 
-- e-mails transactionnels
-- page client de gestion de reservation
-- interface admin
-- import Booking.com ICS declenche en cron reel
-- configuration reelle SumUp / Google Calendar / Cloudflare
+- remboursement automatique SumUp
+- declenchement cron reel cote Cloudflare
+- credentials Google Calendar finalises
+- credentials Resend finalises
 - funnel dedie au studio
 
 ## Fichiers de reference

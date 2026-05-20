@@ -92,7 +92,6 @@ Variables non secretes possibles :
 
 - `PUBLIC_BASE_URL`
 - `DEFAULT_BOOKING_UNIT_CODE`
-- `DEFAULT_BASE_RATE_CHF`
 - `TOURIST_TAX_ADULT_CHF`
 - `WC_SHOWER_CLEANING_FEE_CHF`
 - `PAYMENT_FEE_RATE`
@@ -102,13 +101,17 @@ Variables non secretes possibles :
 - `DEFAULT_CHECK_IN_END_TIME`
 - `DEFAULT_CHECK_OUT_TIME`
 - `BOOKING_ICS_IMPORT_URL`
-- `GOOGLE_CALENDAR_ID`
+- `ADMIN_NOTIFICATION_EMAIL`
+- `EMAIL_FROM`
+- `EMAIL_REPLY_TO`
 
 Secrets ou valeurs sensibles :
 
 - `SUMUP_API_KEY`
 - `SUMUP_MERCHANT_CODE`
 - `INTERNAL_SYNC_TOKEN`
+- `ADMIN_ACCESS_TOKEN`
+- `RESEND_API_KEY`
 - `GOOGLE_SERVICE_ACCOUNT_EMAIL`
 - `GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY`
 
@@ -136,7 +139,7 @@ Ces fichiers sont copies depuis `src/` vers `_site/`.
 ### Booking.com ICS
 
 - chaque unite reservable peut avoir sa propre source ICS
-- l'import peut etre stocke en base dans `external_calendar_sources.import_url`
+- l'import est idealement stocke en base dans `external_calendar_sources.import_url`
 - `BOOKING_ICS_IMPORT_URL` reste utile comme fallback pour l'unite par defaut
 
 ### SumUp
@@ -164,8 +167,41 @@ Important :
 ### Google Calendar
 
 - utiliser un service account
+- stocker le calendrier cible par unite dans `rentable_units.google_calendar_id`
 - partager le calendrier cible avec l'adresse e-mail du service account
 - donner le droit de modifier les evenements
+
+### Resend
+
+- utilise pour les e-mails transactionnels
+- requis si vous voulez :
+  - l'e-mail instantane de reservation
+  - les e-mails de modification / annulation
+  - le rappel automatique d'arrivee
+
+Variables :
+
+- `RESEND_API_KEY`
+- `EMAIL_FROM`
+- `EMAIL_REPLY_TO`
+
+### Admin
+
+- la mini interface est accessible sur `/admin/booking`
+- un token explicite est attendu via `ADMIN_ACCESS_TOKEN`
+
+### Jobs internes
+
+- `POST /api/internal/jobs/run` peut lancer :
+  - le sync Booking.com ICS
+  - les e-mails d'arrivee
+  - les deux en une seule execution
+
+Important :
+
+- le backend des jobs est pret
+- le declenchement automatique reste a brancher selon le mode exact de deploiement Cloudflare
+- je n'ai pas pu deplacer ou creer ces triggers automatiquement depuis ici
 
 ## Notes importantes
 

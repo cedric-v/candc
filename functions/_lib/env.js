@@ -28,7 +28,6 @@ export function getConfig(env) {
   return {
     publicBaseUrl: getRequiredEnv(env, "PUBLIC_BASE_URL"),
     defaultUnitCode: env.DEFAULT_BOOKING_UNIT_CODE || "parking-space",
-    defaultBaseRateChf: getNumberEnv(env, "DEFAULT_BASE_RATE_CHF", 20),
     timeZone: env.TIMEZONE || "Europe/Zurich",
     bookingIcsFeedToken: env.BOOKING_ICS_FEED_TOKEN || "",
     checkInTime: env.DEFAULT_CHECK_IN_TIME || "15:00:00",
@@ -43,7 +42,11 @@ export function getConfig(env) {
     sumUpMerchantCode: env.SUMUP_MERCHANT_CODE || "",
     bookingIcsImportUrl: env.BOOKING_ICS_IMPORT_URL || "",
     internalSyncToken: env.INTERNAL_SYNC_TOKEN || "",
-    googleCalendarId: env.GOOGLE_CALENDAR_ID || "",
+    adminAccessToken: env.ADMIN_ACCESS_TOKEN || "",
+    adminNotificationEmail: env.ADMIN_NOTIFICATION_EMAIL || "bonjour@candc.ch",
+    emailFrom: env.EMAIL_FROM || "",
+    emailReplyTo: env.EMAIL_REPLY_TO || "",
+    resendApiKey: env.RESEND_API_KEY || "",
     googleServiceAccountEmail: env.GOOGLE_SERVICE_ACCOUNT_EMAIL || "",
     googleServiceAccountPrivateKey: (env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY || "").replace(/\\n/g, "\n"),
   };

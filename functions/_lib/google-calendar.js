@@ -153,23 +153,19 @@ function buildEventPayload(reservation) {
 export function isGoogleCalendarConfigured(env) {
   const config = getConfig(env);
   return Boolean(
-    config.googleCalendarId &&
-      config.googleServiceAccountEmail &&
-      config.googleServiceAccountPrivateKey,
+    config.googleServiceAccountEmail && config.googleServiceAccountPrivateKey,
   );
 }
 
 export async function upsertReservationEvent(env, reservation) {
-  const config = getConfig(env);
-
-  if (!config.googleCalendarId) {
+  if (!reservation.google_calendar_id) {
     throw new Error("google_calendar_not_configured");
   }
 
   const accessToken = await getAccessToken(env);
   const body = buildEventPayload(reservation);
   const eventId = reservation.google_calendar_event_id;
-  const calendarId = encodeURIComponent(config.googleCalendarId);
+  const calendarId = encodeURIComponent(reservation.google_calendar_id);
 
   if (eventId) {
     const response = await fetch(

@@ -14,17 +14,19 @@ export function buildReservationFeed(reservations) {
   const lines = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//C&C//Parking Booking Feed//EN",
+    "PRODID:-//C&C//Booking Feed//EN",
     "CALSCALE:GREGORIAN",
     "METHOD:PUBLISH",
   ];
 
   for (const reservation of reservations) {
+    const isStudio = reservation.unit_code === "eco-studio";
+    const unitName = isStudio ? "Studio" : "Parking";
     const summary = reservation.public_reference
-      ? `C&C Parking ${reservation.public_reference}`
-      : "C&C Parking reservation";
+      ? `C&C ${unitName} ${reservation.public_reference}`
+      : `C&C ${unitName} reservation`;
     const guestName = [reservation.guest_first_name, reservation.guest_last_name].filter(Boolean).join(" ");
-    const description = guestName ? `Guest: ${guestName}` : "C&C Parking reservation";
+    const description = guestName ? `Guest: ${guestName}` : `C&C ${unitName} reservation`;
 
     lines.push(
       "BEGIN:VEVENT",

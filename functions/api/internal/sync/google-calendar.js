@@ -1,29 +1,14 @@
-import {
-  getReservationForCalendarSync,
-  insertSyncLog,
-  updateReservationGoogleCalendarEventId,
-} from "../../../_lib/db.js";
-import { getConfig } from "../../../_lib/env.js";
-import { isGoogleCalendarConfigured, upsertReservationEvent } from "../../../_lib/google-calendar.js";
+import { hasValidInternalToken } from "../../../_lib/auth.js";
+import { syncReservationToGoogleCalendar } from "../../../_lib/booking-ops.js";
+import { getReservationForCalendarSync } from "../../../_lib/db.js";
+import { isGoogleCalendarConfigured } from "../../../_lib/google-calendar.js";
 import { badRequest, json, serverError, unauthorized } from "../../../_lib/http.js";
-
-function hasValidToken(request, env) {
-  const config = getConfig(env);
-
-  if (!config.internalSyncToken) {
-    return false;
-  }
-
-  const bearerToken = request.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
-  const headerToken = request.headers.get("x-internal-sync-token");
-  return bearerToken === config.internalSyncToken || headerToken === config.internalSyncToken;
-}
 
 export async function onRequestPost(context) {
   const { request, env } = context;
 
   try {
-    if (!hasValidToken(request, env)) {
+    if (!hasValidInternalToken(request, env)) {
       return unauthorized("Missing or invalid internal sync token");
     }
 
@@ -44,24 +29,12 @@ export async function onRequestPost(context) {
       return badRequest("Unknown reservationId");
     }
 
-    const event = await upsertReservationEvent(env, reservation);
-    await updateReservationGoogleCalendarEventId(env, reservation.id, event.id);
-    await insertSyncLog(env, {
-      unitId: reservation.unit_id || null,
-      syncType: "google_calendar_sync",
-      status: "success",
-      message: `Synced reservation ${reservation.public_reference} to Google Calendar`,
-      payloadSummary: {
-        reservationId: reservation.id,
-        publicReference: reservation.public_reference,
-        googleEventId: event.id,
-      },
-    });
+    const result = await syncReservationToGoogleCalendar(env, reservation.id);
 
     return json({
-      ok: true,
+      ok: result.ok,
       reservationId: reservation.id,
-      eventId: event.id,
+      eventId: result.eventId || null,
     });
   } catch (error) {
     if (error instanceof SyntaxError) {

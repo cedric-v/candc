@@ -18,6 +18,16 @@ export function text(body, init = {}) {
   });
 }
 
+export function html(body, init = {}) {
+  const headers = new Headers(init.headers || {});
+  headers.set("content-type", "text/html; charset=utf-8");
+
+  return new Response(body, {
+    ...init,
+    headers,
+  });
+}
+
 export function methodNotAllowed(allowedMethods) {
   return json(
     {

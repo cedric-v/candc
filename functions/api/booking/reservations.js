@@ -9,6 +9,7 @@ import {
 import { buildQuote } from "../../_lib/pricing.js";
 import { badRequest, conflict, json, serverError } from "../../_lib/http.js";
 import { generateOpaqueToken, sha256Hex } from "../../_lib/security.js";
+import { sendReservationEmail } from "../../_lib/booking-ops.js";
 import { createHostedCheckout, isSumUpConfigured } from "../../_lib/sumup.js";
 import { normalizeBookingInput, validateBookingInput } from "../../_lib/validation.js";
 
@@ -61,6 +62,17 @@ export async function onRequestPost(context) {
     );
 
     if (!isSumUpConfigured(context.env)) {
+      try {
+        await sendReservationEmail(
+          context.env,
+          reservationRecord.reservationId,
+          "booking_confirmation",
+          { manageToken },
+        );
+      } catch {
+        // Email failures should not block reservation creation.
+      }
+
       return json(
         {
           reservation: {
@@ -113,6 +125,17 @@ export async function onRequestPost(context) {
       currency: pricing.currency,
       rawPayload: checkout,
     });
+
+    try {
+      await sendReservationEmail(
+        context.env,
+        reservationRecord.reservationId,
+        "booking_confirmation",
+        { manageToken },
+      );
+    } catch {
+      // Email failures should not block reservation creation.
+    }
 
     return json(
       {

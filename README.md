@@ -19,13 +19,16 @@ Implemented today:
 - SumUp hosted checkout integration scaffold
 - Booking.com ICS import scaffold
 - Google Calendar sync scaffold
+- transactional email pipeline
+- customer self-service booking management page
+- minimal admin interface
+- internal jobs endpoint for sync and arrival emails
 
 Still to complete:
 
-- transactional emails
-- customer self-service booking management page
-- admin UI
 - studio-specific booking funnel
+- automatic SumUp refunds
+- final Cloudflare cron deployment for internal jobs
 
 ## Supported languages
 
@@ -67,10 +70,15 @@ API routes already scaffolded:
 - `GET /api/booking/availability`
 - `POST /api/booking/quote`
 - `POST /api/booking/reservations`
+- `GET /api/booking/manage/:token`
+- `POST /api/booking/manage/:token`
 - `GET /api/booking/ics/:feedToken`
 - `POST /api/booking/sumup/webhook`
 - `POST /api/internal/sync/booking-ics`
 - `POST /api/internal/sync/google-calendar`
+- `POST /api/internal/jobs/run`
+- `GET /api/admin/booking`
+- `POST /api/admin/booking`
 
 ## Installation
 

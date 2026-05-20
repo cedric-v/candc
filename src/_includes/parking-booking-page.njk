@@ -24,6 +24,10 @@
     data-msg-created="{{ b.reservationCreated }}"
     data-msg-redirecting="{{ b.redirecting }}"
     data-msg-terms="{{ b.termsRequired }}"
+    data-msg-summary-empty-stay="{{ b.summaryEmptyStay }}"
+    data-msg-summary-pending-amount="{{ b.summaryPendingAmount }}"
+    data-msg-night-singular="{{ b.nightSingular or 'night' }}"
+    data-msg-night-plural="{{ b.nightPlural or 'nights' }}"
   >
     <div class="card booking-main-card">
       <form id="parking-booking-form" class="booking-form">
@@ -142,37 +146,37 @@
           <h2 class="booking-summary-title">{{ b.summaryTitle }}</h2>
           <div class="booking-summary-stay">
             <span class="booking-summary-label">{{ b.stayLabel }}</span>
-            <strong id="booking-stay-label">-</strong>
+            <strong id="booking-stay-label">{{ b.summaryEmptyStay or '-' }}</strong>
           </div>
 
           <dl class="booking-breakdown" id="booking-breakdown">
             <div>
               <dt>{{ b.baseRateLabel }}</dt>
-              <dd id="booking-base-amount">-</dd>
+              <dd id="booking-base-amount">{{ b.summaryPendingAmount or '-' }}</dd>
             </div>
             <div>
               <dt>{{ b.touristTaxLabel }}</dt>
-              <dd id="booking-tax-amount">-</dd>
+              <dd id="booking-tax-amount">{{ b.summaryPendingAmount or '-' }}</dd>
             </div>
             <div>
               <dt>{{ b.wcShowerLabel }}</dt>
-              <dd id="booking-options-amount">-</dd>
+              <dd id="booking-options-amount">{{ b.summaryPendingAmount or '-' }}</dd>
             </div>
             <div class="booking-discount-row">
               <dt>{{ b.longStayDiscountLabel }}</dt>
-              <dd id="booking-long-stay-discount">-</dd>
+              <dd id="booking-long-stay-discount">{{ b.summaryPendingAmount or '-' }}</dd>
             </div>
             <div class="booking-discount-row">
               <dt>{{ b.nonRefundableDiscountLabel }}</dt>
-              <dd id="booking-non-refundable-discount">-</dd>
+              <dd id="booking-non-refundable-discount">{{ b.summaryPendingAmount or '-' }}</dd>
             </div>
             <div>
               <dt>{{ b.paymentFeeLabel }}</dt>
-              <dd id="booking-payment-fee">-</dd>
+              <dd id="booking-payment-fee">{{ b.summaryPendingAmount or '-' }}</dd>
             </div>
             <div class="booking-total-row">
               <dt>{{ b.totalLabel }}</dt>
-              <dd id="booking-total-amount">-</dd>
+              <dd id="booking-total-amount">{{ b.summaryPendingAmount or '-' }}</dd>
             </div>
           </dl>
 

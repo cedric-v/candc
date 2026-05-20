@@ -32,14 +32,18 @@ tout en gardant :
 - `POST /api/booking/reservations`
 - `GET /api/booking/ics/:feedToken`
 - `POST /api/booking/sumup/webhook`
+- `GET /api/booking/manage/:token`
+- `POST /api/booking/manage/:token`
 - `POST /api/internal/sync/booking-ics`
 - `POST /api/internal/sync/google-calendar`
+- `POST /api/internal/jobs/run`
+- `GET /api/admin/booking`
+- `POST /api/admin/booking`
 
 ## Variables d'environnement attendues
 
 - `PUBLIC_BASE_URL`
 - `DEFAULT_BOOKING_UNIT_CODE`
-- `DEFAULT_BASE_RATE_CHF`
 - `TOURIST_TAX_ADULT_CHF`
 - `WC_SHOWER_CLEANING_FEE_CHF`
 - `PAYMENT_FEE_RATE`
@@ -49,12 +53,15 @@ tout en gardant :
 - `DEFAULT_CHECK_OUT_TIME`
 - `BOOKING_ICS_FEED_TOKEN`
 - `BOOKING_ICS_IMPORT_URL`
-- `ADMIN_EMAIL`
+- `ADMIN_ACCESS_TOKEN`
+- `ADMIN_NOTIFICATION_EMAIL`
+- `EMAIL_FROM`
+- `EMAIL_REPLY_TO`
+- `RESEND_API_KEY`
 - `SUMUP_API_BASE_URL`
 - `SUMUP_MERCHANT_CODE`
 - `SUMUP_API_KEY`
 - `INTERNAL_SYNC_TOKEN`
-- `GOOGLE_CALENDAR_ID`
 - `GOOGLE_SERVICE_ACCOUNT_EMAIL`
 - `GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY`
 
@@ -111,6 +118,12 @@ wrangler d1 create candc-booking
 wrangler d1 execute candc-booking --file=./migrations/0001_booking_schema.sql
 ```
 
+Si la base D1 existe deja et a ete creee avant le passage aux calendriers Google configures par unite, executer aussi :
+
+```bash
+wrangler d1 execute candc-booking --file=./migrations/0002_unit_scoped_calendar_config.sql
+```
+
 ## Etat actuel
 
 Le scaffold couvre :
@@ -131,12 +144,17 @@ Le scaffold couvre :
 - journalisation des synchronisations dans `sync_logs`
 - synchro Google Calendar par reservation confirmee
 - mise a jour automatique Google Calendar depuis le webhook SumUp si la configuration est presente
+- e-mail transactionnel de creation de reservation
+- e-mails de modification, annulation et rappel d'arrivee
+- page client de gestion de reservation via lien magique
+- mini interface admin protegee par token
+- endpoint interne unifie pour lancer les jobs Booking ICS et arrival emails
 
 Le scaffold ne couvre pas encore :
 
-- page publique de gestion de reservation
-- e-mails transactionnels
-- admin UI
+- remboursement automatique SumUp
+- cron Cloudflare effectivement deployee depuis ce repo
+- parcours front dedie studio
 
 ## Charges utiles attendues
 
@@ -180,10 +198,10 @@ Le scaffold ne couvre pas encore :
 
 ## Etape recommandee suivante
 
-1. renseigner les vraies URLs ICS Booking.com dans `external_calendar_sources` ou `BOOKING_ICS_IMPORT_URL`
-2. configurer le service account Google Calendar et partager le calendrier avec son e-mail
-3. brancher un cron ou un appel interne securise vers `POST /api/internal/sync/booking-ics`
-4. ajouter les e-mails transactionnels
+1. configurer le service account Google Calendar et partager le calendrier avec son e-mail
+2. configurer Resend (`RESEND_API_KEY`, `EMAIL_FROM`, `EMAIL_REPLY_TO`)
+3. creer `ADMIN_ACCESS_TOKEN`
+4. brancher un scheduler externe ou Cloudflare adapte vers `POST /api/internal/jobs/run`
 
 ## Extension future studio
 
@@ -252,9 +270,9 @@ Le calendrier interne partage est alimente reservation par reservation.
 
 Configuration necessaire :
 
-- `GOOGLE_CALENDAR_ID`
 - `GOOGLE_SERVICE_ACCOUNT_EMAIL`
 - `GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY`
+- un `google_calendar_id` renseigne sur l'unite concernee dans `rentable_units`
 
 Important :
 
@@ -283,3 +301,66 @@ Contenu envoye dans l'evenement :
 - total et statut de paiement
 - reference de reservation
 - unite reservee
+
+## Gestion client
+
+Le lien magique de gestion pointe vers :
+
+- `GET /booking/manage/:token`
+
+L'API associee permet :
+
+- lecture de la reservation
+- previsualisation d'une modification
+- modification des dates et de l'option WC-douche
+- annulation si la politique le permet
+
+Comportement actuel :
+
+- si le nouveau total augmente, un checkout SumUp d'ajustement est cree
+- si le nouveau total diminue, un remboursement manuel est marque comme du
+
+## Interface admin minimale
+
+La mini interface est exposee sur :
+
+- `GET /admin/booking`
+
+Elle consomme :
+
+- `GET /api/admin/booking`
+- `POST /api/admin/booking`
+
+Fonctions en place :
+
+- voir les reservations recentes
+- voir les periodes tarifaires
+- creer une periode tarifaire speciale
+- voir les logs de synchro recents
+- lancer manuellement le sync Booking.com
+- lancer manuellement les e-mails d'arrivee
+
+## Jobs internes
+
+Le point d'entree unique est :
+
+- `POST /api/internal/jobs/run`
+
+Actions prises en charge :
+
+- `booking_ics`
+- `arrival_emails`
+- `all`
+
+Exemple :
+
+```json
+{
+  "action": "all"
+}
+```
+
+Important :
+
+- les handlers serveur sont prets
+- le declenchement automatique doit encore etre branche sur le mode de deploiement Cloudflare retenu

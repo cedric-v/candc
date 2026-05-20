@@ -102,3 +102,11 @@ export function isArrivalWithin24Hours(checkInDate, checkInTime, timeZone) {
 export function rangesOverlap(startA, endA, startB, endB) {
   return startA < endB && startB < endA;
 }
+
+export function getCurrentIsoDateInZone(timeZone) {
+  const parts = getTimePartsInZone(new Date(), timeZone);
+  const year = String(parts.year);
+  const month = String(parts.month).padStart(2, "0");
+  const day = String(parts.day).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}

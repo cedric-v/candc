@@ -30,6 +30,10 @@
     created: root.dataset.msgCreated || "",
     redirecting: root.dataset.msgRedirecting || "",
     terms: root.dataset.msgTerms || "",
+    summaryEmptyStay: root.dataset.msgSummaryEmptyStay || "",
+    summaryPendingAmount: root.dataset.msgSummaryPendingAmount || "",
+    nightSingular: root.dataset.msgNightSingular || "night",
+    nightPlural: root.dataset.msgNightPlural || "nights",
   };
 
   const fields = {
@@ -264,7 +268,8 @@
   }
 
   function renderQuote(quote, payload) {
-    summary.stayLabel.textContent = `${payload.checkInDate} → ${payload.checkOutDate} (${quote.nights})`;
+    const nightLabel = quote.nights > 1 ? texts.nightPlural : texts.nightSingular;
+    summary.stayLabel.textContent = `${formatDate(payload.checkInDate)} → ${formatDate(payload.checkOutDate)} · ${quote.nights} ${nightLabel}`;
     summary.baseAmount.textContent = formatCurrency(quote.baseAmount, quote.currency);
     summary.taxAmount.textContent = formatCurrency(quote.touristTaxAmount, quote.currency);
     summary.optionsAmount.textContent = formatCurrency(quote.optionsAmount, quote.currency);
@@ -280,14 +285,14 @@
   }
 
   function resetSummary() {
-    summary.stayLabel.textContent = "-";
-    summary.baseAmount.textContent = "-";
-    summary.taxAmount.textContent = "-";
-    summary.optionsAmount.textContent = "-";
-    summary.longStayDiscount.textContent = "-";
-    summary.nonRefundableDiscount.textContent = "-";
-    summary.paymentFee.textContent = "-";
-    summary.totalAmount.textContent = "-";
+    summary.stayLabel.textContent = texts.summaryEmptyStay;
+    summary.baseAmount.textContent = texts.summaryPendingAmount;
+    summary.taxAmount.textContent = texts.summaryPendingAmount;
+    summary.optionsAmount.textContent = texts.summaryPendingAmount;
+    summary.longStayDiscount.textContent = texts.summaryPendingAmount;
+    summary.nonRefundableDiscount.textContent = texts.summaryPendingAmount;
+    summary.paymentFee.textContent = texts.summaryPendingAmount;
+    summary.totalAmount.textContent = texts.summaryPendingAmount;
     submitButton.disabled = true;
   }
 
@@ -339,5 +344,17 @@
 
   function toDateInputValue(date) {
     return date.toISOString().slice(0, 10);
+  }
+
+  function formatDate(isoDate) {
+    if (!isoDate) {
+      return "";
+    }
+
+    return new Intl.DateTimeFormat(locale, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    }).format(new Date(`${isoDate}T00:00:00`));
   }
 })();

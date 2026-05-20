@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS rentable_units (
   display_name TEXT NOT NULL,
   currency TEXT NOT NULL DEFAULT 'CHF',
   default_base_rate REAL,
+  google_calendar_id TEXT,
   check_in_start_time TEXT NOT NULL,
   check_in_end_time TEXT NOT NULL,
   check_out_time TEXT NOT NULL,
@@ -190,7 +191,7 @@ CREATE INDEX IF NOT EXISTS idx_email_logs_reservation
   ON email_logs (reservation_id, email_type);
 
 INSERT OR IGNORE INTO rentable_units (
-  id, code, unit_type, public_reference_prefix, display_name, currency, default_base_rate,
+  id, code, unit_type, public_reference_prefix, display_name, currency, default_base_rate, google_calendar_id,
   check_in_start_time, check_in_end_time, check_out_time, max_concurrent_reservations,
   features_json, settings_json, is_active, created_at, updated_at
 ) VALUES
@@ -202,6 +203,7 @@ INSERT OR IGNORE INTO rentable_units (
     'C&C Parking Space',
     'CHF',
     20,
+    'REPLACE_WITH_PARKING_GOOGLE_CALENDAR_ID',
     '15:00:00',
     '21:00:00',
     '10:00:00',
@@ -219,6 +221,7 @@ INSERT OR IGNORE INTO rentable_units (
     'STUDIO',
     'C&C Eco Studio',
     'CHF',
+    NULL,
     NULL,
     '15:00:00',
     '21:00:00',
@@ -240,7 +243,7 @@ INSERT OR IGNORE INTO external_calendar_sources (
     'unit_parking_space',
     'booking',
     'ics',
-    NULL,
+    'REPLACE_WITH_PARKING_BOOKING_ICS_URL',
     'REPLACE_PARKING_FEED_TOKEN',
     1,
     1,
@@ -253,7 +256,7 @@ INSERT OR IGNORE INTO external_calendar_sources (
     'unit_eco_studio',
     'booking',
     'ics',
-    NULL,
+    'REPLACE_WITH_STUDIO_BOOKING_ICS_URL',
     'REPLACE_STUDIO_FEED_TOKEN',
     1,
     1,

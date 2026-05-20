@@ -405,7 +405,7 @@ a:hover {
 
 .booking-summary-sticky {
   display: grid;
-  gap: var(--spacing-lg);
+  gap: var(--spacing-xl);
 }
 
 .booking-summary-title {
@@ -430,7 +430,7 @@ a:hover {
 
 .booking-breakdown {
   display: grid;
-  gap: 0.85rem;
+  gap: 1rem;
 }
 
 .booking-breakdown div {
@@ -438,6 +438,7 @@ a:hover {
   justify-content: space-between;
   gap: var(--spacing-md);
   font-size: 0.98rem;
+  align-items: baseline;
 }
 
 .booking-breakdown dt {
@@ -469,7 +470,7 @@ a:hover {
 .booking-summary-block {
   display: grid;
   gap: var(--spacing-sm);
-  padding: var(--spacing-lg);
+  padding: var(--spacing-xl);
   border-radius: var(--border-radius-lg);
   background: rgba(248, 250, 252, 0.92);
   border: 1px solid rgba(91, 110, 125, 0.14);
@@ -478,6 +479,11 @@ a:hover {
 .booking-summary-block h3 {
   margin: 0;
   font-size: 1rem;
+  padding-top: 0.1rem;
+}
+
+.booking-summary-block + .booking-summary-block {
+  margin-top: var(--spacing-sm);
 }
 
 .booking-muted-list {

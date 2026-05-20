@@ -73,11 +73,10 @@ If editing functions-only logic, import checks via Node ESM are also useful.
 
 ## Known unfinished areas
 
-- transactional emails
-- customer booking management page
-- admin UI
 - full studio booking funnel
 - production credential wiring
+- automatic refund execution through SumUp
+- actual cron deployment for internal jobs depending on Cloudflare deployment mode
 
 ## Contributor note
 

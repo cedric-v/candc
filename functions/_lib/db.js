@@ -16,6 +16,7 @@ export async function getUnitByCode(env, unitCode) {
           display_name,
           currency,
           default_base_rate,
+          google_calendar_id,
           check_in_start_time,
           check_in_end_time,
           check_out_time,
@@ -46,6 +47,7 @@ export async function getUnitByCode(env, unitCode) {
         displayName: fallback.displayName,
         currency: fallback.currency,
         defaultBaseRateChf: fallback.defaultBaseRateChf,
+        googleCalendarId: fallback.googleCalendarId || null,
         checkInStartTime: fallback.checkInStartTime,
         checkInEndTime: fallback.checkInEndTime,
         checkOutTime: fallback.checkOutTime,
@@ -69,6 +71,7 @@ export async function getUnitByFeedToken(env, feedToken) {
           rentable_units.display_name,
           rentable_units.currency,
           rentable_units.default_base_rate,
+          rentable_units.google_calendar_id,
           rentable_units.check_in_start_time,
           rentable_units.check_in_end_time,
           rentable_units.check_out_time,
@@ -154,6 +157,7 @@ function normalizeUnitRecord(unit) {
       unit.default_base_rate === null || unit.default_base_rate === undefined
         ? null
         : Number(unit.default_base_rate),
+    googleCalendarId: unit.google_calendar_id || null,
     checkInStartTime: unit.check_in_start_time,
     checkInEndTime: unit.check_in_end_time,
     checkOutTime: unit.check_out_time,
@@ -185,12 +189,11 @@ export async function getRatePeriodsForRange(env, unitId, startDate, endDate) {
 }
 
 export async function getNightlyRates(env, unit, startDate, endDate) {
-  const config = getConfig(env);
   const nights = enumerateNights(startDate, endDate);
   const periods = await getRatePeriodsForRange(env, unit.id, startDate, endDate);
-  const fallbackRate = unit.defaultBaseRateChf ?? config.defaultBaseRateChf;
+  const fallbackRate = unit.defaultBaseRateChf;
 
-  return nights.map((nightDate) => {
+  const nightlyRates = nights.map((nightDate) => {
     const matchedPeriod = periods.find(
       (period) => period.start_date <= nightDate && period.end_date > nightDate,
     );
@@ -202,6 +205,12 @@ export async function getNightlyRates(env, unit, startDate, endDate) {
       label: matchedPeriod?.label || "default",
     };
   });
+
+  if (nightlyRates.some((night) => night.rate === null || night.rate === undefined)) {
+    throw new Error("unit_base_rate_not_configured");
+  }
+
+  return nightlyRates;
 }
 
 export async function getAvailabilityConflicts(env, unitId, startDate, endDate) {
@@ -219,6 +228,33 @@ export async function getAvailabilityConflicts(env, unitId, startDate, endDate) 
       `,
     )
     .bind(unitId, endDate, startDate)
+    .all();
+
+  return results || [];
+}
+
+export async function getAvailabilityConflictsExcludingReservation(
+  env,
+  unitId,
+  startDate,
+  endDate,
+  reservationId,
+) {
+  const db = requireDb(env);
+  const { results } = await db
+    .prepare(
+      `
+        SELECT id, unit_id, source, external_uid, reservation_id, start_date, end_date, status
+        FROM calendar_blocks
+        WHERE unit_id IS ?
+          AND status IN ('active', 'confirmed', 'pending_payment')
+          AND start_date < ?
+          AND end_date > ?
+          AND (reservation_id IS NULL OR reservation_id != ?)
+        ORDER BY start_date ASC
+      `,
+    )
+    .bind(unitId, endDate, startDate, reservationId)
     .all();
 
   return results || [];
@@ -356,7 +392,7 @@ export async function getReservationsForIcsFeed(env, unitId) {
           status
         FROM reservations
         WHERE unit_id IS ?
-          AND status IN ('pending_payment', 'confirmed', 'modified')
+          AND status IN ('pending_payment', 'pending_adjustment_payment', 'confirmed', 'modified', 'refund_due', 'pending_refund')
         ORDER BY check_in_date ASC
       `,
     )
@@ -581,7 +617,8 @@ export async function getReservationByCheckoutId(env, checkoutId) {
           reservations.public_reference,
           reservations.status,
           reservations.guest_email,
-          payments.provider_checkout_id
+          payments.provider_checkout_id,
+          payments.type AS payment_type
         FROM reservations
         INNER JOIN payments ON payments.reservation_id = reservations.id
         WHERE payments.provider_checkout_id = ?
@@ -625,6 +662,7 @@ export async function getReservationForCalendarSync(env, reservationId) {
           reservations.google_calendar_event_id,
           rentable_units.unit_type,
           rentable_units.display_name AS unit_display_name,
+          rentable_units.google_calendar_id,
           (
             SELECT payments.status
             FROM payments
@@ -654,4 +692,484 @@ export async function updateReservationGoogleCalendarEventId(env, reservationId,
     )
     .bind(eventId, new Date().toISOString(), reservationId)
     .run();
+}
+
+export async function getReservationForManageToken(env, tokenHash) {
+  const db = requireDb(env);
+  return db
+    .prepare(
+      `
+        SELECT
+          reservations.id,
+          reservations.unit_id,
+          reservations.unit_code,
+          reservations.public_reference,
+          reservations.locale,
+          reservations.status,
+          reservations.guest_first_name,
+          reservations.guest_last_name,
+          reservations.guest_email,
+          reservations.guest_phone,
+          reservations.vehicle_type,
+          reservations.vehicle_length_m,
+          reservations.adults,
+          reservations.children,
+          reservations.remarks,
+          reservations.check_in_date,
+          reservations.check_out_date,
+          reservations.check_in_start_time,
+          reservations.check_in_end_time,
+          reservations.check_out_time,
+          reservations.wc_shower_requested,
+          reservations.wc_shower_confirmed,
+          reservations.refundable_policy_type,
+          reservations.booked_at,
+          reservations.arrival_less_than_24h,
+          reservations.base_rate_snapshot,
+          reservations.base_amount,
+          reservations.tourist_tax_amount,
+          reservations.options_amount,
+          reservations.long_stay_discount_amount,
+          reservations.non_refundable_discount_amount,
+          reservations.payment_fee_amount,
+          reservations.total_amount,
+          reservations.currency,
+          reservations.google_calendar_event_id,
+          rentable_units.unit_type,
+          rentable_units.display_name AS unit_display_name,
+          rentable_units.google_calendar_id,
+          (
+            SELECT payments.status
+            FROM payments
+            WHERE payments.reservation_id = reservations.id
+            ORDER BY payments.created_at DESC
+            LIMIT 1
+          ) AS payment_status
+        FROM booking_tokens
+        INNER JOIN reservations ON reservations.id = booking_tokens.reservation_id
+        LEFT JOIN rentable_units ON rentable_units.id = reservations.unit_id
+        WHERE booking_tokens.token_hash = ?
+          AND booking_tokens.purpose = 'manage_booking'
+          AND booking_tokens.revoked_at IS NULL
+          AND (booking_tokens.expires_at IS NULL OR booking_tokens.expires_at > ?)
+        LIMIT 1
+      `,
+    )
+    .bind(tokenHash, new Date().toISOString())
+    .first();
+}
+
+export async function getReservationForEmail(env, reservationId) {
+  const db = requireDb(env);
+  return db
+    .prepare(
+      `
+        SELECT
+          reservations.*,
+          rentable_units.unit_type,
+          rentable_units.display_name AS unit_display_name,
+          rentable_units.google_calendar_id,
+          (
+            SELECT payments.status
+            FROM payments
+            WHERE payments.reservation_id = reservations.id
+            ORDER BY payments.created_at DESC
+            LIMIT 1
+          ) AS payment_status
+        FROM reservations
+        LEFT JOIN rentable_units ON rentable_units.id = reservations.unit_id
+        WHERE reservations.id = ?
+        LIMIT 1
+      `,
+    )
+    .bind(reservationId)
+    .first();
+}
+
+export async function getPaymentsForReservation(env, reservationId) {
+  const db = requireDb(env);
+  const { results } = await db
+    .prepare(
+      `
+        SELECT
+          id,
+          provider,
+          provider_checkout_id,
+          provider_payment_reference,
+          type,
+          status,
+          amount,
+          currency,
+          created_at,
+          updated_at
+        FROM payments
+        WHERE reservation_id = ?
+        ORDER BY created_at DESC
+      `,
+    )
+    .bind(reservationId)
+    .all();
+
+  return results || [];
+}
+
+export async function updateReservationBookingDetails(env, reservationId, updates) {
+  const db = requireDb(env);
+  const nowIso = new Date().toISOString();
+
+  await db.batch([
+    db
+      .prepare(
+        `
+          UPDATE reservations
+          SET
+            check_in_date = ?,
+            check_out_date = ?,
+            check_in_start_time = ?,
+            check_in_end_time = ?,
+            check_out_time = ?,
+            adults = ?,
+            children = ?,
+            vehicle_type = ?,
+            vehicle_length_m = ?,
+            remarks = ?,
+            wc_shower_requested = ?,
+            refundable_policy_type = ?,
+            arrival_less_than_24h = ?,
+            base_rate_snapshot = ?,
+            base_amount = ?,
+            tourist_tax_amount = ?,
+            options_amount = ?,
+            long_stay_discount_amount = ?,
+            non_refundable_discount_amount = ?,
+            payment_fee_amount = ?,
+            total_amount = ?,
+            status = ?,
+            updated_at = ?
+          WHERE id = ?
+        `,
+      )
+      .bind(
+        updates.checkInDate,
+        updates.checkOutDate,
+        updates.checkInStartTime,
+        updates.checkInEndTime,
+        updates.checkOutTime,
+        updates.adults,
+        updates.children,
+        updates.vehicleType || null,
+        updates.vehicleLengthM ?? null,
+        updates.remarks || null,
+        updates.wcShowerRequested ? 1 : 0,
+        updates.refundablePolicyType,
+        updates.arrivalLessThan24h ? 1 : 0,
+        JSON.stringify(updates.baseRateSnapshot),
+        updates.baseAmount,
+        updates.touristTaxAmount,
+        updates.optionsAmount,
+        updates.longStayDiscountAmount,
+        updates.nonRefundableDiscountAmount,
+        updates.paymentFeeAmount,
+        updates.totalAmount,
+        updates.status,
+        nowIso,
+        reservationId,
+      ),
+    db
+      .prepare(
+        `
+          UPDATE calendar_blocks
+          SET
+            start_date = ?,
+            end_date = ?,
+            status = ?,
+            updated_at = ?
+          WHERE reservation_id = ?
+        `,
+      )
+      .bind(
+        updates.checkInDate,
+        updates.checkOutDate,
+        updates.calendarBlockStatus,
+        nowIso,
+        reservationId,
+      ),
+  ]);
+}
+
+export async function cancelReservation(env, reservationId) {
+  const db = requireDb(env);
+  const nowIso = new Date().toISOString();
+
+  await db.batch([
+    db
+      .prepare(
+        `
+          UPDATE reservations
+          SET status = 'cancelled', updated_at = ?
+          WHERE id = ?
+        `,
+      )
+      .bind(nowIso, reservationId),
+    db
+      .prepare(
+        `
+          UPDATE calendar_blocks
+          SET status = 'released', updated_at = ?
+          WHERE reservation_id = ?
+        `,
+      )
+      .bind(nowIso, reservationId),
+  ]);
+}
+
+export async function insertEmailLog(env, emailLog) {
+  const db = requireDb(env);
+  await db
+    .prepare(
+      `
+        INSERT INTO email_logs (
+          id, reservation_id, email_type, recipient, status, provider_message_id, created_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?)
+      `,
+    )
+    .bind(
+      crypto.randomUUID(),
+      emailLog.reservationId || null,
+      emailLog.emailType,
+      emailLog.recipient,
+      emailLog.status,
+      emailLog.providerMessageId || null,
+      new Date().toISOString(),
+    )
+    .run();
+}
+
+export async function hasSuccessfulEmailLog(env, reservationId, emailType, recipient) {
+  const db = requireDb(env);
+  const record = await db
+    .prepare(
+      `
+        SELECT id
+        FROM email_logs
+        WHERE reservation_id = ?
+          AND email_type = ?
+          AND recipient = ?
+          AND status = 'sent'
+        LIMIT 1
+      `,
+    )
+    .bind(reservationId, emailType, recipient)
+    .first();
+
+  return Boolean(record);
+}
+
+export async function hasSuccessfulEmailLogForDate(env, reservationId, emailType, recipient, targetDate) {
+  const db = requireDb(env);
+  const record = await db
+    .prepare(
+      `
+        SELECT id
+        FROM email_logs
+        WHERE reservation_id = ?
+          AND email_type = ?
+          AND recipient = ?
+          AND status = 'sent'
+          AND substr(created_at, 1, 10) = ?
+        LIMIT 1
+      `,
+    )
+    .bind(reservationId, emailType, recipient, targetDate)
+    .first();
+
+  return Boolean(record);
+}
+
+export async function getArrivalReservationsForDate(env, isoDate) {
+  const db = requireDb(env);
+  const { results } = await db
+    .prepare(
+      `
+        SELECT
+          reservations.*,
+          rentable_units.unit_type,
+          rentable_units.display_name AS unit_display_name
+        FROM reservations
+        LEFT JOIN rentable_units ON rentable_units.id = reservations.unit_id
+        WHERE reservations.check_in_date = ?
+          AND reservations.status IN ('confirmed', 'modified', 'refund_due', 'pending_refund')
+        ORDER BY reservations.check_in_date ASC, reservations.public_reference ASC
+      `,
+    )
+    .bind(isoDate)
+    .all();
+
+  return results || [];
+}
+
+export async function listAdminReservations(env, limit = 50) {
+  const db = requireDb(env);
+  const { results } = await db
+    .prepare(
+      `
+        SELECT
+          reservations.id,
+          reservations.public_reference,
+          reservations.unit_code,
+          reservations.status,
+          reservations.guest_first_name,
+          reservations.guest_last_name,
+          reservations.guest_email,
+          reservations.check_in_date,
+          reservations.check_out_date,
+          reservations.total_amount,
+          reservations.currency,
+          reservations.wc_shower_requested,
+          rentable_units.display_name AS unit_display_name,
+          (
+            SELECT payments.status
+            FROM payments
+            WHERE payments.reservation_id = reservations.id
+            ORDER BY payments.created_at DESC
+            LIMIT 1
+          ) AS payment_status
+        FROM reservations
+        LEFT JOIN rentable_units ON rentable_units.id = reservations.unit_id
+        ORDER BY reservations.check_in_date DESC, reservations.created_at DESC
+        LIMIT ?
+      `,
+    )
+    .bind(limit)
+    .all();
+
+  return results || [];
+}
+
+export async function listUnitsForAdmin(env) {
+  const db = requireDb(env);
+  const { results } = await db
+    .prepare(
+      `
+        SELECT
+          id,
+          code,
+          unit_type,
+          display_name,
+          default_base_rate,
+          google_calendar_id,
+          is_active
+        FROM rentable_units
+        ORDER BY display_name ASC
+      `,
+    )
+    .all();
+
+  return results || [];
+}
+
+export async function listRatePeriods(env, unitCode = null) {
+  const db = requireDb(env);
+  const sql = unitCode
+    ? `
+        SELECT
+          rate_periods.id,
+          rate_periods.unit_id,
+          rate_periods.start_date,
+          rate_periods.end_date,
+          rate_periods.nightly_base_rate,
+          rate_periods.label,
+          rate_periods.priority,
+          rate_periods.is_active,
+          rentable_units.code AS unit_code,
+          rentable_units.display_name AS unit_display_name
+        FROM rate_periods
+        LEFT JOIN rentable_units ON rentable_units.id = rate_periods.unit_id
+        WHERE rentable_units.code = ?
+        ORDER BY rate_periods.start_date ASC, rate_periods.priority DESC
+      `
+    : `
+        SELECT
+          rate_periods.id,
+          rate_periods.unit_id,
+          rate_periods.start_date,
+          rate_periods.end_date,
+          rate_periods.nightly_base_rate,
+          rate_periods.label,
+          rate_periods.priority,
+          rate_periods.is_active,
+          rentable_units.code AS unit_code,
+          rentable_units.display_name AS unit_display_name
+        FROM rate_periods
+        LEFT JOIN rentable_units ON rentable_units.id = rate_periods.unit_id
+        ORDER BY rentable_units.display_name ASC, rate_periods.start_date ASC, rate_periods.priority DESC
+      `;
+  const query = unitCode ? db.prepare(sql).bind(unitCode) : db.prepare(sql);
+  const { results } = await query.all();
+  return results || [];
+}
+
+export async function upsertRatePeriod(env, ratePeriod) {
+  const db = requireDb(env);
+  const id = ratePeriod.id || crypto.randomUUID();
+  const nowIso = new Date().toISOString();
+
+  await db
+    .prepare(
+      `
+        INSERT INTO rate_periods (
+          id, unit_id, start_date, end_date, nightly_base_rate, label, priority, is_active, created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ON CONFLICT(id) DO UPDATE SET
+          unit_id = excluded.unit_id,
+          start_date = excluded.start_date,
+          end_date = excluded.end_date,
+          nightly_base_rate = excluded.nightly_base_rate,
+          label = excluded.label,
+          priority = excluded.priority,
+          is_active = excluded.is_active,
+          updated_at = excluded.updated_at
+      `,
+    )
+    .bind(
+      id,
+      ratePeriod.unitId,
+      ratePeriod.startDate,
+      ratePeriod.endDate,
+      ratePeriod.nightlyBaseRate,
+      ratePeriod.label || null,
+      ratePeriod.priority ?? 100,
+      ratePeriod.isActive ? 1 : 0,
+      nowIso,
+      nowIso,
+    )
+    .run();
+
+  return id;
+}
+
+export async function listRecentSyncLogs(env, limit = 20) {
+  const db = requireDb(env);
+  const { results } = await db
+    .prepare(
+      `
+        SELECT
+          sync_logs.id,
+          sync_logs.sync_type,
+          sync_logs.status,
+          sync_logs.message,
+          sync_logs.payload_summary,
+          sync_logs.created_at,
+          rentable_units.code AS unit_code,
+          rentable_units.display_name AS unit_display_name
+        FROM sync_logs
+        LEFT JOIN rentable_units ON rentable_units.id = sync_logs.unit_id
+        ORDER BY sync_logs.created_at DESC
+        LIMIT ?
+      `,
+    )
+    .bind(limit)
+    .all();
+
+  return results || [];
 }
