@@ -589,6 +589,27 @@
     return true;
   }
 
+  function hasSelectableDepartureAfter(startKey) {
+    const earliestCheckout = new Date(`${startKey}T00:00:00`);
+    earliestCheckout.setDate(earliestCheckout.getDate() + minimumStayNights);
+
+    const cursor = new Date(earliestCheckout);
+
+    while (true) {
+      const dateKey = formatDateKey(cursor);
+
+      if (blockedDates.has(dateKey)) {
+        return false;
+      }
+
+      if (!rangeContainsBlockedDate(startKey, dateKey)) {
+        return true;
+      }
+
+      cursor.setDate(cursor.getDate() + 1);
+    }
+  }
+
   function expandBlockedDates(ranges) {
     const set = new Set();
 
@@ -886,7 +907,10 @@
     }
 
     if (fields.checkInDate.value && !fields.checkOutDate.value) {
-      if (!canStartStayOn(fields.checkInDate.value)) {
+      if (
+        !canStartStayOn(fields.checkInDate.value) ||
+        !hasSelectableDepartureAfter(fields.checkInDate.value)
+      ) {
         setAvailabilityStatus(
           texts.minimumStayArrivalTemplate.replace("{nights}", String(minimumStayNights)),
           "error",
