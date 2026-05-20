@@ -37,9 +37,9 @@ Le repository contient maintenant deux couches principales :
 - tarification par unite et periodes tarifaires
 - creation de reservations `pending_payment`
 - flux ICS sortant par unite
-- integration SumUp scaffolded
-- import Booking.com ICS scaffolded
-- Google Calendar sync scaffolded
+- integration SumUp active
+- import Booking.com ICS active
+- Google Calendar sync pret, en attente de credentials definitifs
 - e-mails transactionnels
 - page client de gestion via lien magique
 - mini interface admin par token
@@ -64,7 +64,6 @@ Cela permet de brancher le studio plus tard sans grosse migration de schema.
 - remboursement automatique SumUp
 - declenchement cron reel cote Cloudflare
 - credentials Google Calendar finalises
-- credentials Resend finalises
 - funnel dedie au studio
 
 ## Fichiers de reference

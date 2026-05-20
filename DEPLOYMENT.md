@@ -126,7 +126,6 @@ Variables non secretes possibles :
 - `DEFAULT_CHECK_IN_TIME`
 - `DEFAULT_CHECK_IN_END_TIME`
 - `DEFAULT_CHECK_OUT_TIME`
-- `BOOKING_ICS_IMPORT_URL`
 - `ADMIN_NOTIFICATION_EMAIL`
 - `EMAIL_FROM`
 - `EMAIL_REPLY_TO`
@@ -165,8 +164,9 @@ Ces fichiers sont copies depuis `src/` vers `_site/`.
 ### Booking.com ICS
 
 - chaque unite reservable peut avoir sa propre source ICS
-- l'import est idealement stocke en base dans `external_calendar_sources.import_url`
-- `BOOKING_ICS_IMPORT_URL` reste utile comme fallback pour l'unite par defaut
+- l'import est stocke en base dans `external_calendar_sources.import_url`
+- l'export ICS est resolu par `external_calendar_sources.export_feed_token`
+- il n'y a plus de variable globale `BOOKING_ICS_*`, pour eviter les confusions entre parking et studio
 
 ### SumUp
 
@@ -233,4 +233,5 @@ Important :
 
 - le systeme est deja concu pour supporter ensuite le studio dans le meme moteur
 - la reservation parking est la premiere UX exposee
-- les emails transactionnels et l'admin restent a terminer
+- les e-mails transactionnels, la page client de gestion et la mini interface admin sont deja en place
+- la principale integration encore incomplete cote exploitation reste Google Calendar si les credentials Google ne sont pas encore finalises

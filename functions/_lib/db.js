@@ -819,6 +819,7 @@ export async function getPaymentsForReservation(env, reservationId) {
           status,
           amount,
           currency,
+          raw_payload,
           created_at,
           updated_at
         FROM payments
@@ -830,6 +831,44 @@ export async function getPaymentsForReservation(env, reservationId) {
     .all();
 
   return results || [];
+}
+
+export async function getReservationByPublicReference(env, publicReference) {
+  const db = requireDb(env);
+  return db
+    .prepare(
+      `
+        SELECT
+          reservations.id,
+          reservations.unit_id,
+          reservations.unit_code,
+          reservations.public_reference,
+          reservations.locale,
+          reservations.status,
+          reservations.guest_first_name,
+          reservations.guest_last_name,
+          reservations.guest_email,
+          reservations.check_in_date,
+          reservations.check_out_date,
+          reservations.total_amount,
+          reservations.currency,
+          rentable_units.unit_type,
+          rentable_units.display_name AS unit_display_name,
+          (
+            SELECT payments.status
+            FROM payments
+            WHERE payments.reservation_id = reservations.id
+            ORDER BY payments.created_at DESC
+            LIMIT 1
+          ) AS payment_status
+        FROM reservations
+        LEFT JOIN rentable_units ON rentable_units.id = reservations.unit_id
+        WHERE reservations.public_reference = ?
+        LIMIT 1
+      `,
+    )
+    .bind(publicReference)
+    .first();
 }
 
 export async function updateReservationBookingDetails(env, reservationId, updates) {

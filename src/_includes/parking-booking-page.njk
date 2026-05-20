@@ -152,7 +152,9 @@
         <section class="booking-section">
           <label class="booking-checkbox booking-checkbox-terms">
             <input type="checkbox" id="booking-terms" name="acceptedTerms" required>
-            <span>{{ b.terms }}</span>
+            <span>
+              {{ b.termsPrefix or '' }}<a href="/{{ locale }}/legal/" target="_blank" rel="noopener noreferrer">{{ b.termsLinkLabel or b.terms }}</a>{{ b.termsSuffix or '' }}
+            </span>
           </label>
           <div class="booking-actions">
             <button class="btn btn-primary booking-submit" type="submit" id="booking-submit">

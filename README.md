@@ -16,9 +16,9 @@ Implemented today:
 - multilingual marketing site
 - dedicated parking booking funnel
 - booking backend scaffold with unit-aware data model
-- SumUp hosted checkout integration scaffold
-- Booking.com ICS import scaffold
-- Google Calendar sync scaffold
+- SumUp hosted checkout integration
+- Booking.com ICS import pipeline
+- Google Calendar sync pipeline
 - transactional email pipeline
 - customer self-service booking management page
 - minimal admin interface
@@ -28,6 +28,7 @@ Still to complete:
 
 - studio-specific booking funnel
 - automatic SumUp refunds
+- production Google Calendar credentials and service account sharing
 - final Cloudflare cron deployment for internal jobs
 
 ## Supported languages

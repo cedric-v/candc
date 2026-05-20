@@ -5,6 +5,7 @@ import {
   getReservationForManageToken,
   getUnitByCode,
   insertPaymentRecord,
+  updateReservationAndCalendarStatus,
   updateReservationBookingDetails,
 } from "../../../_lib/db.js";
 import { isArrivalWithin24Hours } from "../../../_lib/date.js";
@@ -19,7 +20,11 @@ function toManageResponse(reservation) {
   const canSelfManage = ["confirmed", "modified", "refund_due", "pending_refund"].includes(
     reservation.status,
   );
-  const paymentPending = reservation.status === "pending_payment";
+  const paymentPending =
+    reservation.status === "pending_payment" ||
+    (reservation.status === "cancelled" && reservation.payment_status !== "paid") ||
+    reservation.status === "payment_setup_failed";
+  const canResumePayment = paymentPending;
 
   return {
     reservation: {
@@ -57,10 +62,11 @@ function toManageResponse(reservation) {
         (reservation.status === "pending_payment" ||
           reservation.refundable_policy_type === "flexible_24h"),
       paymentPending,
+      canResumePayment,
     },
     notices: paymentPending
       ? [
-          "This reservation is still waiting for payment. Date changes are disabled until payment is completed.",
+          "This reservation is still waiting for payment. Use the payment button below to confirm it. Date changes stay disabled until payment is completed.",
         ]
       : [],
   };
@@ -173,6 +179,77 @@ export async function onRequestPost(context) {
         ok: true,
         action: "cancel",
         status: "cancelled",
+      });
+    }
+
+    if (action === "resume_payment") {
+      const canResumePayment =
+        reservation.status === "pending_payment" ||
+        reservation.status === "payment_setup_failed" ||
+        (reservation.status === "cancelled" && reservation.payment_status !== "paid");
+
+      if (!canResumePayment) {
+        return badRequest("This reservation no longer needs an initial payment");
+      }
+
+      const unit = await getUnitByCode(context.env, reservation.unit_code);
+
+      if (!unit) {
+        return badRequest("Unknown unit");
+      }
+
+      if (!isSumUpConfigured(context.env)) {
+        return json(
+          {
+            ok: false,
+            action: "resume_payment",
+            payment: {
+              provider: "sumup",
+              status: "configuration_required",
+            },
+          },
+          { status: 200 },
+        );
+      }
+
+      await updateReservationAndCalendarStatus(
+        context.env,
+        reservation.id,
+        "pending_payment",
+        "pending_payment",
+      );
+
+      const checkoutReference = `${reservation.public_reference}-RETRY-${generateOpaqueToken(6).slice(0, 6).toUpperCase()}`;
+      const checkout = await createHostedCheckout(context.env, {
+        amount: Number(reservation.total_amount),
+        checkoutReference,
+        currency: reservation.currency,
+        description: `${unit.displayName} ${reservation.public_reference}`,
+        redirectUrl: `${getConfig(context.env).publicBaseUrl}/booking/confirmation/?reference=${encodeURIComponent(reservation.public_reference)}&manageToken=${encodeURIComponent(context.params.token)}`,
+        returnUrl: `${getConfig(context.env).publicBaseUrl}/api/booking/sumup/webhook`,
+      });
+
+      await insertPaymentRecord(context.env, {
+        reservationId: reservation.id,
+        provider: "sumup",
+        providerCheckoutId: checkout.id,
+        providerPaymentReference: checkout.transaction_id || null,
+        type: "initial",
+        status: (checkout.status || "PENDING").toLowerCase(),
+        amount: Number(reservation.total_amount),
+        currency: reservation.currency,
+        rawPayload: checkout,
+      });
+
+      return json({
+        ok: true,
+        action: "resume_payment",
+        payment: {
+          provider: "sumup",
+          status: (checkout.status || "PENDING").toLowerCase(),
+          checkoutId: checkout.id,
+          hostedCheckoutUrl: checkout.hosted_checkout_url || null,
+        },
       });
     }
 

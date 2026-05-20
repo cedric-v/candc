@@ -51,8 +51,6 @@ tout en gardant :
 - `TIMEZONE`
 - `DEFAULT_CHECK_IN_TIME`
 - `DEFAULT_CHECK_OUT_TIME`
-- `BOOKING_ICS_FEED_TOKEN`
-- `BOOKING_ICS_IMPORT_URL`
 - `ADMIN_ACCESS_TOKEN`
 - `ADMIN_NOTIFICATION_EMAIL`
 - `EMAIL_FROM`
@@ -274,8 +272,13 @@ Le flux d'import fonctionne par unite reservable.
 
 Sources d'URL prises en charge :
 
-- prioritairement `external_calendar_sources.import_url`
-- sinon `BOOKING_ICS_IMPORT_URL` pour l'unite par defaut
+- `external_calendar_sources.import_url` pour l'import par unite
+- `external_calendar_sources.export_feed_token` pour l'export ICS par unite
+
+Important :
+
+- il n'y a plus de variable globale `BOOKING_ICS_*`
+- cela evite toute ambiguite entre parking et studio
 
 Authentification requise :
 

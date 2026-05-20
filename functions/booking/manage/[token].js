@@ -54,8 +54,9 @@ export function onRequestGet(context) {
             <textarea id="remarks" name="remarks"></textarea>
           </div>
           <div class="actions">
+            <button class="btn-primary" type="button" id="pay-button" hidden>Pay now to confirm</button>
             <button class="btn-secondary" type="button" id="preview-button">Preview updated total</button>
-            <button class="btn-primary" type="submit" id="update-button">Apply changes</button>
+            <button class="btn-primary" type="submit" id="update-button">Save changes</button>
             <button class="btn-danger" type="button" id="cancel-button">Cancel reservation</button>
           </div>
         </form>
@@ -76,6 +77,7 @@ export function onRequestGet(context) {
         const quoteMeta = document.getElementById('quote-meta');
         const form = document.getElementById('manage-form');
         const previewButton = document.getElementById('preview-button');
+        const payButton = document.getElementById('pay-button');
         const cancelButton = document.getElementById('cancel-button');
         const vehicleWrap = document.getElementById('vehicle-wrap');
         let reservation = null;
@@ -123,10 +125,11 @@ export function onRequestGet(context) {
               ['Current total', formatMoney(reservation.totalAmount, reservation.currency)],
             ]);
             fillForm(reservation);
-            form.hidden = !data.permissions.canUpdate && !data.permissions.canCancel;
+            form.hidden = !data.permissions.canUpdate && !data.permissions.canCancel && !data.permissions.canResumePayment;
             previewButton.disabled = !data.permissions.canUpdate;
             form.querySelector('#update-button').disabled = !data.permissions.canUpdate;
             cancelButton.disabled = !data.permissions.canCancel;
+            payButton.hidden = !data.permissions.canResumePayment;
           } catch (error) {
             notice.className = 'notice error';
             notice.textContent = error.message;
@@ -227,7 +230,29 @@ export function onRequestGet(context) {
           }
         }
 
+        async function resumePayment() {
+          notice.className = 'notice info';
+          notice.textContent = 'Preparing your payment link…';
+          try {
+            const data = await fetchJson(apiUrl, {
+              method: 'POST',
+              headers: { 'content-type': 'application/json' },
+              body: JSON.stringify({ action: 'resume_payment' }),
+            });
+            if (data.payment && data.payment.hostedCheckoutUrl) {
+              window.location.assign(data.payment.hostedCheckoutUrl);
+              return;
+            }
+            notice.className = 'notice error';
+            notice.textContent = 'Payment is not available right now. Please contact us if needed.';
+          } catch (error) {
+            notice.className = 'notice error';
+            notice.textContent = error.message;
+          }
+        }
+
         previewButton.addEventListener('click', previewQuote);
+        payButton.addEventListener('click', resumePayment);
         cancelButton.addEventListener('click', cancelReservation);
         form.addEventListener('submit', applyUpdate);
         loadReservation();

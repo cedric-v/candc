@@ -26,14 +26,11 @@ async function fetchIcs(importUrl) {
 }
 
 export async function runBookingIcsSync(env, unitCode = null) {
-  const config = getConfig(env);
   const sources = await getImportCalendarSources(env, "booking", unitCode);
   const results = [];
 
   for (const sourceRecord of sources) {
-    const importUrl =
-      sourceRecord.import_url ||
-      (sourceRecord.unit_code === config.defaultUnitCode ? config.bookingIcsImportUrl : null);
+    const importUrl = sourceRecord.import_url || null;
 
     if (!importUrl) {
       await insertSyncLog(env, {

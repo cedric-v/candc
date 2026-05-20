@@ -101,7 +101,7 @@ export async function onRequestPost(context) {
         checkoutReference: reservationRecord.publicReference,
         currency: pricing.currency,
         description: `${unit.displayName} ${reservationRecord.publicReference}`,
-        redirectUrl: `${config.publicBaseUrl}/booking/confirmation/?reference=${encodeURIComponent(reservationRecord.publicReference)}`,
+        redirectUrl: `${config.publicBaseUrl}/booking/confirmation/?reference=${encodeURIComponent(reservationRecord.publicReference)}&manageToken=${encodeURIComponent(manageToken)}`,
         returnUrl: `${config.publicBaseUrl}/api/booking/sumup/webhook`,
       });
     } catch (error) {

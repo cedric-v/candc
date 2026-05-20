@@ -96,15 +96,15 @@ export function mapCheckoutStatus(status) {
     case "FAILED":
       return {
         paymentStatus: "failed",
-        reservationStatus: "payment_failed",
-        calendarBlockStatus: "released",
+        reservationStatus: "pending_payment",
+        calendarBlockStatus: "pending_payment",
       };
     case "CANCELLED":
     case "EXPIRED":
       return {
         paymentStatus: status.toLowerCase(),
-        reservationStatus: "cancelled",
-        calendarBlockStatus: "released",
+        reservationStatus: "pending_payment",
+        calendarBlockStatus: "pending_payment",
       };
     default:
       return {
