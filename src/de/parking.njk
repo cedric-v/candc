@@ -133,6 +133,29 @@ ogImage: assets/img/logo-cc.jpg
       <h2 class="section-title">{{ t.testimonials.title }}</h2>
       <p class="text-muted">{{ t.testimonials.intro }}</p>
     </div>
+    <div class="featured-testimonial-card mb-8">
+      <div class="featured-testimonial-head">
+        <div>
+          <p class="featured-testimonial-author">Radek, CZ</p>
+          <p class="featured-testimonial-meta">10/10 · 19. Mai 2026</p>
+        </div>
+      </div>
+      <blockquote class="featured-testimonial-quote">
+        “10/10: Was will man mehr?”
+      </blockquote>
+      <p class="featured-testimonial-note">Aus dem Tschechischen mit Google übersetzt.</p>
+    </div>
+    <div class="featured-testimonial-card mb-8">
+      <div class="featured-testimonial-head">
+        <div>
+          <p class="featured-testimonial-author">Luc</p>
+          <p class="featured-testimonial-meta">5/5 · April 2026</p>
+        </div>
+      </div>
+      <blockquote class="featured-testimonial-quote">
+        “Nichts zu sagen, praktisch, ruhiger Ort :-)”
+      </blockquote>
+    </div>
     <div class="gallery-grid" id="testimonials-grid">
       {% set pageTestimonials = testimonials.parking[locale] or testimonials.parking['fr'] %}
       {% for testimonial in pageTestimonials %}
