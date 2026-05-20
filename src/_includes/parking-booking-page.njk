@@ -44,6 +44,7 @@
     data-msg-calendar-arrival="{{ b.checkIn }}"
     data-msg-calendar-departure="{{ b.checkOut }}"
     data-msg-calendar-blocked-short="{{ b.calendarBlockedShort or b.calendarLegendBlocked or 'Unavailable' }}"
+    data-msg-min-stay-template="{{ b.minimumStayErrorTemplate or 'Minimum stay: {nights} night(s).' }}"
   >
     <div class="card booking-main-card">
       <form

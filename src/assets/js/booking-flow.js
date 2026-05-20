@@ -54,6 +54,7 @@
     calendarArrival: root.dataset.msgCalendarArrival || "Check-in",
     calendarDeparture: root.dataset.msgCalendarDeparture || "Check-out",
     calendarBlockedShort: root.dataset.msgCalendarBlockedShort || "Unavailable",
+    minimumStayTemplate: root.dataset.msgMinStayTemplate || "Minimum stay: {nights} night(s).",
   };
 
   const fields = {
@@ -296,7 +297,7 @@
       }
 
       latestQuote = null;
-      setAvailabilityStatus(texts.quoteError, "error");
+      setAvailabilityStatus(resolveQuoteErrorMessage(error), "error");
       resetSummary();
     }
   }
@@ -909,10 +910,39 @@
 
     if (!response.ok) {
       const message = data?.message || `Request failed with status ${response.status}`;
-      throw new Error(message);
+      const error = new Error(message);
+      error.payload = data;
+      throw error;
     }
 
     return data;
+  }
+
+  function resolveQuoteErrorMessage(error) {
+    const details = error?.payload?.details;
+
+    if (Array.isArray(details)) {
+      const minStayDetail = details.find(
+        (detail) =>
+          detail?.field === "checkOutDate" &&
+          typeof detail?.message === "string" &&
+          detail.message.startsWith("Minimum stay is "),
+      );
+
+      if (minStayDetail) {
+        const match = minStayDetail.message.match(/Minimum stay is (\d+)/);
+        if (match) {
+          return texts.minimumStayTemplate.replace("{nights}", match[1]);
+        }
+      }
+
+      const firstMessage = details.find((detail) => typeof detail?.message === "string")?.message;
+      if (firstMessage) {
+        return firstMessage;
+      }
+    }
+
+    return error?.message || texts.quoteError;
   }
 
   function formatCurrency(value, currency) {
