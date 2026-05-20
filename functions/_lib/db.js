@@ -145,6 +145,25 @@ export async function getImportCalendarSources(env, sourceCode = "booking", unit
   return results || [];
 }
 
+export async function getLatestCalendarSyncForUnit(env, unitId, sourceCode = "booking") {
+  const db = requireDb(env);
+  return db
+    .prepare(
+      `
+        SELECT last_synced_at
+        FROM external_calendar_sources
+        WHERE unit_id = ?
+          AND source_code = ?
+          AND is_active = 1
+          AND is_reference = 1
+        ORDER BY updated_at DESC
+        LIMIT 1
+      `,
+    )
+    .bind(unitId, sourceCode)
+    .first();
+}
+
 function normalizeUnitRecord(unit) {
   return {
     id: unit.id,

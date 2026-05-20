@@ -1,4 +1,9 @@
-import { getAvailabilityConflicts, getUnitByCode } from "../../_lib/db.js";
+import {
+  getAvailabilityConflicts,
+  getLatestCalendarSyncForUnit,
+  getNightlyRates,
+  getUnitByCode,
+} from "../../_lib/db.js";
 import { getConfig } from "../../_lib/env.js";
 import { isIsoDateString } from "../../_lib/date.js";
 import { badRequest, json, serverError } from "../../_lib/http.js";
@@ -28,9 +33,12 @@ export async function onRequestGet(context) {
           code: unit.code,
           unitType: unit.unitType,
           displayName: unit.displayName,
+          minStayNights: Number(unit.settings?.minStayNights || 1),
         },
         available: null,
         blockedRanges: [],
+        nightlyRates: [],
+        lastCalendarSyncAt: null,
         message: "Provide from and to to check a specific stay",
       });
     }
@@ -40,12 +48,17 @@ export async function onRequestGet(context) {
     }
 
     const conflicts = await getAvailabilityConflicts(env, unit.id, from, to);
+    const nightlyRates = await getNightlyRates(env, unit, from, to);
+    const latestSync = unit.id
+      ? await getLatestCalendarSyncForUnit(env, unit.id, "booking")
+      : null;
 
     return json({
       unit: {
         code: unit.code,
         unitType: unit.unitType,
         displayName: unit.displayName,
+        minStayNights: Number(unit.settings?.minStayNights || 1),
       },
       available: conflicts.length === 0,
       blockedRanges: conflicts.map((conflict) => ({
@@ -54,6 +67,8 @@ export async function onRequestGet(context) {
         source: conflict.source,
         status: conflict.status,
       })),
+      nightlyRates,
+      lastCalendarSyncAt: latestSync?.last_synced_at || null,
     });
   } catch (error) {
     return serverError("Failed to compute availability", error.message);

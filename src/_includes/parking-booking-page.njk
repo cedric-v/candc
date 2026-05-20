@@ -28,6 +28,12 @@
     data-msg-summary-pending-amount="{{ b.summaryPendingAmount }}"
     data-msg-night-singular="{{ b.nightSingular or 'night' }}"
     data-msg-night-plural="{{ b.nightPlural or 'nights' }}"
+    data-msg-calendar-prev="{{ b.calendarPrev or 'Previous month' }}"
+    data-msg-calendar-next="{{ b.calendarNext or 'Next month' }}"
+    data-msg-calendar-last-sync-prefix="{{ b.calendarLastSyncPrefix or 'Last Booking sync' }}"
+    data-msg-calendar-arrival="{{ b.checkIn }}"
+    data-msg-calendar-departure="{{ b.checkOut }}"
+    data-msg-calendar-blocked-short="{{ b.calendarBlockedShort or b.calendarLegendBlocked or 'Unavailable' }}"
   >
     <div class="card booking-main-card">
       <form id="parking-booking-form" class="booking-form">
@@ -45,6 +51,25 @@
               <label class="form-label" for="booking-check-out">{{ b.checkOut }}</label>
               <input class="form-input" type="date" id="booking-check-out" name="checkOutDate" required>
             </div>
+          </div>
+          <div class="booking-calendar-shell" aria-labelledby="booking-calendar-title">
+            <div class="booking-calendar-head">
+              <div>
+                <h3 id="booking-calendar-title" class="booking-calendar-title">{{ b.calendarTitle or b.availabilityTitle }}</h3>
+                <p class="text-sm text-muted booking-calendar-help">{{ b.calendarHelp or b.availabilityEnterDates }}</p>
+              </div>
+              <div class="booking-calendar-legend" aria-hidden="true">
+                <span><i class="booking-calendar-dot booking-calendar-dot-available"></i>{{ b.calendarLegendAvailable or 'Available' }}</span>
+                <span><i class="booking-calendar-dot booking-calendar-dot-selected"></i>{{ b.calendarLegendSelected or 'Selected' }}</span>
+                <span><i class="booking-calendar-dot booking-calendar-dot-blocked"></i>{{ b.calendarLegendBlocked or 'Unavailable' }}</span>
+              </div>
+            </div>
+            <div class="booking-calendar-toolbar">
+              <div class="booking-calendar-sync text-sm text-muted" id="booking-calendar-sync"></div>
+              <button class="booking-calendar-nav" type="button" id="booking-calendar-prev" aria-label="{{ b.calendarPrev or 'Previous month' }}">&#8249;</button>
+              <button class="booking-calendar-nav" type="button" id="booking-calendar-next" aria-label="{{ b.calendarNext or 'Next month' }}">&#8250;</button>
+            </div>
+            <div class="booking-calendar-grid" id="booking-calendar-grid"></div>
           </div>
           <div class="booking-status" id="booking-availability-status">{{ b.availabilityEnterDates }}</div>
         </section>

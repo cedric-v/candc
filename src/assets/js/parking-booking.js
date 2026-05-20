@@ -18,6 +18,10 @@
   const successPaymentWrap = document.getElementById("booking-success-payment-link-wrap");
   const successPaymentLink = document.getElementById("booking-success-payment-link");
   const nonRefundableCheckbox = document.getElementById("booking-non-refundable");
+  const calendarGrid = document.getElementById("booking-calendar-grid");
+  const calendarSync = document.getElementById("booking-calendar-sync");
+  const calendarPrevButton = document.getElementById("booking-calendar-prev");
+  const calendarNextButton = document.getElementById("booking-calendar-next");
 
   const texts = {
     enterDates: root.dataset.msgEnterDates || "",
@@ -34,6 +38,12 @@
     summaryPendingAmount: root.dataset.msgSummaryPendingAmount || "",
     nightSingular: root.dataset.msgNightSingular || "night",
     nightPlural: root.dataset.msgNightPlural || "nights",
+    calendarPrev: root.dataset.msgCalendarPrev || "Previous month",
+    calendarNext: root.dataset.msgCalendarNext || "Next month",
+    calendarLastSyncPrefix: root.dataset.msgCalendarLastSyncPrefix || "Last Booking sync",
+    calendarArrival: root.dataset.msgCalendarArrival || "Check-in",
+    calendarDeparture: root.dataset.msgCalendarDeparture || "Check-out",
+    calendarBlockedShort: root.dataset.msgCalendarBlockedShort || "Unavailable",
   };
 
   const fields = {
@@ -66,10 +76,17 @@
   let latestQuote = null;
   let availabilityController = null;
   let quoteController = null;
+  let calendarController = null;
+  let currentMonthCursor = startOfMonth(new Date());
+  let blockedDates = new Set();
+  let nightlyRateByDate = new Map();
+  let minimumStayNights = 1;
 
   initializeDateInputs();
   wireEvents();
   resetSummary();
+  renderCalendars();
+  loadCalendarAvailability();
 
   function initializeDateInputs() {
     const today = new Date();
@@ -108,9 +125,67 @@
           fields.checkOutDate.value = minCheckOut;
         }
       }
+
+      renderCalendars();
     });
 
+    fields.checkOutDate.addEventListener("change", renderCalendars);
+
+    if (calendarPrevButton && calendarNextButton) {
+      calendarPrevButton.addEventListener("click", () => {
+        currentMonthCursor = addMonths(currentMonthCursor, -1);
+        renderCalendars();
+        loadCalendarAvailability();
+      });
+
+      calendarNextButton.addEventListener("click", () => {
+        currentMonthCursor = addMonths(currentMonthCursor, 1);
+        renderCalendars();
+        loadCalendarAvailability();
+      });
+    }
+
     form.addEventListener("submit", handleSubmit);
+  }
+
+  async function loadCalendarAvailability() {
+    if (!calendarGrid) {
+      return;
+    }
+
+    if (calendarController) {
+      calendarController.abort();
+    }
+
+    calendarController = new AbortController();
+    const windowStart = formatDateKey(startOfMonth(currentMonthCursor));
+    const windowEnd = formatDateKey(endOfMonth(addMonths(currentMonthCursor, 1)));
+
+    try {
+      const availability = await fetchJson(
+        `${apiBase}/availability?from=${encodeURIComponent(windowStart)}&to=${encodeURIComponent(windowEnd)}&unitCode=${encodeURIComponent(unitCode)}`,
+        {
+          signal: calendarController.signal,
+        },
+      );
+
+      blockedDates = expandBlockedDates(availability.blockedRanges || []);
+      nightlyRateByDate = new Map(
+        (availability.nightlyRates || []).map((night) => [night.date, Number(night.rate)]),
+      );
+      minimumStayNights = Number(availability.unit?.minStayNights || 1);
+      renderCalendarSync(availability.lastCalendarSyncAt);
+      renderCalendars();
+    } catch (error) {
+      if (error.name === "AbortError") {
+        return;
+      }
+
+      blockedDates = new Set();
+      nightlyRateByDate = new Map();
+      renderCalendarSync(null);
+      renderCalendars();
+    }
   }
 
   async function handleQuoteRefresh() {
@@ -258,6 +333,213 @@
     return payload;
   }
 
+  function renderCalendars() {
+    if (!calendarGrid) {
+      return;
+    }
+
+    calendarGrid.innerHTML = "";
+
+    for (let monthOffset = 0; monthOffset < 2; monthOffset += 1) {
+      const monthDate = addMonths(currentMonthCursor, monthOffset);
+      calendarGrid.appendChild(buildMonthElement(monthDate));
+    }
+  }
+
+  function buildMonthElement(monthDate) {
+    const month = document.createElement("section");
+    month.className = "booking-month";
+
+    const title = document.createElement("h4");
+    title.className = "booking-month-title";
+    title.textContent = new Intl.DateTimeFormat(locale, {
+      month: "long",
+      year: "numeric",
+    }).format(monthDate);
+    month.appendChild(title);
+
+    const weekdays = document.createElement("div");
+    weekdays.className = "booking-weekdays";
+    getWeekdayLabels().forEach((label) => {
+      const cell = document.createElement("span");
+      cell.textContent = label;
+      weekdays.appendChild(cell);
+    });
+    month.appendChild(weekdays);
+
+    const days = document.createElement("div");
+    days.className = "booking-days";
+
+    const firstDay = new Date(monthDate.getFullYear(), monthDate.getMonth(), 1);
+    const leadingOffset = (firstDay.getDay() + 6) % 7;
+    for (let index = 0; index < leadingOffset; index += 1) {
+      const spacer = document.createElement("div");
+      spacer.className = "booking-day-spacer";
+      days.appendChild(spacer);
+    }
+
+    const daysInMonth = new Date(monthDate.getFullYear(), monthDate.getMonth() + 1, 0).getDate();
+    for (let day = 1; day <= daysInMonth; day += 1) {
+      const cellDate = new Date(monthDate.getFullYear(), monthDate.getMonth(), day);
+      days.appendChild(buildDayButton(cellDate));
+    }
+
+    month.appendChild(days);
+    return month;
+  }
+
+  function buildDayButton(date) {
+    const button = document.createElement("button");
+    const dateKey = formatDateKey(date);
+    const isPast = dateKey < fields.checkInDate.min;
+    const isBlocked = blockedDates.has(dateKey);
+    const isMinStayBlocked = !isPast && !isBlocked && !canStartStayOn(dateKey);
+    const isSelectedStart = dateKey === fields.checkInDate.value;
+    const isSelectedEnd = dateKey === fields.checkOutDate.value;
+    const inSelectedRange = isDateInsideSelectedRange(dateKey);
+
+    button.type = "button";
+    button.className = "booking-day";
+
+    if (isPast || isBlocked || isMinStayBlocked) {
+      button.classList.add("booking-day-disabled");
+      button.disabled = true;
+    }
+
+    if (isPast) {
+      button.classList.add("booking-day-past");
+    } else if (isBlocked) {
+      button.classList.add("booking-day-blocked");
+    } else if (isMinStayBlocked) {
+      button.classList.add("booking-day-blocked");
+    } else if (inSelectedRange) {
+      button.classList.add("booking-day-in-range");
+    }
+
+    if (isSelectedStart || isSelectedEnd) {
+      button.classList.add("booking-day-selected");
+    }
+
+    button.setAttribute("aria-label", new Intl.DateTimeFormat(locale, {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    }).format(date));
+
+    if (!(isPast || isBlocked || isMinStayBlocked)) {
+      button.addEventListener("click", () => handleCalendarSelection(dateKey));
+    }
+
+    const dayNumber = document.createElement("span");
+    dayNumber.className = "booking-day-number";
+    dayNumber.textContent = String(date.getDate());
+    button.appendChild(dayNumber);
+
+    const state = document.createElement("span");
+    state.className = "booking-day-state";
+    if (isSelectedStart) {
+      state.textContent = texts.calendarArrival;
+    } else if (isSelectedEnd) {
+      state.textContent = texts.calendarDeparture;
+    } else if (isBlocked || isMinStayBlocked) {
+      state.textContent = texts.calendarBlockedShort;
+    } else if (nightlyRateByDate.has(dateKey)) {
+      state.textContent = formatDayPrice(nightlyRateByDate.get(dateKey));
+    } else {
+      state.textContent = "";
+    }
+    button.appendChild(state);
+
+    return button;
+  }
+
+  function handleCalendarSelection(dateKey) {
+    const hasStart = Boolean(fields.checkInDate.value);
+    const hasEnd = Boolean(fields.checkOutDate.value);
+
+    if (!hasStart || hasEnd) {
+      fields.checkInDate.value = dateKey;
+      fields.checkOutDate.value = nextAvailableDate(dateKey);
+    } else if (dateKey <= fields.checkInDate.value) {
+      fields.checkInDate.value = dateKey;
+      fields.checkOutDate.value = nextAvailableDate(dateKey);
+    } else if (rangeContainsBlockedDate(fields.checkInDate.value, dateKey)) {
+      fields.checkInDate.value = dateKey;
+      fields.checkOutDate.value = nextAvailableDate(dateKey);
+    } else {
+      fields.checkOutDate.value = dateKey;
+    }
+
+    fields.checkOutDate.min = nextAvailableDate(fields.checkInDate.value);
+    renderCalendars();
+    handleQuoteRefresh();
+  }
+
+  function nextAvailableDate(startDateKey) {
+    const cursor = new Date(`${startDateKey}T00:00:00`);
+    cursor.setDate(cursor.getDate() + 1);
+
+    while (blockedDates.has(formatDateKey(cursor))) {
+      cursor.setDate(cursor.getDate() + 1);
+    }
+
+    return formatDateKey(cursor);
+  }
+
+  function isDateInsideSelectedRange(dateKey) {
+    return Boolean(
+      fields.checkInDate.value &&
+      fields.checkOutDate.value &&
+      dateKey > fields.checkInDate.value &&
+      dateKey < fields.checkOutDate.value
+    );
+  }
+
+  function rangeContainsBlockedDate(startKey, endKey) {
+    const cursor = new Date(`${startKey}T00:00:00`);
+    cursor.setDate(cursor.getDate() + 1);
+
+    while (formatDateKey(cursor) < endKey) {
+      if (blockedDates.has(formatDateKey(cursor))) {
+        return true;
+      }
+      cursor.setDate(cursor.getDate() + 1);
+    }
+
+    return false;
+  }
+
+  function canStartStayOn(startKey) {
+    const cursor = new Date(`${startKey}T00:00:00`);
+
+    for (let nightIndex = 0; nightIndex < minimumStayNights; nightIndex += 1) {
+      const key = formatDateKey(cursor);
+      if (blockedDates.has(key)) {
+        return false;
+      }
+      cursor.setDate(cursor.getDate() + 1);
+    }
+
+    return true;
+  }
+
+  function expandBlockedDates(ranges) {
+    const set = new Set();
+
+    ranges.forEach((range) => {
+      const cursor = new Date(`${range.startDate}T00:00:00`);
+      const end = new Date(`${range.endDate}T00:00:00`);
+
+      while (cursor < end) {
+        set.add(formatDateKey(cursor));
+        cursor.setDate(cursor.getDate() + 1);
+      }
+    });
+
+    return set;
+  }
+
   function hasCoreFields() {
     return (
       fields.checkInDate.value &&
@@ -334,6 +616,15 @@
     }).format(value || 0);
   }
 
+  function formatDayPrice(value) {
+    return new Intl.NumberFormat(locale, {
+      style: "currency",
+      currency: "CHF",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(value || 0);
+  }
+
   function formatSignedCurrency(value, currency) {
     if (!value) {
       return formatCurrency(0, currency);
@@ -344,6 +635,66 @@
 
   function toDateInputValue(date) {
     return date.toISOString().slice(0, 10);
+  }
+
+  function formatDateKey(date) {
+    if (typeof date === "string") {
+      return date;
+    }
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  }
+
+  function startOfMonth(date) {
+    return new Date(date.getFullYear(), date.getMonth(), 1);
+  }
+
+  function endOfMonth(date) {
+    return new Date(date.getFullYear(), date.getMonth() + 1, 0);
+  }
+
+  function addMonths(date, amount) {
+    return new Date(date.getFullYear(), date.getMonth() + amount, 1);
+  }
+
+  function getWeekdayLabels() {
+    const labels = [];
+    const baseMonday = new Date(Date.UTC(2026, 0, 5));
+
+    for (let index = 0; index < 7; index += 1) {
+      const date = new Date(baseMonday);
+      date.setUTCDate(baseMonday.getUTCDate() + index);
+      labels.push(
+        new Intl.DateTimeFormat(locale, { weekday: "short" })
+          .format(date)
+          .replace(".", ""),
+      );
+    }
+
+    return labels;
+  }
+
+  function renderCalendarSync(isoDateTime) {
+    if (!calendarSync) {
+      return;
+    }
+
+    if (!isoDateTime) {
+      calendarSync.textContent = "";
+      return;
+    }
+
+    const formatted = new Intl.DateTimeFormat(locale, {
+      day: "numeric",
+      month: "short",
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(new Date(isoDateTime));
+
+    calendarSync.textContent = `${texts.calendarLastSyncPrefix}: ${formatted}`;
   }
 
   function formatDate(isoDate) {
