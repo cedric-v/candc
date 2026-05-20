@@ -24,10 +24,10 @@ export function onRequestGet() {
       <section class="card stack">
         <h2>Quick actions</h2>
         <div class="actions">
-          <button class="btn-secondary" type="button" id="sync-booking-button">Run Booking.com sync</button>
+          <button class="btn-secondary" type="button" id="sync-booking-button">Run calendar sync</button>
           <button class="btn-secondary" type="button" id="send-arrival-button">Send today's arrival emails</button>
         </div>
-        <p class="small">These actions reuse the same backend jobs that will later be called by automated triggers.</p>
+        <p class="small">These actions reuse the same backend jobs that will later be called by automated triggers. They sync all active imported OTA calendars configured in the system.</p>
       </section>
     </div>
     <section class="card stack" style="margin-top:18px">
@@ -216,7 +216,7 @@ export function onRequestGet() {
         syncBookingButton.addEventListener('click', async () => {
           try {
             adminNotice.className = 'notice info';
-            adminNotice.textContent = 'Running Booking.com sync…';
+            adminNotice.textContent = 'Running calendar sync…';
             await apiFetch('POST', { action: 'run_booking_sync' });
             await loadDashboard();
           } catch (error) {

@@ -305,6 +305,7 @@ Etat actuel :
 - pret pour d'autres tarifs via `rate_periods`
 - pret pour des regles propres au studio via `settings_json`
 - pret pour ne pas exiger les donnees vehicule sur les unites non parking
+- le funnel studio public est deja expose
 
 Ce qui restera a faire si besoin :
 
@@ -324,6 +325,10 @@ Important :
 
 - il n'y a plus de variable globale `BOOKING_ICS_*`
 - cela evite toute ambiguite entre parking et studio
+- le job importe toutes les sources ICS actives declarees en base pour l'unite
+- `booking` est la source principale attendue
+- `airbnb` peut aussi etre importe si une source active existe
+- l'interface admin presente donc un bouton generique de sync calendrier
 
 Authentification requise :
 

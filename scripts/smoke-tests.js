@@ -49,7 +49,7 @@ for (const lang of languages) {
   }
 }
 
-// Test 3: Vérifier les CTA (Booking.com, Airbnb, WhatsApp, Email)
+// Test 3: Vérifier les CTA principaux
 console.log('\n🔗 Checking CTAs in pages...');
 for (const lang of languages) {
   for (const page of pages) {
@@ -59,14 +59,14 @@ for (const lang of languages) {
     if (fs.existsSync(fullPath)) {
       const content = fs.readFileSync(fullPath, 'utf8');
 
-      // Vérifier Booking.com
-      if (!content.includes('booking.com') && !content.includes('Booking.com')) {
-        warnings.push(`${pagePath}: Missing Booking.com link`);
-      }
+      // Vérifier qu'une page de presentation conserve au moins un CTA de reservation pertinent.
+      if (page === 'eco-studio' || page === 'parking') {
+        const hasDirectBookingCta = content.includes('/booking/') || content.includes('checkAvailability');
+        const hasOtaLink = content.includes('booking.com') || content.includes('airbnb');
 
-      // Vérifier Airbnb
-      if (!content.includes('airbnb.com') && !content.includes('Airbnb')) {
-        warnings.push(`${pagePath}: Missing Airbnb link`);
+        if (!hasDirectBookingCta && !hasOtaLink) {
+          warnings.push(`${pagePath}: Missing booking CTA`);
+        }
       }
 
       // Vérifier WhatsApp (sur contact et index)

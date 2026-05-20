@@ -41,6 +41,7 @@ Le repository contient maintenant deux couches principales :
 - bebes `0-2` gratuits
 - parking gratuit pour `1` vehicule
 - terrasse privative incluse
+- sejour minimum de `4` nuites
 - remise `15 %` des `30` nuits
 - remise `10 %` non remboursable
 - remise `5 %` des `7` nuits
@@ -57,6 +58,8 @@ Le repository contient maintenant deux couches principales :
 - flux ICS sortant par unite
 - integration SumUp active
 - import Booking.com ICS active
+- import Airbnb ICS egalement possible si une source active existe pour l'unite
+- en prod actuelle, le studio dispose aussi d'une source Airbnb importee
 - Google Calendar sync implemente mais desactive par defaut tant qu'il n'est pas explicitement reactive
 - e-mails transactionnels localises selon la langue de reservation
 - page client de gestion via lien magique

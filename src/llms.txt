@@ -45,7 +45,7 @@ Le funnel studio est lui aussi expose cote site.
 
 - `llms.txt` : https://candc.ch/llms.txt
 - `site-context.json` : https://candc.ch/.well-known/site-context.json
-- WebMCP progressif sur la reservation parking
+- WebMCP progressif sur les reservations parking et studio
 
 Pages actuellement exposees aux agents en contexte navigateur :
 
@@ -67,11 +67,12 @@ Notes :
 
 - WebMCP ici est une couche navigateur visible, ajoutee comme progressive enhancement
 - le back-office admin n'est pas expose comme outil WebMCP public
-- le funnel studio n'est pas encore agent-ready cote UI
+- les funnels parking et studio sont tous deux agent-ready cote UI
 
 ## Integrations prevues
 
-- Booking.com ICS comme source de disponibilite externe
+- Booking.com ICS comme source de disponibilite externe principale
+- Airbnb ICS egalement possible si une source active existe pour l'unite
 - export ICS des reservations directes
 - SumUp pour le paiement
 - Google Calendar en option, desactive par defaut

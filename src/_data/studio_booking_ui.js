@@ -34,7 +34,7 @@ const overrides = {
     webMcpCheckoutToolDescription: "Prepare a direct reservation checkout for the eco studio, collect traveller details, create the reservation, and send the traveller to payment.",
     directBookingPromoText: "Profitez d'un avantage exclusif à notre site officiel : réservez en direct et les frais de ménage (d'une valeur de 64 CHF) sont offerts dès 5 nuits.",
     cleaningFeeLabel: "Frais de ménage",
-    complimentaryLabel: "Offert"
+    complimentaryLabel: "Offerts"
   },
   en: {
     title: "Book your studio online",

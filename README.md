@@ -26,6 +26,7 @@ Implemented today:
 - minimal admin interface
 - internal jobs endpoint for sync and localized arrival emails
 - WebMCP-ready public parking and studio booking flows, plus reservation management flow
+- Booking.com as the primary imported external availability source, with optional Airbnb ICS sources when configured per unit
 
 Still to complete:
 
@@ -139,7 +140,7 @@ npm test
 Smoke tests currently verify:
 
 - main localized pages
-- parking booking pages
+- parking and studio booking pages
 - sitemap hreflang output
 - robots.txt
 
@@ -170,6 +171,12 @@ Each unit can have:
 - separate rate periods
 - separate business settings
 - separate booking UI later on
+
+Operational sync note:
+
+- the admin UI exposes `Run Booking.com sync`
+- there is intentionally no separate `Run Airbnb sync` action
+- Airbnb is expected to remain synchronized downstream from Booking.com instead of acting as a second imported source
 
 Current payment fee assumption for the parking funnel:
 
