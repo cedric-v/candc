@@ -137,26 +137,8 @@ function normalizeLongStayDiscountTiers(unitSettings) {
   const configuredTiers = Array.isArray(unitSettings.longStayDiscountTiers)
     ? unitSettings.longStayDiscountTiers
     : [];
-  const legacyTiers = [];
-  const weeklyStayDiscountRate = Number(unitSettings.weeklyStayDiscountRate ?? 0);
-  const weeklyStayThresholdNights = Number(unitSettings.weeklyStayThresholdNights ?? 0);
-  const legacyLongStayDiscountRate = Number(unitSettings.longStayDiscountRate ?? 0);
 
-  if (weeklyStayThresholdNights > 0 && weeklyStayDiscountRate > 0) {
-    legacyTiers.push({
-      minNights: weeklyStayThresholdNights,
-      rate: weeklyStayDiscountRate,
-    });
-  }
-
-  if (legacyLongStayDiscountRate > 0) {
-    legacyTiers.push({
-      minNights: 30,
-      rate: legacyLongStayDiscountRate,
-    });
-  }
-
-  const normalized = (configuredTiers.length > 0 ? configuredTiers : legacyTiers)
+  const normalized = [...configuredTiers]
     .map((tier) => ({
       minNights: Number(tier?.minNights || 0),
       rate: Number(tier?.rate || 0),

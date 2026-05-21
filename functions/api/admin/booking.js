@@ -115,8 +115,6 @@ export async function onRequestPost(context) {
       const nextSettings = {
         ...(unit.settings || {}),
         longStayDiscountTiers: dedupedTiers,
-        longStayDiscountRate:
-          dedupedTiers.length > 0 ? dedupedTiers[dedupedTiers.length - 1].rate : 0,
       };
 
       await updateUnitSettings(context.env, payload.unitId, nextSettings);

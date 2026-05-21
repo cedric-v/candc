@@ -23,7 +23,6 @@ export const DEFAULT_UNITS = [
       allowsWcShowerOption: true,
       adultTouristTaxChf: 3,
       wcShowerCleaningFeeChf: 10,
-      longStayDiscountRate: 0.3,
       longStayDiscountTiers: [
         { minNights: 7, rate: 0.1 },
         { minNights: 16, rate: 0.2 },
@@ -54,7 +53,6 @@ export const DEFAULT_UNITS = [
       includedAdultsCount: 1,
       extraAdultNightlyRateChf: 7,
       extraChildNightlyRateChf: 5,
-      longStayDiscountRate: 0.25,
       longStayDiscountTiers: [
         { minNights: 7, rate: 0.1 },
         { minNights: 16, rate: 0.2 },
