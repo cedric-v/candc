@@ -6,6 +6,7 @@ import {
   listRatePeriods,
   listRecentSyncLogs,
   listUnitsForAdmin,
+  updateUnitSettings,
   upsertRatePeriod,
 } from "../../_lib/db.js";
 import { runArrivalEmails, runBookingIcsSync, validateCalendarSources } from "../../_lib/jobs.js";
@@ -77,6 +78,54 @@ export async function onRequestPost(context) {
         ok: true,
         action,
         ratePeriodId,
+      });
+    }
+
+    if (action === "update_long_stay_discounts") {
+      if (!payload.unitId) {
+        return badRequest("unitId is required");
+      }
+
+      const units = await listUnitsForAdmin(context.env);
+      const unit = units.find((item) => item.id === payload.unitId);
+
+      if (!unit) {
+        return badRequest("Unknown unit");
+      }
+
+      const tiers = Array.isArray(payload.tiers) ? payload.tiers : [];
+      const normalizedTiers = tiers
+        .map((tier) => ({
+          minNights: Number(tier?.minNights || 0),
+          rate: Number(tier?.rate || 0),
+        }))
+        .filter((tier) => tier.minNights > 0 && tier.rate > 0);
+
+      if (normalizedTiers.some((tier) => !Number.isFinite(tier.minNights) || !Number.isFinite(tier.rate))) {
+        return badRequest("All tier values must be numeric");
+      }
+
+      const dedupedTiers = normalizedTiers
+        .sort((left, right) => left.minNights - right.minNights)
+        .filter(
+          (tier, index, list) =>
+            list.findIndex((candidate) => candidate.minNights === tier.minNights) === index,
+        );
+
+      const nextSettings = {
+        ...(unit.settings || {}),
+        longStayDiscountTiers: dedupedTiers,
+        longStayDiscountRate:
+          dedupedTiers.length > 0 ? dedupedTiers[dedupedTiers.length - 1].rate : 0,
+      };
+
+      await updateUnitSettings(context.env, payload.unitId, nextSettings);
+
+      return json({
+        ok: true,
+        action,
+        unitId: payload.unitId,
+        tiers: dedupedTiers,
       });
     }
 

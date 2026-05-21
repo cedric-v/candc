@@ -72,6 +72,61 @@ export function onRequestGet() {
       </form>
     </section>
     <section class="card stack" style="margin-top:18px">
+      <h2>Long-stay discounts</h2>
+      <p class="small">Configure up to three long-stay discount tiers per unit. The highest eligible tier is applied automatically and still appears as a single “Long-stay discount” line in the customer quote.</p>
+      <form id="long-stay-form" class="stack">
+        <div class="field">
+          <label for="longStayUnitId">Unit</label>
+          <select id="longStayUnitId" name="unitId"></select>
+        </div>
+        <div class="field-row three">
+          <div class="field">
+            <label for="longStayNights1">Tier 1 minimum nights</label>
+            <input id="longStayNights1" name="longStayNights1" type="number" min="1" step="1" placeholder="16">
+          </div>
+          <div class="field">
+            <label for="longStayRate1">Tier 1 discount (%)</label>
+            <input id="longStayRate1" name="longStayRate1" type="number" min="0" max="100" step="0.01" placeholder="20">
+          </div>
+          <div class="field">
+            <label> </label>
+            <div class="small">Example: more than 15 days = 20%</div>
+          </div>
+        </div>
+        <div class="field-row three">
+          <div class="field">
+            <label for="longStayNights2">Tier 2 minimum nights</label>
+            <input id="longStayNights2" name="longStayNights2" type="number" min="1" step="1" placeholder="30">
+          </div>
+          <div class="field">
+            <label for="longStayRate2">Tier 2 discount (%)</label>
+            <input id="longStayRate2" name="longStayRate2" type="number" min="0" max="100" step="0.01" placeholder="25">
+          </div>
+          <div class="field">
+            <label> </label>
+            <div class="small">Example: 30 nights or more = 25%</div>
+          </div>
+        </div>
+        <div class="field-row three">
+          <div class="field">
+            <label for="longStayNights3">Tier 3 minimum nights</label>
+            <input id="longStayNights3" name="longStayNights3" type="number" min="1" step="1" placeholder="60">
+          </div>
+          <div class="field">
+            <label for="longStayRate3">Tier 3 discount (%)</label>
+            <input id="longStayRate3" name="longStayRate3" type="number" min="0" max="100" step="0.01" placeholder="30">
+          </div>
+          <div class="field">
+            <label> </label>
+            <div class="small">Example: 60 nights or more = 30%</div>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn-primary" type="submit">Save long-stay discounts</button>
+        </div>
+      </form>
+    </section>
+    <section class="card stack" style="margin-top:18px">
       <h2>Recent reservations</h2>
       <div id="admin-reservations" class="small">No data loaded yet.</div>
     </section>
@@ -92,8 +147,10 @@ export function onRequestGet() {
         const apiUrl = '/api/admin/booking';
         const authForm = document.getElementById('admin-auth-form');
         const ratePeriodForm = document.getElementById('rate-period-form');
+        const longStayForm = document.getElementById('long-stay-form');
         const adminNotice = document.getElementById('admin-notice');
         const unitSelect = document.getElementById('unitId');
+        const longStayUnitSelect = document.getElementById('longStayUnitId');
         const reservationsWrap = document.getElementById('admin-reservations');
         const ratePeriodsWrap = document.getElementById('admin-rate-periods');
         const syncLogsWrap = document.getElementById('admin-sync-logs');
@@ -103,6 +160,7 @@ export function onRequestGet() {
         const validateCalendarButton = document.getElementById('validate-calendar-button');
         const sendArrivalButton = document.getElementById('send-arrival-button');
         let adminToken = sessionStorage.getItem('candcAdminToken') || '';
+        let adminUnits = [];
 
         if (adminToken) {
           document.getElementById('adminToken').value = adminToken;
@@ -169,12 +227,41 @@ export function onRequestGet() {
           }).join('');
         }
 
+        function getLongStayInputs() {
+          return [1, 2, 3].map((index) => ({
+            nights: longStayForm.elements['longStayNights' + index],
+            rate: longStayForm.elements['longStayRate' + index],
+          }));
+        }
+
+        function fillLongStayForm(unitId) {
+          const unit = adminUnits.find((item) => item.id === unitId);
+          const tiers = Array.isArray(unit?.settings?.longStayDiscountTiers)
+            ? [...unit.settings.longStayDiscountTiers].sort((left, right) => left.minNights - right.minNights)
+            : [];
+
+          getLongStayInputs().forEach((row, index) => {
+            const tier = tiers[index];
+            row.nights.value = tier?.minNights || '';
+            row.rate.value = tier ? Number(tier.rate * 100).toFixed(2).replace(/\.00$/, '') : '';
+          });
+        }
+
         async function loadDashboard() {
           adminNotice.className = 'notice info';
           adminNotice.textContent = 'Loading dashboard…';
           try {
             const data = await apiFetch('GET');
-            unitSelect.innerHTML = data.units.map((unit) => '<option value="' + unit.id + '">' + unit.display_name + '</option>').join('');
+            adminUnits = data.units || [];
+            const unitOptions = adminUnits.map((unit) => '<option value="' + unit.id + '">' + unit.display_name + '</option>').join('');
+            unitSelect.innerHTML = unitOptions;
+            longStayUnitSelect.innerHTML = unitOptions;
+            if (longStayUnitSelect.value) {
+              fillLongStayForm(longStayUnitSelect.value);
+            } else if (adminUnits[0]) {
+              longStayUnitSelect.value = adminUnits[0].id;
+              fillLongStayForm(adminUnits[0].id);
+            }
             reservationsWrap.innerHTML = renderTable(
               data.reservations.map((item) => ({
                 reference: item.public_reference,
@@ -276,6 +363,34 @@ export function onRequestGet() {
             adminNotice.className = 'notice success';
             adminNotice.textContent = 'Pricing period saved.';
             ratePeriodForm.reset();
+            await loadDashboard();
+          } catch (error) {
+            adminNotice.className = 'notice error';
+            adminNotice.textContent = error.message;
+          }
+        });
+
+        longStayUnitSelect.addEventListener('change', () => {
+          fillLongStayForm(longStayUnitSelect.value);
+        });
+
+        longStayForm.addEventListener('submit', async (event) => {
+          event.preventDefault();
+          try {
+            const tiers = getLongStayInputs()
+              .map((row) => ({
+                minNights: Number(row.nights.value || 0),
+                rate: Number(row.rate.value || 0) / 100,
+              }))
+              .filter((tier) => tier.minNights > 0 && tier.rate > 0);
+
+            await apiFetch('POST', {
+              action: 'update_long_stay_discounts',
+              unitId: longStayForm.elements.unitId.value,
+              tiers,
+            });
+            adminNotice.className = 'notice success';
+            adminNotice.textContent = 'Long-stay discounts saved.';
             await loadDashboard();
           } catch (error) {
             adminNotice.className = 'notice error';

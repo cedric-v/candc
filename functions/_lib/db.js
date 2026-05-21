@@ -1190,6 +1190,7 @@ export async function listUnitsForAdmin(env) {
           unit_type,
           display_name,
           default_base_rate,
+          settings_json,
           google_calendar_id,
           is_active
         FROM rentable_units
@@ -1198,7 +1199,10 @@ export async function listUnitsForAdmin(env) {
     )
     .all();
 
-  return results || [];
+  return (results || []).map((unit) => ({
+    ...unit,
+    settings: unit.settings_json ? JSON.parse(unit.settings_json) : {},
+  }));
 }
 
 export async function listCalendarHealthForAdmin(env) {
@@ -1372,6 +1376,22 @@ export async function upsertRatePeriod(env, ratePeriod) {
     .run();
 
   return id;
+}
+
+export async function updateUnitSettings(env, unitId, settings) {
+  const db = requireDb(env);
+  const nowIso = new Date().toISOString();
+
+  await db
+    .prepare(
+      `
+        UPDATE rentable_units
+        SET settings_json = ?, updated_at = ?
+        WHERE id = ?
+      `,
+    )
+    .bind(JSON.stringify(settings || {}), nowIso, unitId)
+    .run();
 }
 
 export async function listRecentSyncLogs(env, limit = 20) {

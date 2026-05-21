@@ -142,6 +142,78 @@ function runPricingTests() {
   assertEqual(studioQuote.touristTaxAmount, 42, "Studio tourist tax should match adults only");
   assertEqual(studioQuote.weeklyStayDiscountAmount, 34.96, "Studio 7+ night rebate should be applied");
   assertEqual(studioQuote.nonRefundableDiscountAmount, 77.7, "Studio non-refundable discount should apply after long-stay base");
+
+  const studioLongStayQuote = calculateQuoteFromResolvedUnit(
+    {
+      ...studio,
+      unitType: studio.unitType,
+      displayName: studio.displayName,
+      checkInStartTime: studio.checkInStartTime,
+      currency: studio.currency,
+    },
+    createNightlyRates("2027-08-01", 16, 99),
+    {
+      unitCode: "eco-studio",
+      checkInDate: "2027-08-01",
+      checkOutDate: "2027-08-17",
+      adults: 1,
+      children: 0,
+      infants: 0,
+      wcShowerRequested: false,
+      nonRefundableSelected: false,
+    },
+    config,
+  );
+
+  assertEqual(studioLongStayQuote.appliedLongStayDiscountRate, 0.2, "Studio should apply 20% long-stay discount from 16 nights");
+
+  const studioThirtyNightQuote = calculateQuoteFromResolvedUnit(
+    {
+      ...studio,
+      unitType: studio.unitType,
+      displayName: studio.displayName,
+      checkInStartTime: studio.checkInStartTime,
+      currency: studio.currency,
+    },
+    createNightlyRates("2027-09-01", 30, 99),
+    {
+      unitCode: "eco-studio",
+      checkInDate: "2027-09-01",
+      checkOutDate: "2027-10-01",
+      adults: 1,
+      children: 0,
+      infants: 0,
+      wcShowerRequested: false,
+      nonRefundableSelected: false,
+    },
+    config,
+  );
+
+  assertEqual(studioThirtyNightQuote.appliedLongStayDiscountRate, 0.25, "Studio should apply 25% long-stay discount from 30 nights");
+
+  const studioSixtyNightQuote = calculateQuoteFromResolvedUnit(
+    {
+      ...studio,
+      unitType: studio.unitType,
+      displayName: studio.displayName,
+      checkInStartTime: studio.checkInStartTime,
+      currency: studio.currency,
+    },
+    createNightlyRates("2027-11-01", 60, 99),
+    {
+      unitCode: "eco-studio",
+      checkInDate: "2027-11-01",
+      checkOutDate: "2027-12-31",
+      adults: 1,
+      children: 0,
+      infants: 0,
+      wcShowerRequested: false,
+      nonRefundableSelected: false,
+    },
+    config,
+  );
+
+  assertEqual(studioSixtyNightQuote.appliedLongStayDiscountRate, 0.3, "Studio should apply 30% long-stay discount from 60 nights");
 }
 
 function runRefundPlanTests() {

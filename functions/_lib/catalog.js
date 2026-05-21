@@ -24,6 +24,9 @@ export const DEFAULT_UNITS = [
       adultTouristTaxChf: 3,
       wcShowerCleaningFeeChf: 10,
       longStayDiscountRate: 0.15,
+      longStayDiscountTiers: [
+        { minNights: 30, rate: 0.15 },
+      ],
       nonRefundableDiscountRate: 0.1,
       minStayNights: 1,
     },
@@ -48,7 +51,12 @@ export const DEFAULT_UNITS = [
       includedAdultsCount: 1,
       extraAdultNightlyRateChf: 7,
       extraChildNightlyRateChf: 5,
-      longStayDiscountRate: 0.15,
+      longStayDiscountRate: 0.25,
+      longStayDiscountTiers: [
+        { minNights: 16, rate: 0.2 },
+        { minNights: 30, rate: 0.25 },
+        { minNights: 60, rate: 0.3 },
+      ],
       nonRefundableDiscountRate: 0.1,
       weeklyStayDiscountRate: 0.05,
       weeklyStayThresholdNights: 7,

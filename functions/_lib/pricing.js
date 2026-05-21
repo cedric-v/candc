@@ -62,9 +62,14 @@ export function calculateQuoteFromResolvedUnit(unit, nightlyRates, input, config
   const optionsAmount = (wcShowerRequested ? roundMoney(wcShowerCleaningFeeChf) : 0) + cleaningFeeAmount;
 
   const accommodationAmount = roundMoney(baseAmount + guestSurchargeAmount);
-  const longStayDiscountAmount = nights >= 30
-    ? roundMoney(accommodationAmount * longStayDiscountRate)
-    : 0;
+  const appliedLongStayTier = resolveLongStayDiscountTier(unitSettings, nights);
+  const appliedLongStayDiscountRate =
+    appliedLongStayTier?.rate ??
+    (nights >= 30 ? longStayDiscountRate : 0);
+  const longStayDiscountAmount =
+    appliedLongStayDiscountRate > 0
+      ? roundMoney(accommodationAmount * appliedLongStayDiscountRate)
+      : 0;
   const arrivalLessThan24h = isArrivalWithin24Hours(
     input.checkInDate,
     unit.checkInStartTime || config.checkInTime,
@@ -113,6 +118,8 @@ export function calculateQuoteFromResolvedUnit(unit, nightlyRates, input, config
     touristTaxAmount,
     optionsAmount,
     longStayDiscountAmount,
+    appliedLongStayDiscountRate,
+    appliedLongStayTier,
     nonRefundableDiscountAmount,
     weeklyStayDiscountAmount,
     paymentFeeAmount,
@@ -127,6 +134,20 @@ export function calculateQuoteFromResolvedUnit(unit, nightlyRates, input, config
       wcShowerRequested,
     },
   };
+}
+
+function resolveLongStayDiscountTier(unitSettings, nights) {
+  const tiers = Array.isArray(unitSettings.longStayDiscountTiers)
+    ? unitSettings.longStayDiscountTiers
+        .map((tier) => ({
+          minNights: Number(tier?.minNights || 0),
+          rate: Number(tier?.rate || 0),
+        }))
+        .filter((tier) => tier.minNights > 0 && tier.rate > 0)
+        .sort((left, right) => right.minNights - left.minNights)
+    : [];
+
+  return tiers.find((tier) => nights >= tier.minNights) || null;
 }
 
 function roundMoney(value) {

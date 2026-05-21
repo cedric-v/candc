@@ -42,7 +42,9 @@ Le repository contient maintenant deux couches principales :
 - parking gratuit pour `1` vehicule
 - terrasse privative incluse
 - sejour minimum de `4` nuites
-- remise `15 %` des `30` nuits
+- remise `20 %` des `16` nuits
+- remise `25 %` des `30` nuits
+- remise `30 %` des `60` nuits
 - remise `10 %` non remboursable
 - remise `5 %` des `7` nuits
 

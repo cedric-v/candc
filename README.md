@@ -202,7 +202,9 @@ Current studio pricing baseline:
 - infants `0-2` free
 - free parking for `1 vehicle`
 - private terrace included
-- `15 %` discount from `30` nights
+- `20 %` discount from `16` nights
+- `25 %` discount from `30` nights
+- `30 %` discount from `60` nights
 - `10 %` discount for voluntary non-refundable bookings
 - `5 %` rebate from `7` nights
 

@@ -32,6 +32,19 @@
   </div>
   {% endif %}
 
+  {% if b.longStayPromoTitle and b.longStayPromoList %}
+  <div class="booking-promo-banner booking-promo-banner-secondary">
+    <div class="booking-promo-content">
+      <p class="font-bold mb-2">{{ b.longStayPromoTitle }}</p>
+      <ul class="booking-muted-list">
+        {% for item in b.longStayPromoList %}
+        <li>{{ item }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  {% endif %}
+
   <div
     class="booking-shell"
     id="booking-app"
