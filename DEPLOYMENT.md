@@ -86,6 +86,18 @@ wrangler d1 create candc-booking
 wrangler d1 execute candc-booking --file=./migrations/0001_booking_schema.sql
 ```
 
+Si la base existe deja et doit recevoir la fusion des anciennes remises `7+ nuits` dans les paliers `Long-stay discount`, executer aussi :
+
+```bash
+wrangler d1 execute candc-booking --file=./migrations/0008_merge_weekly_discount_into_long_stay_tiers.sql
+```
+
+Si la base existe deja et doit ensuite relever cette remise `7+ nuits` de `5 %` a `10 %`, executer aussi :
+
+```bash
+wrangler d1 execute candc-booking --file=./migrations/0009_raise_7_night_long_stay_discount.sql
+```
+
 ### Binding D1 obligatoire sur Cloudflare Pages
 
 Important :
@@ -215,6 +227,8 @@ Variables :
 
 - la mini interface est accessible sur `/admin/booking`
 - un token explicite est attendu via `ADMIN_ACCESS_TOKEN`
+- la section `Long-stay discounts` permet maintenant de configurer jusqu'a `4` paliers par unite
+- le formulaire affiche un feedback local de sauvegarde (`saving`, `success`, `error`)
 
 ### Jobs internes
 

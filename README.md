@@ -148,6 +148,7 @@ Business logic tests now also verify:
 - studio 4-night minimum stay
 - studio max occupancy
 - parking/studio pricing rules and discounts
+- merged long-stay tiers, including the 7-night threshold
 - automatic refund allocation logic
 
 ## Project structure
@@ -202,11 +203,22 @@ Current studio pricing baseline:
 - infants `0-2` free
 - free parking for `1 vehicle`
 - private terrace included
+- `10 %` discount from `7` nights
 - `20 %` discount from `16` nights
 - `25 %` discount from `30` nights
 - `30 %` discount from `60` nights
 - `10 %` discount for voluntary non-refundable bookings
-- `5 %` rebate from `7` nights
+
+Current parking long-stay baseline:
+
+- `10 %` discount from `7` nights
+- `15 %` discount from `30` nights
+
+Long-stay discount note:
+
+- long-stay discounts are now configured as unit-level tiers
+- the customer quote always shows them as a single `Long-stay discount` line
+- the admin UI supports up to `4` tiers per unit
 
 ## Deployment notes
 

@@ -46,7 +46,24 @@ Le repository contient maintenant deux couches principales :
 - remise `25 %` des `30` nuits
 - remise `30 %` des `60` nuits
 - remise `10 %` non remboursable
-- remise `5 %` des `7` nuits
+- remise `10 %` des `7` nuits, desormais integree a `Remise long sejour`
+
+### Longs sejours par unite
+
+- parking :
+  - `10 %` des `7` nuits
+  - `15 %` des `30` nuits
+- studio :
+  - `10 %` des `7` nuits
+  - `20 %` des `16` nuits
+  - `25 %` des `30` nuits
+  - `30 %` des `60` nuits
+
+Important :
+
+- l'ancienne ligne visuelle `Remise 7+ nuits` a ete retiree
+- toutes les remises longues sont desormais fusionnees dans la seule ligne `Remise long sejour`
+- l'admin permet de configurer jusqu'a `4` paliers par unite
 
 ### Backend reservation
 

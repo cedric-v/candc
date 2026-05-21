@@ -137,7 +137,7 @@ function runPricingTests() {
     config,
   );
 
-  assertEqual(parkingLongStayQuote.appliedLongStayDiscountRate, 0.05, "Parking should apply 5% long-stay discount from 7 nights");
+  assertEqual(parkingLongStayQuote.appliedLongStayDiscountRate, 0.1, "Parking should apply 10% long-stay discount from 7 nights");
 
   const studioQuote = calculateQuoteFromResolvedUnit(
     {
@@ -164,9 +164,9 @@ function runPricingTests() {
   assertEqual(studioQuote.baseAmount, 693, "Studio base amount should total nightly rates");
   assertEqual(studioQuote.guestSurchargeAmount, 84, "Studio should charge extra adults and children");
   assertEqual(studioQuote.touristTaxAmount, 42, "Studio tourist tax should match adults only");
-  assertEqual(studioQuote.longStayDiscountAmount, 38.85, "Studio 7+ night discount should now be folded into the long-stay discount");
+  assertEqual(studioQuote.longStayDiscountAmount, 77.7, "Studio 7+ night discount should now be folded into the long-stay discount");
   assertEqual(studioQuote.weeklyStayDiscountAmount, 0, "Legacy weekly discount should no longer be applied separately");
-  assertEqual(studioQuote.nonRefundableDiscountAmount, 73.82, "Studio non-refundable discount should apply after the merged long-stay discount");
+  assertEqual(studioQuote.nonRefundableDiscountAmount, 69.93, "Studio non-refundable discount should apply after the merged long-stay discount");
 
   const studioLongStayQuote = calculateQuoteFromResolvedUnit(
     {

@@ -79,6 +79,15 @@ Notes :
 - remboursements automatiques SumUp pour les cas eligibles, avec fallback manuel si necessaire
 - worker cron Cloudflare deployee pour sync OTA et e-mails d'arrivee
 
+## Pricing notes
+
+- long-stay discounts are configured per unit
+- the customer quote exposes a single `Long-stay discount` line
+- the old separate `7+ nights` discount line has been merged into those tiers
+- current public baselines:
+  - parking: `10 %` from `7` nights, `15 %` from `30` nights
+  - studio: `10 %` from `7` nights, `20 %` from `16` nights, `25 %` from `30` nights, `30 %` from `60` nights
+
 ## Flux et index
 
 - Sitemap: https://candc.ch/sitemap.xml

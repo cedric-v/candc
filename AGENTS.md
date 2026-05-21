@@ -55,6 +55,7 @@ When changing booking behavior, check all of:
 - `functions/_lib/db.js`
 - `functions/_lib/catalog.js`
 - `migrations/0001_booking_schema.sql`
+- any follow-up migration if pricing tiers changed, notably `migrations/0008_merge_weekly_discount_into_long_stay_tiers.sql`
 
 When changing public booking UI, also check:
 
@@ -96,6 +97,13 @@ If editing functions-only logic, import checks via Node ESM are also useful.
 - production credential wiring
 - Google Calendar remains optional and disabled by default in production until credentials are finalized
 - automatic refunds now exist, but fallback to manual follow-up if SumUp transaction coverage is incomplete or a refund API call fails
+
+## Current pricing note
+
+- long-stay discounts are unit-specific tiers
+- the quote UI now shows a single `Long-stay discount` line only
+- the old separate `7+ nights` discount line has been merged into those tiers
+- the admin UI supports up to `4` tiers per unit
 
 ## Contributor note
 

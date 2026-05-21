@@ -101,9 +101,11 @@ module.exports = function (eleventyConfig) {
   });
 
   // 8. Shortcode pour générer les schémas Schema.org en JSON-LD spécifiques à chaque page
-  eleventyConfig.addShortcode("schemaOrg", function (page, locale) {
+  eleventyConfig.addShortcode("schemaOrg", function (page, locale, explicitTitle, explicitDescription) {
     const baseUrl = 'https://candc.ch';
     const schemas = [];
+    const pageTitle = explicitTitle || page?.data?.title || page?.title || '';
+    const pageDescription = explicitDescription || page?.data?.description || page?.description || '';
 
     // Charger les traductions
     let translations = {};
@@ -120,6 +122,7 @@ module.exports = function (eleventyConfig) {
 
     // Déterminer le type de page basé sur l'URL
     const url = page.url || '/';
+    const isBookingPage = url.includes('/booking/');
     let pageType = 'WebPage';
 
     if (url.includes('/eco-studio/')) {
@@ -182,8 +185,11 @@ module.exports = function (eleventyConfig) {
         "@context": "https://schema.org",
         "@type": "LodgingBusiness",
         "name": t.studio?.title || "Eco Studio",
-        "description": t.studio?.description || "Studio meublé éco-responsable en campagne",
+        "description": isBookingPage
+          ? (pageDescription || t.studio?.description || "Studio meublé éco-responsable en campagne")
+          : (t.studio?.description || "Studio meublé éco-responsable en campagne"),
         "url": baseUrl + url,
+        "mainEntityOfPage": baseUrl + url,
         "address": {
           "@type": "PostalAddress",
           "addressCountry": "CH",
@@ -212,6 +218,21 @@ module.exports = function (eleventyConfig) {
           },
           {
             "@type": "LocationFeatureSpecification",
+            "name": "Private terrace",
+            "value": true
+          },
+          {
+            "@type": "LocationFeatureSpecification",
+            "name": "Kitchen",
+            "value": true
+          },
+          {
+            "@type": "LocationFeatureSpecification",
+            "name": "Self check-in",
+            "value": true
+          },
+          {
+            "@type": "LocationFeatureSpecification",
             "name": "Eco-friendly",
             "value": true
           }
@@ -222,6 +243,13 @@ module.exports = function (eleventyConfig) {
           "reviewCount": "25"
         }
       };
+      if (isBookingPage) {
+        lodgingBusiness.potentialAction = {
+          "@type": "ReserveAction",
+          "target": baseUrl + url,
+          "name": pageTitle || "Book the eco studio directly"
+        };
+      }
       schemas.push(lodgingBusiness);
 
     } else if (pageType === 'AutomotiveBusiness') {
@@ -230,8 +258,11 @@ module.exports = function (eleventyConfig) {
         "@context": "https://schema.org",
         "@type": "AutomotiveBusiness",
         "name": t.parking?.title || "Parking sécurisé",
-        "description": t.parking?.description || "Place de stationnement pour camping-car près de Fribourg",
+        "description": isBookingPage
+          ? (pageDescription || t.parking?.description || "Place de stationnement pour camping-car près de Fribourg")
+          : (t.parking?.description || "Place de stationnement pour camping-car près de Fribourg"),
         "url": baseUrl + url,
+        "mainEntityOfPage": baseUrl + url,
         "address": {
           "@type": "PostalAddress",
           "addressCountry": "CH",
@@ -258,7 +289,17 @@ module.exports = function (eleventyConfig) {
           },
           {
             "@type": "LocationFeatureSpecification",
+            "name": "Drinking water",
+            "value": true
+          },
+          {
+            "@type": "LocationFeatureSpecification",
             "name": "Waste management",
+            "value": true
+          },
+          {
+            "@type": "LocationFeatureSpecification",
+            "name": "Private terrace",
             "value": true
           },
           {
@@ -268,6 +309,13 @@ module.exports = function (eleventyConfig) {
           }
         ]
       };
+      if (isBookingPage) {
+        automotiveBusiness.potentialAction = {
+          "@type": "ReserveAction",
+          "target": baseUrl + url,
+          "name": pageTitle || "Book the parking space directly"
+        };
+      }
       schemas.push(automotiveBusiness);
 
     } else if (pageType === 'Place') {
@@ -366,15 +414,31 @@ module.exports = function (eleventyConfig) {
           "@type": "ListItem",
           "position": 2,
           "name": t.ecoStudio || "Eco Studio",
-          "item": baseUrl + url
+          "item": baseUrl + (url.includes('/booking/') ? url.replace('/booking/', '/') : url)
         });
+        if (url.includes('/booking/')) {
+          breadcrumbList.itemListElement.push({
+            "@type": "ListItem",
+            "position": 3,
+            "name": pageTitle || "Booking",
+            "item": baseUrl + url
+          });
+        }
       } else if (url.includes('/parking/')) {
         breadcrumbList.itemListElement.push({
           "@type": "ListItem",
           "position": 2,
           "name": t.menuParking || "Parking",
-          "item": baseUrl + url
+          "item": baseUrl + (url.includes('/booking/') ? url.replace('/booking/', '/') : url)
         });
+        if (url.includes('/booking/')) {
+          breadcrumbList.itemListElement.push({
+            "@type": "ListItem",
+            "position": 3,
+            "name": pageTitle || "Booking",
+            "item": baseUrl + url
+          });
+        }
       } else if (url.includes('/location/')) {
         breadcrumbList.itemListElement.push({
           "@type": "ListItem",

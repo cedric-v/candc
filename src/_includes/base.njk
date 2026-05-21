@@ -105,7 +105,7 @@
     <link rel="icon" type="image/x-icon" href="{{ '/favicon.ico' | relativeUrl }}">
     
     {# Schema.org JSON-LD #}
-    {% schemaOrg page, locale %}
+    {% schemaOrg page, locale, title, description %}
 </head>
 <body class="page-body">
     {% include "header.njk" %}

@@ -172,6 +172,18 @@ Si la base D1 existe deja et doit maintenant supporter les reservations studio a
 wrangler d1 execute candc-booking --file=./migrations/0003_studio_pricing_and_infants.sql
 ```
 
+Si la base D1 existe deja et doit maintenant fusionner l'ancienne remise `7+ nuits` dans les paliers `Remise long sejour`, executer aussi :
+
+```bash
+wrangler d1 execute candc-booking --file=./migrations/0008_merge_weekly_discount_into_long_stay_tiers.sql
+```
+
+Si la base D1 existe deja et doit maintenant passer la remise `7+ nuits` de `5 %` a `10 %`, executer aussi :
+
+```bash
+wrangler d1 execute candc-booking --file=./migrations/0009_raise_7_night_long_stay_discount.sql
+```
+
 ## Binding D1 a faire dans Cloudflare Pages
 
 Le projet de reservation ne peut pas fonctionner en production sans binding D1 sur le projet Pages.
@@ -215,6 +227,7 @@ Le scaffold couvre :
 - des regles metier parametrables par unite via `rentable_units.settings_json`
 - validation des payloads
 - calcul des prix
+- remises long sejour unifiees par unite, avec jusqu'a `4` paliers configurables dans l'admin
 - gestion des periodes tarifaires par unite
 - creation d'une reservation `pending_payment`
 - blocage calendrier associe a une unite

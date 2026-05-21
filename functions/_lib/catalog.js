@@ -25,7 +25,7 @@ export const DEFAULT_UNITS = [
       wcShowerCleaningFeeChf: 10,
       longStayDiscountRate: 0.15,
       longStayDiscountTiers: [
-        { minNights: 7, rate: 0.05 },
+        { minNights: 7, rate: 0.1 },
         { minNights: 30, rate: 0.15 },
       ],
       nonRefundableDiscountRate: 0.1,
@@ -54,7 +54,7 @@ export const DEFAULT_UNITS = [
       extraChildNightlyRateChf: 5,
       longStayDiscountRate: 0.25,
       longStayDiscountTiers: [
-        { minNights: 7, rate: 0.05 },
+        { minNights: 7, rate: 0.1 },
         { minNights: 16, rate: 0.2 },
         { minNights: 30, rate: 0.25 },
         { minNights: 60, rate: 0.3 },
