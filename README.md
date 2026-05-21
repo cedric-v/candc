@@ -212,7 +212,9 @@ Current studio pricing baseline:
 Current parking long-stay baseline:
 
 - `10 %` discount from `7` nights
-- `15 %` discount from `30` nights
+- `20 %` discount from `16` nights
+- `25 %` discount from `30` nights
+- `30 %` discount from `60` nights
 
 Long-stay discount note:
 

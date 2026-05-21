@@ -156,7 +156,7 @@ function normalizeLongStayDiscountTiers(unitSettings) {
     });
   }
 
-  const normalized = [...configuredTiers, ...legacyTiers]
+  const normalized = (configuredTiers.length > 0 ? configuredTiers : legacyTiers)
     .map((tier) => ({
       minNights: Number(tier?.minNights || 0),
       rate: Number(tier?.rate || 0),

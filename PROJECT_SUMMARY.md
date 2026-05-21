@@ -52,7 +52,9 @@ Le repository contient maintenant deux couches principales :
 
 - parking :
   - `10 %` des `7` nuits
-  - `15 %` des `30` nuits
+  - `20 %` des `16` nuits
+  - `25 %` des `30` nuits
+  - `30 %` des `60` nuits
 - studio :
   - `10 %` des `7` nuits
   - `20 %` des `16` nuits

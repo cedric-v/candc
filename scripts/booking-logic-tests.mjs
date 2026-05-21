@@ -139,6 +139,78 @@ function runPricingTests() {
 
   assertEqual(parkingLongStayQuote.appliedLongStayDiscountRate, 0.1, "Parking should apply 10% long-stay discount from 7 nights");
 
+  const parking16NightQuote = calculateQuoteFromResolvedUnit(
+    {
+      ...parking,
+      unitType: parking.unitType,
+      displayName: parking.displayName,
+      checkInStartTime: parking.checkInStartTime,
+      currency: parking.currency,
+    },
+    createNightlyRates("2027-06-01", 16, 20),
+    {
+      unitCode: "parking-space",
+      checkInDate: "2027-06-01",
+      checkOutDate: "2027-06-17",
+      adults: 1,
+      children: 0,
+      infants: 0,
+      wcShowerRequested: false,
+      nonRefundableSelected: false,
+    },
+    config,
+  );
+
+  assertEqual(parking16NightQuote.appliedLongStayDiscountRate, 0.2, "Parking should apply 20% long-stay discount from 16 nights");
+
+  const parking30NightQuote = calculateQuoteFromResolvedUnit(
+    {
+      ...parking,
+      unitType: parking.unitType,
+      displayName: parking.displayName,
+      checkInStartTime: parking.checkInStartTime,
+      currency: parking.currency,
+    },
+    createNightlyRates("2027-06-01", 30, 20),
+    {
+      unitCode: "parking-space",
+      checkInDate: "2027-06-01",
+      checkOutDate: "2027-07-01",
+      adults: 1,
+      children: 0,
+      infants: 0,
+      wcShowerRequested: false,
+      nonRefundableSelected: false,
+    },
+    config,
+  );
+
+  assertEqual(parking30NightQuote.appliedLongStayDiscountRate, 0.25, "Parking should apply 25% long-stay discount from 30 nights");
+
+  const parking60NightQuote = calculateQuoteFromResolvedUnit(
+    {
+      ...parking,
+      unitType: parking.unitType,
+      displayName: parking.displayName,
+      checkInStartTime: parking.checkInStartTime,
+      currency: parking.currency,
+    },
+    createNightlyRates("2027-06-01", 60, 20),
+    {
+      unitCode: "parking-space",
+      checkInDate: "2027-06-01",
+      checkOutDate: "2027-07-31",
+      adults: 1,
+      children: 0,
+      infants: 0,
+      wcShowerRequested: false,
+      nonRefundableSelected: false,
+    },
+    config,
+  );
+
+  assertEqual(parking60NightQuote.appliedLongStayDiscountRate, 0.3, "Parking should apply 30% long-stay discount from 60 nights");
+
   const studioQuote = calculateQuoteFromResolvedUnit(
     {
       ...studio,

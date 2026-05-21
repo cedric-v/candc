@@ -212,7 +212,7 @@ INSERT OR IGNORE INTO rentable_units (
     '10:00:00',
     1,
     '["electricity","drinking_water","waste_disposal","private_terrace"]',
-    '{"requiresVehicleType":true,"allowsWcShowerOption":true,"adultTouristTaxChf":3,"wcShowerCleaningFeeChf":10,"longStayDiscountRate":0.15,"longStayDiscountTiers":[{"minNights":7,"rate":0.1},{"minNights":30,"rate":0.15}],"nonRefundableDiscountRate":0.1,"minStayNights":1}',
+    '{"requiresVehicleType":true,"allowsWcShowerOption":true,"adultTouristTaxChf":3,"wcShowerCleaningFeeChf":10,"longStayDiscountRate":0.3,"longStayDiscountTiers":[{"minNights":7,"rate":0.1},{"minNights":16,"rate":0.2},{"minNights":30,"rate":0.25},{"minNights":60,"rate":0.3}],"nonRefundableDiscountRate":0.1,"minStayNights":1}',
     1,
     '2026-05-20T00:00:00.000Z',
     '2026-05-20T00:00:00.000Z'

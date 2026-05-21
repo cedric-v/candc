@@ -865,8 +865,23 @@
         summary.optionsAmount.classList.remove("booking-discount-highlight");
       }
     }
-    summary.longStayDiscount.textContent = formatSignedCurrency(-quote.longStayDiscountAmount, quote.currency);
-    summary.nonRefundableDiscount.textContent = formatSignedCurrency(-quote.nonRefundableDiscountAmount, quote.currency);
+
+    if (summary.longStayDiscount) {
+      summary.longStayDiscount.textContent = formatSignedCurrency(-quote.longStayDiscountAmount, quote.currency);
+      const row = summary.longStayDiscount.closest(".booking-discount-row");
+      if (row) {
+        row.style.display = quote.longStayDiscountAmount > 0 ? "flex" : "none";
+      }
+    }
+
+    if (summary.nonRefundableDiscount) {
+      summary.nonRefundableDiscount.textContent = formatSignedCurrency(-quote.nonRefundableDiscountAmount, quote.currency);
+      const row = summary.nonRefundableDiscount.closest(".booking-discount-row");
+      if (row) {
+        row.style.display = quote.nonRefundableDiscountAmount > 0 ? "flex" : "none";
+      }
+    }
+
     summary.paymentFee.textContent = formatCurrency(quote.paymentFeeAmount, quote.currency);
     summary.totalAmount.textContent = formatCurrency(quote.totalAmount, quote.currency);
 
@@ -886,8 +901,23 @@
     if (summary.optionsAmount) {
       summary.optionsAmount.textContent = texts.summaryPendingAmount;
     }
-    summary.longStayDiscount.textContent = texts.summaryPendingAmount;
-    summary.nonRefundableDiscount.textContent = texts.summaryPendingAmount;
+
+    if (summary.longStayDiscount) {
+      summary.longStayDiscount.textContent = texts.summaryPendingAmount;
+      const row = summary.longStayDiscount.closest(".booking-discount-row");
+      if (row) {
+        row.style.display = "none";
+      }
+    }
+
+    if (summary.nonRefundableDiscount) {
+      summary.nonRefundableDiscount.textContent = texts.summaryPendingAmount;
+      const row = summary.nonRefundableDiscount.closest(".booking-discount-row");
+      if (row) {
+        row.style.display = "none";
+      }
+    }
+
     summary.paymentFee.textContent = texts.summaryPendingAmount;
     summary.totalAmount.textContent = texts.summaryPendingAmount;
     submitButton.disabled = true;
