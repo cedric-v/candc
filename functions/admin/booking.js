@@ -82,57 +82,57 @@ export function onRequestGet() {
         <div class="field-row three">
           <div class="field">
             <label for="longStayNights1">Tier 1 minimum nights</label>
-            <input id="longStayNights1" name="longStayNights1" type="number" min="1" step="1" placeholder="16">
+            <input id="longStayNights1" name="longStayNights1" type="number" min="1" step="1">
           </div>
           <div class="field">
             <label for="longStayRate1">Tier 1 discount (%)</label>
-            <input id="longStayRate1" name="longStayRate1" type="number" min="0" max="100" step="0.01" placeholder="20">
+            <input id="longStayRate1" name="longStayRate1" type="number" min="0" max="100" step="0.01">
           </div>
           <div class="field">
             <label> </label>
-            <div class="small">Example: more than 15 days = 20%</div>
+            <div class="small" id="longStayHint1">Current suggestion will appear here.</div>
           </div>
         </div>
         <div class="field-row three">
           <div class="field">
             <label for="longStayNights2">Tier 2 minimum nights</label>
-            <input id="longStayNights2" name="longStayNights2" type="number" min="1" step="1" placeholder="30">
+            <input id="longStayNights2" name="longStayNights2" type="number" min="1" step="1">
           </div>
           <div class="field">
             <label for="longStayRate2">Tier 2 discount (%)</label>
-            <input id="longStayRate2" name="longStayRate2" type="number" min="0" max="100" step="0.01" placeholder="25">
+            <input id="longStayRate2" name="longStayRate2" type="number" min="0" max="100" step="0.01">
           </div>
           <div class="field">
             <label> </label>
-            <div class="small">Example: 30 nights or more = 25%</div>
+            <div class="small" id="longStayHint2">Current suggestion will appear here.</div>
           </div>
         </div>
         <div class="field-row three">
           <div class="field">
             <label for="longStayNights3">Tier 3 minimum nights</label>
-            <input id="longStayNights3" name="longStayNights3" type="number" min="1" step="1" placeholder="60">
+            <input id="longStayNights3" name="longStayNights3" type="number" min="1" step="1">
           </div>
           <div class="field">
             <label for="longStayRate3">Tier 3 discount (%)</label>
-            <input id="longStayRate3" name="longStayRate3" type="number" min="0" max="100" step="0.01" placeholder="30">
+            <input id="longStayRate3" name="longStayRate3" type="number" min="0" max="100" step="0.01">
           </div>
           <div class="field">
             <label> </label>
-            <div class="small">Example: 60 nights or more = 30%</div>
+            <div class="small" id="longStayHint3">Current suggestion will appear here.</div>
           </div>
         </div>
         <div class="field-row three">
           <div class="field">
             <label for="longStayNights4">Tier 4 minimum nights</label>
-            <input id="longStayNights4" name="longStayNights4" type="number" min="1" step="1" placeholder="90">
+            <input id="longStayNights4" name="longStayNights4" type="number" min="1" step="1">
           </div>
           <div class="field">
             <label for="longStayRate4">Tier 4 discount (%)</label>
-            <input id="longStayRate4" name="longStayRate4" type="number" min="0" max="100" step="0.01" placeholder="35">
+            <input id="longStayRate4" name="longStayRate4" type="number" min="0" max="100" step="0.01">
           </div>
           <div class="field">
             <label> </label>
-            <div class="small">Optional extra tier if needed.</div>
+            <div class="small" id="longStayHint4">Leave empty if this unit does not use a fourth tier.</div>
           </div>
         </div>
         <div class="actions">
@@ -248,7 +248,27 @@ export function onRequestGet() {
           return [1, 2, 3, 4].map((index) => ({
             nights: longStayForm.elements['longStayNights' + index],
             rate: longStayForm.elements['longStayRate' + index],
+            hint: document.getElementById('longStayHint' + index),
           }));
+        }
+
+        function formatRatePercent(rate) {
+          return Number(rate * 100).toFixed(2).replace(/\.00$/, '');
+        }
+
+        function syncLongStaySuggestions(tiers) {
+          getLongStayInputs().forEach((row, index) => {
+            const tier = tiers[index];
+            if (tier) {
+              row.nights.placeholder = String(tier.minNights);
+              row.rate.placeholder = formatRatePercent(tier.rate);
+              row.hint.textContent = 'Current: ' + tier.minNights + ' nights or more = ' + formatRatePercent(tier.rate) + '%';
+            } else {
+              row.nights.placeholder = '';
+              row.rate.placeholder = '';
+              row.hint.textContent = 'Leave empty if this unit does not use an additional tier.';
+            }
+          });
         }
 
         function fillLongStayForm(unitId) {
@@ -257,10 +277,12 @@ export function onRequestGet() {
             ? [...unit.settings.longStayDiscountTiers].sort((left, right) => left.minNights - right.minNights)
             : [];
 
+          syncLongStaySuggestions(tiers);
+
           getLongStayInputs().forEach((row, index) => {
             const tier = tiers[index];
             row.nights.value = tier?.minNights || '';
-            row.rate.value = tier ? Number(tier.rate * 100).toFixed(2).replace(/\.00$/, '') : '';
+            row.rate.value = tier ? formatRatePercent(tier.rate) : '';
           });
         }
 
@@ -274,16 +296,23 @@ export function onRequestGet() {
           adminNotice.className = 'notice info';
           adminNotice.textContent = 'Loading dashboard…';
           try {
+            const selectedRateUnitId = unitSelect.value;
+            const selectedLongStayUnitId = longStayUnitSelect.value;
             const data = await apiFetch('GET');
             adminUnits = data.units || [];
             const unitOptions = adminUnits.map((unit) => '<option value="' + unit.id + '">' + unit.display_name + '</option>').join('');
             unitSelect.innerHTML = unitOptions;
             longStayUnitSelect.innerHTML = unitOptions;
-            if (longStayUnitSelect.value) {
-              fillLongStayForm(longStayUnitSelect.value);
+            if (selectedRateUnitId && adminUnits.some((unit) => unit.id === selectedRateUnitId)) {
+              unitSelect.value = selectedRateUnitId;
+            }
+            if (selectedLongStayUnitId && adminUnits.some((unit) => unit.id === selectedLongStayUnitId)) {
+              longStayUnitSelect.value = selectedLongStayUnitId;
             } else if (adminUnits[0]) {
               longStayUnitSelect.value = adminUnits[0].id;
-              fillLongStayForm(adminUnits[0].id);
+            }
+            if (longStayUnitSelect.value) {
+              fillLongStayForm(longStayUnitSelect.value);
             }
             reservationsWrap.innerHTML = renderTable(
               data.reservations.map((item) => ({
