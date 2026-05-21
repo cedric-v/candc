@@ -27,8 +27,6 @@ export function calculateQuoteFromResolvedUnit(unit, nightlyRates, input, config
     unitSettings.adultTouristTaxChf ?? config.touristTaxAdultChf;
   const wcShowerCleaningFeeChf =
     unitSettings.wcShowerCleaningFeeChf ?? config.wcShowerCleaningFeeChf;
-  const longStayDiscountRate =
-    unitSettings.longStayDiscountRate ?? 0.15;
   const nonRefundableDiscountRate =
     unitSettings.nonRefundableDiscountRate ?? 0.1;
   const allowsWcShowerOption =
@@ -39,10 +37,6 @@ export function calculateQuoteFromResolvedUnit(unit, nightlyRates, input, config
     Number(unitSettings.extraAdultNightlyRateChf ?? 0);
   const extraChildNightlyRateChf =
     Number(unitSettings.extraChildNightlyRateChf ?? 0);
-  const weeklyStayDiscountRate =
-    Number(unitSettings.weeklyStayDiscountRate ?? 0);
-  const weeklyStayThresholdNights =
-    Number(unitSettings.weeklyStayThresholdNights ?? 0);
   const cleaningFeeChf =
     Number(unitSettings.cleaningFeeChf ?? 0);
   const cleaningFeeThresholdNights =
@@ -65,7 +59,7 @@ export function calculateQuoteFromResolvedUnit(unit, nightlyRates, input, config
   const appliedLongStayTier = resolveLongStayDiscountTier(unitSettings, nights);
   const appliedLongStayDiscountRate =
     appliedLongStayTier?.rate ??
-    (nights >= 30 ? longStayDiscountRate : 0);
+    0;
   const longStayDiscountAmount =
     appliedLongStayDiscountRate > 0
       ? roundMoney(accommodationAmount * appliedLongStayDiscountRate)
@@ -83,10 +77,7 @@ export function calculateQuoteFromResolvedUnit(unit, nightlyRates, input, config
     !arrivalLessThan24h && input.nonRefundableSelected
       ? roundMoney(discountBase * nonRefundableDiscountRate)
       : 0;
-  const weeklyStayDiscountAmount =
-    weeklyStayThresholdNights > 0 && nights >= weeklyStayThresholdNights
-      ? roundMoney((discountBase - nonRefundableDiscountAmount) * weeklyStayDiscountRate)
-      : 0;
+  const weeklyStayDiscountAmount = 0;
 
   const subtotalBeforeFees =
     baseAmount +
@@ -137,17 +128,53 @@ export function calculateQuoteFromResolvedUnit(unit, nightlyRates, input, config
 }
 
 function resolveLongStayDiscountTier(unitSettings, nights) {
-  const tiers = Array.isArray(unitSettings.longStayDiscountTiers)
-    ? unitSettings.longStayDiscountTiers
-        .map((tier) => ({
-          minNights: Number(tier?.minNights || 0),
-          rate: Number(tier?.rate || 0),
-        }))
-        .filter((tier) => tier.minNights > 0 && tier.rate > 0)
-        .sort((left, right) => right.minNights - left.minNights)
-    : [];
+  const tiers = normalizeLongStayDiscountTiers(unitSettings);
 
   return tiers.find((tier) => nights >= tier.minNights) || null;
+}
+
+function normalizeLongStayDiscountTiers(unitSettings) {
+  const configuredTiers = Array.isArray(unitSettings.longStayDiscountTiers)
+    ? unitSettings.longStayDiscountTiers
+    : [];
+  const legacyTiers = [];
+  const weeklyStayDiscountRate = Number(unitSettings.weeklyStayDiscountRate ?? 0);
+  const weeklyStayThresholdNights = Number(unitSettings.weeklyStayThresholdNights ?? 0);
+  const legacyLongStayDiscountRate = Number(unitSettings.longStayDiscountRate ?? 0);
+
+  if (weeklyStayThresholdNights > 0 && weeklyStayDiscountRate > 0) {
+    legacyTiers.push({
+      minNights: weeklyStayThresholdNights,
+      rate: weeklyStayDiscountRate,
+    });
+  }
+
+  if (legacyLongStayDiscountRate > 0) {
+    legacyTiers.push({
+      minNights: 30,
+      rate: legacyLongStayDiscountRate,
+    });
+  }
+
+  const normalized = [...configuredTiers, ...legacyTiers]
+    .map((tier) => ({
+      minNights: Number(tier?.minNights || 0),
+      rate: Number(tier?.rate || 0),
+    }))
+    .filter((tier) => tier.minNights > 0 && tier.rate > 0)
+    .sort((left, right) => left.minNights - right.minNights);
+
+  const deduped = [];
+  for (const tier of normalized) {
+    const previous = deduped[deduped.length - 1];
+    if (previous && previous.minNights === tier.minNights) {
+      previous.rate = Math.max(previous.rate, tier.rate);
+    } else {
+      deduped.push({ ...tier });
+    }
+  }
+
+  return deduped.sort((left, right) => right.minNights - left.minNights);
 }
 
 function roundMoney(value) {

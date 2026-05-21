@@ -21,7 +21,6 @@ const overrides = {
     nonRefundableHint: "Ce choix n'est possible que si l'arrivée est dans plus de 24 heures.",
     guestSurchargeLabel: "Suppléments voyageurs",
     wcShowerLabel: "Options",
-    weeklyDiscountLabel: "Remise 7+ nuits",
     includedList: [
       "Parking gratuit pour 1 véhicule",
       "Terrasse privative",
@@ -41,7 +40,7 @@ const overrides = {
     webMcpCheckoutToolDescription: "Prepare a direct reservation checkout for the eco studio, collect traveller details, create the reservation, and send the traveller to payment.",
     directBookingPromoText: "Profitez d'un avantage exclusif à notre site officiel : réservez en direct et les frais de ménage (d'une valeur de 64 CHF) sont offerts dès 5 nuits.",
     longStayPromoTitle: "Tarif dégressif longue durée",
-    longStayPromoList: ["20 % de remise dès 16 nuitées", "25 % de remise dès 30 nuitées", "30 % de remise dès 60 nuitées"],
+    longStayPromoList: ["5 % de remise dès 7 nuitées", "20 % de remise dès 16 nuitées", "25 % de remise dès 30 nuitées", "30 % de remise dès 60 nuitées"],
     cleaningFeeLabel: "Frais de ménage",
     complimentaryLabel: "Offerts"
   },
@@ -64,7 +63,6 @@ const overrides = {
     bookingRulesList: ["No pets", "No smoking indoors", "No parties"],
     guestSurchargeLabel: "Guest supplements",
     wcShowerLabel: "Options",
-    weeklyDiscountLabel: "7+ night discount",
     includedList: [
       "Free parking for 1 vehicle",
       "Private terrace",
@@ -84,7 +82,7 @@ const overrides = {
     webMcpCheckoutToolDescription: "Prepare a direct reservation checkout for the eco studio, collect traveller details, create the reservation, and send the traveller to payment.",
     directBookingPromoText: "Enjoy a benefit exclusive to our official website: book directly and cleaning fees (worth 64 CHF) are complimentary for stays of 5 nights or more.",
     longStayPromoTitle: "Long-stay sliding rates",
-    longStayPromoList: ["20% off from 16 nights", "25% off from 30 nights", "30% off from 60 nights"],
+    longStayPromoList: ["5% off from 7 nights", "20% off from 16 nights", "25% off from 30 nights", "30% off from 60 nights"],
     cleaningFeeLabel: "Cleaning fee",
     complimentaryLabel: "Complimentary"
   },
@@ -107,7 +105,6 @@ const overrides = {
     bookingRulesList: ["Keine Tiere", "Rauchen in Innenräumen verboten", "Keine Partys"],
     guestSurchargeLabel: "Zuschläge für Reisende",
     wcShowerLabel: "Optionen",
-    weeklyDiscountLabel: "Rabatt ab 7 Nächten",
     includedList: [
       "Kostenloser Parkplatz für 1 Fahrzeug",
       "Private Terrasse",
@@ -127,7 +124,7 @@ const overrides = {
     webMcpCheckoutToolDescription: "Prepare a direct reservation checkout for the eco studio, collect traveller details, create the reservation, and send the traveller to payment.",
     directBookingPromoText: "Genießen Sie einen exklusiven Vorteil auf unserer offiziellen Website: Buchen Sie direkt und die Reinigungsgebühr (im Wert von 64 CHF) ist ab 5 Nächten kostenlos.",
     longStayPromoTitle: "Langzeitstaffel",
-    longStayPromoList: ["20 % Rabatt ab 16 Nächten", "25 % Rabatt ab 30 Nächten", "30 % Rabatt ab 60 Nächten"],
+    longStayPromoList: ["5 % Rabatt ab 7 Nächten", "20 % Rabatt ab 16 Nächten", "25 % Rabatt ab 30 Nächten", "30 % Rabatt ab 60 Nächten"],
     cleaningFeeLabel: "Reinigungsgebühr",
     complimentaryLabel: "Kostenlos"
   },
@@ -150,7 +147,6 @@ const overrides = {
     bookingRulesList: ["No se admiten animales", "Prohibido fumar en el interior", "No fiestas"],
     guestSurchargeLabel: "Suplementos de viajeros",
     wcShowerLabel: "Opciones",
-    weeklyDiscountLabel: "Descuento de 7+ noches",
     includedList: [
       "Parking gratuito para 1 vehículo",
       "Terraza privada",
@@ -170,7 +166,7 @@ const overrides = {
     webMcpCheckoutToolDescription: "Prepare a direct reservation checkout for the eco studio, collect traveller details, create the reservation, and send the traveller to payment.",
     directBookingPromoText: "Disfrute de una ventaja exclusiva de nuestro sitio web oficial: reserve directamente y los gastos de limpieza (valorados en 64 CHF) son gratuitos para estancias de 5 noches o más.",
     longStayPromoTitle: "Tarifa decreciente para largas estancias",
-    longStayPromoList: ["20 % de descuento desde 16 noches", "25 % de descuento desde 30 noches", "30 % de descuento desde 60 noches"],
+    longStayPromoList: ["5 % de descuento desde 7 noches", "20 % de descuento desde 16 noches", "25 % de descuento desde 30 noches", "30 % de descuento desde 60 noches"],
     cleaningFeeLabel: "Gastos de limpieza",
     complimentaryLabel: "Cortesía"
   },
@@ -193,7 +189,6 @@ const overrides = {
     bookingRulesList: ["Animais não permitidos", "Proibido fumar no interior", "Sem festas"],
     guestSurchargeLabel: "Suplementos de viajantes",
     wcShowerLabel: "Opções",
-    weeklyDiscountLabel: "Desconto de 7+ noites",
     includedList: [
       "Estacionamento gratuito para 1 veículo",
       "Terraço privativo",
@@ -213,7 +208,7 @@ const overrides = {
     webMcpCheckoutToolDescription: "Prepare a direct reservation checkout for the eco studio, collect traveller details, create the reservation, and send the traveller to payment.",
     directBookingPromoText: "Desfrute de uma vantagem exclusiva do nosso website oficial: reserve diretamente e a taxa de limpeza (no valor de 64 CHF) é gratuita para estadias de 5 noites ou mais.",
     longStayPromoTitle: "Tarifa decrescente para estadias longas",
-    longStayPromoList: ["20 % de desconto a partir de 16 noites", "25 % de desconto a partir de 30 noites", "30 % de desconto a partir de 60 noites"],
+    longStayPromoList: ["5 % de desconto a partir de 7 noites", "20 % de desconto a partir de 16 noites", "25 % de desconto a partir de 30 noites", "30 % de desconto a partir de 60 noites"],
     cleaningFeeLabel: "Taxa de limpeza",
     complimentaryLabel: "Cortesia"
   },
@@ -236,7 +231,6 @@ const overrides = {
     bookingRulesList: ["Animali non ammessi", "Vietato fumare all'interno", "Niente feste"],
     guestSurchargeLabel: "Supplementi viaggiatori",
     wcShowerLabel: "Opzioni",
-    weeklyDiscountLabel: "Sconto da 7+ notti",
     includedList: [
       "Parcheggio gratuito per 1 veicolo",
       "Terrazza privata",
@@ -256,7 +250,7 @@ const overrides = {
     webMcpCheckoutToolDescription: "Prepare a direct reservation checkout for the eco studio, collect traveller details, create the reservation, and send the traveller to payment.",
     directBookingPromoText: "Approfitta di un vantaggio esclusivo del nostro sito ufficiale: prenota direttamente e le spese di pulizia (del valore di 64 CHF) sono offerte per soggiorni di 5 o più notti.",
     longStayPromoTitle: "Tariffa decrescente per soggiorni lunghi",
-    longStayPromoList: ["20 % di sconto da 16 notti", "25 % di sconto da 30 notti", "30 % di sconto da 60 notti"],
+    longStayPromoList: ["5 % di sconto da 7 notti", "20 % di sconto da 16 notti", "25 % di sconto da 30 notti", "30 % di sconto da 60 notti"],
     cleaningFeeLabel: "Spese di pulizia",
     complimentaryLabel: "Offerto"
   },
@@ -279,7 +273,6 @@ const overrides = {
     bookingRulesList: ["Geen huisdieren", "Niet roken binnen", "Geen feesten"],
     guestSurchargeLabel: "Toeslagen reizigers",
     wcShowerLabel: "Opties",
-    weeklyDiscountLabel: "Korting vanaf 7 nachten",
     includedList: [
       "Gratis parking voor 1 voertuig",
       "Privéterras",
@@ -299,7 +292,7 @@ const overrides = {
     webMcpCheckoutToolDescription: "Prepare a direct reservation checkout for the eco studio, collect traveller details, create the reservation, and send the traveller to payment.",
     directBookingPromoText: "Geniet van een exclusief voordeel op onze officiële website: boek rechtstreeks en de schoonmaakkosten (t.w.v. 64 CHF) zijn gratis bij een verblijf van 5 nachten of meer.",
     longStayPromoTitle: "Aflopend tarief voor langere verblijven",
-    longStayPromoList: ["20% korting vanaf 16 nachten", "25% korting vanaf 30 nachten", "30% korting vanaf 60 nachten"],
+    longStayPromoList: ["5% korting vanaf 7 nachten", "20% korting vanaf 16 nachten", "25% korting vanaf 30 nachten", "30% korting vanaf 60 nachten"],
     cleaningFeeLabel: "Schoonmaakkosten",
     complimentaryLabel: "Gratis"
   }

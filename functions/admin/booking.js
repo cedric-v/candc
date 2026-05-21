@@ -73,7 +73,7 @@ export function onRequestGet() {
     </section>
     <section class="card stack" style="margin-top:18px">
       <h2>Long-stay discounts</h2>
-      <p class="small">Configure up to three long-stay discount tiers per unit. The highest eligible tier is applied automatically and still appears as a single “Long-stay discount” line in the customer quote.</p>
+      <p class="small">Configure up to four long-stay discount tiers per unit. The highest eligible tier is applied automatically and still appears as a single “Long-stay discount” line in the customer quote.</p>
       <form id="long-stay-form" class="stack">
         <div class="field">
           <label for="longStayUnitId">Unit</label>
@@ -121,9 +121,24 @@ export function onRequestGet() {
             <div class="small">Example: 60 nights or more = 30%</div>
           </div>
         </div>
+        <div class="field-row three">
+          <div class="field">
+            <label for="longStayNights4">Tier 4 minimum nights</label>
+            <input id="longStayNights4" name="longStayNights4" type="number" min="1" step="1" placeholder="90">
+          </div>
+          <div class="field">
+            <label for="longStayRate4">Tier 4 discount (%)</label>
+            <input id="longStayRate4" name="longStayRate4" type="number" min="0" max="100" step="0.01" placeholder="35">
+          </div>
+          <div class="field">
+            <label> </label>
+            <div class="small">Optional extra tier if needed.</div>
+          </div>
+        </div>
         <div class="actions">
           <button class="btn-primary" type="submit">Save long-stay discounts</button>
         </div>
+        <div id="long-stay-notice" class="notice info" hidden>Update the tiers for a unit, then save them here.</div>
       </form>
     </section>
     <section class="card stack" style="margin-top:18px">
@@ -149,6 +164,8 @@ export function onRequestGet() {
         const ratePeriodForm = document.getElementById('rate-period-form');
         const longStayForm = document.getElementById('long-stay-form');
         const adminNotice = document.getElementById('admin-notice');
+        const longStayNotice = document.getElementById('long-stay-notice');
+        const longStaySubmitButton = longStayForm.querySelector('button[type="submit"]');
         const unitSelect = document.getElementById('unitId');
         const longStayUnitSelect = document.getElementById('longStayUnitId');
         const reservationsWrap = document.getElementById('admin-reservations');
@@ -228,7 +245,7 @@ export function onRequestGet() {
         }
 
         function getLongStayInputs() {
-          return [1, 2, 3].map((index) => ({
+          return [1, 2, 3, 4].map((index) => ({
             nights: longStayForm.elements['longStayNights' + index],
             rate: longStayForm.elements['longStayRate' + index],
           }));
@@ -245,6 +262,12 @@ export function onRequestGet() {
             row.nights.value = tier?.minNights || '';
             row.rate.value = tier ? Number(tier.rate * 100).toFixed(2).replace(/\.00$/, '') : '';
           });
+        }
+
+        function setLongStayNotice(type, message) {
+          longStayNotice.hidden = false;
+          longStayNotice.className = 'notice ' + type;
+          longStayNotice.textContent = message;
         }
 
         async function loadDashboard() {
@@ -372,10 +395,14 @@ export function onRequestGet() {
 
         longStayUnitSelect.addEventListener('change', () => {
           fillLongStayForm(longStayUnitSelect.value);
+          setLongStayNotice('info', 'Adjust the tiers for this unit, then save your changes.');
         });
 
         longStayForm.addEventListener('submit', async (event) => {
           event.preventDefault();
+          longStaySubmitButton.disabled = true;
+          longStaySubmitButton.textContent = 'Saving…';
+          setLongStayNotice('info', 'Saving long-stay discounts…');
           try {
             const tiers = getLongStayInputs()
               .map((row) => ({
@@ -391,10 +418,15 @@ export function onRequestGet() {
             });
             adminNotice.className = 'notice success';
             adminNotice.textContent = 'Long-stay discounts saved.';
+            setLongStayNotice('success', 'Long-stay discounts saved successfully.');
             await loadDashboard();
           } catch (error) {
             adminNotice.className = 'notice error';
             adminNotice.textContent = error.message;
+            setLongStayNotice('error', error.message);
+          } finally {
+            longStaySubmitButton.disabled = false;
+            longStaySubmitButton.textContent = 'Save long-stay discounts';
           }
         });
 

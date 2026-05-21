@@ -86,7 +86,6 @@
     optionsAmount: document.getElementById("booking-options-amount"),
     longStayDiscount: document.getElementById("booking-long-stay-discount"),
     nonRefundableDiscount: document.getElementById("booking-non-refundable-discount"),
-    weeklyDiscount: document.getElementById("booking-weekly-discount"),
     paymentFee: document.getElementById("booking-payment-fee"),
     totalAmount: document.getElementById("booking-total-amount"),
   };
@@ -868,9 +867,6 @@
     }
     summary.longStayDiscount.textContent = formatSignedCurrency(-quote.longStayDiscountAmount, quote.currency);
     summary.nonRefundableDiscount.textContent = formatSignedCurrency(-quote.nonRefundableDiscountAmount, quote.currency);
-    if (summary.weeklyDiscount) {
-      summary.weeklyDiscount.textContent = formatSignedCurrency(-(quote.weeklyStayDiscountAmount || 0), quote.currency);
-    }
     summary.paymentFee.textContent = formatCurrency(quote.paymentFeeAmount, quote.currency);
     summary.totalAmount.textContent = formatCurrency(quote.totalAmount, quote.currency);
 
@@ -892,9 +888,6 @@
     }
     summary.longStayDiscount.textContent = texts.summaryPendingAmount;
     summary.nonRefundableDiscount.textContent = texts.summaryPendingAmount;
-    if (summary.weeklyDiscount) {
-      summary.weeklyDiscount.textContent = texts.summaryPendingAmount;
-    }
     summary.paymentFee.textContent = texts.summaryPendingAmount;
     summary.totalAmount.textContent = texts.summaryPendingAmount;
     submitButton.disabled = true;

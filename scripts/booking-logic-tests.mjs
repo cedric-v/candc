@@ -115,6 +115,30 @@ function runPricingTests() {
   assertEqual(parkingQuote.optionsAmount, 10, "Parking WC-shower should add a flat CHF 10");
   assertEqual(parkingQuote.totalAmount, 63.55, "Parking total should include 2.5% payment fee");
 
+  const parkingLongStayQuote = calculateQuoteFromResolvedUnit(
+    {
+      ...parking,
+      unitType: parking.unitType,
+      displayName: parking.displayName,
+      checkInStartTime: parking.checkInStartTime,
+      currency: parking.currency,
+    },
+    createNightlyRates("2027-06-01", 7, 20),
+    {
+      unitCode: "parking-space",
+      checkInDate: "2027-06-01",
+      checkOutDate: "2027-06-08",
+      adults: 1,
+      children: 0,
+      infants: 0,
+      wcShowerRequested: false,
+      nonRefundableSelected: false,
+    },
+    config,
+  );
+
+  assertEqual(parkingLongStayQuote.appliedLongStayDiscountRate, 0.05, "Parking should apply 5% long-stay discount from 7 nights");
+
   const studioQuote = calculateQuoteFromResolvedUnit(
     {
       ...studio,
@@ -140,8 +164,9 @@ function runPricingTests() {
   assertEqual(studioQuote.baseAmount, 693, "Studio base amount should total nightly rates");
   assertEqual(studioQuote.guestSurchargeAmount, 84, "Studio should charge extra adults and children");
   assertEqual(studioQuote.touristTaxAmount, 42, "Studio tourist tax should match adults only");
-  assertEqual(studioQuote.weeklyStayDiscountAmount, 34.96, "Studio 7+ night rebate should be applied");
-  assertEqual(studioQuote.nonRefundableDiscountAmount, 77.7, "Studio non-refundable discount should apply after long-stay base");
+  assertEqual(studioQuote.longStayDiscountAmount, 38.85, "Studio 7+ night discount should now be folded into the long-stay discount");
+  assertEqual(studioQuote.weeklyStayDiscountAmount, 0, "Legacy weekly discount should no longer be applied separately");
+  assertEqual(studioQuote.nonRefundableDiscountAmount, 73.82, "Studio non-refundable discount should apply after the merged long-stay discount");
 
   const studioLongStayQuote = calculateQuoteFromResolvedUnit(
     {

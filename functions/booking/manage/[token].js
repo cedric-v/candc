@@ -188,7 +188,7 @@ export function onRequestGet(context) {
               ['Tourist tax', formatMoney(data.quote.touristTaxAmount, data.quote.currency)],
               ['Options', formatMoney(data.quote.optionsAmount, data.quote.currency)],
               ['Guest supplements', formatMoney(data.quote.guestSurchargeAmount || 0, data.quote.currency)],
-              ['7+ night rebate', formatMoney(data.quote.weeklyStayDiscountAmount || 0, data.quote.currency)],
+              ['Long-stay discount', formatMoney(data.quote.longStayDiscountAmount || 0, data.quote.currency)],
               ['Payment fee', formatMoney(data.quote.paymentFeeAmount, data.quote.currency)],
               ['Updated total', formatMoney(data.nextTotal, data.quote.currency)],
             ]);
