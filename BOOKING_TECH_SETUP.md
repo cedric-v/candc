@@ -184,6 +184,12 @@ Si la base D1 existe deja et doit maintenant passer la remise `7+ nuits` de `5 %
 wrangler d1 execute candc-booking --file=./migrations/0009_raise_7_night_long_stay_discount.sql
 ```
 
+Si la base D1 existe deja et doit maintenant pointer le calendrier Booking.com du parking vers la nouvelle URL iCal, executer aussi :
+
+```bash
+wrangler d1 execute candc-booking --file=./migrations/0011_update_parking_booking_ical_url.sql
+```
+
 ## Binding D1 a faire dans Cloudflare Pages
 
 Le projet de reservation ne peut pas fonctionner en production sans binding D1 sur le projet Pages.

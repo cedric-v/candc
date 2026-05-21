@@ -98,6 +98,12 @@ Si la base existe deja et doit ensuite relever cette remise `7+ nuits` de `5 %` 
 wrangler d1 execute candc-booking --file=./migrations/0009_raise_7_night_long_stay_discount.sql
 ```
 
+Si la base existe deja et doit maintenant mettre a jour l'URL iCal Booking.com du parking, executer aussi :
+
+```bash
+wrangler d1 execute candc-booking --file=./migrations/0011_update_parking_booking_ical_url.sql
+```
+
 ### Binding D1 obligatoire sur Cloudflare Pages
 
 Important :
