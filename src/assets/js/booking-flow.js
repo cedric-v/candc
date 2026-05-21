@@ -864,6 +864,13 @@
         summary.optionsAmount.textContent = formatCurrency(quote.optionsAmount, quote.currency);
         summary.optionsAmount.classList.remove("booking-discount-highlight");
       }
+
+      if (unitCode === "parking-space") {
+        const row = summary.optionsAmount.closest("div");
+        if (row) {
+          row.style.display = quote.appliedOptions.wcShowerRequested ? "flex" : "none";
+        }
+      }
     }
 
     if (summary.longStayDiscount) {
@@ -900,6 +907,12 @@
     }
     if (summary.optionsAmount) {
       summary.optionsAmount.textContent = texts.summaryPendingAmount;
+      if (unitCode === "parking-space") {
+        const row = summary.optionsAmount.closest("div");
+        if (row) {
+          row.style.display = "none";
+        }
+      }
     }
 
     if (summary.longStayDiscount) {
