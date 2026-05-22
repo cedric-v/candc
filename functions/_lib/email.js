@@ -622,7 +622,7 @@ function buildConfirmationText(reservation, token, includeWcUpsell) {
   return lines.join("\n");
 }
 
-function buildArrivalText(reservation) {
+function buildArrivalText(reservation, config = {}) {
   const text = getEmailText(reservation.locale);
 
   if (reservation.unit_type !== "parking") {
@@ -693,9 +693,12 @@ function buildArrivalText(reservation) {
     "",
     text.kindRegards,
     "Celine and Cedric",
-  );
+  ];
 
-  return lines.join("\n");
+  return lines
+    .join("\n")
+    .replaceAll("__WIFI_STUDIO_PASSWORD__", config.wifiStudioPassword || "__WIFI_STUDIO_PASSWORD__")
+    .replaceAll("__WIFI_TERRACE_PASSWORD__", config.wifiTerracePassword || "__WIFI_TERRACE_PASSWORD__");
 }
 
 function buildModificationText(reservation, deltaAmount, manageLink) {
@@ -772,7 +775,7 @@ function buildEmailPayload(type, reservation, config, options = {}) {
     case "arrival_instructions":
       return {
         subject: `${subjectPrefix} ${text.subjects.arrival_instructions} - ${reservation.public_reference}`,
-        text: buildArrivalText(reservation),
+        text: buildArrivalText(reservation, config),
       };
     default:
       throw new Error(`unknown_email_type:${type}`);

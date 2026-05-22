@@ -45,6 +45,8 @@ export function getConfig(env) {
     emailFrom: env.EMAIL_FROM || "",
     emailReplyTo: env.EMAIL_REPLY_TO || "",
     resendApiKey: env.RESEND_API_KEY || "",
+    wifiStudioPassword: env.WIFI_STUDIO_PASSWORD || "__WIFI_STUDIO_PASSWORD__",
+    wifiTerracePassword: env.WIFI_TERRACE_PASSWORD || "__WIFI_TERRACE_PASSWORD__",
     enableGoogleCalendarSync: String(env.ENABLE_GOOGLE_CALENDAR_SYNC || "false") === "true",
     googleServiceAccountEmail: env.GOOGLE_SERVICE_ACCOUNT_EMAIL || "",
     googleServiceAccountPrivateKey: (env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY || "").replace(/\\n/g, "\n"),
