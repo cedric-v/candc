@@ -107,6 +107,26 @@ Verification recommandee :
 - `GOOGLE_SERVICE_ACCOUNT_EMAIL`
 - `GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY`
 
+## Hygiene repo public
+
+Ce projet est sur un depot GitHub public.
+
+Ne pas versionner :
+
+- les vraies URLs ICS Booking.com ou Airbnb
+- les `export_feed_token`
+- les vrais IDs de Google Calendar prives
+- les vraies valeurs de `wrangler.toml`
+- les tokens admin et sync internes
+- les secrets SumUp, Resend ou Google
+
+Concretement :
+
+1. garder `wrangler.toml.example` comme modele committe
+2. garder le vrai `wrangler.toml` local uniquement
+3. injecter les vraies URLs ICS et tokens de feed au deploiement ou via mise a jour D1 privee
+4. verifier que les logs et reponses admin n'exposent jamais ces valeurs en clair
+
 ## Recuperer le `SUMUP_MERCHANT_CODE`
 
 Le plus rapide et le plus fiable est de le recuperer via l'API SumUp avec la cle API privee.
@@ -121,10 +141,6 @@ curl https://api.sumup.com/v0.1/me \
 Dans la reponse JSON :
 
 - utiliser `merchant_profile.merchant_code`
-
-Exemple de valeur :
-
-- `REPLACE_WITH_SUMUP_MERCHANT_CODE`
 
 Important :
 
@@ -148,9 +164,10 @@ Justification :
 
 1. Copier `wrangler.toml.example` vers `wrangler.toml`
 2. Remplacer le `database_id`
-3. Creer la base D1
-4. Executer la migration SQL
-5. Configurer les variables d'environnement Pages / Workers
+3. Remplir les placeholders prives pour les calendriers et tokens de feed si vous utilisez les migrations de seed
+4. Creer la base D1
+5. Executer la migration SQL
+6. Configurer les variables d'environnement Pages / Workers
 
 ## Exemple de commandes
 
@@ -189,6 +206,12 @@ Si la base D1 existe deja et doit maintenant pointer le calendrier Booking.com d
 ```bash
 wrangler d1 execute candc-booking --file=./migrations/0011_update_parking_booking_ical_url.sql
 ```
+
+Important :
+
+- les migrations de seed contiennent des placeholders deliberes pour les valeurs sensibles
+- remplacez-les uniquement dans un contexte prive avant execution
+- ne recommitez jamais ces valeurs dans le depot public
 
 ## Binding D1 a faire dans Cloudflare Pages
 
@@ -257,6 +280,38 @@ Le scaffold couvre :
 - fallback d'e-mail d'arrivee immediat pour les reservations confirmees le jour meme apres 08:00 locale
 - remboursements automatiques SumUp pour les cas eligibles, avec fallback `manual_refund_due` si la transaction n'est pas remboursable automatiquement
 - tests metier dedies dans `scripts/booking-logic-tests.mjs`
+
+## Controle de securite recommande
+
+Validation serveur :
+
+- `POST /api/booking/quote` et `POST /api/booking/reservations` doivent rester valides uniquement sur la base des regles serveur
+- ne pas faire confiance aux montants, remises, politiques d'annulation ou etats de paiement venant du client
+- les payloads invites, remarques et longueurs vehicule doivent rester bornes cote serveur
+
+Calendriers :
+
+- ne pas exposer les vraies URLs ICS importees dans les logs, dashboards ou docs
+- ne pas synchroniser de notes internes ou de prix confidentiels dans les flux ICS publics
+- limiter les descriptions et resumes ICS au strict minimum de disponibilite
+
+Paiement :
+
+- la verification webhook doit continuer a relire l'etat du checkout via SumUp avant de confirmer une reservation
+- utiliser exclusivement le hosted checkout pour ne jamais manipuler de donnees carte dans l'application
+
+Cloudflare :
+
+- activer du rate limiting ou WAF sur `POST /api/booking/reservations`
+- activer du rate limiting ou WAF sur `POST /api/booking/quote`
+- proteger `POST /api/booking/sumup/webhook` avec une regle dediee et, si possible, une allowlist de provenance
+- restreindre `/api/internal/*` et `/api/admin/*` par token, et idealement par IP ou Access pour l'operations
+
+Point de depart raisonnable :
+
+- reservations : `10` requetes / minute / IP
+- quote : `30` requetes / minute / IP
+- webhook SumUp : faible bruit, journalisation, allowlist si faisable
 
 Le scaffold ne couvre pas encore :
 

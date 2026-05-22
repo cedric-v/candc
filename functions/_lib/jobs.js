@@ -10,6 +10,31 @@ import { getConfig } from "./env.js";
 import { sendReservationEmail } from "./booking-ops.js";
 import { parseIcsEvents } from "./ics-import.js";
 
+function redactSecret(value, visibleChars = 6) {
+  if (!value || typeof value !== "string") {
+    return null;
+  }
+
+  if (value.length <= visibleChars) {
+    return "***";
+  }
+
+  return `***${value.slice(-visibleChars)}`;
+}
+
+function sanitizeCalendarUrl(value) {
+  if (!value || typeof value !== "string") {
+    return null;
+  }
+
+  try {
+    const url = new URL(value);
+    return `${url.origin}${url.pathname}${url.search ? "?token=" : ""}${redactSecret(url.searchParams.get("t") || url.searchParams.get("token") || "configured")}`;
+  } catch {
+    return redactSecret(value);
+  }
+}
+
 async function fetchIcs(importUrl) {
   const response = await fetch(importUrl, {
     method: "GET",
@@ -190,7 +215,7 @@ export async function validateCalendarSources(env, unitCode = null) {
       unitCode: sourceRecord.unit_code,
       unitDisplayName: sourceRecord.display_name,
       sourceCode: sourceRecord.source_code,
-      importUrl: sourceRecord.import_url || null,
+      importUrl: sanitizeCalendarUrl(sourceRecord.import_url || null),
       importStatus: "skipped",
       importEventCount: 0,
       exportStatus: "skipped",
@@ -216,7 +241,7 @@ export async function validateCalendarSources(env, unitCode = null) {
     if (exportFeedToken && !exportChecksSeen.has(exportCacheKey)) {
       exportChecksSeen.add(exportCacheKey);
       const exportUrl = `${config.publicBaseUrl}/api/booking/ics/${encodeURIComponent(exportFeedToken)}`;
-      result.exportUrl = exportUrl;
+      result.exportUrl = `${config.publicBaseUrl}/api/booking/ics/${redactSecret(exportFeedToken)}`;
       try {
         const exportIcs = await fetchIcs(exportUrl);
         result.exportEventCount = parseIcsEvents(exportIcs).length;
@@ -227,7 +252,7 @@ export async function validateCalendarSources(env, unitCode = null) {
       }
     } else if (exportFeedToken) {
       result.exportStatus = "shared";
-      result.exportUrl = `${config.publicBaseUrl}/api/booking/ics/${encodeURIComponent(exportFeedToken)}`;
+      result.exportUrl = `${config.publicBaseUrl}/api/booking/ics/${redactSecret(exportFeedToken)}`;
     } else {
       result.errors.push("export:missing_feed_token");
     }

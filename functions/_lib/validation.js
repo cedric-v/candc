@@ -9,6 +9,17 @@ const ALLOWED_VEHICLE_TYPES = new Set([
   "motorhome_over_6_5m",
 ]);
 
+const MAX_NAME_LENGTH = 120;
+const MAX_EMAIL_LENGTH = 254;
+const MAX_PHONE_LENGTH = 40;
+const MAX_REMARKS_LENGTH = 2000;
+const MAX_GUEST_COUNT = 20;
+const MAX_VEHICLE_LENGTH_M = 20;
+
+function isPositiveFiniteNumber(value) {
+  return Number.isFinite(value) && value > 0;
+}
+
 export function validateBookingInput(input, { requireGuestInfo = false, unit = null } = {}) {
   const errors = [];
 
@@ -55,14 +66,32 @@ export function validateBookingInput(input, { requireGuestInfo = false, unit = n
 
   if (!Number.isInteger(input.adults) || input.adults < 1) {
     errors.push({ field: "adults", message: "At least one adult is required" });
+  } else if (input.adults > MAX_GUEST_COUNT) {
+    errors.push({ field: "adults", message: "Adults exceeds supported limit" });
   }
 
   if (!Number.isInteger(input.children) || input.children < 0) {
     errors.push({ field: "children", message: "Children must be zero or more" });
+  } else if (input.children > MAX_GUEST_COUNT) {
+    errors.push({ field: "children", message: "Children exceeds supported limit" });
   }
 
   if (!Number.isInteger(input.infants) || input.infants < 0) {
     errors.push({ field: "infants", message: "Infants must be zero or more" });
+  } else if (input.infants > MAX_GUEST_COUNT) {
+    errors.push({ field: "infants", message: "Infants exceeds supported limit" });
+  }
+
+  if (input.vehicleLengthM !== null && input.vehicleLengthM !== undefined) {
+    if (!isPositiveFiniteNumber(input.vehicleLengthM)) {
+      errors.push({ field: "vehicleLengthM", message: "Vehicle length must be a positive number" });
+    } else if (input.vehicleLengthM > MAX_VEHICLE_LENGTH_M) {
+      errors.push({ field: "vehicleLengthM", message: "Vehicle length exceeds supported limit" });
+    }
+  }
+
+  if (input.remarks && input.remarks.length > MAX_REMARKS_LENGTH) {
+    errors.push({ field: "remarks", message: "Remarks is too long" });
   }
 
   const maxGuests = Number(unit?.settings?.maxGuests || 0);
@@ -79,14 +108,24 @@ export function validateBookingInput(input, { requireGuestInfo = false, unit = n
   if (requireGuestInfo) {
     if (!input.guestFirstName?.trim()) {
       errors.push({ field: "guestFirstName", message: "First name is required" });
+    } else if (input.guestFirstName.length > MAX_NAME_LENGTH) {
+      errors.push({ field: "guestFirstName", message: "First name is too long" });
     }
 
     if (!input.guestLastName?.trim()) {
       errors.push({ field: "guestLastName", message: "Last name is required" });
+    } else if (input.guestLastName.length > MAX_NAME_LENGTH) {
+      errors.push({ field: "guestLastName", message: "Last name is too long" });
     }
 
     if (!input.guestEmail?.trim() || !/.+@.+\..+/.test(input.guestEmail)) {
       errors.push({ field: "guestEmail", message: "Valid email is required" });
+    } else if (input.guestEmail.length > MAX_EMAIL_LENGTH) {
+      errors.push({ field: "guestEmail", message: "Email is too long" });
+    }
+
+    if (input.guestPhone && input.guestPhone.length > MAX_PHONE_LENGTH) {
+      errors.push({ field: "guestPhone", message: "Phone number is too long" });
     }
   }
 

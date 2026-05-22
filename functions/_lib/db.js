@@ -2,6 +2,18 @@ import { getDefaultUnitByCode } from "./catalog.js";
 import { enumerateNights } from "./date.js";
 import { getConfig, requireDb } from "./env.js";
 
+function redactSecret(value, visibleChars = 6) {
+  if (!value || typeof value !== "string") {
+    return null;
+  }
+
+  if (value.length <= visibleChars) {
+    return "***";
+  }
+
+  return `***${value.slice(-visibleChars)}`;
+}
+
 export async function getUnitByCode(env, unitCode) {
   const db = requireDb(env);
   const code = unitCode || getConfig(env).defaultUnitCode;
@@ -1263,7 +1275,11 @@ export async function listCalendarHealthForAdmin(env) {
     )
     .all();
 
-  return results || [];
+  return (results || []).map((row) => ({
+    ...row,
+    import_url: redactSecret(row.import_url),
+    export_feed_token: redactSecret(row.export_feed_token),
+  }));
 }
 
 export async function listOperationalJobHealth(env) {
@@ -1417,5 +1433,13 @@ export async function listRecentSyncLogs(env, limit = 20) {
     .bind(limit)
     .all();
 
-  return results || [];
+  return (results || []).map((row) => ({
+    id: row.id,
+    sync_type: row.sync_type,
+    status: row.status,
+    message: row.message,
+    created_at: row.created_at,
+    unit_code: row.unit_code,
+    unit_display_name: row.unit_display_name,
+  }));
 }

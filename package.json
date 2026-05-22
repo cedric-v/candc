@@ -14,7 +14,7 @@
   "license": "CC-BY-NC-SA-4.0",
   "homepage": "https://candc.ch",
   "private": true,
-  "description": "C & C - Eco Studio & Parking à La Sonnaz, Fribourg",
+  "description": "Multilingual Eleventy site and Cloudflare-based direct booking engine for a parking space and eco studio",
   "dependencies": {
     "cross-env": "^10.1.0",
     "dotenv": "^17.4.2",

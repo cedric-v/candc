@@ -92,6 +92,16 @@ Important :
 - couche agent-ready avec `llms.txt`, `site-context.json` et WebMCP sur les parcours publics de reservation parking et studio
 - logique d'e-mail d'arrivee adaptee aux reservations de derniere minute : si la reservation est confirmee le jour meme apres 8h locale, l'e-mail d'arrivee part immediatement au lieu d'attendre le cron du lendemain
 
+## Posture securite
+
+- validation serveur des payloads de devis et reservation
+- token de gestion client aleatoire, stocke uniquement sous forme de hash
+- webhook paiement revalide contre SumUp avant confirmation
+- routes admin et sync internes protegees par token dedie
+- sync Google Calendar desactivee par defaut
+- depot public assaini : les URLs ICS, feed tokens, IDs de calendrier et valeurs `wrangler.toml` reelles ne doivent pas etre committes
+- protections Cloudflare attendues en production sur les endpoints d'ecriture, en particulier `POST /api/booking/reservations`
+
 ## Ce qui est important architecturalement
 
 Le systeme n'est plus pense uniquement pour le parking.

@@ -1,14 +1,18 @@
-# C & C - Eco Studio & Parking
+# C & C - Direct Booking Platform for an Eco Studio and Parking
 
 Official website: [candc.ch](https://candc.ch)
 
-Multilingual marketing site and in-progress direct booking platform for:
+Multilingual marketing site and direct booking platform for:
 
 - `parking-space`
 - `eco-studio`
 
-The public site is built with `Eleventy`. The booking engine is being added with `Cloudflare Pages Functions`, `D1`, ICS synchronization, SumUp payments, and optional Google Calendar sync.
+The public site is built with `Eleventy`. The booking engine runs on `Cloudflare Pages Functions` with `D1`, unit-aware pricing and availability, hosted checkout via `SumUp`, OTA sync through ICS, and self-service reservation management.
 The public booking funnel is also prepared for browser-based agent use with `llms.txt`, `.well-known/site-context.json`, and progressive `WebMCP` exposure on reservation flows.
+
+Suggested GitHub description:
+
+`Multilingual Eleventy site and Cloudflare-based direct booking engine for a parking space and eco studio, with unit-aware pricing, OTA calendar sync, SumUp checkout, and self-service reservation management.`
 
 ## Current scope
 
@@ -17,9 +21,10 @@ Implemented today:
 - multilingual marketing site
 - dedicated parking booking funnel
 - dedicated studio booking funnel
-- booking backend scaffold with unit-aware data model
+- booking backend with unit-aware data model
 - SumUp hosted checkout integration
-- Booking.com ICS import pipeline
+- Booking.com and optional Airbnb ICS import pipeline
+- direct reservation export ICS per unit
 - optional Google Calendar sync pipeline, disabled by default
 - multilingual transactional email pipeline
 - customer self-service booking management page
@@ -77,6 +82,28 @@ Important limitation:
 - `Cloudflare Cron Triggers` for scheduled sync jobs
 - `SumUp` for payment
 - `Google Calendar API` for optional internal reservation visibility
+
+## Security posture
+
+This repository is public, so operational secrets and private calendar endpoints must stay outside git.
+
+Current protections and conventions:
+
+- booking payloads are validated server-side before pricing or reservation creation
+- booking management links are opaque random tokens stored as `SHA-256` hashes in D1
+- SumUp webhook processing re-fetches checkout state from SumUp before updating a reservation
+- internal sync and admin routes require dedicated tokens
+- Google Calendar sync is disabled by default unless explicitly configured
+- Cloudflare Zaraz is used for analytics instead of embedding GA or GTM snippets in templates
+
+Required deployment posture:
+
+- keep real `wrangler.toml` values, ICS import URLs, feed tokens, Google Calendar IDs, and API secrets out of the repo
+- enforce Cloudflare WAF or Rate Limiting on `POST /api/booking/reservations`, `POST /api/booking/quote`, `POST /api/booking/sumup/webhook`, and internal/admin endpoints
+- review admin and sync logs so they do not expose raw calendar URLs, feed tokens, or payment secrets
+- never synchronize internal notes or confidential pricing data into public ICS feeds or public agent-facing surfaces
+
+See `SECURITY.md` and `BOOKING_TECH_SETUP.md` for the operational checklist.
 
 ## Key routes
 
@@ -231,6 +258,7 @@ Important:
 - the static website builds to `_site`
 - booking APIs live under `functions/`
 - Cloudflare bindings and secrets are documented in `wrangler.toml.example`
+- copy `wrangler.toml.example` locally and keep the real `wrangler.toml` untracked
 
 ## Analytics
 

@@ -39,12 +39,13 @@ export async function onRequestPost(context) {
   try {
     const payload = await context.request.json();
 
-    if (!payload?.id) {
+    if (typeof payload?.id !== "string" || payload.id.trim() === "" || payload.id.length > 200) {
       return badRequest("Missing SumUp checkout id");
     }
 
-    const checkout = await getCheckout(context.env, payload.id);
-    const reservation = await getReservationByCheckoutId(context.env, payload.id);
+    const checkoutId = payload.id.trim();
+    const checkout = await getCheckout(context.env, checkoutId);
+    const reservation = await getReservationByCheckoutId(context.env, checkoutId);
 
     if (!reservation) {
       return json({}, { status: 202 });
@@ -52,7 +53,7 @@ export async function onRequestPost(context) {
 
     const mappedStatus = mapStatusForPaymentType(checkout.status, reservation.payment_type);
 
-    await updatePaymentByCheckoutId(context.env, payload.id, {
+    await updatePaymentByCheckoutId(context.env, checkoutId, {
       providerPaymentReference: checkout.transaction_id || null,
       status: mappedStatus.paymentStatus,
       rawPayload: checkout,

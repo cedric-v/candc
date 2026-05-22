@@ -22,11 +22,8 @@ export function buildReservationFeed(reservations) {
   for (const reservation of reservations) {
     const isStudio = reservation.unit_code === "eco-studio";
     const unitName = isStudio ? "Studio" : "Parking";
-    const summary = reservation.public_reference
-      ? `C&C ${unitName} ${reservation.public_reference}`
-      : `C&C ${unitName} reservation`;
-    const guestName = [reservation.guest_first_name, reservation.guest_last_name].filter(Boolean).join(" ");
-    const description = guestName ? `Guest: ${guestName}` : `C&C ${unitName} reservation`;
+    const summary = `C&C ${unitName} unavailable`;
+    const description = `Direct reservation block for ${unitName.toLowerCase()} availability sync.`;
 
     lines.push(
       "BEGIN:VEVENT",
