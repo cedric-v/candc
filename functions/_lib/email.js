@@ -693,7 +693,7 @@ function buildArrivalText(reservation, config = {}) {
     "",
     text.kindRegards,
     "Celine and Cedric",
-  ];
+  );
 
   return lines
     .join("\n")
