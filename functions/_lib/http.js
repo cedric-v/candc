@@ -10,7 +10,9 @@ export function json(data, init = {}) {
 
 export function text(body, init = {}) {
   const headers = new Headers(init.headers || {});
-  headers.set("content-type", "text/plain; charset=utf-8");
+  if (!headers.has("content-type")) {
+    headers.set("content-type", "text/plain; charset=utf-8");
+  }
 
   return new Response(body, {
     ...init,
