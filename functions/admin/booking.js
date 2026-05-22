@@ -176,6 +176,22 @@ export function onRequestGet() {
         const syncBookingButton = document.getElementById('sync-booking-button');
         const validateCalendarButton = document.getElementById('validate-calendar-button');
         const sendArrivalButton = document.getElementById('send-arrival-button');
+        const adminTimeZone = 'Europe/Zurich';
+        const dateFormatter = new Intl.DateTimeFormat('fr-CH', {
+          timeZone: adminTimeZone,
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+        });
+        const dateTimeFormatter = new Intl.DateTimeFormat('fr-CH', {
+          timeZone: adminTimeZone,
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          timeZoneName: 'short',
+        });
         let adminToken = sessionStorage.getItem('candcAdminToken') || '';
         let adminUnits = [];
 
@@ -205,6 +221,41 @@ export function onRequestGet() {
             return '<p class="small">No data yet.</p>';
           }
           return '<table><thead><tr>' + headers.map((header) => '<th>' + header.label + '</th>').join('') + '</tr></thead><tbody>' + rows.map((row) => '<tr>' + headers.map((header) => '<td>' + (row[header.key] ?? '-') + '</td>').join('') + '</tr>').join('') + '</tbody></table>';
+        }
+
+        function isIsoDateOnly(value) {
+          return typeof value === 'string' && /^\\d{4}-\\d{2}-\\d{2}$/.test(value);
+        }
+
+        function formatAdminDate(value) {
+          if (!value) {
+            return '-';
+          }
+
+          if (isIsoDateOnly(value)) {
+            const parts = value.split('-');
+            return parts[2] + '.' + parts[1] + '.' + parts[0];
+          }
+
+          const parsed = new Date(value);
+          if (Number.isNaN(parsed.getTime())) {
+            return value;
+          }
+
+          return dateFormatter.format(parsed);
+        }
+
+        function formatAdminDateTime(value) {
+          if (!value) {
+            return '-';
+          }
+
+          const parsed = new Date(value);
+          if (Number.isNaN(parsed.getTime())) {
+            return value;
+          }
+
+          return dateTimeFormatter.format(parsed);
         }
 
         function computeHealthBadge(item) {
@@ -240,7 +291,7 @@ export function onRequestGet() {
               return '<div class="meta-row"><span class="label">' + label + '</span><span class="value">No run recorded yet.</span></div>';
             }
 
-            return '<div class="meta-row"><span class="label">' + label + '</span><span class="value">' + [item.status, item.created_at, item.message].filter(Boolean).join(' · ') + '</span></div>';
+            return '<div class="meta-row"><span class="label">' + label + '</span><span class="value">' + [item.status, formatAdminDateTime(item.created_at), item.message].filter(Boolean).join(' · ') + '</span></div>';
           }).join('');
         }
 
@@ -318,7 +369,7 @@ export function onRequestGet() {
               data.reservations.map((item) => ({
                 reference: item.public_reference,
                 unit: item.unit_display_name,
-                stay: item.check_in_date + ' → ' + item.check_out_date,
+                stay: formatAdminDate(item.check_in_date) + ' → ' + formatAdminDate(item.check_out_date),
                 guest: item.guest_first_name + ' ' + item.guest_last_name,
                 status: item.status + ' / ' + (item.payment_status || '-'),
                 total: item.total_amount + ' ' + item.currency,
@@ -335,7 +386,7 @@ export function onRequestGet() {
             ratePeriodsWrap.innerHTML = renderTable(
               data.ratePeriods.map((item) => ({
                 unit: item.unit_display_name,
-                period: item.start_date + ' → ' + item.end_date,
+                period: formatAdminDate(item.start_date) + ' → ' + formatAdminDate(item.end_date),
                 rate: item.nightly_base_rate + ' CHF',
                 label: item.label || '-',
                 priority: item.priority,
@@ -354,7 +405,7 @@ export function onRequestGet() {
                 unit: item.unit_display_name,
                 source: item.source_code,
                 health: computeHealthBadge(item),
-                synced: item.last_synced_at || '-',
+                synced: formatAdminDateTime(item.last_synced_at),
                 imported: String(item.future_block_count ?? 0),
                 lastStatus: item.last_status || '-',
                 lastMessage: item.last_message || '-',
@@ -371,7 +422,7 @@ export function onRequestGet() {
             );
             syncLogsWrap.innerHTML = renderTable(
               data.syncLogs.map((item) => ({
-                when: item.created_at,
+                when: formatAdminDateTime(item.created_at),
                 type: item.sync_type,
                 unit: item.unit_display_name || '-',
                 status: item.status,
