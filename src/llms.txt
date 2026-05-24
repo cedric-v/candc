@@ -1,17 +1,17 @@
 # C and C
 
-Site multilingue pour :
+Multilingual site for:
 
-- un eco studio meuble
-- une place de parking reservable pour van, caravane ou camping-car
+- a furnished eco studio
+- a bookable parking space for vans, caravans, or motorhomes
 
-Le projet comprend maintenant :
+The project now includes:
 
-- le site public marketing
-- un moteur de reservation en cours d'integration
-- une couche agent-ready pour les funnels de reservation parking et studio
+- the public marketing site
+- a booking engine being integrated
+- an agent-ready layer for the parking and studio booking funnels
 
-## Langues
+## Languages
 
 - fr
 - en
@@ -21,39 +21,38 @@ Le projet comprend maintenant :
 - it
 - nl
 
-## Pages publiques importantes
+## Key public pages
 
-- Accueil FR: https://candc.ch/fr/
+- Home FR: https://candc.ch/fr/
 - Eco Studio FR: https://candc.ch/fr/eco-studio/
 - Parking FR: https://candc.ch/fr/parking/
-- Reservation Parking FR: https://candc.ch/fr/parking/booking/
+- Parking Booking FR: https://candc.ch/fr/parking/booking/
 - Contact FR: https://candc.ch/fr/contact/
 
 ## Booking system
 
-Le moteur de reservation est pense pour plusieurs unites reservables.
+The booking engine is designed for multiple rentable units.
 
-Unites deja preparees :
+Current prepared units:
 
 - `parking-space`
 - `eco-studio`
 
-Le funnel parking est deja expose cote site.
-Le funnel studio est lui aussi expose cote site.
+Both the parking and studio funnels are exposed on the site.
 
 ## Agent readiness
 
-- `llms.txt` : https://candc.ch/llms.txt
-- `site-context.json` : https://candc.ch/.well-known/site-context.json
-- WebMCP progressif sur les reservations parking et studio
+- `llms.txt`: https://candc.ch/llms.txt
+- `site-context.json`: https://candc.ch/.well-known/site-context.json
+- Progressive WebMCP on parking and studio reservations
 
-Pages actuellement exposees aux agents en contexte navigateur :
+Pages currently exposed to agents in browser context:
 
-- Reservation parking : https://candc.ch/fr/parking/booking/
-- Reservation studio : https://candc.ch/fr/eco-studio/booking/
-- Gestion de reservation : https://candc.ch/booking/manage/{token}
+- Parking reservation: https://candc.ch/fr/parking/booking/
+- Studio reservation: https://candc.ch/fr/eco-studio/booking/
+- Reservation management: https://candc.ch/booking/manage/{token}
 
-Outils WebMCP publics actuellement prevus :
+Public WebMCP tools currently planned:
 
 - `check_parking_availability`
 - `quote_parking_stay`
@@ -63,22 +62,22 @@ Outils WebMCP publics actuellement prevus :
 - `start_studio_reservation_checkout`
 - `update_existing_reservation`
 
-Notes :
+Notes:
 
-- WebMCP ici est une couche navigateur visible, ajoutee comme progressive enhancement
-- le back-office admin n'est pas expose comme outil WebMCP public
-- les funnels parking et studio sont tous deux agent-ready cote UI
+- WebMCP here is a visible browser layer, added as progressive enhancement
+- the admin back-office is not exposed as a public WebMCP tool
+- both parking and studio funnels are agent-ready on the UI side
 
-## Integrations prevues
+## Planned integrations
 
-- Booking.com ICS comme source de disponibilite externe principale
-- Airbnb ICS egalement possible si une source active existe pour l'unite
-- export ICS des reservations directes
-- SumUp pour le paiement
-- Google Calendar en option, desactive par defaut
-- remboursements automatiques SumUp pour les cas eligibles, avec fallback manuel si necessaire
-- worker cron Cloudflare deployee pour sync OTA, e-mails d'arrivee et e-mails de depart
-- notifications push ntfy.sh pour les evenements de reservation (nouvelles, annulations, modifications, paiements confirmes)
+- Booking.com ICS as the primary external availability source
+- Airbnb ICS also possible if an active source exists for the unit
+- ICS export of direct reservations
+- SumUp for payment
+- Google Calendar optional, disabled by default
+- automatic SumUp refunds for eligible cases, with manual fallback if needed
+- Cloudflare Cron Worker deployed for OTA sync, arrival emails, and departure emails
+- push notifications via ntfy.sh for reservation events (new bookings, cancellations, modifications, confirmed payments)
 
 ## Pricing notes
 
@@ -89,16 +88,16 @@ Notes :
   - parking: `10 %` from `7` nights, `20 %` from `16` nights, `25 %` from `30` nights, `30 %` from `60` nights
   - studio: `10 %` from `7` nights, `20 %` from `16` nights, `25 %` from `30` nights, `30 %` from `60` nights
 
-## Flux et index
+## Feeds and indexes
 
 - Sitemap: https://candc.ch/sitemap.xml
 - Site context: https://candc.ch/.well-known/site-context.json
 
-## Notes utiles pour les agents IA
+## Useful notes for AI agents
 
-- ne pas supposer que le moteur de reservation est limite au parking
-- les regles metier peuvent varier par unite
-- la documentation de reference locale est dans :
+- do not assume the booking engine is limited to parking
+- business rules may vary per unit
+- local reference documentation is in:
   - `README.md`
   - `BOOKING_SYSTEM_SPEC.md`
   - `BOOKING_TECH_SETUP.md`
