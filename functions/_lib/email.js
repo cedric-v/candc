@@ -1,8 +1,6 @@
 import { getConfig } from "./env.js";
 import { formatIsoDate, parseIsoDate } from "./date.js";
 
-const WHATSAPP_LINE = "__WHATSAPP_LINE__";
-
 const EMAIL_I18N = {
   fr: {
     localeTag: "fr-CH",
@@ -33,12 +31,12 @@ const EMAIL_I18N = {
       "Ce service optionnel est proposé contre un forfait de nettoyage de CHF 10 pour l'ensemble du séjour.",
     manageReservation: "Gérer votre réservation",
     supportLine:
-      `Cédric reste disponible si nécessaire via cette messagerie ou WhatsApp ${WHATSAPP_LINE}`,
+      `Cédric reste disponible si nécessaire via cette messagerie ou WhatsApp __WHATSAPP_LINE__`,
     confirmationClose: "Nous nous réjouissons de vous accueillir.",
     confirmationSignoff: "À bientôt,",
     arrivalStudioIntro: "Nous nous réjouissons de vous accueillir.",
     arrivalAssistance:
-      `Si vous avez besoin d'aide avant votre arrivée, Cédric reste disponible via cette messagerie ou WhatsApp ${WHATSAPP_LINE}`,
+      `Si vous avez besoin d'aide avant votre arrivée, Cédric reste disponible via cette messagerie ou WhatsApp __WHATSAPP_LINE__`,
     kindRegards: "Bien cordialement,",
     updatedReservation: "Votre réservation a été mise à jour.",
     updatedTotalLabel: "Nouveau total",
@@ -75,7 +73,7 @@ const EMAIL_I18N = {
     arrivalEvCharge:
       "Vous pouvez aussi recharger votre voiture électrique si besoin, lorsque nous sommes sur place. Nous fournissons un câble compatible avec la prise suisse Type 13 (220 V, 10 A) équipé d’un connecteur Type 2. Ce service de recharge lente est proposé en supplément (CHF 15 pour 10h, CHF 30 pour toute la journée ou la nuit).",
     arrivalSupport:
-      `À votre arrivée et pendant tout votre séjour, Cédric sera disponible via cette messagerie ou WhatsApp ${WHATSAPP_LINE}`,
+      `À votre arrivée et pendant tout votre séjour, Cédric sera disponible via cette messagerie ou WhatsApp __WHATSAPP_LINE__`,
     pleasantStay: "Nous vous souhaitons un excellent séjour.",
   },
   en: {
@@ -107,12 +105,12 @@ const EMAIL_I18N = {
       "This optional service is available for a cleaning fee of CHF 10 for your entire stay.",
     manageReservation: "Manage your reservation",
     supportLine:
-      `Cédric is available if needed via this messaging system or via WhatsApp ${WHATSAPP_LINE}`,
+      `Cédric is available if needed via this messaging system or via WhatsApp __WHATSAPP_LINE__`,
     confirmationClose: "We look forward to meeting you.",
     confirmationSignoff: "See you soon,",
     arrivalStudioIntro: "We are looking forward to welcoming you.",
     arrivalAssistance:
-      `If you need assistance before arrival, Cédric is available via this messaging system or via WhatsApp ${WHATSAPP_LINE}`,
+      `If you need assistance before arrival, Cédric is available via this messaging system or via WhatsApp __WHATSAPP_LINE__`,
     kindRegards: "Kind regards,",
     updatedReservation: "Your reservation has been updated.",
     updatedTotalLabel: "Updated total",
@@ -149,7 +147,7 @@ const EMAIL_I18N = {
     arrivalEvCharge:
       "You can also charge your electric car if you have one, and we are on site. We supply a charging cable compatible with the Type 13 socket (Swiss domestic: 220 V, 10 A) and fitted with a Type 2 connector. This slow recharging service is available at an additional charge (CHF 15 for 10h, CHF 30 for the whole day or night).",
     arrivalSupport:
-      `Upon your arrival and throughout your stay, Cédric will be available to assist you via this messaging system or via WhatsApp ${WHATSAPP_LINE}`,
+      `Upon your arrival and throughout your stay, Cédric will be available to assist you via this messaging system or via WhatsApp __WHATSAPP_LINE__`,
     pleasantStay: "We wish you a pleasant stay.",
   },
   de: {
@@ -181,12 +179,12 @@ const EMAIL_I18N = {
       "Dieser optionale Service wird gegen eine Reinigungspauschale von CHF 10 pro Aufenthalt angeboten.",
     manageReservation: "Reservierung verwalten",
     supportLine:
-      `Cédric ist bei Bedarf über dieses Nachrichtensystem oder per WhatsApp erreichbar: ${WHATSAPP_LINE}`,
+      `Cédric ist bei Bedarf über dieses Nachrichtensystem oder per WhatsApp erreichbar: __WHATSAPP_LINE__`,
     confirmationClose: "Wir freuen uns darauf, Sie willkommen zu heissen.",
     confirmationSignoff: "Bis bald,",
     arrivalStudioIntro: "Wir freuen uns darauf, Sie willkommen zu heissen.",
     arrivalAssistance:
-      `Wenn Sie vor Ihrer Anreise Hilfe benötigen, ist Cédric über dieses Nachrichtensystem oder per WhatsApp erreichbar: ${WHATSAPP_LINE}`,
+      `Wenn Sie vor Ihrer Anreise Hilfe benötigen, ist Cédric über dieses Nachrichtensystem oder per WhatsApp erreichbar: __WHATSAPP_LINE__`,
     kindRegards: "Freundliche Grüsse,",
     updatedReservation: "Ihre Reservierung wurde aktualisiert.",
     updatedTotalLabel: "Neuer Gesamtbetrag",
@@ -223,7 +221,7 @@ const EMAIL_I18N = {
     arrivalEvCharge:
       "Sie können auch Ihr Elektroauto aufladen, wenn wir vor Ort sind. Wir stellen ein Kabel bereit, das mit der Schweizer Typ-13-Steckdose (220 V, 10 A) kompatibel ist und über einen Typ-2-Anschluss verfügt. Dieser langsame Ladeservice ist gegen Aufpreis verfügbar (CHF 15 für 10h, CHF 30 für den ganzen Tag oder die ganze Nacht).",
     arrivalSupport:
-      `Bei Ihrer Ankunft und während Ihres gesamten Aufenthalts ist Cédric über dieses Nachrichtensystem oder per WhatsApp erreichbar: ${WHATSAPP_LINE}`,
+      `Bei Ihrer Ankunft und während Ihres gesamten Aufenthalts ist Cédric über dieses Nachrichtensystem oder per WhatsApp erreichbar: __WHATSAPP_LINE__`,
     pleasantStay: "Wir wünschen Ihnen einen angenehmen Aufenthalt.",
   },
   es: {
@@ -255,12 +253,12 @@ const EMAIL_I18N = {
       "Este servicio opcional está disponible por una tarifa de limpieza de CHF 10 para toda la estancia.",
     manageReservation: "Gestionar tu reserva",
     supportLine:
-      `Cédric está disponible si hace falta a través de este sistema de mensajería o por WhatsApp ${WHATSAPP_LINE}`,
+      `Cédric está disponible si hace falta a través de este sistema de mensajería o por WhatsApp __WHATSAPP_LINE__`,
     confirmationClose: "Esperamos verte pronto.",
     confirmationSignoff: "Hasta pronto,",
     arrivalStudioIntro: "Estamos deseando darte la bienvenida.",
     arrivalAssistance:
-      `Si necesitas ayuda antes de llegar, Cédric está disponible a través de este sistema de mensajería o por WhatsApp ${WHATSAPP_LINE}`,
+      `Si necesitas ayuda antes de llegar, Cédric está disponible a través de este sistema de mensajería o por WhatsApp __WHATSAPP_LINE__`,
     kindRegards: "Un cordial saludo,",
     updatedReservation: "Tu reserva ha sido actualizada.",
     updatedTotalLabel: "Nuevo total",
@@ -297,7 +295,7 @@ const EMAIL_I18N = {
     arrivalEvCharge:
       "También puedes cargar tu coche eléctrico si lo necesitas y estamos en el lugar. Proporcionamos un cable compatible con el enchufe Type 13 suizo (220 V, 10 A) y equipado con un conector Type 2. Este servicio de carga lenta está disponible con cargo adicional (CHF 15 por 10h, CHF 30 por todo el día o la noche).",
     arrivalSupport:
-      `A tu llegada y durante toda tu estancia, Cédric estará disponible para ayudarte a través de este sistema de mensajería o por WhatsApp ${WHATSAPP_LINE}`,
+      `A tu llegada y durante toda tu estancia, Cédric estará disponible para ayudarte a través de este sistema de mensajería o por WhatsApp __WHATSAPP_LINE__`,
     pleasantStay: "Te deseamos una estancia agradable.",
   },
   pt: {
@@ -329,12 +327,12 @@ const EMAIL_I18N = {
       "Este serviço opcional está disponível mediante uma taxa de limpeza de CHF 10 por toda a estadia.",
     manageReservation: "Gerir a sua reserva",
     supportLine:
-      `Cédric está disponível se necessário através deste sistema de mensagens ou por WhatsApp ${WHATSAPP_LINE}`,
+      `Cédric está disponível se necessário através deste sistema de mensagens ou por WhatsApp __WHATSAPP_LINE__`,
     confirmationClose: "Estamos ansiosos por recebê-lo.",
     confirmationSignoff: "Até breve,",
     arrivalStudioIntro: "Estamos ansiosos por recebê-lo.",
     arrivalAssistance:
-      `Se precisar de ajuda antes da chegada, Cédric está disponível através deste sistema de mensagens ou por WhatsApp ${WHATSAPP_LINE}`,
+      `Se precisar de ajuda antes da chegada, Cédric está disponível através deste sistema de mensagens ou por WhatsApp __WHATSAPP_LINE__`,
     kindRegards: "Com os melhores cumprimentos,",
     updatedReservation: "A sua reserva foi atualizada.",
     updatedTotalLabel: "Novo total",
@@ -371,7 +369,7 @@ const EMAIL_I18N = {
     arrivalEvCharge:
       "Também pode carregar o seu carro elétrico se necessário, quando estamos no local. Fornecemos um cabo compatível com a tomada suíça Type 13 (220 V, 10 A) e equipado com um conector Type 2. Este serviço de carregamento lento está disponível mediante custo adicional (CHF 15 por 10h, CHF 30 por todo o dia ou noite).",
     arrivalSupport:
-      `À sua chegada e durante toda a estadia, Cédric estará disponível para ajudar através deste sistema de mensagens ou por WhatsApp ${WHATSAPP_LINE}`,
+      `À sua chegada e durante toda a estadia, Cédric estará disponível para ajudar através deste sistema de mensagens ou por WhatsApp __WHATSAPP_LINE__`,
     pleasantStay: "Desejamos-lhe uma excelente estadia.",
   },
   it: {
@@ -403,12 +401,12 @@ const EMAIL_I18N = {
       "Questo servizio opzionale è disponibile con un costo di pulizia di CHF 10 per l'intero soggiorno.",
     manageReservation: "Gestisci la tua prenotazione",
     supportLine:
-      `Cédric è disponibile se necessario tramite questo sistema di messaggistica o via WhatsApp ${WHATSAPP_LINE}`,
+      `Cédric è disponibile se necessario tramite questo sistema di messaggistica o via WhatsApp __WHATSAPP_LINE__`,
     confirmationClose: "Non vediamo l'ora di accoglierti.",
     confirmationSignoff: "A presto,",
     arrivalStudioIntro: "Non vediamo l'ora di accoglierti.",
     arrivalAssistance:
-      `Se hai bisogno di assistenza prima dell'arrivo, Cédric è disponibile tramite questo sistema di messaggistica o via WhatsApp ${WHATSAPP_LINE}`,
+      `Se hai bisogno di assistenza prima dell'arrivo, Cédric è disponibile tramite questo sistema di messaggistica o via WhatsApp __WHATSAPP_LINE__`,
     kindRegards: "Cordiali saluti,",
     updatedReservation: "La tua prenotazione è stata aggiornata.",
     updatedTotalLabel: "Nuovo totale",
@@ -445,7 +443,7 @@ const EMAIL_I18N = {
     arrivalEvCharge:
       "Puoi anche ricaricare la tua auto elettrica se necessario, quando siamo sul posto. Forniamo un cavo compatibile con la presa svizzera Type 13 (220 V, 10 A) dotato di connettore Type 2. Questo servizio di ricarica lenta è disponibile con un supplemento (CHF 15 per 10h, CHF 30 per l'intera giornata o notte).",
     arrivalSupport:
-      `Al tuo arrivo e durante tutto il soggiorno, Cédric sarà disponibile per assisterti tramite questo sistema di messaggistica o via WhatsApp ${WHATSAPP_LINE}`,
+      `Al tuo arrivo e durante tutto il soggiorno, Cédric sarà disponibile per assisterti tramite questo sistema di messaggistica o via WhatsApp __WHATSAPP_LINE__`,
     pleasantStay: "Ti auguriamo un piacevole soggiorno.",
   },
   nl: {
@@ -477,12 +475,12 @@ const EMAIL_I18N = {
       "Deze optionele service is beschikbaar tegen een schoonmaakvergoeding van CHF 10 voor het volledige verblijf.",
     manageReservation: "Beheer je reservering",
     supportLine:
-      `Cédric is indien nodig bereikbaar via dit berichtensysteem of via WhatsApp ${WHATSAPP_LINE}`,
+      `Cédric is indien nodig bereikbaar via dit berichtensysteem of via WhatsApp __WHATSAPP_LINE__`,
     confirmationClose: "We kijken ernaar uit je te ontmoeten.",
     confirmationSignoff: "Tot binnenkort,",
     arrivalStudioIntro: "We kijken ernaar uit je te verwelkomen.",
     arrivalAssistance:
-      `Als je voor aankomst hulp nodig hebt, is Cédric bereikbaar via dit berichtensysteem of via WhatsApp ${WHATSAPP_LINE}`,
+      `Als je voor aankomst hulp nodig hebt, is Cédric bereikbaar via dit berichtensysteem of via WhatsApp __WHATSAPP_LINE__`,
     kindRegards: "Met vriendelijke groet,",
     updatedReservation: "Je reservering is bijgewerkt.",
     updatedTotalLabel: "Nieuw totaal",
@@ -519,7 +517,7 @@ const EMAIL_I18N = {
     arrivalEvCharge:
       "Je kunt ook je elektrische auto opladen als dat nodig is, wanneer wij aanwezig zijn. Wij leveren een kabel die compatibel is met de Zwitserse Type 13-aansluiting (220 V, 10 A) en voorzien is van een Type 2-connector. Deze langzame oplaadservice is beschikbaar tegen een extra vergoeding (CHF 15 voor 10u, CHF 30 voor de hele dag of nacht).",
     arrivalSupport:
-      `Bij je aankomst en tijdens je hele verblijf zal Cédric beschikbaar zijn via dit berichtensysteem of via WhatsApp ${WHATSAPP_LINE}`,
+      `Bij je aankomst en tijdens je hele verblijf zal Cédric beschikbaar zijn via dit berichtensysteem of via WhatsApp __WHATSAPP_LINE__`,
     pleasantStay: "We wensen je een aangenaam verblijf.",
   },
 };
@@ -695,10 +693,7 @@ function buildArrivalText(reservation, config = {}) {
     "Celine and Cedric",
   );
 
-  return lines
-    .join("\n")
-    .replaceAll("__WIFI_STUDIO_PASSWORD__", config.wifiStudioPassword || "__WIFI_STUDIO_PASSWORD__")
-    .replaceAll("__WIFI_TERRACE_PASSWORD__", config.wifiTerracePassword || "__WIFI_TERRACE_PASSWORD__");
+  return lines.join("\n");
 }
 
 function buildModificationText(reservation, deltaAmount, manageLink) {
@@ -745,6 +740,19 @@ function buildCancellationText(reservation) {
   ].join("\n");
 }
 
+function applyPlaceholders(text, config, locale) {
+  const garageMap = JSON.parse(config.garageInstructionsJson || "{}");
+  const garageInstruction = garageMap[normalizeLocale(locale)] || "__GARAGE_INSTRUCTIONS__";
+
+  return text
+    .replaceAll("__WIFI_STUDIO_PASSWORD__", config.wifiStudioPassword || "__WIFI_STUDIO_PASSWORD__")
+    .replaceAll("__WIFI_TERRACE_PASSWORD__", config.wifiTerracePassword || "__WIFI_TERRACE_PASSWORD__")
+    .replaceAll("__GARAGE_INSTRUCTIONS__", garageInstruction)
+    .replaceAll("__KEY_BOX_STUDIO_CODE__", config.keyBoxStudioCode || "__KEY_BOX_STUDIO_CODE__")
+    .replaceAll("__WHATSAPP_LINE__", config.whatsappLine || "__WHATSAPP_LINE__")
+    .replaceAll("__STUDIO_ADDRESS__", config.studioAddress || "__STUDIO_ADDRESS__");
+}
+
 function buildEmailPayload(type, reservation, config, options = {}) {
   const text = getEmailText(reservation.locale);
   const subjectPrefix = reservation.unit_type === "studio"
@@ -752,34 +760,32 @@ function buildEmailPayload(type, reservation, config, options = {}) {
     : text.subjectPrefixParking;
   const manageLink = options.manageToken ? manageUrl(config, options.manageToken) : null;
 
+  let rawText;
   switch (type) {
     case "booking_confirmation":
-      return {
-        subject: `${subjectPrefix} ${text.subjects.booking_confirmation} - ${reservation.public_reference}`,
-        text: buildConfirmationText(
-          reservation,
-          manageLink,
-          !reservation.wc_shower_requested && reservation.unit_type === "parking",
-        ),
-      };
+      rawText = buildConfirmationText(
+        reservation,
+        manageLink,
+        !reservation.wc_shower_requested && reservation.unit_type === "parking",
+      );
+      break;
     case "booking_modification":
-      return {
-        subject: `${subjectPrefix} ${text.subjects.booking_modification} - ${reservation.public_reference}`,
-        text: buildModificationText(reservation, options.deltaAmount || 0, manageLink || "-"),
-      };
+      rawText = buildModificationText(reservation, options.deltaAmount || 0, manageLink || "-");
+      break;
     case "booking_cancellation":
-      return {
-        subject: `${subjectPrefix} ${text.subjects.booking_cancellation} - ${reservation.public_reference}`,
-        text: buildCancellationText(reservation),
-      };
+      rawText = buildCancellationText(reservation);
+      break;
     case "arrival_instructions":
-      return {
-        subject: `${subjectPrefix} ${text.subjects.arrival_instructions} - ${reservation.public_reference}`,
-        text: buildArrivalText(reservation, config),
-      };
+      rawText = buildArrivalText(reservation, config);
+      break;
     default:
       throw new Error(`unknown_email_type:${type}`);
   }
+
+  return {
+    subject: `${subjectPrefix} ${text.subjects[type]} - ${reservation.public_reference}`,
+    text: applyPlaceholders(rawText, config, reservation.locale),
+  };
 }
 
 export function isEmailConfigured(env) {
