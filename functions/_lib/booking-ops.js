@@ -11,6 +11,7 @@ import { getCurrentIsoDateInZone, getCurrentTimePartsInZone } from "./date.js";
 import { getConfig } from "./env.js";
 import { isEmailConfigured, sendTransactionalEmail } from "./email.js";
 import { isGoogleCalendarConfigured, upsertReservationEvent } from "./google-calendar.js";
+import { isNtfyConfigured, sendNtfyNotification } from "./ntfy.js";
 
 export async function syncReservationToGoogleCalendar(env, reservationId) {
   if (!isGoogleCalendarConfigured(env)) {
@@ -123,4 +124,54 @@ export async function sendImmediateArrivalEmailIfNeeded(env, reservationId) {
     skipped: Boolean(response.skipped),
     reason: response.reason || null,
   };
+}
+
+export async function sendReservationNtfy(env, reservationId, eventType, options = {}) {
+  if (!isNtfyConfigured(env)) {
+    return { ok: false, reason: "ntfy_not_configured" };
+  }
+
+  const reservation = await getReservationForEmail(env, reservationId);
+
+  if (!reservation) {
+    throw new Error("reservation_not_found");
+  }
+
+  const unitLabel = reservation.unit_display_name || reservation.unit_code || reservation.unit_type || "reservation";
+  const guestName = reservation.guest_name || "Guest";
+  const dates = `${reservation.check_in_date} → ${reservation.check_out_date}`;
+  const total = Number(reservation.total_amount || 0).toFixed(2);
+
+  let title;
+  let message;
+
+  switch (eventType) {
+    case "new_booking": {
+      title = `New booking: ${reservation.public_reference}`;
+      message = `${unitLabel} — ${guestName}\n${dates}\nTotal: CHF ${total}`;
+      break;
+    }
+    case "cancellation": {
+      title = `Cancelled: ${reservation.public_reference}`;
+      message = `${unitLabel} — ${guestName}\n${dates}\nStatus: cancelled`;
+      break;
+    }
+    case "modification": {
+      const delta = options.deltaAmount != null ? `CHF ${Number(options.deltaAmount).toFixed(2)}` : "N/A";
+      title = `Modified: ${reservation.public_reference}`;
+      message = `${unitLabel} — ${guestName}\n${dates}\nDelta: ${delta}`;
+      break;
+    }
+    case "payment_confirmed": {
+      title = `Payment: ${reservation.public_reference}`;
+      message = `${unitLabel} — ${guestName}\n${dates}\nStatus: confirmed, Total: CHF ${total}`;
+      break;
+    }
+    default:
+      throw new Error(`unknown_ntfy_event_type:${eventType}`);
+  }
+
+  await sendNtfyNotification(env, title, message, { tags: "reservation" });
+
+  return { ok: true };
 }

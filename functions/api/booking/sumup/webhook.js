@@ -3,7 +3,7 @@ import {
   updatePaymentByCheckoutId,
   updateReservationAndCalendarStatus,
 } from "../../../_lib/db.js";
-import { sendImmediateArrivalEmailIfNeeded, syncReservationToGoogleCalendar } from "../../../_lib/booking-ops.js";
+import { sendImmediateArrivalEmailIfNeeded, sendReservationNtfy, syncReservationToGoogleCalendar } from "../../../_lib/booking-ops.js";
 import { isGoogleCalendarConfigured } from "../../../_lib/google-calendar.js";
 import { badRequest, json, serverError } from "../../../_lib/http.js";
 import { getCheckout, mapCheckoutStatus } from "../../../_lib/sumup.js";
@@ -71,6 +71,11 @@ export async function onRequestPost(context) {
         await sendImmediateArrivalEmailIfNeeded(context.env, reservation.id);
       } catch {
         // Email dedupe / send failures should not block webhook processing.
+      }
+      try {
+        await sendReservationNtfy(context.env, reservation.id, "payment_confirmed");
+      } catch {
+        // ntfy failures should not block webhook processing.
       }
     }
 

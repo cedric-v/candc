@@ -9,7 +9,7 @@ import {
 import { buildQuote } from "../../_lib/pricing.js";
 import { badRequest, conflict, json, serverError } from "../../_lib/http.js";
 import { generateOpaqueToken, sha256Hex } from "../../_lib/security.js";
-import { sendReservationEmail } from "../../_lib/booking-ops.js";
+import { sendReservationEmail, sendReservationNtfy } from "../../_lib/booking-ops.js";
 import { createHostedCheckout, isSumUpConfigured } from "../../_lib/sumup.js";
 import { normalizeBookingInput, validateBookingInput } from "../../_lib/validation.js";
 
@@ -71,6 +71,11 @@ export async function onRequestPost(context) {
         );
       } catch {
         // Email failures should not block reservation creation.
+      }
+      try {
+        await sendReservationNtfy(context.env, reservationRecord.reservationId, "new_booking");
+      } catch {
+        // ntfy failures should not block reservation creation.
       }
 
       return json(
@@ -135,6 +140,11 @@ export async function onRequestPost(context) {
       );
     } catch {
       // Email failures should not block reservation creation.
+    }
+    try {
+      await sendReservationNtfy(context.env, reservationRecord.reservationId, "new_booking");
+    } catch {
+      // ntfy failures should not block reservation creation.
     }
 
     return json(

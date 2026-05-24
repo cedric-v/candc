@@ -456,6 +456,19 @@ Variables minimales :
 
 Le bloc WC-douche dans ce mail doit rester informatif et cohérent avec l'achat effectif du service.
 
+## Notifications push hôte (ntfy.sh)
+
+Des notifications push temps reel sont envoyees a l'hote via ntfy.sh pour chaque evenement de reservation :
+
+- **Nouvelle reservation** — unite, invite, dates, montant total
+- **Annulation** — unite, invite, dates
+- **Modification** — unite, invite, dates, delta CHF
+- **Paiement confirme** — unite, invite, dates, statut confirme
+
+La variable d'environnement `NTFY_TOPIC_URL` (URL du topic ntfy.sh) controle l'activation.
+Si elle est absente, les notifications sont silencieusement ignorees.
+Les echecs ntfy ne bloquent jamais les operations de reservation ou de paiement.
+
 ## Modele de donnees recommande
 
 Le modele de donnees doit etre multi-unite.

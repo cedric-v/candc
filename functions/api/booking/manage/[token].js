@@ -12,7 +12,7 @@ import {
 import { isArrivalWithin48Hours } from "../../../_lib/date.js";
 import { getConfig } from "../../../_lib/env.js";
 import { badRequest, json, notFound, serverError } from "../../../_lib/http.js";
-import { sendReservationEmail, syncReservationToGoogleCalendar } from "../../../_lib/booking-ops.js";
+import { sendReservationEmail, sendReservationNtfy, syncReservationToGoogleCalendar } from "../../../_lib/booking-ops.js";
 import { buildAutomaticRefundPlan } from "../../../_lib/refunds.js";
 import { generateOpaqueToken, sha256Hex } from "../../../_lib/security.js";
 import { createHostedCheckout, isSumUpConfigured, refundTransaction } from "../../../_lib/sumup.js";
@@ -321,6 +321,11 @@ export async function onRequestPost(context) {
         // Email failures should not block cancellation.
       }
       try {
+        await sendReservationNtfy(context.env, reservation.id, "cancellation");
+      } catch {
+        // ntfy failures should not block cancellation.
+      }
+      try {
         await syncReservationToGoogleCalendar(context.env, reservation.id);
       } catch {
         // Calendar sync failures should not block cancellation.
@@ -568,6 +573,11 @@ export async function onRequestPost(context) {
       });
     } catch {
       // Email failures should not block customer updates.
+    }
+    try {
+      await sendReservationNtfy(context.env, reservation.id, "modification", { deltaAmount });
+    } catch {
+      // ntfy failures should not block customer updates.
     }
     try {
       await syncReservationToGoogleCalendar(context.env, reservation.id);

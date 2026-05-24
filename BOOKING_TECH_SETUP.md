@@ -106,6 +106,7 @@ Verification recommandee :
 - `INTERNAL_SYNC_TOKEN`
 - `GOOGLE_SERVICE_ACCOUNT_EMAIL`
 - `GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY`
+- `NTFY_TOPIC_URL` — URL du topic ntfy.sh pour les notifications push (nouvelles reservations, annulations, modifications, paiements confirmes)
 
 ## Hygiene repo public
 

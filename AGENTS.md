@@ -80,6 +80,7 @@ When changing sync behavior, also check:
 - `functions/api/internal/sync/booking-ics.js`
 - `functions/api/internal/sync/google-calendar.js`
 - `functions/api/booking/sumup/webhook.js`
+- `functions/_lib/ntfy.js`
 
 ## Verification
 

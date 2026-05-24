@@ -51,6 +51,7 @@ export function getConfig(env) {
     garageInstructionsJson: env.GARAGE_INSTRUCTIONS || "{}",
     whatsappLine: env.WHATSAPP_LINE || "__WHATSAPP_LINE__",
     studioAddress: env.STUDIO_ADDRESS || "__STUDIO_ADDRESS__",
+    ntfyTopicUrl: env.NTFY_TOPIC_URL || "",
     enableGoogleCalendarSync: String(env.ENABLE_GOOGLE_CALENDAR_SYNC || "false") === "true",
     googleServiceAccountEmail: env.GOOGLE_SERVICE_ACCOUNT_EMAIL || "",
     googleServiceAccountPrivateKey: (env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY || "").replace(/\\n/g, "\n"),
