@@ -415,6 +415,7 @@ Exigences :
 - e-mail de mise a jour apres modification
 - e-mail d'annulation
 - e-mail d'arrivee le jour meme a 08:00
+- e-mail de depart la veille a 18:00 (studio uniquement)
 
 ### E-mail de confirmation immediate
 
@@ -455,6 +456,20 @@ Variables minimales :
 - statut option WC-douche
 
 Le bloc WC-douche dans ce mail doit rester informatif et cohérent avec l'achat effectif du service.
+
+### E-mail de depart la veille a 18:00 (studio uniquement)
+
+Le cron declenche a 18:00 heure locale pour les departs du lendemain.
+
+Contenu attendu :
+- prenom de l'invite (`__FIRST_NAME__`)
+- heure de check-out (`__CHECKOUT_CLOSE_TIME__`)
+- instructions de tri des dechets (recyclables, organiques, ordures)
+- procedure de depart : fenetre en position oscillo-battante, porte fermee
+- code de la boite a cle (`__KEY_BOX_STUDIO_CODE__`)
+
+Le texte est disponible en francais, anglais et allemand.
+Les autres langues recoivent la version anglaise.
 
 ## Notifications push hôte (ntfy.sh)
 

@@ -1,6 +1,6 @@
 import { hasValidInternalToken } from "../../../_lib/auth.js";
 import { badRequest, json, serverError, unauthorized } from "../../../_lib/http.js";
-import { runArrivalEmails, runBookingIcsSync, validateCalendarSources } from "../../../_lib/jobs.js";
+import { runArrivalEmails, runBookingIcsSync, runDepartureEmails, validateCalendarSources } from "../../../_lib/jobs.js";
 import { releaseExpiredPendingPayments } from "../../../_lib/db.js";
 
 export async function onRequest(context) {
@@ -31,6 +31,10 @@ export async function onRequest(context) {
       return json(await runArrivalEmails(context.env, payload.targetDate || null));
     }
 
+    if (action === "departure_emails") {
+      return json(await runDepartureEmails(context.env, payload.targetDate || null));
+    }
+
     if (action === "validate_calendars") {
       return json(await validateCalendarSources(context.env, payload.unitCode || null));
     }
@@ -39,11 +43,13 @@ export async function onRequest(context) {
       await releaseExpiredPendingPayments(context.env);
       const bookingSync = await runBookingIcsSync(context.env, payload.unitCode || null);
       const arrivalEmails = await runArrivalEmails(context.env, payload.targetDate || null);
+      const departureEmails = await runDepartureEmails(context.env, payload.targetDate || null);
 
       return json({
-        ok: bookingSync.ok && arrivalEmails.ok,
+        ok: bookingSync.ok && arrivalEmails.ok && departureEmails.ok,
         bookingSync,
         arrivalEmails,
+        departureEmails,
       });
     }
 

@@ -1,5 +1,6 @@
 import {
   getArrivalReservationsForDate,
+  getDepartureReservationsForDate,
   getImportCalendarSources,
   insertSyncLog,
   replaceExternalCalendarBlocks,
@@ -198,6 +199,55 @@ export async function runArrivalEmails(env, targetDate = null) {
   return {
     ok: results.every((result) => result.status !== "failed"),
     targetDate: isoDate,
+    results,
+  };
+}
+
+export async function runDepartureEmails(env, targetDate = null) {
+  const config = getConfig(env);
+  const today = targetDate || getCurrentIsoDateInZone(config.timeZone);
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const tomorrowIso = tomorrow.toISOString().slice(0, 10);
+
+  const reservations = await getDepartureReservationsForDate(env, tomorrowIso);
+  const results = [];
+
+  for (const reservation of reservations) {
+    try {
+      const response = await sendReservationEmail(env, reservation.id, "departure_instructions", {
+        dedupe: true,
+        forDate: tomorrowIso,
+      });
+      results.push({
+        reservationId: reservation.id,
+        publicReference: reservation.public_reference,
+        status: response.skipped ? "skipped" : "sent",
+      });
+    } catch (error) {
+      results.push({
+        reservationId: reservation.id,
+        publicReference: reservation.public_reference,
+        status: "failed",
+        error: error.message,
+      });
+    }
+  }
+
+  await insertSyncLog(env, {
+    unitId: null,
+    syncType: "departure_email_job",
+    status: buildValidationResultStatus(results),
+    message: `Processed ${results.length} departure reservation(s) for ${tomorrowIso}`,
+    payloadSummary: {
+      targetDate: tomorrowIso,
+      results,
+    },
+  });
+
+  return {
+    ok: results.every((result) => result.status !== "failed"),
+    targetDate: tomorrowIso,
     results,
   };
 }

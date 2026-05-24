@@ -81,6 +81,7 @@ When changing sync behavior, also check:
 - `functions/api/internal/sync/google-calendar.js`
 - `functions/api/booking/sumup/webhook.js`
 - `functions/_lib/ntfy.js`
+- `functions/_lib/jobs.js`
 
 ## Verification
 

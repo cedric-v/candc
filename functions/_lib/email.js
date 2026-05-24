@@ -13,7 +13,25 @@ const EMAIL_I18N = {
       booking_modification: "réservation modifiée",
       booking_cancellation: "réservation annulée",
       arrival_instructions: "informations d'arrivée",
+      departure_instructions: "instructions de départ",
     },
+    departureBody: `Bonjour __FIRST_NAME__,
+
+J'espère que vous allez bien.
+
+Comme votre séjour chez nous se termine demain (l'heure de départ est __CHECKOUT_CLOSE_TIME__), avant de partir, pourriez-vous vous assurer de trier les déchets recyclables (bouteilles recyclables en plastique/PET, canettes en aluminium, papier et carton) et les placer dans la boîte grise à l'extérieur.
+Les restes organiques sont à mettre dans le petit conteneur vert près de la porte.
+Les autres déchets doivent être mis dans le sac poubelle gris qui va dans le grand conteneur vert à l'extérieur (à côté du garage).
+
+Si quelque chose n'est pas fonctionnel ou a été abîmé, je vous invite à nous en informer.
+
+En partant, veuillez ouvrir la fenêtre en position oscillo-battante (inclinée), fermer la porte, et déposer la clé dans la boîte à clé sécurisée située en haut de l'escalier extérieur. La boîte est noire et fixée au mur du garage.
+Le code est: __KEY_BOX_STUDIO_CODE__
+
+Nous nous réjouissons de vous accueillir à nouveau.
+
+Tous nos meilleurs vœux,
+Céline et Cédric`,
     greeting: (name) => `Bonjour ${name},`,
     confirmationCreated: (label) => `Merci. Votre réservation ${label} a bien été créée.`,
     referenceLabel: "Référence",
@@ -87,7 +105,25 @@ const EMAIL_I18N = {
       booking_modification: "booking updated",
       booking_cancellation: "booking cancelled",
       arrival_instructions: "arrival information",
+      departure_instructions: "departure information",
     },
+    departureBody: `Hello __FIRST_NAME__,
+
+I hope you are well.
+
+As your stay with us ends tomorrow (check-out time is __CHECKOUT_CLOSE_TIME__), before you leave, please make sure to sort the recyclable waste (recyclable plastic/PET bottles, aluminum cans, paper and cardboard) and place them in the grey box outside.
+The organic remains go in the small green container near the door.
+The other trash goes in the gray trash-bag that goes inside the big green container outside (alongside the garage).
+
+If anything is not working or has been damaged, please notify us.
+
+When leaving, please open the window in the tilt-and-turn position (tilted), close the door, and place the key in the secure key box located at the top of the external staircase. The box is black and attached to the garage wall.
+The code is: __KEY_BOX_STUDIO_CODE__
+
+We look forward to welcoming you back.
+
+All the best,
+Celine and Cedric`,
     greeting: (name) => `Dear ${name},`,
     confirmationCreated: (label) => `Thank you. Your ${label} reservation has been created.`,
     referenceLabel: "Reference",
@@ -161,7 +197,25 @@ const EMAIL_I18N = {
       booking_modification: "Buchung aktualisiert",
       booking_cancellation: "Buchung storniert",
       arrival_instructions: "Anreiseinformationen",
+      departure_instructions: "Abreiseinformationen",
     },
+    departureBody: `Guten Tag __FIRST_NAME__,
+
+Wir hoffen, es geht Ihnen gut.
+
+Da Ihr Aufenthalt bei uns morgen endet (Check-Out-Zeit ist __CHECKOUT_CLOSE_TIME__), könnten Sie bitte vor Ihrer Abreise dafür sorgen, dass die wiederverwertbaren Abfälle (wiederverwertbare Plastik-/PET-Flaschen, Aluminiumdosen, Papier und Pappe) sortiert und in die graue Box draußen gegeben werden.
+Die organischen Reste gehören in den kleinen grünen Container neben der Tür.
+Die anderen Abfälle gehören in den grauen Müllsack, der in den großen grünen Container draußen (neben der Garage) kommt.
+
+Falls etwas nicht funktioniert oder beschädigt wurde, bitte ich Sie, uns dies mitzuteilen.
+
+Wenn Sie gehen, öffnen Sie bitte das Fenster in Kippstellung, schließen Sie die Tür und legen Sie den Schlüssel in den sicheren Schlüsselkasten oben an der Außentreppe. Der Kasten ist schwarz und an der Wand der Garage befestigt.
+Der Code lautet: __KEY_BOX_STUDIO_CODE__
+
+Wir freuen uns darauf, Sie wieder begrüßen zu dürfen.
+
+Alles Gute für Sie,
+Celine und Cedric`,
     greeting: (name) => `Hallo ${name},`,
     confirmationCreated: (label) => `Vielen Dank. Ihre Reservierung für den ${label} wurde erstellt.`,
     referenceLabel: "Referenz",
@@ -235,6 +289,7 @@ const EMAIL_I18N = {
       booking_modification: "reserva actualizada",
       booking_cancellation: "reserva cancelada",
       arrival_instructions: "información de llegada",
+      departure_instructions: "información de salida",
     },
     greeting: (name) => `Hola ${name},`,
     confirmationCreated: (label) => `Gracias. Tu reserva de ${label} ha sido creada.`,
@@ -309,6 +364,7 @@ const EMAIL_I18N = {
       booking_modification: "reserva atualizada",
       booking_cancellation: "reserva cancelada",
       arrival_instructions: "informações de chegada",
+      departure_instructions: "informações de partida",
     },
     greeting: (name) => `Olá ${name},`,
     confirmationCreated: (label) => `Obrigado. A sua reserva de ${label} foi criada.`,
@@ -383,6 +439,7 @@ const EMAIL_I18N = {
       booking_modification: "prenotazione aggiornata",
       booking_cancellation: "prenotazione annullata",
       arrival_instructions: "informazioni di arrivo",
+      departure_instructions: "informazioni di partenza",
     },
     greeting: (name) => `Ciao ${name},`,
     confirmationCreated: (label) => `Grazie. La tua prenotazione per il ${label} è stata creata.`,
@@ -457,6 +514,7 @@ const EMAIL_I18N = {
       booking_modification: "boeking bijgewerkt",
       booking_cancellation: "boeking geannuleerd",
       arrival_instructions: "aankomstinformatie",
+      departure_instructions: "vertrekinformatie",
     },
     greeting: (name) => `Hallo ${name},`,
     confirmationCreated: (label) => `Bedankt. Je reservering voor het ${label} is aangemaakt.`,
@@ -740,7 +798,16 @@ function buildCancellationText(reservation) {
   ].join("\n");
 }
 
-function applyPlaceholders(text, config, locale) {
+function buildDepartureText(reservation) {
+  const text = getEmailText(reservation.locale);
+  const template = text.departureBody || getEmailText("en").departureBody || "";
+
+  return template
+    .replaceAll("__FIRST_NAME__", reservation.guest_first_name)
+    .replaceAll("__CHECKOUT_CLOSE_TIME__", reservation.check_out_time ? reservation.check_out_time.slice(0, 5) : "10:00");
+}
+
+function applyPlaceholders(text, config, locale, reservation = null) {
   const garageMap = JSON.parse(config.garageInstructionsJson || "{}");
   const garageInstruction = garageMap[normalizeLocale(locale)] || "__GARAGE_INSTRUCTIONS__";
 
@@ -778,13 +845,16 @@ function buildEmailPayload(type, reservation, config, options = {}) {
     case "arrival_instructions":
       rawText = buildArrivalText(reservation, config);
       break;
+    case "departure_instructions":
+      rawText = buildDepartureText(reservation);
+      break;
     default:
       throw new Error(`unknown_email_type:${type}`);
   }
 
   return {
     subject: `${subjectPrefix} ${text.subjects[type]} - ${reservation.public_reference}`,
-    text: applyPlaceholders(rawText, config, reservation.locale),
+    text: applyPlaceholders(rawText, config, reservation.locale, reservation),
   };
 }
 

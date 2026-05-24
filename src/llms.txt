@@ -77,7 +77,7 @@ Notes :
 - SumUp pour le paiement
 - Google Calendar en option, desactive par defaut
 - remboursements automatiques SumUp pour les cas eligibles, avec fallback manuel si necessaire
-- worker cron Cloudflare deployee pour sync OTA et e-mails d'arrivee
+- worker cron Cloudflare deployee pour sync OTA, e-mails d'arrivee et e-mails de depart
 - notifications push ntfy.sh pour les evenements de reservation (nouvelles, annulations, modifications, paiements confirmes)
 
 ## Pricing notes
