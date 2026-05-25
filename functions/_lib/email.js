@@ -32,6 +32,60 @@ Nous nous réjouissons de vous accueillir à nouveau.
 
 Tous nos meilleurs vœux,
 Céline et Cédric`,
+    studioConfirmationBody: `Bonjour __FIRST_NAME__ __LAST_NAME__,
+
+Merci pour votre réservation.
+
+L'adresse du studio est "__STUDIO_ADDRESS__".
+Vous trouverez également l'endroit en cherchant "C & C Eco Studio" sur Google Maps.
+
+Vous trouverez la clé dans une boîte à clé sécurisée. L'emplacement exact de cette boîte et le code pour l'ouvrir vous seront envoyés le matin de votre jour d'arrivée.
+
+Durant votre arrivée et tout votre séjour, nous restons disponibles via ce système de messagerie, ainsi que par téléphone (Cédric a WhatsApp/Signal/Telegram).
+
+N'hésitez pas à nous contacter si vous avez la moindre question.
+
+__MANAGE_LINK__
+
+Nous nous réjouissons de vous accueillir.
+Céline & Cédric Vonlanthen`,
+    studioArrivalBody: `Bonjour __FIRST_NAME__ __LAST_NAME__,
+
+Nous espérons que vous allez bien.
+
+L'adresse du studio est "__STUDIO_ADDRESS__". Vous trouverez également l'endroit en cherchant "C & C Eco Studio" sur Google Maps.
+
+Vous trouverez la clé dans la boîte à clé sécurisée en haut de l'escalier extérieur. La boîte est noire, fixée au mur du garage.
+Le code est: __KEY_BOX_STUDIO_CODE__
+Si vous entrez un code incorrect, faites glisser le bouton de réinitialisation (situé entre les touches C et D) et relâchez-le; puis réessayez.
+
+La porte d'entrée du studio est celle de droite. Vous pouvez vous garer juste devant l'entrée.
+
+La terrasse située devant est la vôtre. Vous pouvez prendre du bois pour allumer un barbecue sur le brasero mis à disposition si vous le souhaitez.
+
+Sur le côté gauche de l'entrée, vous trouverez une grande boîte grise pour les matériaux recyclables. Il y a un compartiment pour les bouteilles PET (uniquement les bouteilles plastiques recyclables), un pour les canettes en aluminium et un autre pour les bouteilles en verre. Le reste de la boîte est destiné au papier et au carton secs.
+
+Juste devant l'entrée, vous trouverez également un petit récipient vert destiné aux restes alimentaires. Tout le reste est à mettre dans le sac poubelle gris qui se trouve dans la cuisine.
+
+Sous le four, vous trouverez des planches à découper et des maniques.
+
+Merci d'aérer le logement régulièrement, au moins deux fois par jour pendant 10 minutes.
+Vous pouvez le faire en ouvrant la fenêtre et en allumant la lumière des toilettes en même temps (cela active le ventilateur de la douche).
+Lorsque vous utilisez le sèche-linge, veuillez laisser la lumière des toilettes allumée pour que le ventilateur continue de fonctionner.
+
+Un déshumidificateur est également disponible dans la salle de bain, à utiliser après une douche, pendant l'utilisation du sèche-linge ou lorsque le taux d'humidité devient trop élevé (> 60 %). Lorsque l'indicateur affiche "bac plein", ouvrez le bac et videz l'eau dans la douche.
+
+Pour accéder aux plus de 250 chaînes TV gratuites, vous devez utiliser l'application "Salt.TV" sur l'Apple TV.
+
+Vous pouvez également recharger votre voiture électrique si vous en avez une, lorsque nous sommes sur place.
+Nous fournissons un câble de recharge compatible avec la prise suisse Type 13 (220 V, 10 A) équipé d'un connecteur Type 2 (standard pour la plupart des véhicules électriques). Ce service de recharge lente est disponible moyennant un supplément (CHF 15 pour 10h, CHF 30 pour toute la journée ou la nuit).
+
+Durant votre arrivée et tout au long de votre séjour, nous restons disponibles via ce système de messagerie, ainsi que par téléphone (Cédric a WhatsApp, Signal et Telegram).
+
+Nous vous souhaitons un agréable séjour.
+
+Bien cordialement,
+Céline et Cédric`,
     greeting: (name) => `Bonjour ${name},`,
     confirmationCreated: (label) => `Merci. Votre réservation ${label} a bien été créée.`,
     referenceLabel: "Référence",
@@ -124,7 +178,60 @@ We look forward to welcoming you back.
 
 All the best,
 Celine and Cedric`,
-    greeting: (name) => `Dear ${name},`,
+    studioConfirmationBody: `Dear __FIRST_NAME__ __LAST_NAME__,
+
+Thank you for your booking.
+
+The studio address is "__STUDIO_ADDRESS__".
+You will also find the place by searching "C & C Eco Studio" on Google Maps.
+
+You will find the key in a secure key box. The exact location of this box and the code to open it will be sent to you the morning of your day of arrival.
+
+During your arrival and your whole stay, we will remain available through this messaging system, as well as by phone (Cedric has WhatsApp/Signal/Telegram installed).
+
+Please let us know if you have any question.
+
+__MANAGE_LINK__
+
+We look forward meeting you.
+Céline & Cédric Vonlanthen`,
+    studioArrivalBody: `Dear __FIRST_NAME__ __LAST_NAME__,
+
+We hope you are well.
+
+The studio address is "__STUDIO_ADDRESS__". You will also find the place by searching "C & C Eco Studio" on Google Maps.
+
+You will find the key in the secure key box at the top of the outside stairs. The box is black, fixed to the wall of the garage.
+The code is: __KEY_BOX_STUDIO_CODE__
+If you enter the wrong code, slide the reset button (located between the C and D keys) and release it; then, try again.
+
+The studio's entry door is the one on the right side. You can park your car just in front of the entry.
+
+The terrace on the front is yours. You can take some woods to start a barbecue on the brasero which is provided if you wish.
+
+On the left side of the entry, you will find a big gray box. This is for recyclable materials. There is one for PET bottles (not for all the plastics, only the recyclable plastic bottles), one for aluminum cans and another for glass bottles. The rest of the box is for dry paper and cardboard.
+
+Just in front of the entry, you will also find a small green recipient which is for food leftovers. Everything else goes into the grey trash-bag which is in the kitchen.
+
+Under the oven, you will find some cutting boards and oven mitts.
+
+Please air the flat regularly, at least twice a day for 10 minutes.
+You can do this by opening the window and turning on the toilet light at the same time (this will turn on the shower fan).
+When using the tumble dryer, please leave the toilet light on so that it keeps the fan running.
+
+A dehumidifier is also available in the bathroom, for use after a shower, when using the tumble dryer, or when humidity levels rise too high (> 60%). When the indicator shows "tray full", open the tray and empty the water into the shower.
+
+To access the more than 250 free TV channels, you will need to use the "Salt.TV" application on the Apple TV.
+
+You can also charge your electric car if you have one, and we are on-site.
+We supply a charging cable compatible with the Type 13 socket (Swiss domestic: 220 V, 10 A) and fitted with a Type 2 connector (standard for most electric vehicles). This slow recharging service is available at an additional charge (CHF 15 for 10h, CHF 30 for the whole day or night).
+
+During your arrival and throughout your stay, we will remain available through this messaging system, as well as by phone (Cedric has WhatsApp, Signal, and Telegram installed).
+
+We wish you a pleasant stay.
+
+Kind Regards,
+Celine and Cedric`,    greeting: (name) => `Dear ${name},`,
     confirmationCreated: (label) => `Thank you. Your ${label} reservation has been created.`,
     referenceLabel: "Reference",
     arrivalLabel: "Arrival",
@@ -216,7 +323,60 @@ Wir freuen uns darauf, Sie wieder begrüßen zu dürfen.
 
 Alles Gute für Sie,
 Celine und Cedric`,
-    greeting: (name) => `Hallo ${name},`,
+    studioConfirmationBody: `Hallo __FIRST_NAME__ __LAST_NAME__,
+
+Vielen Dank für Ihre Buchung.
+
+Die Adresse des Studios lautet "__STUDIO_ADDRESS__".
+Sie finden den Ort auch, indem Sie in Google Maps nach "C & C Eco Studio" suchen.
+
+Den Schlüssel finden Sie in einem sicheren Schlüsselkasten. Der genaue Standort dieses Kastens und der Code zum Öffnen werden Ihnen am Morgen Ihres Anreisetages zugesandt.
+
+Während Ihrer Anreise und Ihres gesamten Aufenthalts bleiben wir über dieses Nachrichtensystem sowie telefonisch erreichbar (Cédric hat WhatsApp/Signal/Telegram).
+
+Bitte lassen Sie es uns wissen, wenn Sie Fragen haben.
+
+__MANAGE_LINK__
+
+Wir freuen uns darauf, Sie willkommen zu heissen.
+Céline & Cédric Vonlanthen`,
+    studioArrivalBody: `Hallo __FIRST_NAME__ __LAST_NAME__,
+
+Wir hoffen, es geht Ihnen gut.
+
+Die Adresse des Studios lautet "__STUDIO_ADDRESS__". Sie finden den Ort auch, indem Sie in Google Maps nach "C & C Eco Studio" suchen.
+
+Den Schlüssel finden Sie im sicheren Schlüsselkasten oben an der Außentreppe. Der Kasten ist schwarz und an der Wand der Garage befestigt.
+Der Code lautet: __KEY_BOX_STUDIO_CODE__
+Wenn Sie einen falschen Code eingeben, schieben Sie den Reset-Knopf (zwischen den Tasten C und D) und lassen Sie ihn los; versuchen Sie es dann erneut.
+
+Die Eingangstür des Studios ist die rechte. Sie können Ihr Auto direkt vor dem Eingang parken.
+
+Die vordere Terrasse gehört Ihnen. Sie können etwas Holz nehmen, um auf dem bereitgestellten Brasero ein Grillfeuer zu entfachen.
+
+Auf der linken Seite des Eingangs finden Sie eine große graue Box für Recyclingmaterial. Es gibt ein Fach für PET-Flaschen (nur recycelbare Plastikflaschen), eines für Aluminiumdosen und ein weiteres für Glasflaschen. Der Rest der Box ist für trockenes Papier und Karton.
+
+Direkt vor dem Eingang finden Sie auch einen kleinen grünen Behälter für Essensreste. Alles andere kommt in den grauen Müllsack, der in der Küche zu finden ist.
+
+Unter dem Ofen finden Sie Schneidebretter und Ofenhandschuhe.
+
+Bitte lüften Sie das Studio regelmäßig, mindestens zweimal täglich für 10 Minuten.
+Sie können dies tun, indem Sie das Fenster öffnen und gleichzeitig das Toilettenlicht einschalten (dies aktiviert den Duschventilator).
+Lassen Sie beim Betrieb des Wäschetrockners bitte das Toilettenlicht eingeschaltet, damit der Ventilator weiterläuft.
+
+Ein Luftentfeuchter steht Ihnen ebenfalls im Badezimmer zur Verfügung, zur Nutzung nach dem Duschen, beim Betrieb des Wäschetrockners oder wenn die Luftfeuchtigkeit zu hoch steigt (> 60 %). Wenn die Anzeige "Behälter voll" anzeigt, öffnen Sie den Behälter und leeren Sie das Wasser in die Dusche.
+
+Um auf die mehr als 250 kostenlosen TV-Sender zuzugreifen, verwenden Sie bitte die "Salt.TV"-App auf dem Apple TV.
+
+Sie können Ihr Elektroauto auch aufladen, falls Sie eines haben und wir vor Ort sind.
+Wir stellen ein Ladekabel zur Verfügung, das mit der Schweizer Typ-13-Steckdose (220 V, 10 A) kompatibel und mit einem Typ-2-Stecker ausgestattet ist (Standard für die meisten Elektrofahrzeuge). Dieser Langsam-Ladeservice ist gegen Aufpreis verfügbar (CHF 15 für 10h, CHF 30 für den ganzen Tag oder die ganze Nacht).
+
+Während Ihrer Anreise und Ihres gesamten Aufenthalts bleiben wir über dieses Nachrichtensystem sowie telefonisch erreichbar (Cédric hat WhatsApp, Signal und Telegram).
+
+Wir wünschen Ihnen einen angenehmen Aufenthalt.
+
+Freundliche Grüsse,
+Céline und Cédric`,    greeting: (name) => `Hallo ${name},`,
     confirmationCreated: (label) => `Vielen Dank. Ihre Reservierung für den ${label} wurde erstellt.`,
     referenceLabel: "Referenz",
     arrivalLabel: "Anreise",
@@ -618,25 +778,13 @@ function buildConfirmationText(reservation, token, includeWcUpsell) {
   const text = getEmailText(reservation.locale);
 
   if (reservation.unit_type === "studio") {
-    return [
-      `Dear ${reservation.guest_first_name} ${reservation.guest_last_name},`,
-      "",
-      "Thank you for your booking.",
-      "",
-      'The studio address is "__STUDIO_ADDRESS__".',
-      'You will also find the place by searching "C & C Eco Studio" on Google Maps.',
-      "",
-      "You will find the key in a secure key box. The exact location of this box and the code to open it will be sent to you the morning of your day of arrival.",
-      "",
-      "During your arrival and your whole stay, we will remain available through this messaging system, as well as by phone (Cedric has WhatsApp/Signal/Telegram installed).",
-      "",
-      "Please let us know if you have any question.",
-      "",
-      `${text.manageReservation}: ${token}`,
-      "",
-      "We look forward meeting you.",
-      "Céline & Cédric Vonlanthen",
-    ].join("\n");
+    const template = text.studioConfirmationBody || getEmailText("en").studioConfirmationBody || "";
+    const manageLine = `${text.manageReservation}: ${token}`;
+
+    return template
+      .replaceAll("__FIRST_NAME__", reservation.guest_first_name)
+      .replaceAll("__LAST_NAME__", reservation.guest_last_name || "")
+      .replaceAll("__MANAGE_LINK__", manageLine);
   }
 
   const lines = [
@@ -682,45 +830,11 @@ function buildArrivalText(reservation, config = {}) {
   const text = getEmailText(reservation.locale);
 
   if (reservation.unit_type !== "parking") {
-    return [
-      `Dear ${reservation.guest_first_name} ${reservation.guest_last_name},`,
-      "",
-      "We hope you are well.",
-      "",
-      'The studio address is "__STUDIO_ADDRESS__". You will also find the place by searching "C & C Eco Studio" on Google Maps.',
-      "",
-      "You will find the key in the secure key box at the top of the outside stairs. The box is black, fixed to the wall of the garage.",
-      "The code is: __KEY_BOX_STUDIO_CODE__",
-      "If you enter the wrong code, slide the reset button (located between the C and D keys) and release it; then, try again.",
-      "",
-      "The studio's entry door is the one on the right side. You can park your car just in front of the entry.",
-      "",
-      "The terrace on the front is yours. You can take some woods to start a barbecue on the brasero which is provided if you wish.",
-      "",
-      "On the left side of the entry, you will find a big gray box. This is for recyclable materials. There is one for PET bottles (not for all the plastics, only the recyclable plastic bottles), one for aluminum cans and another for glass bottles. The rest of the box is for dry paper and cardboard.",
-      "",
-      "Just in front of the entry, you will also find a small green recipient which is for food leftovers. Everything else goes into the grey trash-bag which is in the kitchen.",
-      "",
-      "Under the oven, you will find some cutting boards and oven mitts.",
-      "",
-      "Please air the flat regularly, at least twice a day for 10 minutes.",
-      "You can do this by opening the window and turning on the toilet light at the same time (this will turn on the shower fan).",
-      "When using the tumble dryer, please leave the toilet light on so that it keeps the fan running.",
-      "",
-      'A dehumidifier is also available in the bathroom, for use after a shower, when using the tumble dryer, or when humidity levels rise too high (> 60%). When the indicator shows “tray full”, open the tray and empty the water into the shower.',
-      "",
-      'To access the more than 250 free TV channels, you will need to use the "Salt.TV" application on the Apple TV.',
-      "",
-      "You can also charge your electric car if you have one, and we are on-site.",
-      "We supply a charging cable compatible with the Type 13 socket (Swiss domestic: 220 V, 10 A) and fitted with a Type 2 connector (standard for most electric vehicles). This slow recharging service is available at an additional charge (CHF 15 for 10h, CHF 30 for the whole day or night).",
-      "",
-      "During your arrival and throughout your stay, we will remain available through this messaging system, as well as by phone (Cedric has WhatsApp, Signal, and Telegram installed).",
-      "",
-      "We wish you a pleasant stay.",
-      "",
-      "Kind Regards,",
-      "Celine and Cedric",
-    ].join("\n");
+    const template = text.studioArrivalBody || getEmailText("en").studioArrivalBody || "";
+
+    return template
+      .replaceAll("__FIRST_NAME__", reservation.guest_first_name)
+      .replaceAll("__LAST_NAME__", reservation.guest_last_name || "");
   }
 
   const lines = [
