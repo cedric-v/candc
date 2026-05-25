@@ -799,6 +799,10 @@ function buildCancellationText(reservation) {
 }
 
 function buildDepartureText(reservation) {
+  if (reservation.unit_type !== "studio") {
+    throw new Error("departure_email_studio_only");
+  }
+
   const text = getEmailText(reservation.locale);
   const template = text.departureBody || getEmailText("en").departureBody || "";
 
