@@ -390,7 +390,7 @@ Etat actuel :
 
 Ce qui restera a faire si besoin :
 
-- completer d'eventuelles traductions dediees des e-mails studio
+- completer les traductions des e-mails studio pour les langues restantes (es, pt, it, nl — actuellement EN/FR/DE)
 - affiner les options et conditions propres au studio
 
 ## Synchronisation Booking ICS

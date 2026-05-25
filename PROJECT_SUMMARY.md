@@ -82,10 +82,10 @@ Important :
 - import Airbnb ICS egalement possible si une source active existe pour l'unite
 - en prod actuelle, le studio dispose aussi d'une source Airbnb importee
 - Google Calendar sync implemente mais desactive par defaut tant qu'il n'est pas explicitement reactive
-- e-mails transactionnels localises selon la langue de reservation
+- e-mails transactionnels localises selon la langue de reservation (textes studio dispo en FR, EN, DE ; fallback EN pour es, pt, it, nl)
 - page client de gestion via lien magique
 - mini interface admin par token
-- endpoint interne pour jobs de sync et d'e-mails, y compris le mail d'arrivee localise
+- endpoint interne pour jobs de sync et d'e-mails, y compris le mail d'arrivee localise et le mail de depart studio
 - remboursements automatiques SumUp pour les annulations flexibles et les diminutions de total, avec fallback manuel si la couverture transactionnelle est insuffisante
 - tableau de sante admin pour les sources calendaires et les jobs operationnels
 - validation OTA manuelle via l'admin pour verifier import et export ICS

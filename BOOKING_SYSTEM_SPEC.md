@@ -417,6 +417,8 @@ Exigences :
 - e-mail d'arrivee le jour meme a 08:00
 - e-mail de depart la veille a 18:00 (studio uniquement)
 
+Les e-mails sont localises selon la langue de reservation. Les textes specifiques au studio (confirmation, arrivee, depart) sont disponibles en francais, anglais et allemand. Les autres langues recoivent la version anglaise.
+
 ### E-mail de confirmation immediate
 
 Contenu attendu :
@@ -469,7 +471,7 @@ Contenu attendu :
 - code de la boite a cle (`__KEY_BOX_STUDIO_CODE__`)
 
 Le texte est disponible en francais, anglais et allemand.
-Les autres langues recoivent la version anglaise.
+Les autres langues recoivent la version anglaise (comme les e-mails de confirmation et d'arrivee studio).
 
 ## Notifications push hôte (ntfy.sh)
 

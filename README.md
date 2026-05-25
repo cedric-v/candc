@@ -26,10 +26,10 @@ Implemented today:
 - Booking.com and optional Airbnb ICS import pipeline
 - direct reservation export ICS per unit
 - optional Google Calendar sync pipeline, disabled by default
-- multilingual transactional email pipeline
+- multilingual transactional email pipeline (FR, EN, DE studio emails; fallback EN for es, pt, it, nl)
 - customer self-service booking management page
 - minimal admin interface
-- internal jobs endpoint for sync and localized arrival emails
+- internal jobs endpoint for sync and localized arrival and departure emails
 - WebMCP-ready public parking and studio booking flows, plus reservation management flow
 - Booking.com as the primary imported external availability source, with optional Airbnb ICS sources when configured per unit
 
