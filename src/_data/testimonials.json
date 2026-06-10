@@ -126,6 +126,13 @@
         "author": "Guest",
         "rating": 5,
         "caption": "Cédric et Céline sont des hôtes incroyables et ont toujours été ravis d'aider"
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-27.jpg",
+        "alt": "Parfait séjour très simple mais pas besoin de plus, très agréable avec ce côté campagne tout en restant très proche de la ville, de belles balades à faire dans les environs",
+        "author": "Maignan",
+        "rating": 5,
+        "caption": "Parfait séjour très simple mais agréable"
       }
     ],
     "en": [
@@ -254,6 +261,13 @@
         "author": "Guest",
         "rating": 5,
         "caption": "Cédric and Céline are amazing hosts and were always happy to help."
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-27.jpg",
+        "alt": "Perfect stay, very simple but no need for more, very pleasant with this countryside feel while remaining very close to the city, beautiful walks to do in the surroundings",
+        "author": "Maignan",
+        "rating": 5,
+        "caption": "Perfect simple stay"
       }
     ],
     "de": [
@@ -382,6 +396,13 @@
         "author": "Guest",
         "rating": 5,
         "caption": "Cédric und Céline sind fantastische Gastgeber und haben immer gerne geholfen"
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-27.jpg",
+        "alt": "Perfekter Aufenthalt, sehr einfach aber mehr braucht es nicht, sehr angenehm mit diesem Landgefühl und dabei sehr nah an der Stadt, schöne Spaziergänge in der Umgebung",
+        "author": "Maignan",
+        "rating": 5,
+        "caption": "Perfekter einfacher Aufenthalt"
       }
     ],
     "es": [
@@ -510,6 +531,13 @@
         "author": "Guest",
         "rating": 5,
         "caption": "Cédric y Céline son anfitriones increíbles y siempre estuvieron dispuestos a ayudar"
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-27.jpg",
+        "alt": "Estancia perfecta, muy sencilla pero no necesita más, muy agradable con este aire campestre estando muy cerca de la ciudad, bonitos paseos por los alrededores",
+        "author": "Maignan",
+        "rating": 5,
+        "caption": "Estancia perfecta y sencilla"
       }
     ],
     "pt": [
@@ -638,6 +666,13 @@
         "author": "Guest",
         "rating": 5,
         "caption": "Cédric e Céline são anfitriões incríveis e estiveram sempre prontos a ajudar"
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-27.jpg",
+        "alt": "Estadia perfeita, muito simples mas não precisa de mais, muito agradável com este ambiente campestre estando muito perto da cidade, belos passeios pelos arredores",
+        "author": "Maignan",
+        "rating": 5,
+        "caption": "Estadia perfeita e simples"
       }
     ],
     "it": [
@@ -766,6 +801,13 @@
         "author": "Guest",
         "rating": 5,
         "caption": "Cédric e Céline sono padroni di casa incredibili e sono sempre stati felici di aiutare"
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-27.jpg",
+        "alt": "Soggiorno perfetto, molto semplice ma non serve altro, molto piacevole con quest'atmosfera campestre pur restando vicinissimo alla città, belle passeggiate nei dintorni",
+        "author": "Maignan",
+        "rating": 5,
+        "caption": "Soggiorno perfetto e semplice"
       }
     ],
     "nl": [
@@ -894,6 +936,13 @@
         "author": "Guest",
         "rating": 5,
         "caption": "Cédric en Céline zijn fantastische gastheren en hielpen altijd graag."
+      },
+      {
+        "image": "assets/img/testimonials/testimonial-27.jpg",
+        "alt": "Perfect verblijf, heel eenvoudig maar meer is niet nodig, zeer aangenaam met dit plattelandsgevoel terwijl je dicht bij de stad blijft, mooie wandelingen in de omgeving",
+        "author": "Maignan",
+        "rating": 5,
+        "caption": "Perfect eenvoudig verblijf"
       }
     ]
   },
