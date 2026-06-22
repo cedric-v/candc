@@ -204,19 +204,16 @@
               <input class="form-input" type="email" id="booking-email" name="guestEmail" required toolparamdescription="Guest email address for confirmation and self-service management links.">
             </div>
             <div>
-              <label class="form-label" for="booking-phone">{{ b.phoneLabel or 'Phone' }}</label>
-              <input class="form-input" type="tel" id="booking-phone" name="guestPhone" toolparamdescription="Guest phone number for arrival coordination if needed.">
+              <label class="form-label" for="booking-mobile-phone">{{ b.mobilePhoneLabel }}</label>
+              <input class="form-input" type="tel" id="booking-mobile-phone" name="guestMobilePhone" required toolparamdescription="Guest mobile phone number for urgent contact during the stay.">
             </div>
           </div>
           <div class="grid grid-cols-2 booking-two-cols">
             <div>
-              <label class="form-label" for="booking-mobile-phone">{{ b.mobilePhoneLabel }}</label>
-              <input class="form-input" type="tel" id="booking-mobile-phone" name="guestMobilePhone" required toolparamdescription="Guest mobile phone number for urgent contact during the stay.">
-            </div>
-            <div>
               <label class="form-label" for="booking-date-of-birth">{{ b.dateOfBirthLabel }}</label>
               <input class="form-input" type="date" id="booking-date-of-birth" name="guestDateOfBirth" required toolparamdescription="Guest date of birth in YYYY-MM-DD format.">
             </div>
+            <div></div>
           </div>
           <fieldset class="booking-fieldset">
             <legend class="booking-fieldset-legend">{{ b.addressLabel }}</legend>

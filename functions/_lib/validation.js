@@ -130,11 +130,9 @@ export function validateBookingInput(input, { requireGuestInfo = false, unit = n
       errors.push({ field: "guestEmail", message: "Email is too long" });
     }
 
-    if (input.guestPhone && input.guestPhone.length > MAX_PHONE_LENGTH) {
-      errors.push({ field: "guestPhone", message: "Phone number is too long" });
-    }
-
-    if (input.guestMobilePhone && input.guestMobilePhone.length > MAX_PHONE_LENGTH) {
+    if (!input.guestMobilePhone?.trim()) {
+      errors.push({ field: "guestMobilePhone", message: "Mobile phone is required" });
+    } else if (input.guestMobilePhone.length > MAX_PHONE_LENGTH) {
       errors.push({ field: "guestMobilePhone", message: "Mobile phone number is too long" });
     }
 

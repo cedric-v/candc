@@ -73,7 +73,6 @@
     guestFirstName: form.elements.guestFirstName,
     guestLastName: form.elements.guestLastName,
     guestEmail: form.elements.guestEmail,
-    guestPhone: form.elements.guestPhone,
     guestMobilePhone: form.elements.guestMobilePhone,
     guestDateOfBirth: form.elements.guestDateOfBirth,
     guestAddressStreet: form.elements.guestAddressStreet,
@@ -393,7 +392,6 @@
       payload.guestFirstName = fields.guestFirstName.value.trim();
       payload.guestLastName = fields.guestLastName.value.trim();
       payload.guestEmail = fields.guestEmail.value.trim();
-      payload.guestPhone = fields.guestPhone.value.trim();
       payload.guestMobilePhone = fields.guestMobilePhone.value.trim();
       payload.guestDateOfBirth = fields.guestDateOfBirth.value.trim();
       payload.guestAddressStreet = fields.guestAddressStreet.value.trim();

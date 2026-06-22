@@ -128,6 +128,12 @@ export async function sendImmediateArrivalEmailIfNeeded(env, reservationId) {
 
 export async function sendReservationNtfy(env, reservationId, eventType, options = {}) {
   if (!isNtfyConfigured(env)) {
+    await insertSyncLog(env, {
+      unitId: null,
+      syncType: "ntfy_notification",
+      status: "skipped",
+      message: `ntfy_not_configured — ${eventType} not sent for ${reservationId}`,
+    });
     return { ok: false, reason: "ntfy_not_configured" };
   }
 
@@ -171,7 +177,24 @@ export async function sendReservationNtfy(env, reservationId, eventType, options
       throw new Error(`unknown_ntfy_event_type:${eventType}`);
   }
 
-  await sendNtfyNotification(env, title, message, { tags: "reservation" });
-
-  return { ok: true };
+  try {
+    await sendNtfyNotification(env, title, message, { tags: "reservation" });
+    await insertSyncLog(env, {
+      unitId: reservation.unit_id || null,
+      syncType: "ntfy_notification",
+      status: "success",
+      message: `${eventType} notification sent for ${reservation.public_reference}`,
+      payloadSummary: { reservationId, eventType },
+    });
+    return { ok: true };
+  } catch (error) {
+    await insertSyncLog(env, {
+      unitId: reservation.unit_id || null,
+      syncType: "ntfy_notification",
+      status: "failed",
+      message: error.message,
+      payloadSummary: { reservationId, eventType },
+    });
+    throw error;
+  }
 }
