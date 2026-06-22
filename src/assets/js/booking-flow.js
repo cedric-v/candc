@@ -189,6 +189,11 @@
       fields.children.addEventListener("input", handleGuestCountChange);
     }
 
+    if (fields.infants) {
+      fields.infants.addEventListener("change", handleGuestCountChange);
+      fields.infants.addEventListener("input", handleGuestCountChange);
+    }
+
     if (webMcpController) {
       window.addEventListener(
         "pagehide",
@@ -1021,7 +1026,8 @@
 
     const adultCount = Number(fields.adults.value || 1);
     const childCount = Number(fields.children.value || 0);
-    const additionalCount = Math.max(0, adultCount + childCount - 1);
+    const infantCount = Number(fields.infants?.value || 0);
+    const additionalCount = Math.max(0, adultCount + childCount + infantCount - 1);
 
     if (additionalCount <= 0) {
       section.classList.add("hidden");
