@@ -1015,7 +1015,8 @@
     }
 
     const adultCount = Number(fields.adults.value || 1);
-    const additionalCount = Math.max(0, adultCount - 1);
+    const childCount = Number(fields.children.value || 0);
+    const additionalCount = Math.max(0, adultCount + childCount - 1);
 
     if (additionalCount <= 0) {
       section.classList.add("hidden");
