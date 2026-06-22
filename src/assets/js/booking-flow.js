@@ -74,6 +74,14 @@
     guestLastName: form.elements.guestLastName,
     guestEmail: form.elements.guestEmail,
     guestPhone: form.elements.guestPhone,
+    guestMobilePhone: form.elements.guestMobilePhone,
+    guestDateOfBirth: form.elements.guestDateOfBirth,
+    guestAddressStreet: form.elements.guestAddressStreet,
+    guestAddressZip: form.elements.guestAddressZip,
+    guestAddressCity: form.elements.guestAddressCity,
+    guestAddressCountry: form.elements.guestAddressCountry,
+    guestNationality: form.elements.guestNationality,
+    guestIdDocumentNumber: form.elements.guestIdDocumentNumber,
     remarks: form.elements.remarks,
     acceptedTerms: form.elements.acceptedTerms,
   };
@@ -167,6 +175,15 @@
     }
 
     form.addEventListener("submit", handleSubmit);
+
+    if (fields.guestNationality) {
+      fields.guestNationality.addEventListener("change", handleNationalityChange);
+    }
+
+    if (fields.adults) {
+      fields.adults.addEventListener("change", handleAdultsChange);
+      fields.adults.addEventListener("input", handleAdultsChange);
+    }
 
     if (webMcpController) {
       window.addEventListener(
@@ -377,6 +394,15 @@
       payload.guestLastName = fields.guestLastName.value.trim();
       payload.guestEmail = fields.guestEmail.value.trim();
       payload.guestPhone = fields.guestPhone.value.trim();
+      payload.guestMobilePhone = fields.guestMobilePhone.value.trim();
+      payload.guestDateOfBirth = fields.guestDateOfBirth.value.trim();
+      payload.guestAddressStreet = fields.guestAddressStreet.value.trim();
+      payload.guestAddressZip = fields.guestAddressZip.value.trim();
+      payload.guestAddressCity = fields.guestAddressCity.value.trim();
+      payload.guestAddressCountry = fields.guestAddressCountry.value.trim();
+      payload.guestNationality = fields.guestNationality.value;
+      payload.guestIdDocumentNumber = fields.guestIdDocumentNumber.value.trim();
+      payload.additionalGuests = collectAdditionalGuests();
       payload.remarks = fields.remarks.value.trim();
       payload.acceptedTerms = fields.acceptedTerms.checked;
     }
@@ -934,6 +960,84 @@
     summary.paymentFee.textContent = texts.summaryPendingAmount;
     summary.totalAmount.textContent = texts.summaryPendingAmount;
     submitButton.disabled = true;
+  }
+
+  function handleNationalityChange() {
+    const nationality = (fields.guestNationality.value || "").trim().toLowerCase();
+    const docGroup = document.getElementById("booking-id-document-group");
+    if (!docGroup) {
+      return;
+    }
+
+    const isSwiss = nationality === "suisse" || nationality === "swiss" || nationality === "schweiz" || nationality === "svizzera" || nationality === "svizzero" || nationality === "suíço" || nationality === "zwitsers";
+
+    if (isSwiss || nationality === "") {
+      docGroup.classList.add("hidden");
+      if (fields.guestIdDocumentNumber) {
+        fields.guestIdDocumentNumber.required = false;
+      }
+    } else {
+      docGroup.classList.remove("hidden");
+      if (fields.guestIdDocumentNumber) {
+        fields.guestIdDocumentNumber.required = true;
+      }
+    }
+  }
+
+  function handleAdultsChange() {
+    syncAdditionalGuests();
+  }
+
+  function collectAdditionalGuests() {
+    const guests = [];
+    const containers = document.querySelectorAll("#booking-additional-guests-container .booking-additional-guest");
+
+    containers.forEach((container) => {
+      const firstNameInput = container.querySelector('input[name="additionalGuestFirstName"]');
+      const lastNameInput = container.querySelector('input[name="additionalGuestLastName"]');
+      if (firstNameInput && lastNameInput) {
+        const firstName = firstNameInput.value.trim();
+        const lastName = lastNameInput.value.trim();
+        if (firstName || lastName) {
+          guests.push({ firstName, lastName });
+        }
+      }
+    });
+
+    return guests;
+  }
+
+  function syncAdditionalGuests() {
+    const section = document.getElementById("booking-additional-guests-section");
+    const container = document.getElementById("booking-additional-guests-container");
+    const template = document.getElementById("booking-additional-guest-template");
+
+    if (!section || !container || !template) {
+      return;
+    }
+
+    const adultCount = Number(fields.adults.value || 1);
+    const additionalCount = Math.max(0, adultCount - 1);
+
+    if (additionalCount <= 0) {
+      section.classList.add("hidden");
+      container.innerHTML = "";
+      return;
+    }
+
+    section.classList.remove("hidden");
+    const existing = container.children.length;
+
+    if (existing < additionalCount) {
+      for (let index = existing; index < additionalCount; index += 1) {
+        const clone = template.content.cloneNode(true);
+        container.appendChild(clone);
+      }
+    } else if (existing > additionalCount) {
+      while (container.children.length > additionalCount) {
+        container.removeChild(container.lastChild);
+      }
+    }
   }
 
   function setAvailabilityGuidance() {

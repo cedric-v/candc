@@ -642,6 +642,41 @@ a:hover {
   resize: vertical;
 }
 
+.booking-fieldset {
+  border: 1px solid rgba(45, 80, 22, 0.2);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+.booking-fieldset-legend {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--primary-color);
+  padding: 0 var(--spacing-xs);
+  margin-bottom: var(--spacing-sm);
+}
+
+.booking-field-wide {
+  grid-column: 1 / -1;
+}
+
+.booking-subsection-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--primary-color);
+  margin-top: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
+}
+
+.booking-additional-guest {
+  padding: var(--spacing-md);
+  border: 1px solid rgba(45, 80, 22, 0.15);
+  border-radius: var(--border-radius-md);
+  margin-bottom: var(--spacing-sm);
+  background: rgba(45, 80, 22, 0.03);
+}
+
 .booking-actions {
   display: flex;
   flex-wrap: wrap;

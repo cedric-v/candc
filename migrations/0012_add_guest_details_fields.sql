@@ -1,0 +1,9 @@
+ALTER TABLE reservations ADD COLUMN guest_mobile_phone TEXT;
+ALTER TABLE reservations ADD COLUMN guest_address_street TEXT;
+ALTER TABLE reservations ADD COLUMN guest_address_zip TEXT;
+ALTER TABLE reservations ADD COLUMN guest_address_city TEXT;
+ALTER TABLE reservations ADD COLUMN guest_address_country TEXT;
+ALTER TABLE reservations ADD COLUMN guest_date_of_birth TEXT;
+ALTER TABLE reservations ADD COLUMN guest_nationality TEXT;
+ALTER TABLE reservations ADD COLUMN guest_id_document_number TEXT;
+ALTER TABLE reservations ADD COLUMN additional_guests_json TEXT;

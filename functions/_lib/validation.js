@@ -15,6 +15,12 @@ const MAX_PHONE_LENGTH = 40;
 const MAX_REMARKS_LENGTH = 2000;
 const MAX_GUEST_COUNT = 20;
 const MAX_VEHICLE_LENGTH_M = 20;
+const MAX_STREET_LENGTH = 200;
+const MAX_CITY_LENGTH = 100;
+const MAX_ZIP_LENGTH = 20;
+const MAX_COUNTRY_LENGTH = 100;
+const MAX_NATIONALITY_LENGTH = 100;
+const MAX_ID_DOCUMENT_LENGTH = 50;
 
 function isPositiveFiniteNumber(value) {
   return Number.isFinite(value) && value > 0;
@@ -127,6 +133,80 @@ export function validateBookingInput(input, { requireGuestInfo = false, unit = n
     if (input.guestPhone && input.guestPhone.length > MAX_PHONE_LENGTH) {
       errors.push({ field: "guestPhone", message: "Phone number is too long" });
     }
+
+    if (input.guestMobilePhone && input.guestMobilePhone.length > MAX_PHONE_LENGTH) {
+      errors.push({ field: "guestMobilePhone", message: "Mobile phone number is too long" });
+    }
+
+    if (!input.guestAddressStreet?.trim()) {
+      errors.push({ field: "guestAddressStreet", message: "Street address is required" });
+    } else if (input.guestAddressStreet.length > MAX_STREET_LENGTH) {
+      errors.push({ field: "guestAddressStreet", message: "Street address is too long" });
+    }
+
+    if (!input.guestAddressZip?.trim()) {
+      errors.push({ field: "guestAddressZip", message: "ZIP code is required" });
+    } else if (input.guestAddressZip.length > MAX_ZIP_LENGTH) {
+      errors.push({ field: "guestAddressZip", message: "ZIP code is too long" });
+    }
+
+    if (!input.guestAddressCity?.trim()) {
+      errors.push({ field: "guestAddressCity", message: "City is required" });
+    } else if (input.guestAddressCity.length > MAX_CITY_LENGTH) {
+      errors.push({ field: "guestAddressCity", message: "City is too long" });
+    }
+
+    if (!input.guestAddressCountry?.trim()) {
+      errors.push({ field: "guestAddressCountry", message: "Country is required" });
+    } else if (input.guestAddressCountry.length > MAX_COUNTRY_LENGTH) {
+      errors.push({ field: "guestAddressCountry", message: "Country is too long" });
+    }
+
+    if (!input.guestDateOfBirth?.trim()) {
+      errors.push({ field: "guestDateOfBirth", message: "Date of birth is required" });
+    } else if (!/^\d{4}-\d{2}-\d{2}$/.test(input.guestDateOfBirth)) {
+      errors.push({ field: "guestDateOfBirth", message: "Date of birth must be in YYYY-MM-DD format" });
+    }
+
+    if (!input.guestNationality?.trim()) {
+      errors.push({ field: "guestNationality", message: "Nationality is required" });
+    } else if (input.guestNationality.length > MAX_NATIONALITY_LENGTH) {
+      errors.push({ field: "guestNationality", message: "Nationality is too long" });
+    }
+
+    const nationality = (input.guestNationality || "").trim().toLowerCase();
+    if (nationality !== "suisse" && nationality !== "swiss" && nationality !== "schweiz" && nationality !== "svizzera" && nationality !== "svizzero" && nationality !== "suíço" && nationality !== "zwitsers") {
+      if (!input.guestIdDocumentNumber?.trim()) {
+        errors.push({ field: "guestIdDocumentNumber", message: "ID document number is required for non-Swiss guests" });
+      } else if (input.guestIdDocumentNumber.length > MAX_ID_DOCUMENT_LENGTH) {
+        errors.push({ field: "guestIdDocumentNumber", message: "ID document number is too long" });
+      }
+    }
+
+    if (input.additionalGuests) {
+      if (!Array.isArray(input.additionalGuests)) {
+        errors.push({ field: "additionalGuests", message: "Additional guests must be an array" });
+      } else {
+        const totalPeople = (input.adults || 0) + (input.children || 0) + (input.infants || 0);
+        const additionalCount = input.additionalGuests.length;
+        const mainGuestCount = 1;
+        if (additionalCount + mainGuestCount > totalPeople) {
+          errors.push({ field: "additionalGuests", message: "More additional guests listed than total travellers" });
+        }
+        input.additionalGuests.forEach((g, i) => {
+          if (!g.firstName?.trim()) {
+            errors.push({ field: `additionalGuests[${i}].firstName`, message: "Additional guest first name is required" });
+          } else if (g.firstName.length > MAX_NAME_LENGTH) {
+            errors.push({ field: `additionalGuests[${i}].firstName`, message: "Additional guest first name is too long" });
+          }
+          if (!g.lastName?.trim()) {
+            errors.push({ field: `additionalGuests[${i}].lastName`, message: "Additional guest last name is required" });
+          } else if (g.lastName.length > MAX_NAME_LENGTH) {
+            errors.push({ field: `additionalGuests[${i}].lastName`, message: "Additional guest last name is too long" });
+          }
+        });
+      }
+    }
   }
 
   return errors;
@@ -153,6 +233,18 @@ export function normalizeBookingInput(raw) {
     guestLastName: typeof raw.guestLastName === "string" ? raw.guestLastName.trim() : "",
     guestEmail: typeof raw.guestEmail === "string" ? raw.guestEmail.trim().toLowerCase() : "",
     guestPhone: typeof raw.guestPhone === "string" ? raw.guestPhone.trim() : "",
+    guestMobilePhone: typeof raw.guestMobilePhone === "string" ? raw.guestMobilePhone.trim() : "",
+    guestAddressStreet: typeof raw.guestAddressStreet === "string" ? raw.guestAddressStreet.trim() : "",
+    guestAddressZip: typeof raw.guestAddressZip === "string" ? raw.guestAddressZip.trim() : "",
+    guestAddressCity: typeof raw.guestAddressCity === "string" ? raw.guestAddressCity.trim() : "",
+    guestAddressCountry: typeof raw.guestAddressCountry === "string" ? raw.guestAddressCountry.trim() : "",
+    guestDateOfBirth: typeof raw.guestDateOfBirth === "string" ? raw.guestDateOfBirth.trim() : "",
+    guestNationality: typeof raw.guestNationality === "string" ? raw.guestNationality.trim() : "",
+    guestIdDocumentNumber: typeof raw.guestIdDocumentNumber === "string" ? raw.guestIdDocumentNumber.trim() : "",
+    additionalGuests: Array.isArray(raw.additionalGuests) ? raw.additionalGuests.map((g) => ({
+      firstName: typeof g.firstName === "string" ? g.firstName.trim() : "",
+      lastName: typeof g.lastName === "string" ? g.lastName.trim() : "",
+    })) : [],
     acceptedTerms: Boolean(raw.acceptedTerms),
   };
 }
