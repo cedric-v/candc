@@ -173,7 +173,7 @@ export function validateBookingInput(input, { requireGuestInfo = false, unit = n
     }
 
     const nationality = (input.guestNationality || "").trim().toLowerCase();
-    if (nationality !== "suisse" && nationality !== "swiss" && nationality !== "schweiz" && nationality !== "svizzera" && nationality !== "svizzero" && nationality !== "suíço" && nationality !== "zwitsers") {
+    if (nationality !== "ch") {
       if (!input.guestIdDocumentNumber?.trim()) {
         errors.push({ field: "guestIdDocumentNumber", message: "ID document number is required for non-Swiss guests" });
       } else if (input.guestIdDocumentNumber.length > MAX_ID_DOCUMENT_LENGTH) {

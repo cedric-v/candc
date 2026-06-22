@@ -978,7 +978,7 @@
       return;
     }
 
-    const isSwiss = nationality === "suisse" || nationality === "swiss" || nationality === "schweiz" || nationality === "svizzera" || nationality === "svizzero" || nationality === "suíço" || nationality === "zwitsers";
+    const isSwiss = nationality === "ch";
 
     if (isSwiss || nationality === "") {
       docGroup.classList.add("hidden");
