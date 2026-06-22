@@ -677,6 +677,15 @@ a:hover {
   background: rgba(45, 80, 22, 0.03);
 }
 
+.booking-guest-number {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  margin-bottom: var(--spacing-sm);
+  padding-bottom: var(--spacing-xs);
+  border-bottom: 1px solid rgba(45, 80, 22, 0.1);
+}
+
 .booking-actions {
   display: flex;
   flex-wrap: wrap;

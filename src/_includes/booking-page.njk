@@ -67,6 +67,7 @@
     data-msg-redirecting="{{ b.redirecting }}"
     data-msg-terms="{{ b.termsRequired }}"
     data-msg-complimentary-label="{{ b.complimentaryLabel or 'Complimentary' }}"
+    data-msg-guest-label="{{ b.guestLabel or 'Guest' }}"
     data-msg-summary-empty-stay="{{ b.summaryEmptyStay }}"
     data-msg-summary-pending-amount="{{ b.summaryPendingAmount }}"
     data-msg-night-singular="{{ b.nightSingular or 'night' }}"
@@ -642,14 +643,17 @@
             <h3 class="booking-subsection-title">{{ b.additionalGuestsTitle }}</h3>
             <div id="booking-additional-guests-container"></div>
             <template id="booking-additional-guest-template">
-              <div class="booking-additional-guest grid grid-cols-2 booking-two-cols">
-                <div>
-                  <label class="form-label">{{ b.firstName }}</label>
-                  <input class="form-input" type="text" name="additionalGuestFirstName" toolparamdescription="Additional guest first name.">
-                </div>
-                <div>
-                  <label class="form-label">{{ b.lastName }}</label>
-                  <input class="form-input" type="text" name="additionalGuestLastName" toolparamdescription="Additional guest last name.">
+              <div class="booking-additional-guest">
+                <p class="booking-guest-number"></p>
+                <div class="grid grid-cols-2 booking-two-cols">
+                  <div>
+                    <label class="form-label">{{ b.firstName }}</label>
+                    <input class="form-input" type="text" name="additionalGuestFirstName" toolparamdescription="Additional guest first name.">
+                  </div>
+                  <div>
+                    <label class="form-label">{{ b.lastName }}</label>
+                    <input class="form-input" type="text" name="additionalGuestLastName" toolparamdescription="Additional guest last name.">
+                  </div>
                 </div>
               </div>
             </template>

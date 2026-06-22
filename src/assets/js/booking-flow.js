@@ -59,6 +59,7 @@
       root.dataset.msgMinStayArrivalTemplate ||
       "This arrival date does not allow the minimum stay of {nights} night(s).",
     complimentaryLabel: root.dataset.msgComplimentaryLabel || "Complimentary",
+    guestLabel: root.dataset.msgGuestLabel || "Guest",
   };
 
   const fields = {
@@ -1048,6 +1049,23 @@
         container.removeChild(container.lastChild);
       }
     }
+
+    updateGuestNumbers();
+  }
+
+  function updateGuestNumbers() {
+    const container = document.getElementById("booking-additional-guests-container");
+    if (!container) {
+      return;
+    }
+
+    const guests = container.querySelectorAll(".booking-additional-guest");
+    guests.forEach((guest, index) => {
+      const numberEl = guest.querySelector(".booking-guest-number");
+      if (numberEl) {
+        numberEl.textContent = `${texts.guestLabel} ${index + 2}`;
+      }
+    });
   }
 
   function setAvailabilityGuidance() {
