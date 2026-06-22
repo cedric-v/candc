@@ -180,8 +180,13 @@
     }
 
     if (fields.adults) {
-      fields.adults.addEventListener("change", handleAdultsChange);
-      fields.adults.addEventListener("input", handleAdultsChange);
+      fields.adults.addEventListener("change", handleGuestCountChange);
+      fields.adults.addEventListener("input", handleGuestCountChange);
+    }
+
+    if (fields.children) {
+      fields.children.addEventListener("change", handleGuestCountChange);
+      fields.children.addEventListener("input", handleGuestCountChange);
     }
 
     if (webMcpController) {
@@ -982,7 +987,7 @@
     }
   }
 
-  function handleAdultsChange() {
+  function handleGuestCountChange() {
     syncAdditionalGuests();
   }
 
