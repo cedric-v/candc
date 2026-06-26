@@ -12,13 +12,13 @@ export async function onRequestGet(context) {
     }
 
     if (!token) {
-      return notFound();
+      return notFound("No token: " + JSON.stringify({ raw: params.feedToken }));
     }
 
     const unit = await getUnitByFeedToken(env, token);
 
     if (!unit) {
-      return notFound();
+      return notFound("Unit not found for token: " + token);
     }
 
     const reservations = await getReservationsForIcsFeed(env, unit.id);
