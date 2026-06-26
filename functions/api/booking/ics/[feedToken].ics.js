@@ -5,20 +5,10 @@ import { notFound, serverError, text } from "../../../_lib/http.js";
 export async function onRequestGet(context) {
   try {
     const { params, env } = context;
-    let token = params.feedToken;
-
-    if (typeof token === "string" && token.endsWith(".ics")) {
-      token = token.slice(0, -4);
-    }
-
-    if (!token) {
-      return notFound("No token: " + JSON.stringify({ raw: params.feedToken }));
-    }
-
-    const unit = await getUnitByFeedToken(env, token);
+    const unit = await getUnitByFeedToken(env, params.feedToken);
 
     if (!unit) {
-      return notFound("Unit not found for token: " + token);
+      return notFound();
     }
 
     const reservations = await getReservationsForIcsFeed(env, unit.id);
