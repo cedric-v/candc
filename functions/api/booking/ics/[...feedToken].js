@@ -5,13 +5,23 @@ import { notFound, serverError, text } from "../../../_lib/http.js";
 export async function onRequestGet(context) {
   try {
     const { params, env } = context;
-    const unit = await getUnitByFeedToken(env, params.feedToken);
+    let token = params.feedToken;
+
+    if (typeof token === "string" && token.endsWith(".ics")) {
+      token = token.slice(0, -4);
+    }
+
+    if (!token) {
+      return notFound();
+    }
+
+    const unit = await getUnitByFeedToken(env, token);
 
     if (!unit) {
       return notFound();
     }
 
-    const reservations = await getReservationsForIcsFeed(env, unit?.id ?? null);
+    const reservations = await getReservationsForIcsFeed(env, unit.id);
     const body = buildReservationFeed(reservations);
 
     return text(body, {
