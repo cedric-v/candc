@@ -133,6 +133,13 @@
         "author": "Maignan",
         "rating": 5,
         "caption": "Parfait séjour très simple mais agréable"
+      },
+      {
+        "image": "assets/img/testimonials/studio-avis-yassine.png",
+        "alt": "Ce client n'a pas laissé de commentaire.",
+        "author": "Yassine",
+        "rating": 5,
+        "caption": "Pas de commentaire"
       }
     ],
     "en": [
@@ -268,6 +275,13 @@
         "author": "Maignan",
         "rating": 5,
         "caption": "Perfect simple stay"
+      },
+      {
+        "image": "assets/img/testimonials/studio-avis-yassine.png",
+        "alt": "This customer did not leave a comment.",
+        "author": "Yassine",
+        "rating": 5,
+        "caption": "No comment"
       }
     ],
     "de": [
@@ -403,6 +417,13 @@
         "author": "Maignan",
         "rating": 5,
         "caption": "Perfekter einfacher Aufenthalt"
+      },
+      {
+        "image": "assets/img/testimonials/studio-avis-yassine.png",
+        "alt": "Dieser Kunde hat keinen Kommentar hinterlassen.",
+        "author": "Yassine",
+        "rating": 5,
+        "caption": "Kein Kommentar"
       }
     ],
     "es": [
@@ -538,6 +559,13 @@
         "author": "Maignan",
         "rating": 5,
         "caption": "Estancia perfecta y sencilla"
+      },
+      {
+        "image": "assets/img/testimonials/studio-avis-yassine.png",
+        "alt": "Este cliente no dejó ningún comentario.",
+        "author": "Yassine",
+        "rating": 5,
+        "caption": "Sin comentarios"
       }
     ],
     "pt": [
@@ -673,6 +701,13 @@
         "author": "Maignan",
         "rating": 5,
         "caption": "Estadia perfeita e simples"
+      },
+      {
+        "image": "assets/img/testimonials/studio-avis-yassine.png",
+        "alt": "Este cliente não deixou um comentário.",
+        "author": "Yassine",
+        "rating": 5,
+        "caption": "Sem comentário"
       }
     ],
     "it": [
@@ -808,6 +843,13 @@
         "author": "Maignan",
         "rating": 5,
         "caption": "Soggiorno perfetto e semplice"
+      },
+      {
+        "image": "assets/img/testimonials/studio-avis-yassine.png",
+        "alt": "Questo cliente non ha lasciato un commento.",
+        "author": "Yassine",
+        "rating": 5,
+        "caption": "Nessun commento"
       }
     ],
     "nl": [
@@ -943,6 +985,13 @@
         "author": "Maignan",
         "rating": 5,
         "caption": "Perfect eenvoudig verblijf"
+      },
+      {
+        "image": "assets/img/testimonials/studio-avis-yassine.png",
+        "alt": "This customer did not leave a comment.",
+        "author": "Yassine",
+        "rating": 5,
+        "caption": "No comment"
       }
     ]
   },
@@ -1038,6 +1087,13 @@
         "author": "Sophie rb",
         "rating": 5,
         "caption": "Nous avons été très bien accueillis par Cédric et sa famille"
+      },
+      {
+        "image": "assets/img/testimonials/parking/parking-avis-stefan-juin2026.png",
+        "alt": "Die Umgebung ist sehr schön, der Platz mit allen Annehmlichkeiten!!",
+        "author": "Stefan",
+        "rating": 5,
+        "caption": "Die Umgebung ist sehr schön, der Platz mit allen Annehmlichkeiten!!"
       }
     ],
     "en": [
@@ -1131,6 +1187,13 @@
         "author": "Sophie rb",
         "rating": 5,
         "caption": "We were very well received by Cédric and his family"
+      },
+      {
+        "image": "assets/img/testimonials/parking/parking-avis-stefan-juin2026.png",
+        "alt": "Die Umgebung ist sehr schön, der Platz mit allen Annehmlichkeiten!!",
+        "author": "Stefan",
+        "rating": 5,
+        "caption": "Die Umgebung ist sehr schön, der Platz mit allen Annehmlichkeiten!!"
       }
     ],
     "de": [
@@ -1224,6 +1287,13 @@
         "author": "Sophie rb",
         "rating": 5,
         "caption": "Wir wurden von Cédric und seiner Familie sehr gut empfangen"
+      },
+      {
+        "image": "assets/img/testimonials/parking/parking-avis-stefan-juin2026.png",
+        "alt": "Die Umgebung ist sehr schön, der Platz mit allen Annehmlichkeiten!!",
+        "author": "Stefan",
+        "rating": 5,
+        "caption": "Die Umgebung ist sehr schön, der Platz mit allen Annehmlichkeiten!!"
       }
     ],
     "es": [
@@ -1317,6 +1387,13 @@
         "author": "Sophie rb",
         "rating": 5,
         "caption": "Fuimos muy bien recibidos por Cédric y su familia"
+      },
+      {
+        "image": "assets/img/testimonials/parking/parking-avis-stefan-juin2026.png",
+        "alt": "Die Umgebung ist sehr schön, der Platz mit allen Annehmlichkeiten!!",
+        "author": "Stefan",
+        "rating": 5,
+        "caption": "Die Umgebung ist sehr schön, der Platz mit allen Annehmlichkeiten!!"
       }
     ],
     "pt": [
@@ -1410,6 +1487,13 @@
         "author": "Sophie rb",
         "rating": 5,
         "caption": "Fomos muito bem recebidos pelo Cédric e pela sua família"
+      },
+      {
+        "image": "assets/img/testimonials/parking/parking-avis-stefan-juin2026.png",
+        "alt": "Die Umgebung ist sehr schön, der Platz mit allen Annehmlichkeiten!!",
+        "author": "Stefan",
+        "rating": 5,
+        "caption": "Die Umgebung ist sehr schön, der Platz mit allen Annehmlichkeiten!!"
       }
     ],
     "it": [
@@ -1503,6 +1587,13 @@
         "author": "Sophie rb",
         "rating": 5,
         "caption": "Siamo stati accolti molto bene da Cédric e dalla sua famiglia"
+      },
+      {
+        "image": "assets/img/testimonials/parking/parking-avis-stefan-juin2026.png",
+        "alt": "Die Umgebung ist sehr schön, der Platz mit allen Annehmlichkeiten!!",
+        "author": "Stefan",
+        "rating": 5,
+        "caption": "Die Umgebung ist sehr schön, der Platz mit allen Annehmlichkeiten!!"
       }
     ],
     "nl": [
@@ -1596,6 +1687,13 @@
         "author": "Sophie rb",
         "rating": 5,
         "caption": "We were very well received by Cédric and his family"
+      },
+      {
+        "image": "assets/img/testimonials/parking/parking-avis-stefan-juin2026.png",
+        "alt": "Die Umgebung ist sehr schön, der Platz mit allen Annehmlichkeiten!!",
+        "author": "Stefan",
+        "rating": 5,
+        "caption": "Die Umgebung ist sehr schön, der Platz mit allen Annehmlichkeiten!!"
       }
     ]
   }
