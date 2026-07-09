@@ -146,7 +146,15 @@
       "text": "Nous sommes superhôtes sur Airbnb",
       "subtext": "C'est signe d'un accueil de qualité."
     },
-    "changeLanguage": "Changer de langue"
+    "changeLanguage": "Changer de langue",
+    "error": {
+      "title": "Page non trouvée",
+      "heading": "Oups, cette page est partie en vadrouille ! 🚐",
+      "body1": "La page que vous cherchez a pris la route sans laissez-passer. Comme un camping-car sans GPS, elle s'est perdue quelque part entre La Sonnaz et le reste du monde…",
+      "body2": "Bonne nouvelle : il reste encore de la place pour vous ici.",
+      "funFactLabel": "Le saviez-vous ?",
+      "funFact": "Notre emplacement est si calme que même les pages perdues viennent s'y poser."
+    }
   },
   "en": {
     "siteName": "C & C",
@@ -295,7 +303,15 @@
       "text": "We are Superhosts on Airbnb",
       "subtext": "It's a sign of a quality welcome."
     },
-    "changeLanguage": "Change language"
+    "changeLanguage": "Change language",
+    "error": {
+      "title": "Page not found",
+      "heading": "Oops, this page has hit the road! 🚐",
+      "body1": "The page you're looking for took off without a pass. Like a camper van without GPS, it got lost somewhere between La Sonnaz and the rest of the world…",
+      "body2": "Good news: there's still room for you here.",
+      "funFactLabel": "Did you know?",
+      "funFact": "Our location is so quiet that even lost pages come to rest here."
+    }
   },
   "de": {
     "siteName": "C & C",
@@ -444,7 +460,15 @@
       "text": "Wir sind Superhosts auf Airbnb",
       "subtext": "Das ist ein Zeichen für einen qualitativ hochwertigen Empfang."
     },
-    "changeLanguage": "Sprache ändern"
+    "changeLanguage": "Sprache ändern",
+    "error": {
+      "title": "Seite nicht gefunden",
+      "heading": "Hoppla, diese Seite ist auf Reisen gegangen! 🚐",
+      "body1": "Die Seite, die Sie suchen, hat sich ohne Erlaubnis auf den Weg gemacht. Wie ein Wohnmobil ohne GPS hat sie sich irgendwo zwischen La Sonnaz und dem Rest der Welt verlaufen…",
+      "body2": "Gute Nachricht: Hier ist noch Platz für Sie.",
+      "funFactLabel": "Wussten Sie schon?",
+      "funFact": "Unser Standort ist so ruhig, dass sogar verlorene Seiten hier Halt machen."
+    }
   },
   "es": {
     "siteName": "C & C",
@@ -593,7 +617,15 @@
       "text": "Somos Superhosts en Airbnb",
       "subtext": "Es señal de una bienvenida de calidad."
     },
-    "changeLanguage": "Cambiar idioma"
+    "changeLanguage": "Cambiar idioma",
+    "error": {
+      "title": "Página no encontrada",
+      "heading": "¡Ups, esta página se ha ido de viaje! 🚐",
+      "body1": "La página que busca tomó la ruta sin permiso. Como una autocaravana sin GPS, se perdió en algún lugar entre La Sonnaz y el resto del mundo…",
+      "body2": "Buena noticia: todavía hay espacio para usted aquí.",
+      "funFactLabel": "¿Sabía que?",
+      "funFact": "Nuestra ubicación es tan tranquila que incluso las páginas perdidas vienen a posarse aquí."
+    }
   },
   "pt": {
     "siteName": "C & C",
@@ -742,7 +774,15 @@
       "text": "Somos Superhosts no Airbnb",
       "subtext": "É sinal de um acolhimento de qualidade."
     },
-    "changeLanguage": "Alterar idioma"
+    "changeLanguage": "Alterar idioma",
+    "error": {
+      "title": "Página não encontrada",
+      "heading": "Ops, esta página foi passear! 🚐",
+      "body1": "A página que procura pegou a estrada sem autorização. Como uma autocaravana sem GPS, perdeu-se algures entre La Sonnaz e o resto do mundo…",
+      "body2": "Boas notícias: ainda há lugar para si aqui.",
+      "funFactLabel": "Sabia que?",
+      "funFact": "A nossa localização é tão tranquila que até as páginas perdidas vêm pousar aqui."
+    }
   },
   "it": {
     "siteName": "C & C",
@@ -891,7 +931,15 @@
       "text": "Siamo Superhost su Airbnb",
       "subtext": "È segno di un'accoglienza di qualità."
     },
-    "changeLanguage": "Cambia lingua"
+    "changeLanguage": "Cambia lingua",
+    "error": {
+      "title": "Pagina non trovata",
+      "heading": "Ops, questa pagina è partita per un giro! 🚐",
+      "body1": "La pagina che cercate ha preso la strada senza permesso. Come un camper senza GPS, si è persa da qualche parte tra La Sonnaz e il resto del mondo…",
+      "body2": "Buona notizia: c'è ancora posto per voi qui.",
+      "funFactLabel": "Lo sapevate?",
+      "funFact": "La nostra posizione è così tranquilla che anche le pagine smarrite vengono a posarsi qui."
+    }
   },
   "nl": {
     "siteName": "C & C",
@@ -1040,6 +1088,14 @@
       "text": "Wij zijn Superhosts op Airbnb",
       "subtext": "Dit is een teken van een gastvrij onthaal van hoge kwaliteit."
     },
-    "changeLanguage": "Taal wijzigen"
+    "changeLanguage": "Taal wijzigen",
+    "error": {
+      "title": "Pagina niet gevonden",
+      "heading": "Oeps, deze pagina is op reis! 🚐",
+      "body1": "De pagina die u zoekt, is zonder toestemming de weg op gegaan. Als een camper zonder GPS is ze ergens verdwaald tussen La Sonnaz en de rest van de wereld…",
+      "body2": "Goed nieuws: er is nog plek voor u hier.",
+      "funFactLabel": "Wist u dat?",
+      "funFact": "Onze locatie is zo rustig dat zelfs verdwaalde pagina's hier komen neerstrijken."
+    }
   }
 }
