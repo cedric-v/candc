@@ -62,7 +62,30 @@ Parametres recommandes :
 - Framework preset : `None` ou `Eleventy`
 - Build command : `npm run build`
 - Build output directory : `_site`
-- Node.js version : `18+`
+- Node.js version : `18.17+` (le fichier `.nvmrc` du projet epingle la version `22`)
+
+### Version de Node.js et generation d'images
+
+Le build responsive des images (`src/assets/img` -> WebP/JPEG haches) repose sur `sharp`, qui exige Node `^18.17 || ^20.3 || >=21`.
+
+Attention :
+
+- `@11ty/eleventy` v3 fonctionne avec n'importe quelle version `>=18`
+- si le build Cloudflare Pages utilise une version de Node comprise entre `18.0` et `18.16`, le build reussit mais `sharp` ne charge pas
+- dans ce cas chaque `<img>` tombe en repli et renvoie l'image source non optimisee
+
+Pour eviter ce cas, le fichier `.nvmrc` du projet force Node `22`. Cloudflare Pages respecte `.nvmrc` (ou la variable d'environnement `NODE_VERSION`). Si le reglage est fait au dashboard, verifier `Settings` -> `Environment variables` -> `NODE_VERSION`.
+
+### Cache de build
+
+Cloudflare Pages met en cache `node_modules` entre les builds. Si un build precedent a installe les binaires natifs de `sharp` pour une autre plateforme ou une autre version de Node, le cache peut devenir invalide et `sharp` echoue silencieusement.
+
+Si les images reviennent a des `<img>` simples (non optimises) apres un deploiement :
+
+1. verifier que la version de Node respecte `.nvmrc` / `NODE_VERSION`
+2. purger le cache de build puis relancer le build (bouton `Retry deployment` avec l'option de vider le cache dans le dashboard)
+
+Note : meme si `sharp` echoue, le site reste fonctionnel : le repli utilise des chemins absolus (`/assets/img/...`), donc les images source s'affichent quand meme.
 
 ## Configuration booking backend
 

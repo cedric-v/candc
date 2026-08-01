@@ -20,7 +20,7 @@ module.exports = function (eleventyConfig) {
 
     if (!fs.existsSync(fullSrc)) {
       console.warn(`Image not found: ${fullSrc}`);
-      return `<img src="${src}" alt="${alt}" class="${cls}" ${loading ? `loading="${loading}"` : ''} ${fetchpriority ? `fetchpriority="${fetchpriority}"` : ''} ${width ? `width="${width}"` : ''} ${height ? `height="${height}"` : ''}>`;
+      return `<img src="/${cleanSrc}" alt="${alt}" class="${cls}" ${loading ? `loading="${loading}"` : ''} ${fetchpriority ? `fetchpriority="${fetchpriority}"` : ''} ${width ? `width="${width}"` : ''} ${height ? `height="${height}"` : ''}>`;
     }
 
     try {
@@ -46,7 +46,7 @@ module.exports = function (eleventyConfig) {
       return Image.generateHTML(metadata, imageAttributes);
     } catch (error) {
       console.error(`Error processing image ${src}:`, error);
-      return `<img src="${src}" alt="${alt}" class="${cls}" ${loading ? `loading="${loading}"` : ''} ${fetchpriority ? `fetchpriority="${fetchpriority}"` : ''} ${width ? `width="${width}"` : ''} ${height ? `height="${height}"` : ''}>`;
+      return `<img src="/${cleanSrc}" alt="${alt}" class="${cls}" ${loading ? `loading="${loading}"` : ''} ${fetchpriority ? `fetchpriority="${fetchpriority}"` : ''} ${width ? `width="${width}"` : ''} ${height ? `height="${height}"` : ''}>`;
     }
   });
 

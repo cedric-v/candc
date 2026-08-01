@@ -14,6 +14,9 @@
   "license": "CC-BY-NC-SA-4.0",
   "homepage": "https://candc.ch",
   "private": true,
+  "engines": {
+    "node": ">=18.17"
+  },
   "description": "Multilingual Eleventy site and Cloudflare-based direct booking engine for a parking space and eco studio",
   "dependencies": {
     "cross-env": "^10.1.0",
