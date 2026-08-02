@@ -154,6 +154,30 @@ if (fs.existsSync(robotsPath)) {
   warnings.push('robots.txt not found');
 }
 
+// Test 6: Vérifier llms.txt (agent accessibility, audit PageSpeed)
+console.log('\n🤖 Checking llms.txt...');
+const llmsPaths = ['llms.txt', path.join('.well-known', 'llms.txt')];
+const llmsContents = {};
+for (const rel of llmsPaths) {
+  const fullPath = path.join(baseDir, rel);
+  if (!fs.existsSync(fullPath)) {
+    errors.push(`Missing llms.txt: /${rel}`);
+    continue;
+  }
+  const content = fs.readFileSync(fullPath, 'utf8');
+  llmsContents[rel] = content;
+  if (!/^#\s/.test(content)) {
+    errors.push(`/${rel}: must contain a Markdown H1 header (# ...)`);
+  }
+  if (!/\[.*\]\(https?:\/\//.test(content)) {
+    errors.push(`/${rel}: must contain Markdown links`);
+  }
+  console.log(`  ✓ /${rel} exists with H1 and links`);
+}
+if (llmsContents['llms.txt'] && llmsContents[path.join('.well-known', 'llms.txt')] && llmsContents['llms.txt'] !== llmsContents[path.join('.well-known', 'llms.txt')]) {
+  errors.push('llms.txt and .well-known/llms.txt are out of sync');
+}
+
 // Résumé
 console.log('\n' + '='.repeat(50));
 if (errors.length === 0 && warnings.length === 0) {
