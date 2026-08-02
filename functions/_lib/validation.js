@@ -22,6 +22,22 @@ const MAX_COUNTRY_LENGTH = 100;
 const MAX_NATIONALITY_LENGTH = 100;
 const MAX_ID_DOCUMENT_LENGTH = 50;
 
+// Lightweight format checks aligned with current best practice: reject
+// clearly invalid input (spaces, double "@", missing TLD, junk phone
+// numbers) without over-restricting legitimate international addresses.
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+function isValidEmail(value) {
+  return EMAIL_PATTERN.test(value) && !value.includes("..");
+}
+
+function isValidPhoneNumber(value) {
+  // Allow common separators (spaces, parentheses, hyphens, dots) and an
+  // optional leading "+" or "00" international prefix.
+  const digits = value.replace(/[\s().-]/g, "");
+  return /^\+?\d{7,15}$/.test(digits);
+}
+
 function isPositiveFiniteNumber(value) {
   return Number.isFinite(value) && value > 0;
 }
@@ -142,16 +158,22 @@ export function validateBookingInput(input, { requireGuestInfo = false, unit = n
       errors.push({ field: "guestLastName", message: "Last name is too long" });
     }
 
-    if (!input.guestEmail?.trim() || !/.+@.+\..+/.test(input.guestEmail)) {
+    const email = input.guestEmail?.trim() || "";
+    if (!email) {
       errors.push({ field: "guestEmail", message: "Valid email is required" });
-    } else if (input.guestEmail.length > MAX_EMAIL_LENGTH) {
+    } else if (email.length > MAX_EMAIL_LENGTH) {
       errors.push({ field: "guestEmail", message: "Email is too long" });
+    } else if (!isValidEmail(email)) {
+      errors.push({ field: "guestEmail", message: "Valid email is required" });
     }
 
-    if (!input.guestMobilePhone?.trim()) {
+    const phone = input.guestMobilePhone?.trim() || "";
+    if (!phone) {
       errors.push({ field: "guestMobilePhone", message: "Mobile phone is required" });
-    } else if (input.guestMobilePhone.length > MAX_PHONE_LENGTH) {
+    } else if (phone.length > MAX_PHONE_LENGTH) {
       errors.push({ field: "guestMobilePhone", message: "Mobile phone number is too long" });
+    } else if (!isValidPhoneNumber(phone)) {
+      errors.push({ field: "guestMobilePhone", message: "Mobile phone number must be a valid international number" });
     }
 
     if (!input.guestAddressStreet?.trim()) {

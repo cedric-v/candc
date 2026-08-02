@@ -76,6 +76,54 @@ function runValidationTests() {
   );
 }
 
+function runGuestContactValidationTests() {
+  const studio = DEFAULT_UNITS.find((unit) => unit.code === "eco-studio");
+  const base = {
+    unitCode: "eco-studio",
+    checkInDate: "2026-07-01",
+    checkOutDate: "2026-07-08",
+    adults: 2,
+    children: 0,
+    infants: 0,
+    vehicleType: "",
+    guestFirstName: "Test",
+    guestLastName: "User",
+    guestEmail: "valid@example.com",
+    guestMobilePhone: "+41 79 123 45 67",
+    guestDateOfBirth: "1990-01-01",
+    guestAddressStreet: "Rue de la Gare 1",
+    guestAddressZip: "1000",
+    guestAddressCity: "Lausanne",
+    guestAddressCountry: "CH",
+    guestNationality: "CH",
+  };
+  const options = { unit: { settings: studio.settings }, requireGuestInfo: true };
+
+  const valid = validateBookingInput({ ...base }, options);
+  assert(
+    !valid.some((item) => item.field === "guestEmail" || item.field === "guestMobilePhone"),
+    "Valid email and phone should pass validation",
+  );
+
+  const cases = [
+    { name: "email with space", patch: { guestEmail: "a b@c.d" }, field: "guestEmail" },
+    { name: "email with double @", patch: { guestEmail: "a@@b.c" }, field: "guestEmail" },
+    { name: "email with double dot", patch: { guestEmail: "foo@bar..com" }, field: "guestEmail" },
+    { name: "email without TLD", patch: { guestEmail: "user@example" }, field: "guestEmail" },
+    { name: "non-numeric phone", patch: { guestMobilePhone: "abc" }, field: "guestMobilePhone" },
+    { name: "too-short phone", patch: { guestMobilePhone: "123" }, field: "guestMobilePhone" },
+    { name: "letters in phone", patch: { guestMobilePhone: "079 123 45 6a" }, field: "guestMobilePhone" },
+  ];
+
+  for (const { name, patch, field } of cases) {
+    const errors = validateBookingInput({ ...base, ...patch }, options);
+    assert(
+      errors.some((item) => item.field === field),
+      `${name} should be rejected on field ${field}`,
+    );
+  }
+}
+
 function runPricingTests() {
   const parking = DEFAULT_UNITS.find((unit) => unit.code === "parking-space");
   const studio = DEFAULT_UNITS.find((unit) => unit.code === "eco-studio");
@@ -360,6 +408,7 @@ function runRefundPlanTests() {
 
 function main() {
   runValidationTests();
+  runGuestContactValidationTests();
   runPricingTests();
   runRefundPlanTests();
   console.log("Booking logic tests passed.");

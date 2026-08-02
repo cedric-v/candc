@@ -6,7 +6,12 @@
     "overviewLinkLabel": "Voir les photos et équipements de l'emplacement",
     "overviewLinkHref": "/fr/parking/",
     "longStayPromoTitle": "Séjours longue durée",
-    "longStayPromoList": ["10 % de remise dès 7 nuitées", "20 % de remise dès 16 nuitées", "25 % de remise dès 30 nuitées", "30 % de remise dès 60 nuitées"],
+    "longStayPromoList": [
+      "10 % de remise dès 7 nuitées",
+      "20 % de remise dès 16 nuitées",
+      "25 % de remise dès 30 nuitées",
+      "30 % de remise dès 60 nuitées"
+    ],
     "availabilityTitle": "Séjour",
     "datesHelp": "Le tarif de base inclut l'emplacement, l'électricité, l'eau potable, la gestion des déchets et la terrasse privative.",
     "calendarTitle": "Disponibilités",
@@ -36,7 +41,9 @@
     },
     "optionsTitle": "Options et conditions",
     "bookingRulesTitle": "Conditions importantes",
-    "bookingRulesList": ["Pas de fêtes"],
+    "bookingRulesList": [
+      "Pas de fêtes"
+    ],
     "wcShower": "Ajouter l'accès au WC-douche intérieure (10 CHF / séjour)",
     "wcShowerNote": "Disponible sur demande lorsque nous sommes sur place, généralement entre 7h00 et 21h00.",
     "nonRefundable": "Choisir le tarif non remboursable pour obtenir 10 % de remise",
@@ -106,7 +113,9 @@
     "nightSingular": "nuit",
     "nightPlural": "nuits",
     "electricityLabel": "Électricité",
-    "includedLabel": "Inclus"
+    "includedLabel": "Inclus",
+    "emailHint": "Adresse de confirmation : le lien de gestion de votre réservation y sera envoyé.",
+    "mobilePhoneHint": "Format international, ex. +41 79 123 45 67. Nous vous appellerons uniquement en cas d'urgence."
   },
   "en": {
     "pageKicker": "Direct booking",
@@ -115,7 +124,12 @@
     "overviewLinkLabel": "See the pitch photos and facilities",
     "overviewLinkHref": "/en/parking/",
     "longStayPromoTitle": "Long stays",
-    "longStayPromoList": ["10% off from 7 nights", "20% off from 16 nights", "25% off from 30 nights", "30% off from 60 nights"],
+    "longStayPromoList": [
+      "10% off from 7 nights",
+      "20% off from 16 nights",
+      "25% off from 30 nights",
+      "30% off from 60 nights"
+    ],
     "availabilityTitle": "Stay",
     "datesHelp": "The base rate includes the pitch, electricity, drinking water, waste disposal and the private terrace.",
     "calendarTitle": "Availability",
@@ -145,7 +159,9 @@
     },
     "optionsTitle": "Options and conditions",
     "bookingRulesTitle": "Important conditions",
-    "bookingRulesList": ["No parties"],
+    "bookingRulesList": [
+      "No parties"
+    ],
     "wcShower": "Add indoor toilet and shower access (CHF 10 / stay)",
     "wcShowerNote": "Available on request when we are on site, usually between 7 a.m. and 9 p.m.",
     "nonRefundable": "Choose the non-refundable rate to get a 10% discount",
@@ -211,7 +227,9 @@
     "paymentButtonFallback": "Open payment page",
     "termsRequired": "Please accept the terms before continuing.",
     "electricityLabel": "Electricity",
-    "includedLabel": "Included"
+    "includedLabel": "Included",
+    "emailHint": "Confirmation and your booking management link will be sent here.",
+    "mobilePhoneHint": "International format, e.g. +41 79 123 45 67. We will only call in case of urgent need."
   },
   "de": {
     "pageKicker": "Direktbuchung",
@@ -220,7 +238,12 @@
     "overviewLinkLabel": "Fotos und Ausstattung des Stellplatzes ansehen",
     "overviewLinkHref": "/de/parking/",
     "longStayPromoTitle": "Längere Aufenthalte",
-    "longStayPromoList": ["10 % Rabatt ab 7 Nächten", "20 % Rabatt ab 16 Nächten", "25 % Rabatt ab 30 Nächten", "30 % Rabatt ab 60 Nächten"],
+    "longStayPromoList": [
+      "10 % Rabatt ab 7 Nächten",
+      "20 % Rabatt ab 16 Nächten",
+      "25 % Rabatt ab 30 Nächten",
+      "30 % Rabatt ab 60 Nächten"
+    ],
     "availabilityTitle": "Aufenthalt",
     "datesHelp": "Der Grundpreis umfasst den Stellplatz, Strom, Trinkwasser, Abfallentsorgung und die private Terrasse.",
     "calendarTitle": "Verfügbarkeit",
@@ -250,7 +273,9 @@
     },
     "optionsTitle": "Optionen und Bedingungen",
     "bookingRulesTitle": "Wichtige Bedingungen",
-    "bookingRulesList": ["Keine Partys"],
+    "bookingRulesList": [
+      "Keine Partys"
+    ],
     "wcShower": "Innen-WC und Dusche hinzufugen (10 CHF / Aufenthalt)",
     "wcShowerNote": "Auf Anfrage verfugbar, wenn wir vor Ort sind, normalerweise zwischen 7:00 und 21:00 Uhr.",
     "nonRefundable": "Nicht erstattbare Rate fur 10 % Rabatt wahlen",
@@ -316,7 +341,9 @@
     "paymentButtonFallback": "Zahlungsseite offnen",
     "termsRequired": "Bitte akzeptieren Sie die Bedingungen, bevor Sie fortfahren.",
     "electricityLabel": "Strom",
-    "includedLabel": "Inklusive"
+    "includedLabel": "Inklusive",
+    "emailHint": "Die Bestätigung und Ihr Buchungsverwaltungslink werden an diese Adresse gesendet.",
+    "mobilePhoneHint": "Internationales Format, z. B. +41 79 123 45 67. Wir rufen Sie nur im Notfall an."
   },
   "es": {
     "pageKicker": "Reserva directa",
@@ -325,7 +352,12 @@
     "overviewLinkLabel": "Ver fotos y equipamiento del lugar",
     "overviewLinkHref": "/es/parking/",
     "longStayPromoTitle": "Estancias largas",
-    "longStayPromoList": ["10 % de descuento desde 7 noches", "20 % de descuento desde 16 noches", "25 % de descuento desde 30 noches", "30 % de descuento desde 60 noches"],
+    "longStayPromoList": [
+      "10 % de descuento desde 7 noches",
+      "20 % de descuento desde 16 noches",
+      "25 % de descuento desde 30 noches",
+      "30 % de descuento desde 60 noches"
+    ],
     "availabilityTitle": "Estancia",
     "datesHelp": "La tarifa base incluye la plaza, la electricidad, el agua potable, la gestion de residuos y la terraza privada.",
     "calendarTitle": "Disponibilidad",
@@ -355,7 +387,9 @@
     },
     "optionsTitle": "Opciones y condiciones",
     "bookingRulesTitle": "Condiciones importantes",
-    "bookingRulesList": ["No fiestas"],
+    "bookingRulesList": [
+      "No fiestas"
+    ],
     "wcShower": "Anadir acceso al WC-ducha interior (10 CHF / estancia)",
     "wcShowerNote": "Disponible bajo peticion cuando estamos en el lugar, normalmente entre las 7:00 y las 21:00.",
     "nonRefundable": "Elegir la tarifa no reembolsable para obtener un 10 % de descuento",
@@ -421,7 +455,9 @@
     "paymentButtonFallback": "Abrir pagina de pago",
     "termsRequired": "Acepta las condiciones antes de continuar.",
     "electricityLabel": "Electricidad",
-    "includedLabel": "Incluido"
+    "includedLabel": "Incluido",
+    "emailHint": "La confirmación y su enlace de gestión de la reserva se enviarán a esta dirección.",
+    "mobilePhoneHint": "Formato internacional, p. ej. +41 79 123 45 67. Solo le llamaremos en caso de urgencia."
   },
   "pt": {
     "pageKicker": "Reserva direta",
@@ -430,7 +466,12 @@
     "overviewLinkLabel": "Ver fotos e equipamentos do lugar",
     "overviewLinkHref": "/pt/parking/",
     "longStayPromoTitle": "Estadias longas",
-    "longStayPromoList": ["10 % de desconto a partir de 7 noites", "20 % de desconto a partir de 16 noites", "25 % de desconto a partir de 30 noites", "30 % de desconto a partir de 60 noites"],
+    "longStayPromoList": [
+      "10 % de desconto a partir de 7 noites",
+      "20 % de desconto a partir de 16 noites",
+      "25 % de desconto a partir de 30 noites",
+      "30 % de desconto a partir de 60 noites"
+    ],
     "availabilityTitle": "Estadia",
     "datesHelp": "A tarifa base inclui o lugar, eletricidade, agua potavel, gestao de residuos e o terraco privativo.",
     "calendarTitle": "Disponibilidade",
@@ -460,7 +501,9 @@
     },
     "optionsTitle": "Opcoes e condicoes",
     "bookingRulesTitle": "Condições importantes",
-    "bookingRulesList": ["Sem festas"],
+    "bookingRulesList": [
+      "Sem festas"
+    ],
     "wcShower": "Adicionar acesso ao WC-duche interior (10 CHF / estadia)",
     "wcShowerNote": "Disponivel mediante pedido quando estamos no local, normalmente entre as 7h00 e as 21h00.",
     "nonRefundable": "Escolher a tarifa nao reembolsavel para obter 10% de desconto",
@@ -526,7 +569,9 @@
     "paymentButtonFallback": "Abrir pagina de pagamento",
     "termsRequired": "Aceite as condicoes antes de continuar.",
     "electricityLabel": "Eletricidade",
-    "includedLabel": "Incluído"
+    "includedLabel": "Incluído",
+    "emailHint": "A confirmação e o seu link de gestão da reserva serão enviados para este endereço.",
+    "mobilePhoneHint": "Formato internacional, ex.: +41 79 123 45 67. Só ligamos em caso de urgência."
   },
   "it": {
     "pageKicker": "Prenotazione diretta",
@@ -535,7 +580,12 @@
     "overviewLinkLabel": "Vedi foto e dotazioni della piazzola",
     "overviewLinkHref": "/it/parking/",
     "longStayPromoTitle": "Soggiorni lunghi",
-    "longStayPromoList": ["10 % di sconto da 7 notti", "20 % di sconto da 16 notti", "25 % di sconto da 30 notti", "30 % di sconto da 60 notti"],
+    "longStayPromoList": [
+      "10 % di sconto da 7 notti",
+      "20 % di sconto da 16 notti",
+      "25 % di sconto da 30 notti",
+      "30 % di sconto da 60 notti"
+    ],
     "availabilityTitle": "Soggiorno",
     "datesHelp": "La tariffa base include la piazzola, l'elettricita, l'acqua potabile, la gestione dei rifiuti e la terrazza privata.",
     "calendarTitle": "Disponibilita",
@@ -565,7 +615,9 @@
     },
     "optionsTitle": "Opzioni e condizioni",
     "bookingRulesTitle": "Condizioni importanti",
-    "bookingRulesList": ["Niente feste"],
+    "bookingRulesList": [
+      "Niente feste"
+    ],
     "wcShower": "Aggiungi accesso a WC-doccia interna (10 CHF / soggiorno)",
     "wcShowerNote": "Disponibile su richiesta quando siamo sul posto, di solito tra le 7:00 e le 21:00.",
     "nonRefundable": "Scegli la tariffa non rimborsabile per ottenere il 10% di sconto",
@@ -631,7 +683,9 @@
     "paymentButtonFallback": "Apri la pagina di pagamento",
     "termsRequired": "Accetta le condizioni prima di continuare.",
     "electricityLabel": "Elettricità",
-    "includedLabel": "Incluso"
+    "includedLabel": "Incluso",
+    "emailHint": "La conferma e il link di gestione della prenotazione saranno inviati a questo indirizzo.",
+    "mobilePhoneHint": "Formato internazionale, es. +41 79 123 45 67. Ti chiameremo solo in caso di urgenza."
   },
   "nl": {
     "pageKicker": "Rechtstreeks boeken",
@@ -640,7 +694,12 @@
     "overviewLinkLabel": "Bekijk foto's en voorzieningen van de staanplaats",
     "overviewLinkHref": "/nl/parking/",
     "longStayPromoTitle": "Langer verblijf",
-    "longStayPromoList": ["10% korting vanaf 7 nachten", "20% korting vanaf 16 nachten", "25% korting vanaf 30 nachten", "30% korting vanaf 60 nachten"],
+    "longStayPromoList": [
+      "10% korting vanaf 7 nachten",
+      "20% korting vanaf 16 nachten",
+      "25% korting vanaf 30 nachten",
+      "30% korting vanaf 60 nachten"
+    ],
     "availabilityTitle": "Verblijf",
     "datesHelp": "Het basistarief omvat de staanplaats, elektriciteit, drinkwater, afvalbeheer en het prive-terras.",
     "calendarTitle": "Beschikbaarheid",
@@ -670,7 +729,9 @@
     },
     "optionsTitle": "Opties en voorwaarden",
     "bookingRulesTitle": "Belangrijke voorwaarden",
-    "bookingRulesList": ["Geen feesten"],
+    "bookingRulesList": [
+      "Geen feesten"
+    ],
     "wcShower": "Toegang tot binnen-wc en douche toevoegen (10 CHF / verblijf)",
     "wcShowerNote": "Beschikbaar op aanvraag wanneer wij ter plaatse zijn, meestal tussen 7.00 en 21.00 uur.",
     "nonRefundable": "Kies het niet-terugbetaalbare tarief voor 10% korting",
@@ -736,6 +797,8 @@
     "paymentButtonFallback": "Betalingspagina openen",
     "termsRequired": "Accepteer de voorwaarden voordat u verdergaat.",
     "electricityLabel": "Elektriciteit",
-    "includedLabel": "Inbegrepen"
+    "includedLabel": "Inbegrepen",
+    "emailHint": "De bevestiging en uw boekingsbeheerlink worden naar dit adres gestuurd.",
+    "mobilePhoneHint": "Internationaal formaat, bijv. +41 79 123 45 67. We bellen alleen in geval van nood."
   }
 }

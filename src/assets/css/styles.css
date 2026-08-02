@@ -637,6 +637,11 @@ a:hover {
   padding-left: 1.75rem;
 }
 
+.booking-field-hint {
+  margin-top: 0.25rem;
+  margin-bottom: 0;
+}
+
 .booking-textarea {
   min-height: 7rem;
   resize: vertical;

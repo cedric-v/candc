@@ -192,27 +192,30 @@
           <div class="grid grid-cols-2 booking-two-cols">
             <div>
               <label class="form-label" for="booking-first-name">{{ b.firstName }}</label>
-              <input class="form-input" type="text" id="booking-first-name" name="guestFirstName" required toolparamdescription="Guest first name.">
+              <input class="form-input" type="text" id="booking-first-name" name="guestFirstName" required autocomplete="given-name" toolparamdescription="Guest first name.">
             </div>
             <div>
               <label class="form-label" for="booking-last-name">{{ b.lastName }}</label>
-              <input class="form-input" type="text" id="booking-last-name" name="guestLastName" required toolparamdescription="Guest last name.">
+              <input class="form-input" type="text" id="booking-last-name" name="guestLastName" required autocomplete="family-name" toolparamdescription="Guest last name.">
             </div>
           </div>
           <div class="grid grid-cols-2 booking-two-cols">
             <div>
               <label class="form-label" for="booking-email">{{ b.email }}</label>
-              <input class="form-input" type="email" id="booking-email" name="guestEmail" required toolparamdescription="Guest email address for confirmation and self-service management links.">
+              <input class="form-input" type="email" id="booking-email" name="guestEmail" required autocomplete="email" inputmode="email" spellcheck="false" autocapitalize="none" maxlength="254" pattern="[^\s@]+@[^\s@]+\.[^\s@]{2,}" title="{{ b.emailHint }}" aria-describedby="booking-email-hint" toolparamdescription="Guest email address for confirmation and self-service management links.">
+              <p class="text-sm text-muted booking-field-hint" id="booking-email-hint">{{ b.emailHint }}</p>
             </div>
             <div>
               <label class="form-label" for="booking-mobile-phone">{{ b.mobilePhoneLabel }}</label>
-              <input class="form-input" type="tel" id="booking-mobile-phone" name="guestMobilePhone" required toolparamdescription="Guest mobile phone number for urgent contact during the stay.">
+              <input class="form-input" type="tel" id="booking-mobile-phone" name="guestMobilePhone" required autocomplete="tel" inputmode="tel" spellcheck="false" autocapitalize="none" maxlength="40" pattern="\+?[0-9][0-9\s().-]{6,19}[0-9]" title="{{ b.mobilePhoneHint }}" aria-describedby="booking-mobile-phone-hint" toolparamdescription="Guest mobile phone number for urgent contact during the stay.">
+              <p class="text-sm text-muted booking-field-hint" id="booking-mobile-phone-hint">{{ b.mobilePhoneHint }}</p>
+            </div>
             </div>
           </div>
           <div class="grid grid-cols-2 booking-two-cols">
             <div>
               <label class="form-label" for="booking-date-of-birth">{{ b.dateOfBirthLabel }}</label>
-              <input class="form-input" type="date" id="booking-date-of-birth" name="guestDateOfBirth" required toolparamdescription="Guest date of birth in YYYY-MM-DD format.">
+              <input class="form-input" type="date" id="booking-date-of-birth" name="guestDateOfBirth" required autocomplete="bday" toolparamdescription="Guest date of birth in YYYY-MM-DD format.">
             </div>
             <div></div>
           </div>
@@ -221,21 +224,21 @@
             <div class="grid grid-cols-2 booking-two-cols">
               <div class="booking-field-wide">
                 <label class="form-label" for="booking-address-street">{{ b.addressStreetLabel }}</label>
-                <input class="form-input" type="text" id="booking-address-street" name="guestAddressStreet" required toolparamdescription="Guest street name and number.">
+                <input class="form-input" type="text" id="booking-address-street" name="guestAddressStreet" required autocomplete="street-address" toolparamdescription="Guest street name and number.">
               </div>
             </div>
             <div class="grid grid-cols-3 booking-three-cols">
               <div>
                 <label class="form-label" for="booking-address-zip">{{ b.addressZipLabel }}</label>
-                <input class="form-input" type="text" id="booking-address-zip" name="guestAddressZip" required toolparamdescription="Guest ZIP / postal code.">
+                <input class="form-input" type="text" id="booking-address-zip" name="guestAddressZip" required autocomplete="postal-code" toolparamdescription="Guest ZIP / postal code.">
               </div>
               <div>
                 <label class="form-label" for="booking-address-city">{{ b.addressCityLabel }}</label>
-                <input class="form-input" type="text" id="booking-address-city" name="guestAddressCity" required toolparamdescription="Guest city / locality.">
+                <input class="form-input" type="text" id="booking-address-city" name="guestAddressCity" required autocomplete="address-level2" toolparamdescription="Guest city / locality.">
               </div>
               <div>
                 <label class="form-label" for="booking-address-country">{{ b.addressCountryLabel }}</label>
-                <select class="form-input" id="booking-address-country" name="guestAddressCountry" required toolparamdescription="Guest country.">
+                <select class="form-input" id="booking-address-country" name="guestAddressCountry" required autocomplete="country-name" toolparamdescription="Guest country.">
                   <option value="">{{ b.countrySelectLabel or 'Select a country' }}</option>
                   {% for c in country_list[locale] %}
                   <option value="{{ c.code }}"{% if c.code == 'CH' %} selected{% endif %}>{{ c.name }}</option>
