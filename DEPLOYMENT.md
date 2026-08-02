@@ -181,6 +181,22 @@ Secrets ou valeurs sensibles :
 - `GOOGLE_SERVICE_ACCOUNT_EMAIL`
 - `GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY`
 
+Configurer un secret depuis la CLI (wrangler authentifie) :
+
+```bash
+npx wrangler pages secret put SUMUP_MERCHANT_CODE --project-name candc-ch
+```
+
+Le terminal demande la valeur (interactif, rien n'est logge).
+
+Piège important : un secret ajoute/modifie ne s'applique qu'aux **nouveaux deployments**. Apres tout ajout de variable ou secret, relancer un deployment (push git, bouton `Create deployment`, ou `wrangler pages deploy`).
+
+Verifier les secrets configures :
+
+```bash
+npx wrangler pages secret list --project-name candc-ch
+```
+
 Valeurs actuelles recommandees pour le parking :
 
 - `PAYMENT_FEE_RATE=0.025`
@@ -215,6 +231,13 @@ Ces fichiers sont copies depuis `src/` vers `_site/`.
 - webhook de confirmation de paiement
 - credentials requis avant usage reel
 
+Les deux secrets suivants sont requis ensemble pour activer le checkout heberge :
+
+- `SUMUP_API_KEY`
+- `SUMUP_MERCHANT_CODE`
+
+Si l'un des deux manque, la reservation est creee (statut `pending_payment`) mais la reponse API contient `payment.status = "configuration_required"` et le front affiche `Booking created, but payment is not configured yet.`. Aucun lien de paiement n'est alors genere.
+
 Recuperation du `SUMUP_MERCHANT_CODE` :
 
 ```bash
@@ -225,6 +248,21 @@ curl https://api.sumup.com/v0.1/me \
 Puis lire :
 
 - `merchant_profile.merchant_code`
+
+Alternative : le merchant code figure aussi dans `payments.raw_payload` en base D1 (champ `merchant_code` des reponses SumUp) :
+
+```bash
+npx wrangler d1 execute candc-booking --remote --command \
+  "SELECT raw_payload FROM payments WHERE raw_payload IS NOT NULL ORDER BY created_at DESC LIMIT 1;"
+```
+
+Verifier que le paiement est bien actif de bout en bout (reponse attendue : `payment.hostedCheckoutUrl` non null) :
+
+```bash
+curl -s -X POST https://candc.ch/api/booking/reservations \
+  -H 'content-type: application/json' \
+  -d '{"unitCode":"parking-space","locale":"fr","checkInDate":"2026-09-01","checkOutDate":"2026-09-03","adults":1,"children":0,"infants":0,"vehicleType":"standard_car","wcShowerRequested":false,"nonRefundableSelected":false,"guestFirstName":"Test","guestLastName":"Test","guestEmail":"test@example.com","guestMobilePhone":"+41790000000","guestAddressStreet":"Rue 1","guestAddressZip":"1000","guestAddressCity":"Lausanne","guestAddressCountry":"CH","guestDateOfBirth":"1990-01-01","guestNationality":"CH","guestIdDocumentNumber":"","additionalGuests":[],"remarks":"","acceptedTerms":true}'
+```
 
 Important :
 
