@@ -24,6 +24,7 @@ export async function onRequest(context) {
     const action = payload.action || "all";
 
     if (action === "booking_ics") {
+      await releaseExpiredPendingPayments(context.env);
       return json(await runBookingIcsSync(context.env, payload.unitCode || null));
     }
 
