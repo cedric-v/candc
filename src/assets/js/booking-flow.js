@@ -123,6 +123,20 @@
 
     fields.checkInDate.min = minCheckIn;
     fields.checkOutDate.min = minCheckOut;
+
+    // Date of birth best practice (2026): never default to the current date
+    // (a guest cannot be born "today"). Instead, default to a plausible adult
+    // birth date (~30 years ago), cap the upper bound at today so future or
+    // impossible dates cannot be selected, and reject dates before 1900.
+    if (fields.guestDateOfBirth) {
+      fields.guestDateOfBirth.max = minCheckIn;
+      fields.guestDateOfBirth.min = "1900-01-01";
+      if (!fields.guestDateOfBirth.value) {
+        const dobDefault = new Date(today);
+        dobDefault.setFullYear(today.getFullYear() - 30);
+        fields.guestDateOfBirth.value = toDateInputValue(dobDefault);
+      }
+    }
   }
 
   function wireEvents() {
