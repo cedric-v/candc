@@ -42,6 +42,31 @@ npm run build
 
 Le site genere est ecrit dans `_site/`.
 
+## Optimisation des images
+
+Les images source dans `src/assets/img/` sont pre-optimisees (redimensionnees et recompressees) pour :
+
+- reduire la charge du pipeline responsif eleventy-img
+- eviter que le repli `<img>` non responsif (si sharp ne charge pas au build) ne serve des fichiers de plusieurs Mo
+
+```bash
+npm run optimize:images
+```
+
+Regles :
+
+- `fond-hero-*.jpg` -> 2000px max, JPEG q82
+- `about-background.jpg` -> 1920px max, JPEG q80
+- `gallery/` et `testimonials/` -> 1200px max, JPEG q80
+- PNG -> palette 256 couleurs, niveau 9 (alpha conserve)
+
+Au build, eleventy-img genere pour chaque image un `<picture>` responsif AVIF -> WebP -> JPEG (largeurs 150/300/600/900/1200), avec attributs `width`/`height` et `loading` dedies.
+
+Si un `<img>` tombe en repli (image source non optimisee servie), verifier :
+
+1. version de Node (voir ci-dessous)
+2. purge du cache de build Cloudflare Pages
+
 ## Tests
 
 ```bash

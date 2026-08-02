@@ -11,7 +11,7 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy({ "src/llms.txt": "llms.txt" });
   eleventyConfig.addPassthroughCopy({ "src/.well-known": ".well-known" });
 
-  // 1. Gestion des Images avec eleventy-img (WebP responsive)
+  // 1. Gestion des Images avec eleventy-img (AVIF/WebP/JPEG responsives)
   eleventyConfig.addShortcode("image", async function (src, alt, cls = "", loading = "lazy", sizes = "100vw", fetchpriority = "", width = "", height = "") {
     if (!src) return '';
 
@@ -25,8 +25,13 @@ module.exports = function (eleventyConfig) {
 
     try {
       const metadata = await Image(fullSrc, {
-        widths: [300, 600, 900, 1200],
-        formats: ["webp", "jpeg"],
+        widths: [150, 300, 600, 900, 1200],
+        formats: ["avif", "webp", "jpeg"],
+        formatOptions: {
+          avif: { quality: 55, effort: 5 },
+          webp: { quality: 80 },
+          jpeg: { quality: 80, mozjpeg: true, progressive: true }
+        },
         outputDir: path.join(__dirname, "_site", path.dirname(cleanSrc)),
         urlPath: `/${path.dirname(cleanSrc)}/`,
       });
