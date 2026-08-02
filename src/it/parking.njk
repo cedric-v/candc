@@ -339,3 +339,87 @@ ogImage: assets/img/logo-cc.jpg
     });
   })();
 </script>
+
+<!-- Schema.org for parking -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": ["ParkingFacility", "LocalBusiness"],
+  "name": "C&C Eco Studio - Parking",
+  "description": "Posto auto completamente attrezzato per van/camper/motorhome a La Sonnaz, Friburgo. Presa elettrica, Wi-Fi, acqua potabile.",
+  "url": "https://candc.ch/{{ locale }}/parking/",
+  "mainEntityOfPage": "https://candc.ch/{{ locale }}/parking/",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Impasse de la Pommeraie 5",
+    "addressLocality": "Formangueires",
+    "postalCode": "1782",
+    "addressCountry": "CH"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": "46.6931",
+    "longitude": "7.1694"
+  },
+  "telephone": "+41763456789",
+  "amenityFeature": [
+    {
+      "@type": "LocationFeatureSpecification",
+      "name": "Posto auto",
+      "value": "true"
+    },
+    {
+      "@type": "LocationFeatureSpecification",
+      "name": "Presa elettrica",
+      "value": "true"
+    },
+    {
+      "@type": "LocationFeatureSpecification",
+      "name": "Wi-Fi veloce",
+      "value": "true"
+    },
+    {
+      "@type": "LocationFeatureSpecification",
+      "name": "Gestione dei rifiuti",
+      "value": "true"
+    },
+    {
+      "@type": "LocationFeatureSpecification",
+      "name": "Acqua potabile",
+      "value": "true"
+    }
+  ],
+  "priceRange": "CHF 10-30",
+  "paymentAccepted": "Cash, Credit Card",
+  "currenciesAccepted": "CHF, EUR",
+  "provider": {
+    "@type": "Organization",
+    "name": "C&C Eco Studio",
+    "url": "https://candc.ch",
+    "logo": "https://candc.ch/assets/img/logo-cc.jpg"
+  },
+  {% set parking_reviews = testimonials.parking[locale] or testimonials.parking['it'] %}
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "5",
+    "reviewCount": "{{ parking_reviews.length }}"
+  },
+  "review": [
+    {% for testimonial in parking_reviews %}
+    {
+      "@type": "Review",
+      "author": {
+        "@type": "Person",
+        "name": "{{ testimonial.author }}"
+      },
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": "{{ testimonial.rating }}",
+        "bestRating": "5"
+      },
+      "reviewBody": "{{ testimonial.alt }}"
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ]
+}
+</script>

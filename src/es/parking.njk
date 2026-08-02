@@ -346,10 +346,10 @@ ogImage: assets/img/logo-cc.jpg
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "ParkingFacility",
+  "@type": ["ParkingFacility", "LocalBusiness"],
   "name": "C&C Eco Studio - Aparcamiento",
   "description": "Plaza individual de aparcamiento totalmente equipada para furgoneta/caravana/autocaravana cerca de Friburgo, Suiza. Toma de corriente, WiFi, gestión de residuos.",
-  "url": "https://candc.ch/es/parking/",
+  "url": "https://candc.ch/{{ locale }}/parking/",
   "address": {
     "@type": "PostalAddress",
     "streetAddress": "Impasse de la Pommeraie 5",
@@ -400,8 +400,14 @@ ogImage: assets/img/logo-cc.jpg
     "url": "https://candc.ch",
     "logo": "https://candc.ch/assets/img/logo-cc.jpg"
   },
+  {% set parking_reviews = testimonials.parking[locale] or testimonials.parking['es'] %}
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "5",
+    "reviewCount": "{{ parking_reviews.length }}"
+  },
   "review": [
-    {% for testimonial in testimonials.parking[locale] or testimonials.parking['es'] %}
+    {% for testimonial in parking_reviews %}
     {
       "@type": "Review",
       "author": {
