@@ -22,7 +22,11 @@ export async function onRequestPost(context) {
       return badRequest("Unknown unit code");
     }
 
-    const errors = validateBookingInput(payload, { requireGuestInfo: true, unit });
+    const errors = validateBookingInput(payload, {
+      requireGuestInfo: true,
+      unit,
+      timeZone: getConfig(context.env).timeZone,
+    });
 
     if (!payload.acceptedTerms) {
       errors.push({ field: "acceptedTerms", message: "Terms must be accepted" });
@@ -116,7 +120,8 @@ export async function onRequestPost(context) {
         error.message,
       );
 
-      return serverError("Failed to create SumUp checkout", error.message);
+      console.error("Failed to create SumUp checkout:", error);
+      return serverError("Failed to create SumUp checkout");
     }
 
     await insertPaymentRecord(context.env, {
@@ -173,6 +178,7 @@ export async function onRequestPost(context) {
       return badRequest("Request body must be valid JSON");
     }
 
-    return serverError("Failed to create reservation", error.message);
+    console.error("Failed to create reservation:", error);
+    return serverError("Failed to create reservation");
   }
 }

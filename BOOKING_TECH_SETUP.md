@@ -103,6 +103,7 @@ Verification recommandee :
 - `SUMUP_API_BASE_URL`
 - `SUMUP_MERCHANT_CODE`
 - `SUMUP_API_KEY`
+- `SUMUP_WEBHOOK_SECRET` — secret de webhook SumUp ; quand il est defini, `POST /api/booking/sumup/webhook` exige une signature HMAC-SHA256 valide (`x-sumup-webhook-signature`) sur le corps brut de la requete
 - `INTERNAL_SYNC_TOKEN`
 - `GOOGLE_SERVICE_ACCOUNT_EMAIL`
 - `GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY`

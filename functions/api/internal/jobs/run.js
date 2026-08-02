@@ -5,7 +5,7 @@ import { releaseExpiredPendingPayments } from "../../../_lib/db.js";
 
 export async function onRequest(context) {
   try {
-    if (!hasValidInternalToken(context.request, context.env)) {
+    if (!(await hasValidInternalToken(context.request, context.env))) {
       return unauthorized("Missing or invalid internal sync token");
     }
 
@@ -59,6 +59,7 @@ export async function onRequest(context) {
       return badRequest("Request body must be valid JSON");
     }
 
-    return serverError("Failed to run internal jobs", error.message);
+    console.error("Failed to run internal jobs:", error);
+    return serverError("Failed to run internal jobs");
   }
 }

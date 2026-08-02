@@ -216,11 +216,20 @@ export function onRequestGet() {
           return data;
         }
 
+        function escapeHtml(value) {
+          return String(value ?? '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+        }
+
         function renderTable(rows, headers) {
           if (!rows.length) {
             return '<p class="small">No data yet.</p>';
           }
-          return '<table><thead><tr>' + headers.map((header) => '<th>' + header.label + '</th>').join('') + '</tr></thead><tbody>' + rows.map((row) => '<tr>' + headers.map((header) => '<td>' + (row[header.key] ?? '-') + '</td>').join('') + '</tr>').join('') + '</tbody></table>';
+          return '<table><thead><tr>' + headers.map((header) => '<th>' + escapeHtml(header.label) + '</th>').join('') + '</tr></thead><tbody>' + rows.map((row) => '<tr>' + headers.map((header) => '<td>' + escapeHtml(row[header.key] ?? '-') + '</td>').join('') + '</tr>').join('') + '</tbody></table>';
         }
 
         function isIsoDateOnly(value) {
@@ -288,10 +297,11 @@ export function onRequestGet() {
 
           operationalHealthWrap.innerHTML = rows.map(([label, item]) => {
             if (!item) {
-              return '<div class="meta-row"><span class="label">' + label + '</span><span class="value">No run recorded yet.</span></div>';
+              return '<div class="meta-row"><span class="label">' + escapeHtml(label) + '</span><span class="value">No run recorded yet.</span></div>';
             }
 
-            return '<div class="meta-row"><span class="label">' + label + '</span><span class="value">' + [item.status, formatAdminDateTime(item.created_at), item.message].filter(Boolean).join(' · ') + '</span></div>';
+            const message = [item.status, formatAdminDateTime(item.created_at), item.message].filter(Boolean).join(' · ');
+            return '<div class="meta-row"><span class="label">' + escapeHtml(label) + '</span><span class="value">' + escapeHtml(message) + '</span></div>';
           }).join('');
         }
 
@@ -351,7 +361,7 @@ export function onRequestGet() {
             const selectedLongStayUnitId = longStayUnitSelect.value;
             const data = await apiFetch('GET');
             adminUnits = data.units || [];
-            const unitOptions = adminUnits.map((unit) => '<option value="' + unit.id + '">' + unit.display_name + '</option>').join('');
+            const unitOptions = adminUnits.map((unit) => '<option value="' + escapeHtml(unit.id) + '">' + escapeHtml(unit.display_name) + '</option>').join('');
             unitSelect.innerHTML = unitOptions;
             longStayUnitSelect.innerHTML = unitOptions;
             if (selectedRateUnitId && adminUnits.some((unit) => unit.id === selectedRateUnitId)) {

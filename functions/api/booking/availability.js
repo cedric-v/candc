@@ -71,6 +71,7 @@ export async function onRequestGet(context) {
       lastCalendarSyncAt: latestSync?.last_synced_at || null,
     });
   } catch (error) {
-    return serverError("Failed to compute availability", error.message);
+    console.error("Failed to compute availability:", error);
+    return serverError("Failed to compute availability");
   }
 }

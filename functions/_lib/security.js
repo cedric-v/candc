@@ -14,6 +14,19 @@ export function generateOpaqueToken(bytes = 32) {
   return toBase64Url(randomBytes);
 }
 
+export function constantTimeEqual(left, right) {
+  if (left.length !== right.length) {
+    return false;
+  }
+
+  let diff = 0;
+  for (let index = 0; index < left.length; index += 1) {
+    diff |= left.charCodeAt(index) ^ right.charCodeAt(index);
+  }
+
+  return diff === 0;
+}
+
 export async function sha256Hex(input) {
   const data = new TextEncoder().encode(input);
   const digest = await crypto.subtle.digest("SHA-256", data);

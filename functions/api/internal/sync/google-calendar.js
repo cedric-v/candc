@@ -8,7 +8,7 @@ export async function onRequestPost(context) {
   const { request, env } = context;
 
   try {
-    if (!hasValidInternalToken(request, env)) {
+    if (!(await hasValidInternalToken(request, env))) {
       return unauthorized("Missing or invalid internal sync token");
     }
 
@@ -41,6 +41,7 @@ export async function onRequestPost(context) {
       return badRequest("Request body must be valid JSON");
     }
 
-    return serverError("Failed to sync Google Calendar", error.message);
+    console.error("Failed to sync Google Calendar:", error);
+    return serverError("Failed to sync Google Calendar");
   }
 }

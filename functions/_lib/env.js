@@ -39,6 +39,7 @@ export function getConfig(env) {
     sumUpApiBaseUrl: env.SUMUP_API_BASE_URL || "https://api.sumup.com",
     sumUpApiKey: env.SUMUP_API_KEY || "",
     sumUpMerchantCode: env.SUMUP_MERCHANT_CODE || "",
+    sumUpWebhookSecret: env.SUMUP_WEBHOOK_SECRET || "",
     internalSyncToken: env.INTERNAL_SYNC_TOKEN || "",
     adminAccessToken: env.ADMIN_ACCESS_TOKEN || "",
     adminNotificationEmail: env.ADMIN_NOTIFICATION_EMAIL || "bonjour@candc.ch",

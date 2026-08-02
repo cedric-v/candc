@@ -92,6 +92,8 @@ Current protections and conventions:
 - booking payloads are validated server-side before pricing or reservation creation
 - booking management links are opaque random tokens stored as `SHA-256` hashes in D1
 - SumUp webhook processing re-fetches checkout state from SumUp before updating a reservation
+- SumUp webhook requests are optionally verified with an HMAC-SHA256 signature when `SUMUP_WEBHOOK_SECRET` is configured
+- dynamic Functions responses (confirmation, manage, admin) and APIs ship security headers (CSP, X-Frame-Options, nosniff, referrer policy) via `functions/_middleware.js`
 - internal sync and admin routes require dedicated tokens
 - Google Calendar sync is disabled by default unless explicitly configured
 - Cloudflare Zaraz is used for analytics instead of embedding GA or GTM snippets in templates

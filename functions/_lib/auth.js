@@ -1,6 +1,19 @@
 import { getConfig } from "./env.js";
+import { constantTimeEqual, sha256Hex } from "./security.js";
 
-export function hasValidInternalToken(request, env) {
+async function tokensMatch(provided, expected) {
+  if (!expected || !provided) {
+    return false;
+  }
+
+  // Hash both sides first so the comparison time does not depend on the
+  // length of the provided value, then compare the digests in constant time.
+  const providedHash = await sha256Hex(provided);
+  const expectedHash = await sha256Hex(expected);
+  return constantTimeEqual(providedHash, expectedHash);
+}
+
+export async function hasValidInternalToken(request, env) {
   const config = getConfig(env);
 
   if (!config.internalSyncToken) {
@@ -18,12 +31,14 @@ export function hasValidInternalToken(request, env) {
     // ignore
   }
 
-  return bearerToken === config.internalSyncToken ||
-         headerToken === config.internalSyncToken ||
-         urlToken === config.internalSyncToken;
+  return (
+    (await tokensMatch(bearerToken, config.internalSyncToken)) ||
+    (await tokensMatch(headerToken, config.internalSyncToken)) ||
+    (await tokensMatch(urlToken, config.internalSyncToken))
+  );
 }
 
-export function hasValidAdminToken(request, env) {
+export async function hasValidAdminToken(request, env) {
   const config = getConfig(env);
 
   if (!config.adminAccessToken) {
@@ -32,5 +47,8 @@ export function hasValidAdminToken(request, env) {
 
   const bearerToken = request.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
   const headerToken = request.headers.get("x-admin-token");
-  return bearerToken === config.adminAccessToken || headerToken === config.adminAccessToken;
+  return (
+    (await tokensMatch(bearerToken, config.adminAccessToken)) ||
+    (await tokensMatch(headerToken, config.adminAccessToken))
+  );
 }

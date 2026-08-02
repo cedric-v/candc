@@ -15,7 +15,7 @@ import { isIsoDateString } from "../../_lib/date.js";
 
 export async function onRequestGet(context) {
   try {
-    if (!hasValidAdminToken(context.request, context.env)) {
+    if (!(await hasValidAdminToken(context.request, context.env))) {
       return unauthorized("Missing or invalid admin token");
     }
 
@@ -38,13 +38,14 @@ export async function onRequestGet(context) {
       operationalHealth,
     });
   } catch (error) {
-    return serverError("Failed to load admin dashboard", error.message);
+    console.error("Failed to load admin dashboard:", error);
+    return serverError("Failed to load admin dashboard");
   }
 }
 
 export async function onRequestPost(context) {
   try {
-    if (!hasValidAdminToken(context.request, context.env)) {
+    if (!(await hasValidAdminToken(context.request, context.env))) {
       return unauthorized("Missing or invalid admin token");
     }
 
@@ -145,6 +146,7 @@ export async function onRequestPost(context) {
       return badRequest("Request body must be valid JSON");
     }
 
-    return serverError("Failed to handle admin action", error.message);
+    console.error("Failed to handle admin action:", error);
+    return serverError("Failed to handle admin action");
   }
 }

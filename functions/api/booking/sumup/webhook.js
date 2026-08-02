@@ -5,8 +5,9 @@ import {
 } from "../../../_lib/db.js";
 import { sendImmediateArrivalEmailIfNeeded, sendReservationNtfy, syncReservationToGoogleCalendar } from "../../../_lib/booking-ops.js";
 import { isGoogleCalendarConfigured } from "../../../_lib/google-calendar.js";
-import { badRequest, json, serverError } from "../../../_lib/http.js";
-import { getCheckout, mapCheckoutStatus } from "../../../_lib/sumup.js";
+import { badRequest, json, serverError, unauthorized } from "../../../_lib/http.js";
+import { getCheckout, mapCheckoutStatus, verifyWebhookSignature } from "../../../_lib/sumup.js";
+import { getConfig } from "../../../_lib/env.js";
 
 function mapStatusForPaymentType(checkoutStatus, paymentType) {
   if (paymentType !== "adjustment") {
@@ -37,7 +38,27 @@ function mapStatusForPaymentType(checkoutStatus, paymentType) {
 
 export async function onRequestPost(context) {
   try {
-    const payload = await context.request.json();
+    const config = getConfig(context.env);
+    const rawBody = await context.request.text();
+
+    // When SUMUP_WEBHOOK_SECRET is configured, require a valid HMAC
+    // signature over the raw body before processing anything.
+    if (config.sumUpWebhookSecret) {
+      const signature = context.request.headers.get("x-sumup-webhook-signature") || "";
+      const isValid = await verifyWebhookSignature(rawBody, signature, config.sumUpWebhookSecret);
+
+      if (!isValid) {
+        console.error("Rejected SumUp webhook with missing or invalid signature");
+        return unauthorized("Invalid webhook signature");
+      }
+    }
+
+    let payload;
+    try {
+      payload = JSON.parse(rawBody);
+    } catch {
+      return badRequest("Request body must be valid JSON");
+    }
 
     if (typeof payload?.id !== "string" || payload.id.trim() === "" || payload.id.length > 200) {
       return badRequest("Missing SumUp checkout id");
@@ -89,10 +110,7 @@ export async function onRequestPost(context) {
 
     return new Response(null, { status: 204 });
   } catch (error) {
-    if (error instanceof SyntaxError) {
-      return badRequest("Request body must be valid JSON");
-    }
-
-    return serverError("Failed to process SumUp webhook", error.message);
+    console.error("Failed to process SumUp webhook:", error);
+    return serverError("Failed to process SumUp webhook");
   }
 }

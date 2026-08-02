@@ -1,5 +1,6 @@
 import { buildQuote } from "../../_lib/pricing.js";
 import { getUnitByCode } from "../../_lib/db.js";
+import { getConfig } from "../../_lib/env.js";
 import { badRequest, json, serverError } from "../../_lib/http.js";
 import { normalizeBookingInput, validateBookingInput } from "../../_lib/validation.js";
 
@@ -12,7 +13,10 @@ export async function onRequestPost(context) {
       return badRequest("Unknown unit code");
     }
 
-    const errors = validateBookingInput(payload, { unit });
+    const errors = validateBookingInput(payload, {
+      unit,
+      timeZone: getConfig(context.env).timeZone,
+    });
 
     if (errors.length > 0) {
       return badRequest("Invalid booking payload", errors);
@@ -39,6 +43,7 @@ export async function onRequestPost(context) {
       return badRequest("Request body must be valid JSON");
     }
 
-    return serverError("Failed to build quote", error.message);
+    console.error("Failed to build quote:", error);
+    return serverError("Failed to build quote");
   }
 }

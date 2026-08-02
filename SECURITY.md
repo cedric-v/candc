@@ -19,8 +19,11 @@ Use `wrangler.toml.example` as the committed template and keep the live `wrangle
 - booking and quote payloads are validated server-side in `functions/_lib/validation.js`
 - reservation management uses opaque random tokens stored as `SHA-256` hashes
 - SumUp webhook handling re-checks the checkout via SumUp before changing reservation state
-- internal sync routes and admin routes require dedicated tokens
+- SumUp webhook requests are optionally verified with an HMAC-SHA256 signature over the raw body when `SUMUP_WEBHOOK_SECRET` is configured (`x-sumup-webhook-signature` header); confirm the exact header name and encoding against SumUp's docs before enabling in production
+- internal sync routes and admin routes require dedicated tokens, compared in constant time
 - Google Calendar sync is opt-in and disabled by default
+- dynamic Functions responses and APIs ship security headers (CSP, `X-Frame-Options`, nosniff, referrer policy) via `functions/_middleware.js`
+- server-side errors are logged with `console.error` and returned to clients as generic messages without internal details
 
 ## Cloudflare protections to enable
 

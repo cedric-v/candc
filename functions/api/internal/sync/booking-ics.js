@@ -6,7 +6,7 @@ export async function onRequest(context) {
   const { request, env } = context;
 
   try {
-    if (!hasValidInternalToken(request, env)) {
+    if (!(await hasValidInternalToken(request, env))) {
       return unauthorized("Missing or invalid internal sync token");
     }
 
@@ -36,6 +36,7 @@ export async function onRequest(context) {
       return badRequest("Request body must be valid JSON");
     }
 
-    return serverError("Failed to run Booking ICS sync", error.message);
+    console.error("Failed to run Booking ICS sync:", error);
+    return serverError("Failed to run Booking ICS sync");
   }
 }

@@ -102,8 +102,26 @@ export function onRequestGet(context) {
           return data;
         }
 
+        function escapeHtml(value) {
+          return String(value ?? '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+        }
+
+        function safeHttpUrl(value) {
+          try {
+            const url = new URL(value);
+            return (url.protocol === 'http:' || url.protocol === 'https:') ? value : '';
+          } catch {
+            return '';
+          }
+        }
+
         function setMeta(target, rows) {
-          target.innerHTML = rows.map(([label, value]) => '<div class="meta-row"><span class="label">' + label + '</span><span class="value">' + value + '</span></div>').join('');
+          target.innerHTML = rows.map(([label, value]) => '<div class="meta-row"><span class="label">' + escapeHtml(label) + '</span><span class="value">' + escapeHtml(value) + '</span></div>').join('');
         }
 
         function fillForm(data) {
@@ -129,7 +147,7 @@ export function onRequestGet(context) {
             reservation = data.reservation;
             notice.className = 'notice info';
             notice.innerHTML = data.notices.length
-              ? data.notices.map((item) => '<div>' + item + '</div>').join('')
+              ? data.notices.map((item) => '<div>' + escapeHtml(item) + '</div>').join('')
               : 'Your booking is ready to be managed below.';
             setMeta(meta, [
               ['Reference', reservation.publicReference],
@@ -209,9 +227,9 @@ export function onRequestGet(context) {
               headers: { 'content-type': 'application/json' },
               body: JSON.stringify(buildPayload('update')),
             });
-            if (data.payment && data.payment.hostedCheckoutUrl) {
+            if (data.payment && safeHttpUrl(data.payment.hostedCheckoutUrl || '')) {
               quoteNotice.className = 'notice warn';
-              quoteNotice.innerHTML = 'Your changes need an extra payment. <a href="' + data.payment.hostedCheckoutUrl + '">Open the payment page</a>.';
+              quoteNotice.innerHTML = 'Your changes need an extra payment. <a href="' + escapeHtml(data.payment.hostedCheckoutUrl) + '">Open the payment page</a>.';
             } else if (data.deltaAmount < 0 && data.refund?.fullyRefunded) {
               quoteNotice.className = 'notice success';
               quoteNotice.textContent = 'Your changes were saved and the refund was triggered automatically.';

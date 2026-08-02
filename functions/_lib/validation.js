@@ -1,4 +1,4 @@
-import { diffNights, isIsoDateString } from "./date.js";
+import { diffNights, getCurrentIsoDateInZone, isIsoDateString } from "./date.js";
 
 const ALLOWED_VEHICLE_TYPES = new Set([
   "standard_car",
@@ -26,7 +26,21 @@ function isPositiveFiniteNumber(value) {
   return Number.isFinite(value) && value > 0;
 }
 
-export function validateBookingInput(input, { requireGuestInfo = false, unit = null } = {}) {
+function isValidCalendarDate(value) {
+  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return false;
+  }
+
+  const [year, month, day] = value.split("-").map(Number);
+  const date = new Date(Date.UTC(year, month - 1, day));
+  return (
+    date.getUTCFullYear() === year &&
+    date.getUTCMonth() === month - 1 &&
+    date.getUTCDate() === day
+  );
+}
+
+export function validateBookingInput(input, { requireGuestInfo = false, unit = null, timeZone = "UTC" } = {}) {
   const errors = [];
 
   if (!input.unitCode?.trim()) {
@@ -46,6 +60,10 @@ export function validateBookingInput(input, { requireGuestInfo = false, unit = n
     if (nights <= 0) {
       errors.push({ field: "checkOutDate", message: "Check-out must be after check-in" });
     }
+  }
+
+  if (isIsoDateString(input.checkInDate) && input.checkInDate < getCurrentIsoDateInZone(timeZone)) {
+    errors.push({ field: "checkInDate", message: "Check-in must be today or in the future" });
   }
 
   const requiresVehicleType = unit?.settings?.requiresVehicleType ?? (input.unitCode === "parking-space");
@@ -162,8 +180,10 @@ export function validateBookingInput(input, { requireGuestInfo = false, unit = n
 
     if (!input.guestDateOfBirth?.trim()) {
       errors.push({ field: "guestDateOfBirth", message: "Date of birth is required" });
-    } else if (!/^\d{4}-\d{2}-\d{2}$/.test(input.guestDateOfBirth)) {
-      errors.push({ field: "guestDateOfBirth", message: "Date of birth must be in YYYY-MM-DD format" });
+    } else if (!isValidCalendarDate(input.guestDateOfBirth)) {
+      errors.push({ field: "guestDateOfBirth", message: "Date of birth must be a valid date in YYYY-MM-DD format" });
+    } else if (input.guestDateOfBirth > getCurrentIsoDateInZone(timeZone)) {
+      errors.push({ field: "guestDateOfBirth", message: "Date of birth cannot be in the future" });
     }
 
     if (!input.guestNationality?.trim()) {

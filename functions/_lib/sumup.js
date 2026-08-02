@@ -1,4 +1,5 @@
 import { getConfig } from "./env.js";
+import { constantTimeEqual } from "./security.js";
 
 function buildHeaders(apiKey) {
   return {
@@ -110,6 +111,39 @@ export async function refundTransaction(env, transactionId, amount = null) {
     return JSON.parse(responseText);
   } catch {
     return { raw: responseText };
+  }
+}
+
+// Verifies an HMAC-SHA256 signature over the raw webhook body.
+// Assumes SumUp sends the lowercase hex digest in the
+// `x-sumup-webhook-signature` header, keyed with the webhook secret.
+// Confirm the exact header name and encoding against SumUp's docs before
+// enabling SUMUP_WEBHOOK_SECRET in production.
+export async function verifyWebhookSignature(rawBody, signature, secret) {
+  if (!secret || !signature) {
+    return false;
+  }
+
+  try {
+    const key = await crypto.subtle.importKey(
+      "raw",
+      new TextEncoder().encode(secret),
+      { name: "HMAC", hash: "SHA-256" },
+      false,
+      ["sign"],
+    );
+    const digest = await crypto.subtle.sign(
+      "HMAC",
+      key,
+      new TextEncoder().encode(rawBody),
+    );
+    const hex = Array.from(
+      new Uint8Array(digest),
+      (byte) => byte.toString(16).padStart(2, "0"),
+    ).join("");
+    return constantTimeEqual(hex, signature.trim().toLowerCase());
+  } catch {
+    return false;
   }
 }
 

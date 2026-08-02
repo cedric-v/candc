@@ -257,7 +257,8 @@ export async function onRequestGet(context) {
 
     return json(toManageResponse(reservation, context.env));
   } catch (error) {
-    return serverError("Failed to load reservation", error.message);
+    console.error("Failed to load reservation:", error);
+    return serverError("Failed to load reservation");
   }
 }
 
@@ -420,7 +421,10 @@ export async function onRequestPost(context) {
     }
 
     const payload = buildEditablePayload(reservation, body);
-    const errors = validateBookingInput(payload, { unit });
+    const errors = validateBookingInput(payload, {
+      unit,
+      timeZone: getConfig(context.env).timeZone,
+    });
 
     if (errors.length > 0) {
       return badRequest("Invalid booking payload", errors);
@@ -601,6 +605,7 @@ export async function onRequestPost(context) {
       return badRequest("Request body must be valid JSON");
     }
 
-    return serverError("Failed to manage reservation", error.message);
+    console.error("Failed to manage reservation:", error);
+    return serverError("Failed to manage reservation");
   }
 }

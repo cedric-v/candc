@@ -144,7 +144,8 @@ export async function sendReservationNtfy(env, reservationId, eventType, options
   }
 
   const unitLabel = reservation.unit_display_name || reservation.unit_code || reservation.unit_type || "reservation";
-  const guestName = reservation.guest_name || "Guest";
+  const guestName =
+    [reservation.guest_first_name, reservation.guest_last_name].filter(Boolean).join(" ") || "Guest";
   const dates = `${reservation.check_in_date} → ${reservation.check_out_date}`;
   const total = Number(reservation.total_amount || 0).toFixed(2);
 
