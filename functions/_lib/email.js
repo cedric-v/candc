@@ -925,17 +925,37 @@ function buildDepartureText(reservation) {
     .replaceAll("__CHECKOUT_CLOSE_TIME__", reservation.check_out_time ? reservation.check_out_time.slice(0, 5) : "10:00");
 }
 
-function applyPlaceholders(text, config, locale, reservation = null) {
-  const garageMap = JSON.parse(config.garageInstructionsJson || "{}");
-  const garageInstruction = garageMap[normalizeLocale(locale)] || "__GARAGE_INSTRUCTIONS__";
+function isUnsetValue(value) {
+  return !value || /^REPLACE_WITH_/i.test(String(value).trim());
+}
 
-  return text
-    .replaceAll("__WIFI_STUDIO_PASSWORD__", config.wifiStudioPassword || "__WIFI_STUDIO_PASSWORD__")
-    .replaceAll("__WIFI_TERRACE_PASSWORD__", config.wifiTerracePassword || "__WIFI_TERRACE_PASSWORD__")
+function parseGarageInstructions(raw) {
+  if (!raw || /^REPLACE_WITH_/i.test(String(raw).trim())) {
+    return {};
+  }
+
+  try {
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+function applyPlaceholders(text, config, locale, reservation = null) {
+  const garageMap = parseGarageInstructions(config.garageInstructionsJson);
+  const garageInstruction = garageMap[normalizeLocale(locale)] || "";
+
+  const result = text
+    .replaceAll("__WIFI_STUDIO_PASSWORD__", isUnsetValue(config.wifiStudioPassword) ? "" : config.wifiStudioPassword)
+    .replaceAll("__WIFI_TERRACE_PASSWORD__", isUnsetValue(config.wifiTerracePassword) ? "" : config.wifiTerracePassword)
     .replaceAll("__GARAGE_INSTRUCTIONS__", garageInstruction)
-    .replaceAll("__KEY_BOX_STUDIO_CODE__", config.keyBoxStudioCode || "__KEY_BOX_STUDIO_CODE__")
-    .replaceAll("__WHATSAPP_LINE__", config.whatsappLine || "__WHATSAPP_LINE__")
-    .replaceAll("__STUDIO_ADDRESS__", config.studioAddress || "__STUDIO_ADDRESS__");
+    .replaceAll("__KEY_BOX_STUDIO_CODE__", isUnsetValue(config.keyBoxStudioCode) ? "" : config.keyBoxStudioCode)
+    .replaceAll("__WHATSAPP_LINE__", isUnsetValue(config.whatsappLine) ? "" : config.whatsappLine)
+    .replaceAll("__STUDIO_ADDRESS__", isUnsetValue(config.studioAddress) ? "" : config.studioAddress);
+
+  // Remove any leftover template placeholders (missing config values).
+  return result.replace(/__[A-Z][A-Z_]*__/g, "");
 }
 
 function buildEmailPayload(type, reservation, config, options = {}) {

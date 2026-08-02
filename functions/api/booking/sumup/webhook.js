@@ -1,9 +1,15 @@
 import {
   getReservationByCheckoutId,
+  hasSuccessfulEmailLog,
   updatePaymentByCheckoutId,
   updateReservationAndCalendarStatus,
 } from "../../../_lib/db.js";
-import { sendImmediateArrivalEmailIfNeeded, sendReservationNtfy, syncReservationToGoogleCalendar } from "../../../_lib/booking-ops.js";
+import {
+  sendImmediateArrivalEmailIfNeeded,
+  sendReservationEmail,
+  sendReservationNtfy,
+  syncReservationToGoogleCalendar,
+} from "../../../_lib/booking-ops.js";
 import { isGoogleCalendarConfigured } from "../../../_lib/google-calendar.js";
 import { badRequest, json, serverError, unauthorized } from "../../../_lib/http.js";
 import { getCheckout, mapCheckoutStatus, verifyWebhookSignature } from "../../../_lib/sumup.js";
@@ -88,6 +94,20 @@ export async function onRequestPost(context) {
     );
 
     if (mappedStatus.reservationStatus === "confirmed") {
+      try {
+        const confirmationSent = await hasSuccessfulEmailLog(
+          context.env,
+          reservation.id,
+          "booking_confirmation",
+          reservation.guest_email,
+        );
+
+        if (!confirmationSent) {
+          await sendReservationEmail(context.env, reservation.id, "booking_confirmation", {});
+        }
+      } catch {
+        // Email failures should not block webhook processing.
+      }
       try {
         await sendImmediateArrivalEmailIfNeeded(context.env, reservation.id);
       } catch {
