@@ -1,4 +1,5 @@
 import {
+  createManageToken,
   getArrivalReservationsForDate,
   getDepartureReservationsForDate,
   getImportCalendarSources,
@@ -166,7 +167,9 @@ export async function runArrivalEmails(env, targetDate = null) {
 
   for (const reservation of reservations) {
     try {
+      const manageToken = await createManageToken(env, reservation.id);
       const response = await sendReservationEmail(env, reservation.id, "arrival_instructions", {
+        manageToken,
         dedupe: true,
         forDate: isoDate,
       });

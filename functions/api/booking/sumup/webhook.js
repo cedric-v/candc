@@ -1,4 +1,5 @@
 import {
+  createManageToken,
   getReservationByCheckoutId,
   hasSuccessfulEmailLog,
   updatePaymentByCheckoutId,
@@ -103,7 +104,10 @@ export async function onRequestPost(context) {
         );
 
         if (!confirmationSent) {
-          await sendReservationEmail(context.env, reservation.id, "booking_confirmation", {});
+          const manageToken = await createManageToken(context.env, reservation.id);
+          await sendReservationEmail(context.env, reservation.id, "booking_confirmation", {
+            manageToken,
+          });
         }
       } catch {
         // Email failures should not block webhook processing.

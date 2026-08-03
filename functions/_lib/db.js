@@ -1,6 +1,7 @@
 import { getDefaultUnitByCode } from "./catalog.js";
 import { enumerateNights } from "./date.js";
 import { getConfig, requireDb } from "./env.js";
+import { generateOpaqueToken, sha256Hex } from "./security.js";
 
 function redactSecret(value, visibleChars = 6) {
   if (!value || typeof value !== "string") {
@@ -463,6 +464,26 @@ export async function insertPendingReservation(env, unit, reservation, pricing, 
     reservationId,
     publicReference,
   };
+}
+
+export async function createManageToken(env, reservationId) {
+  const db = requireDb(env);
+  const manageToken = generateOpaqueToken();
+  const manageTokenHash = await sha256Hex(manageToken);
+  const nowIso = new Date().toISOString();
+
+  await db
+    .prepare(
+      `
+        INSERT INTO booking_tokens (
+          id, reservation_id, token_hash, purpose, expires_at, revoked_at, created_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?)
+      `,
+    )
+    .bind(crypto.randomUUID(), reservationId, manageTokenHash, "manage_booking", null, null, nowIso)
+    .run();
+
+  return manageToken;
 }
 
 export async function getReservationsForIcsFeed(env, unitId) {

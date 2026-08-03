@@ -826,15 +826,17 @@ function buildConfirmationText(reservation, token, includeWcUpsell) {
   return lines.join("\n");
 }
 
-function buildArrivalText(reservation, config = {}) {
+function buildArrivalText(reservation, config = {}, manageToken = null) {
   const text = getEmailText(reservation.locale);
+  const manageLine = manageToken ? `${text.manageReservation}: ${manageUrl(config, manageToken)}` : "";
 
   if (reservation.unit_type !== "parking") {
     const template = text.studioArrivalBody || getEmailText("en").studioArrivalBody || "";
 
     return template
       .replaceAll("__FIRST_NAME__", reservation.guest_first_name)
-      .replaceAll("__LAST_NAME__", reservation.guest_last_name || "");
+      .replaceAll("__LAST_NAME__", reservation.guest_last_name || "")
+      .replaceAll("__MANAGE_LINK__", manageLine);
   }
 
   const lines = [
@@ -859,6 +861,13 @@ function buildArrivalText(reservation, config = {}) {
     "",
     text.arrivalSupport,
     "",
+  );
+
+  if (manageLine) {
+    lines.push(manageLine, "");
+  }
+
+  lines.push(
     text.pleasantStay,
     "",
     text.kindRegards,
@@ -981,7 +990,7 @@ function buildEmailPayload(type, reservation, config, options = {}) {
       rawText = buildCancellationText(reservation);
       break;
     case "arrival_instructions":
-      rawText = buildArrivalText(reservation, config);
+      rawText = buildArrivalText(reservation, config, options.manageToken || null);
       break;
     case "departure_instructions":
       rawText = buildDepartureText(reservation);

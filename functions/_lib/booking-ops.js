@@ -1,4 +1,5 @@
 import {
+  createManageToken,
   getReservationForCalendarSync,
   getReservationForEmail,
   hasSuccessfulEmailLog,
@@ -114,7 +115,9 @@ export async function sendImmediateArrivalEmailIfNeeded(env, reservationId) {
     return { ok: false, reason: "before_arrival_email_window" };
   }
 
+  const manageToken = await createManageToken(env, reservationId);
   const response = await sendReservationEmail(env, reservationId, "arrival_instructions", {
+    manageToken,
     dedupe: true,
     forDate: today,
   });
