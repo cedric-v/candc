@@ -206,7 +206,7 @@ Variables non secretes possibles :
 - `REVIEW_LINK_STUDIO` — lien d'avis Google pour le studio ; injecte dans `__REVIEW_LINK__` de l'e-mail de demande d'avis. Configuree comme variable Cloudflare Pages (production + preview) : https://g.page/r/Ca5HhJ5WSkT6EBM/review
 - `SUMUP_API_BASE_URL`
 
-Secrets ou valeurs sensibles :
+Secrets ou valeurs sensibles (la liste complete des 9 secrets du projet) :
 
 - `SUMUP_API_KEY`
 - `SUMUP_MERCHANT_CODE`
@@ -217,6 +217,7 @@ Secrets ou valeurs sensibles :
 - `NTFY_TOPIC_URL` — URL du topic ntfy.sh pour les notifications push hote
 - `WIFI_STUDIO_PASSWORD` — mot de passe Wi-Fi devant le garage (`__WIFI_STUDIO_PASSWORD__`)
 - `WIFI_TERRACE_PASSWORD` — mot de passe Wi-Fi de la terrasse (`__WIFI_TERRACE_PASSWORD__`)
+- `KEY_BOX_STUDIO_CODE` — boite a cle du studio
 - `GOOGLE_SERVICE_ACCOUNT_EMAIL`
 - `GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY`
 
@@ -297,11 +298,27 @@ npx wrangler d1 execute candc-booking --remote --command \
 
 Verifier que le paiement est bien actif de bout en bout (reponse attendue : `payment.hostedCheckoutUrl` non null) :
 
+Le plus simple : un script dedie cree une reservation factice a +45 jours, verifie qu'un lien de paiement SumUp est genere, puis annule la reservation automatiquement :
+
+```bash
+npm run check:payment
+```
+
+Options : `BASE_URL`, `UNIT_CODE`, `OFFSET_DAYS` (voir `scripts/check-live-payment.mjs`).
+
+Alternative manuelle (curl) :
+
 ```bash
 curl -s -X POST https://candc.ch/api/booking/reservations \
   -H 'content-type: application/json' \
   -d '{"unitCode":"parking-space","locale":"fr","checkInDate":"2026-09-01","checkOutDate":"2026-09-03","adults":1,"children":0,"infants":0,"vehicleType":"standard_car","wcShowerRequested":false,"nonRefundableSelected":false,"guestFirstName":"Test","guestLastName":"Test","guestEmail":"test@example.com","guestMobilePhone":"+41790000000","guestAddressStreet":"Rue 1","guestAddressZip":"1000","guestAddressCity":"Lausanne","guestAddressCountry":"CH","guestDateOfBirth":"1990-01-01","guestNationality":"CH","guestIdDocumentNumber":"","additionalGuests":[],"remarks":"","acceptedTerms":true}'
 ```
+
+> **Piege connu (important)** : toute modification des variables d'environnement non secretes dans le dashboard Cloudflare (ou via PATCH API) peut **vider les valeurs des secrets** du projet, sans les supprimer des listes. Les deployments suivants partent alors avec des secrets vides (`payment.status = "configuration_required"`, emails `skipped`). Apres chaque edition d'env vars dans le dashboard :
+>
+> 1. re-poser TOUS les secrets ci-dessus (la liste des 9 secrets se trouve dans `wrangler.toml.example` et ci-dessous) ;
+> 2. redeployer (push, meme vide) ;
+> 3. verifier avec `npm run check:payment`.
 
 Important :
 

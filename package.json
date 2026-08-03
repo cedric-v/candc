@@ -9,7 +9,8 @@
     "test:smoke": "node scripts/smoke-tests.js",
     "test:logic": "node scripts/booking-logic-tests.mjs",
     "test:email": "node scripts/email-tests.mjs",
-    "test": "npm-run-all test:logic test:email test:smoke"
+    "test": "npm-run-all test:logic test:email test:smoke",
+    "check:payment": "node scripts/check-live-payment.mjs"
   },
   "keywords": [],
   "author": "C & C",
