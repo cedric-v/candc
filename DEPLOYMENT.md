@@ -237,6 +237,35 @@ Verifier les secrets configures :
 npx wrangler pages secret list --project-name candc-ch
 ```
 
+> Attention : `secret list` ne montre que les noms des cles, PAS si une valeur est reellement stockee. Le seul moyen fiable de verifier que les valeurs sont bien injectees dans le deployment actif est `npm run check:payment`.
+
+### Processus recommande (ne plus jamais toucher le dashboard pour les env vars)
+
+> **Cause racine des pannes repetees** : toute modification des variables d'environnement dans le dashboard Cloudflare reecrit la carte complete des env vars et enregistre les secrets avec une valeur VIDE — les valeurs des secrets sont silencieusement perdues (le bug « Reservation creee, mais le paiement n'est pas encore configure »). Les deployments eux-memes ne perdent jamais les secrets : seules les edits dashboard/API de la carte complete en sont la cause (confirme le 3 aout 2026 : l'ajout de `REVIEW_LINK_PARKING`/`REVIEW_LINK_STUDIO` a vide les 9 secrets).
+
+Donc :
+
+1. **Secrets** : editer `secrets.local.json` (gitignore ; modele : `scripts/secrets.local.example.json`), puis restaurer TOUS les secrets en une commande :
+
+   ```bash
+   npm run secrets:push
+   ```
+
+2. **Variables non secretes** : les changer avec le script de merge PATCH (jamais le dashboard) :
+
+   ```bash
+   node scripts/set-env-var.mjs KEY VALUE
+   node scripts/set-env-var.mjs REVIEW_LINK_PARKING "https://g.page/r/CbsI1IDQnZP4EBM/review"
+   ```
+
+3. **Apres tout changement de variable ou de secret** : deployer (push) puis verifier :
+
+   ```bash
+   npm run check:payment
+   ```
+
+4. Verifier automatiquement apres chaque deployment : `npm run check:payment` (exit 0 = paiement actif, exit 1 = secrets non lies).
+
 Valeurs actuelles recommandees pour le parking :
 
 - `PAYMENT_FEE_RATE=0.025`

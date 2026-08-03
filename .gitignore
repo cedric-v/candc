@@ -6,3 +6,5 @@ _site/
 *.log
 .wrangler/
 wrangler.toml
+# local secret values backup (used by npm run secrets:push)
+secrets.local.json

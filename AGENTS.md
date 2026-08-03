@@ -94,6 +94,14 @@ npm test
 
 If editing functions-only logic, import checks via Node ESM are also useful.
 
+After deploying to production (or after ANY Cloudflare env-var change), verify the live payment funnel:
+
+```bash
+npm run check:payment
+```
+
+(exit 0 = SumUp secrets bound and a hosted-checkout link is generated; exit 1 = secrets missing, restore with `npm run secrets:push` and redeploy — see DEPLOYMENT.md "Processus recommande").
+
 ## Known unfinished areas
 
 - production credential wiring
