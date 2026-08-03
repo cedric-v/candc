@@ -65,6 +65,34 @@ function fail(message) {
   process.exit(1);
 }
 
+async function cancelSmokeReservation(reservation) {
+  const manageUrl = reservation && reservation.manageUrl;
+  if (!manageUrl) {
+    return;
+  }
+  // The public manageUrl serves the HTML page (GET only). The cancellation
+  // action must be posted to the API route.
+  const token = manageUrl.split("/").pop();
+  const apiUrl = `${BASE_URL}/api/booking/manage/${encodeURIComponent(token)}`;
+  try {
+    const cancel = await fetch(apiUrl, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ action: "cancel" }),
+    });
+    const cancelBody = await cancel.json();
+    if (cancel.ok && cancelBody.status === "cancelled") {
+      console.log(`✓ Smoke reservation ${reservation.publicReference} cancelled.`);
+    } else {
+      console.warn(
+        `! Could not cancel smoke reservation ${reservation.publicReference}: ${JSON.stringify(cancelBody)}`,
+      );
+    }
+  } catch (error) {
+    console.warn(`! Cancel request failed for ${reservation.publicReference}: ${error.message}`);
+  }
+}
+
 const startedAt = Date.now();
 let response;
 try {
@@ -93,6 +121,7 @@ const payment = body.payment || {};
 const reservation = body.reservation || {};
 
 if (payment.status === "configuration_required" || !payment.hostedCheckoutUrl) {
+  await cancelSmokeReservation(reservation);
   fail(
     `Payment is NOT configured on ${BASE_URL}. The SumUp secrets are not bound to the ` +
       `current deployment (reservation ${reservation.id || "?"}, HTTP ${response.status}, ${durationMs}ms). ` +
@@ -105,25 +134,4 @@ console.log(
 );
 
 // Clean up: cancel the smoke reservation via its manage link.
-const manageUrl = reservation.manageUrl;
-if (manageUrl) {
-  try {
-    const cancel = await fetch(manageUrl, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ action: "cancel" }),
-    });
-    const cancelBody = await cancel.json();
-    if (cancel.ok && cancelBody.status === "cancelled") {
-      console.log(`✓ Smoke reservation ${reservation.publicReference} cancelled.`);
-    } else {
-      console.warn(
-        `! Could not cancel smoke reservation ${reservation.publicReference}: ${JSON.stringify(cancelBody)}`,
-      );
-    }
-  } catch (error) {
-    console.warn(`! Cancel request failed for ${reservation.publicReference}: ${error.message}`);
-  }
-} else {
-  console.warn(`! No manage URL returned; smoke reservation may remain: ${JSON.stringify(reservation)}`);
-}
+await cancelSmokeReservation(reservation);
