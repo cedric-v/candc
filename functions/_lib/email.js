@@ -14,16 +14,18 @@ const EMAIL_I18N = {
       booking_cancellation: "réservation annulée",
       arrival_instructions: "informations d'arrivée",
       departure_instructions: "instructions de départ",
-      review_request: "votre avis nous aiderait",
+      review_request: "Comment s'est passé votre séjour ?",
     },
     reviewBody: `Bonjour __FIRST_NAME__,
 
-Serait-il possible de nous laisser un avis ici ?
-__REVIEW_LINK__
+Merci d'avoir séjourné chez nous !
 
-Cela nous aiderait beaucoup.
+Votre avis aide les futurs voyageurs à trouver le bon emplacement, et il compte beaucoup pour notre petite entreprise familiale.
 
-Tous nos meilleurs vœux,
+Si vous avez un instant, nous serions ravis de lire votre retour :
+Laisser un avis → __REVIEW_LINK__
+
+Belle suite de voyage à vous,
 Céline et Cédric`,
     departureBody: `Bonjour __FIRST_NAME__,
 
@@ -170,16 +172,18 @@ Céline et Cédric`,
       booking_cancellation: "booking cancelled",
       arrival_instructions: "arrival information",
       departure_instructions: "departure information",
-      review_request: "we'd love your review",
+      review_request: "How was your stay at C&C?",
     },
     reviewBody: `Hello __FIRST_NAME__,
 
-Would it be possible that you leave us a review here?
-__REVIEW_LINK__
+Thank you for staying with us!
 
-It would help us a lot.
+Your feedback helps future travellers find the right spot, and it means a lot to our small family business.
 
-All the best,
+If you have a moment, we'd love to hear about your stay:
+Leave us a review → __REVIEW_LINK__
+
+Wishing you a great onward journey,
 Celine and Cedric`,
     departureBody: `Hello __FIRST_NAME__,
 
@@ -325,16 +329,18 @@ Celine and Cedric`,    greeting: (name) => `Dear ${name},`,
       booking_cancellation: "Buchung storniert",
       arrival_instructions: "Anreiseinformationen",
       departure_instructions: "Abreiseinformationen",
-      review_request: "Ihre Bewertung würde uns helfen",
+      review_request: "Wie war Ihr Aufenthalt bei C&C?",
     },
     reviewBody: `Guten Tag __FIRST_NAME__,
 
-Wäre es möglich, dass Sie uns hier eine Bewertung hinterlassen?
-__REVIEW_LINK__
+Vielen Dank für Ihren Aufenthalt bei uns!
 
-Es würde uns sehr helfen.
+Ihre Bewertung hilft zukünftigen Reisenden, den richtigen Platz zu finden, und bedeutet unserer kleinen Familienunternehmung sehr viel.
 
-Alles Gute,
+Wenn Sie einen Moment Zeit haben, würden wir uns sehr über Ihr Feedback freuen:
+Hinterlassen Sie eine Bewertung → __REVIEW_LINK__
+
+Eine schöne Weiterreise wünschen
 Céline und Cédric`,
     departureBody: `Guten Tag __FIRST_NAME__,
 
@@ -480,16 +486,18 @@ Céline und Cédric`,    greeting: (name) => `Hallo ${name},`,
       booking_cancellation: "reserva cancelada",
       arrival_instructions: "información de llegada",
       departure_instructions: "información de salida",
-      review_request: "su reseña nos ayudaría",
+      review_request: "¿Qué tal tu estancia en C&C?",
     },
     reviewBody: `Hola __FIRST_NAME__,
 
-¿Sería posible que nos dejaras una reseña aquí?
-__REVIEW_LINK__
+¡Gracias por alojarte con nosotros!
 
-Nos ayudaría mucho.
+Tu reseña ayuda a los futuros viajeros a encontrar el lugar adecuado, y significa mucho para nuestra pequeña empresa familiar.
 
-Un cordial saludo,
+Si tienes un momento, nos encantaría conocer tu opinión:
+Deja una reseña → __REVIEW_LINK__
+
+Que tengas un buen viaje,
 Céline y Cédric`,
     greeting: (name) => `Hola ${name},`,
     confirmationCreated: (label) => `Gracias. Tu reserva de ${label} ha sido creada.`,
@@ -565,16 +573,18 @@ Céline y Cédric`,
       booking_cancellation: "reserva cancelada",
       arrival_instructions: "informações de chegada",
       departure_instructions: "informações de partida",
-      review_request: "a sua avaliação ajudaria",
+      review_request: "Como foi a sua estadia no C&C?",
     },
     reviewBody: `Olá __FIRST_NAME__,
 
-Seria possível deixar-nos uma avaliação aqui?
-__REVIEW_LINK__
+Agradecemos a sua estadia connosco!
 
-Ajudar-nos-ia muito.
+A sua avaliação ajuda os futuros viajantes a encontrar o lugar certo, e significa muito para a nossa pequena empresa familiar.
 
-Com os melhores cumprimentos,
+Se tiver um momento, gostaríamos muito de saber a sua opinião:
+Deixe uma avaliação → __REVIEW_LINK__
+
+Boa viagem,
 Céline e Cédric`,
     greeting: (name) => `Olá ${name},`,
     confirmationCreated: (label) => `Obrigado. A sua reserva de ${label} foi criada.`,
@@ -650,16 +660,18 @@ Céline e Cédric`,
       booking_cancellation: "prenotazione annullata",
       arrival_instructions: "informazioni di arrivo",
       departure_instructions: "informazioni di partenza",
-      review_request: "la sua recensione ci aiuterebbe",
+      review_request: "Com'è andato il tuo soggiorno al C&C?",
     },
     reviewBody: `Ciao __FIRST_NAME__,
 
-Sarebbe possibile lasciarci una recensione qui?
-__REVIEW_LINK__
+Grazie per aver soggiornato da noi!
 
-Ci aiuterebbe molto.
+La tua recensione aiuta i futuri viaggiatori a trovare il posto giusto, e significa molto per la nostra piccola impresa familiare.
 
-Cordiali saluti,
+Se hai un momento, ci farebbe piacere conoscere la tua opinione:
+Lascia una recensione → __REVIEW_LINK__
+
+Buon viaggio,
 Céline e Cédric`,
     greeting: (name) => `Ciao ${name},`,
     confirmationCreated: (label) => `Grazie. La tua prenotazione per il ${label} è stata creata.`,
@@ -735,16 +747,18 @@ Céline e Cédric`,
       booking_cancellation: "boeking geannuleerd",
       arrival_instructions: "aankomstinformatie",
       departure_instructions: "vertrekinformatie",
-      review_request: "uw recensie zou ons helpen",
+      review_request: "Hoe was uw verblijf bij C&C?",
     },
     reviewBody: `Beste __FIRST_NAME__,
 
-Zou u hier een recensie voor ons kunnen achterlaten?
-__REVIEW_LINK__
+Bedankt voor uw verblijf bij ons!
 
-Het zou ons enorm helpen.
+Uw recensie helpt toekomstige reizigers de juiste plek te vinden, en betekent veel voor onze kleine familieonderneming.
 
-Met vriendelijke groet,
+Als u even tijd heeft, horen we graag uw mening:
+Laat een recensie achter → __REVIEW_LINK__
+
+Een goede reis gewenst,
 Céline en Cédric`,
     greeting: (name) => `Hallo ${name},`,
     confirmationCreated: (label) => `Bedankt. Je reservering voor het ${label} is aangemaakt.`,
@@ -1101,8 +1115,12 @@ function buildEmailPayload(type, reservation, config, options = {}) {
       throw new Error(`unknown_email_type:${type}`);
   }
 
+  const subject = type === "review_request"
+    ? text.subjects[type]
+    : `${subjectPrefix} ${text.subjects[type]} - ${reservation.public_reference}`;
+
   return {
-    subject: `${subjectPrefix} ${text.subjects[type]} - ${reservation.public_reference}`,
+    subject,
     text: applyPlaceholders(rawText, config, reservation.locale, reservation),
   };
 }

@@ -492,15 +492,17 @@ Le message est localise dans la langue de reservation (7 langues).
 
 Exemple (anglais) :
 
-> Would it be possible that you leave us a review here?
-> https://g.page/r/CbsI1IDQnZP4EBM/review
+> Thank you for staying with us!
 >
-> It would help us a lot.
+> Your feedback helps future travellers find the right spot, and it means a lot to our small family business.
 >
-> All the best,
+> If you have a moment, we'd love to hear about your stay:
+> Leave us a review → https://g.page/r/CbsI1IDQnZP4EBM/review
+>
+> Wishing you a great onward journey,
 > Celine and Cedric
 
-L'e-mail n'est envoye qu'une fois par reservation et par date (deduplication via le journal des e-mails, type `review_request`).
+L'e-mail n'est envoye qu'une fois par reservation et par date (deduplication via le journal des e-mails, type `review_request`). Aucune ligne d'opt-out : un seul e-mail par sejour, sans liste de diffusion (interet legitime RGPD).
 
 ## Notifications push hôte (ntfy.sh)
 
