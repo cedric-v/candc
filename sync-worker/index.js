@@ -66,6 +66,24 @@ function isDepartureEmailWindow(env) {
   return values.hour === 18;
 }
 
+function isReviewEmailWindow(env) {
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: env.TIMEZONE || "Europe/Zurich",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(new Date());
+
+  const values = {};
+  for (const part of parts) {
+    if (part.type !== "literal") {
+      values[part.type] = Number(part.value);
+    }
+  }
+
+  return values.hour === 12;
+}
+
 export default {
   async scheduled(controller, env, ctx) {
     try {
@@ -94,6 +112,17 @@ export default {
 
         const res = await runJob(env, "departure_emails");
         console.log(`Departure email cron complete: status ${res.status}, response: ${res.body}`);
+        return;
+      }
+
+      if (controller.cron === "15 * * * *") {
+        if (!isReviewEmailWindow(env)) {
+          console.log("Skipping review email cron outside the 12:00 local window.");
+          return;
+        }
+
+        const res = await runJob(env, "review_emails");
+        console.log(`Review email cron complete: status ${res.status}, response: ${res.body}`);
         return;
       }
 

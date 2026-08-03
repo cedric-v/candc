@@ -54,6 +54,8 @@ export function getConfig(env) {
     garageInstructionsJson: env.GARAGE_INSTRUCTIONS || "{}",
     whatsappLine: env.WHATSAPP_LINE || "__WHATSAPP_LINE__",
     studioAddress: env.STUDIO_ADDRESS || "__STUDIO_ADDRESS__",
+    reviewLinkParking: env.REVIEW_LINK_PARKING || "https://g.page/r/CbsI1IDQnZP4EBM/review",
+    reviewLinkStudio: env.REVIEW_LINK_STUDIO || "https://g.page/r/Ca5HhJ5WSkT6EBM/review",
     ntfyTopicUrl: env.NTFY_TOPIC_URL || "",
     enableGoogleCalendarSync: String(env.ENABLE_GOOGLE_CALENDAR_SYNC || "false") === "true",
     googleServiceAccountEmail: env.GOOGLE_SERVICE_ACCOUNT_EMAIL || "",

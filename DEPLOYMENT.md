@@ -202,6 +202,8 @@ Variables non secretes possibles :
 - `WHATSAPP_LINE` — ligne WhatsApp de contact ; injecte dans `__WHATSAPP_LINE__` des e-mails
 - `STUDIO_ADDRESS` — adresse du studio ; injecte dans `__STUDIO_ADDRESS__` (confirmation et arrivee studio). Accepte une chaine simple **ou** un objet JSON cle par langue (`fr`/`en`/`de`...) pour localiser le nom du pays ; les langues sans cle reçoivent la valeur anglaise
 - `KEY_BOX_STUDIO_CODE` — code de la boite a cle studio ; injecte dans `__KEY_BOX_STUDIO_CODE__`
+- `REVIEW_LINK_PARKING` — lien d'avis Google pour le parking ; injecte dans `__REVIEW_LINK__` de l'e-mail de demande d'avis (defaut : https://g.page/r/CbsI1IDQnZP4EBM/review)
+- `REVIEW_LINK_STUDIO` — lien d'avis Google pour le studio ; injecte dans `__REVIEW_LINK__` de l'e-mail de demande d'avis (defaut : https://g.page/r/Ca5HhJ5WSkT6EBM/review)
 - `SUMUP_API_BASE_URL`
 
 Secrets ou valeurs sensibles :
@@ -339,8 +341,10 @@ Variables :
 - `POST /api/internal/jobs/run` peut lancer :
   - le sync Booking.com ICS
   - les e-mails d'arrivee
+  - les e-mails de depart (studio, la veille a 18:00)
+  - les e-mails de demande d'avis (jour du depart a 12:00)
   - la validation manuelle des feeds OTA
-  - les deux en une seule execution
+  - toutes en une seule execution (action `all`)
 
 Important :
 
@@ -349,6 +353,8 @@ Important :
 - ce Worker separe maintenant :
   - un cron horaire de sync calendrier
   - un cron distinct pour les e-mails d'arrivee, filtre sur `08:00` locale `Europe/Zurich`
+  - un cron distinct pour les e-mails de depart, filtre sur `18:00` locale `Europe/Zurich`
+  - un cron distinct pour les e-mails de demande d'avis, filtre sur `12:00` locale `Europe/Zurich`
 - ce Worker requiert la variable secrete `INTERNAL_SYNC_TOKEN`
 - en cas de reservation confirmee le jour meme apres 08:00 locale, l'e-mail d'arrivee est envoye immediatement par fallback sans attendre le prochain cron
 - l'interface admin expose aussi :

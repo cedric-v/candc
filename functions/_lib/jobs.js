@@ -3,6 +3,7 @@ import {
   getArrivalReservationsForDate,
   getDepartureReservationsForDate,
   getImportCalendarSources,
+  getReviewRequestReservationsForDate,
   insertSyncLog,
   replaceExternalCalendarBlocks,
   updateCalendarSourceSync,
@@ -251,6 +252,51 @@ export async function runDepartureEmails(env, targetDate = null) {
   return {
     ok: results.every((result) => result.status !== "failed"),
     targetDate: tomorrowIso,
+    results,
+  };
+}
+
+export async function runReviewRequestEmails(env, targetDate = null) {
+  const config = getConfig(env);
+  const isoDate = targetDate || getCurrentIsoDateInZone(config.timeZone);
+  const reservations = await getReviewRequestReservationsForDate(env, isoDate);
+  const results = [];
+
+  for (const reservation of reservations) {
+    try {
+      const response = await sendReservationEmail(env, reservation.id, "review_request", {
+        dedupe: true,
+        forDate: isoDate,
+      });
+      results.push({
+        reservationId: reservation.id,
+        publicReference: reservation.public_reference,
+        status: response.skipped ? "skipped" : "sent",
+      });
+    } catch (error) {
+      results.push({
+        reservationId: reservation.id,
+        publicReference: reservation.public_reference,
+        status: "failed",
+        error: error.message,
+      });
+    }
+  }
+
+  await insertSyncLog(env, {
+    unitId: null,
+    syncType: "review_request_email_job",
+    status: buildValidationResultStatus(results),
+    message: `Processed ${results.length} review request(s) for departures on ${isoDate}`,
+    payloadSummary: {
+      targetDate: isoDate,
+      results,
+    },
+  });
+
+  return {
+    ok: results.every((result) => result.status !== "failed"),
+    targetDate: isoDate,
     results,
   };
 }

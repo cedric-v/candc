@@ -1240,6 +1240,28 @@ export async function getDepartureReservationsForDate(env, isoDate) {
   return results || [];
 }
 
+export async function getReviewRequestReservationsForDate(env, isoDate) {
+  const db = requireDb(env);
+  const { results } = await db
+    .prepare(
+      `
+        SELECT
+          reservations.*,
+          rentable_units.unit_type,
+          rentable_units.display_name AS unit_display_name
+        FROM reservations
+        LEFT JOIN rentable_units ON rentable_units.id = reservations.unit_id
+        WHERE reservations.check_out_date = ?
+          AND reservations.status IN ('confirmed', 'modified', 'refund_due', 'pending_refund')
+        ORDER BY reservations.check_out_date ASC, reservations.public_reference ASC
+      `,
+    )
+    .bind(isoDate)
+    .all();
+
+  return results || [];
+}
+
 export async function listAdminReservations(env, limit = 50) {
   const db = requireDb(env);
   const { results } = await db

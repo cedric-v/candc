@@ -477,6 +477,31 @@ Contenu attendu :
 Le texte est disponible en francais, anglais et allemand.
 Les autres langues recoivent la version anglaise (comme les e-mails de confirmation et d'arrivee studio).
 
+### E-mail de demande d'avis le jour du depart a 12:00 (parking et studio)
+
+Le cron declenche a 12:00 heure locale le jour du depart (`check_out_date` du jour).
+
+Contenu attendu :
+- prenom de l'invite (`__FIRST_NAME__`)
+- lien d'avis Google, propre a l'unite (`__REVIEW_LINK__`)
+  - parking : `REVIEW_LINK_PARKING` (defaut : https://g.page/r/CbsI1IDQnZP4EBM/review)
+  - studio : `REVIEW_LINK_STUDIO` (defaut : https://g.page/r/Ca5HhJ5WSkT6EBM/review)
+- remerciement et formule de signature (Celine et Cedric)
+
+Le message est localise dans la langue de reservation (7 langues).
+
+Exemple (anglais) :
+
+> Would it be possible that you leave us a review here?
+> https://g.page/r/CbsI1IDQnZP4EBM/review
+>
+> It would help us a lot.
+>
+> All the best,
+> Celine and Cedric
+
+L'e-mail n'est envoye qu'une fois par reservation et par date (deduplication via le journal des e-mails, type `review_request`).
+
 ## Notifications push hôte (ntfy.sh)
 
 Des notifications push temps reel sont envoyees a l'hote via ntfy.sh pour chaque evenement de reservation :
@@ -686,6 +711,17 @@ Frequence recommande :
 - cron frequent en UTC
 - filtrage applicatif selon le fuseau `Europe/Zurich`
 - envoi a 08:00 locale le jour d'arrivee
+
+### E-mails de depart
+
+- cron frequent en UTC, filtrage applicatif selon le fuseau `Europe/Zurich`
+- envoi a 18:00 locale la veille du depart (studio uniquement)
+
+### E-mails de demande d'avis
+
+- cron frequent en UTC, filtrage applicatif selon le fuseau `Europe/Zurich`
+- envoi a 12:00 locale le jour du depart (parking et studio)
+- lien d'avis selon l'unite (`__REVIEW_LINK__`), message localise dans la langue de reservation
 
 ### Reconciliation paiements
 

@@ -14,7 +14,17 @@ const EMAIL_I18N = {
       booking_cancellation: "réservation annulée",
       arrival_instructions: "informations d'arrivée",
       departure_instructions: "instructions de départ",
+      review_request: "votre avis nous aiderait",
     },
+    reviewBody: `Bonjour __FIRST_NAME__,
+
+Serait-il possible de nous laisser un avis ici ?
+__REVIEW_LINK__
+
+Cela nous aiderait beaucoup.
+
+Tous nos meilleurs vœux,
+Céline et Cédric`,
     departureBody: `Bonjour __FIRST_NAME__,
 
 J'espère que vous allez bien.
@@ -160,7 +170,17 @@ Céline et Cédric`,
       booking_cancellation: "booking cancelled",
       arrival_instructions: "arrival information",
       departure_instructions: "departure information",
+      review_request: "we'd love your review",
     },
+    reviewBody: `Hello __FIRST_NAME__,
+
+Would it be possible that you leave us a review here?
+__REVIEW_LINK__
+
+It would help us a lot.
+
+All the best,
+Celine and Cedric`,
     departureBody: `Hello __FIRST_NAME__,
 
 I hope you are well.
@@ -305,7 +325,17 @@ Celine and Cedric`,    greeting: (name) => `Dear ${name},`,
       booking_cancellation: "Buchung storniert",
       arrival_instructions: "Anreiseinformationen",
       departure_instructions: "Abreiseinformationen",
+      review_request: "Ihre Bewertung würde uns helfen",
     },
+    reviewBody: `Guten Tag __FIRST_NAME__,
+
+Wäre es möglich, dass Sie uns hier eine Bewertung hinterlassen?
+__REVIEW_LINK__
+
+Es würde uns sehr helfen.
+
+Alles Gute,
+Céline und Cédric`,
     departureBody: `Guten Tag __FIRST_NAME__,
 
 Wir hoffen, es geht Ihnen gut.
@@ -450,7 +480,17 @@ Céline und Cédric`,    greeting: (name) => `Hallo ${name},`,
       booking_cancellation: "reserva cancelada",
       arrival_instructions: "información de llegada",
       departure_instructions: "información de salida",
+      review_request: "su reseña nos ayudaría",
     },
+    reviewBody: `Hola __FIRST_NAME__,
+
+¿Sería posible que nos dejaras una reseña aquí?
+__REVIEW_LINK__
+
+Nos ayudaría mucho.
+
+Un cordial saludo,
+Céline y Cédric`,
     greeting: (name) => `Hola ${name},`,
     confirmationCreated: (label) => `Gracias. Tu reserva de ${label} ha sido creada.`,
     referenceLabel: "Referencia",
@@ -525,7 +565,17 @@ Céline und Cédric`,    greeting: (name) => `Hallo ${name},`,
       booking_cancellation: "reserva cancelada",
       arrival_instructions: "informações de chegada",
       departure_instructions: "informações de partida",
+      review_request: "a sua avaliação ajudaria",
     },
+    reviewBody: `Olá __FIRST_NAME__,
+
+Seria possível deixar-nos uma avaliação aqui?
+__REVIEW_LINK__
+
+Ajudar-nos-ia muito.
+
+Com os melhores cumprimentos,
+Céline e Cédric`,
     greeting: (name) => `Olá ${name},`,
     confirmationCreated: (label) => `Obrigado. A sua reserva de ${label} foi criada.`,
     referenceLabel: "Referência",
@@ -600,7 +650,17 @@ Céline und Cédric`,    greeting: (name) => `Hallo ${name},`,
       booking_cancellation: "prenotazione annullata",
       arrival_instructions: "informazioni di arrivo",
       departure_instructions: "informazioni di partenza",
+      review_request: "la sua recensione ci aiuterebbe",
     },
+    reviewBody: `Ciao __FIRST_NAME__,
+
+Sarebbe possibile lasciarci una recensione qui?
+__REVIEW_LINK__
+
+Ci aiuterebbe molto.
+
+Cordiali saluti,
+Céline e Cédric`,
     greeting: (name) => `Ciao ${name},`,
     confirmationCreated: (label) => `Grazie. La tua prenotazione per il ${label} è stata creata.`,
     referenceLabel: "Riferimento",
@@ -675,7 +735,17 @@ Céline und Cédric`,    greeting: (name) => `Hallo ${name},`,
       booking_cancellation: "boeking geannuleerd",
       arrival_instructions: "aankomstinformatie",
       departure_instructions: "vertrekinformatie",
+      review_request: "uw recensie zou ons helpen",
     },
+    reviewBody: `Beste __FIRST_NAME__,
+
+Zou u hier een recensie voor ons kunnen achterlaten?
+__REVIEW_LINK__
+
+Het zou ons enorm helpen.
+
+Met vriendelijke groet,
+Céline en Cédric`,
     greeting: (name) => `Hallo ${name},`,
     confirmationCreated: (label) => `Bedankt. Je reservering voor het ${label} is aangemaakt.`,
     referenceLabel: "Referentie",
@@ -934,6 +1004,14 @@ function buildDepartureText(reservation) {
     .replaceAll("__CHECKOUT_CLOSE_TIME__", reservation.check_out_time ? reservation.check_out_time.slice(0, 5) : "10:00");
 }
 
+function buildReviewRequestText(reservation) {
+  const text = getEmailText(reservation.locale);
+  const template = text.reviewBody || getEmailText("en").reviewBody || "";
+
+  return template
+    .replaceAll("__FIRST_NAME__", reservation.guest_first_name);
+}
+
 function isUnsetValue(value) {
   return !value || /^REPLACE_WITH_/i.test(String(value).trim());
 }
@@ -978,7 +1056,11 @@ function applyPlaceholders(text, config, locale, reservation = null) {
     .replaceAll("__GARAGE_INSTRUCTIONS__", garageInstruction)
     .replaceAll("__KEY_BOX_STUDIO_CODE__", isUnsetValue(config.keyBoxStudioCode) ? "" : config.keyBoxStudioCode)
     .replaceAll("__WHATSAPP_LINE__", isUnsetValue(config.whatsappLine) ? "" : config.whatsappLine)
-    .replaceAll("__STUDIO_ADDRESS__", resolveLocalizedValue(config.studioAddress, locale));
+    .replaceAll("__STUDIO_ADDRESS__", resolveLocalizedValue(config.studioAddress, locale))
+    .replaceAll(
+      "__REVIEW_LINK__",
+      reservation?.unit_type === "studio" ? config.reviewLinkStudio : config.reviewLinkParking,
+    );
 
   // Remove any leftover template placeholders (missing config values).
   return result.replace(/__[A-Z][A-Z_]*__/g, "");
@@ -1011,6 +1093,9 @@ function buildEmailPayload(type, reservation, config, options = {}) {
       break;
     case "departure_instructions":
       rawText = buildDepartureText(reservation);
+      break;
+    case "review_request":
+      rawText = buildReviewRequestText(reservation);
       break;
     default:
       throw new Error(`unknown_email_type:${type}`);
