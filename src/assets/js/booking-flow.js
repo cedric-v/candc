@@ -107,6 +107,7 @@
   let nightlyRateByDate = new Map();
   let minimumStayNights = 1;
   let calendarDataState = "loading";
+  const dayButtonsByKey = new Map();
   const webMcpController = supportsWebMcp() ? new AbortController() : null;
 
   initializeDateInputs();
@@ -438,6 +439,8 @@
       return;
     }
 
+    clearRangePreview();
+    dayButtonsByKey.clear();
     calendarGrid.innerHTML = "";
 
     for (let monthOffset = 0; monthOffset < 2; monthOffset += 1) {
@@ -491,47 +494,60 @@
   function buildDayButton(date) {
     const button = document.createElement("button");
     const dateKey = formatDateKey(date);
-    const isPast = dateKey < fields.checkInDate.min;
     const isCalendarUnavailable = calendarDataState !== "ready";
+    const isPast = dateKey < fields.checkInDate.min;
     const isBlocked = blockedDates.has(dateKey);
     const isMinStayBlocked = !isPast && !isBlocked && !canStartStayOn(dateKey);
+    // A night can be occupied (blocked) and still be a valid check-out day:
+    // the next guest arrives that evening, so departure stays possible.
+    const canArrive = !isCalendarUnavailable && !isPast && !isBlocked && !isMinStayBlocked;
+    const canDepart = !isCalendarUnavailable && !isPast && isValidCheckoutFor(fields.checkInDate.value, dateKey);
+    const isSelectable = canArrive || canDepart;
     const isSelectedStart = dateKey === fields.checkInDate.value;
     const isSelectedEnd = dateKey === fields.checkOutDate.value;
     const inSelectedRange = isDateInsideSelectedRange(dateKey);
 
     button.type = "button";
     button.className = "booking-day";
+    button.dataset.dateKey = dateKey;
+    dayButtonsByKey.set(dateKey, button);
 
-    if (isPast || isBlocked || isMinStayBlocked || isCalendarUnavailable) {
+    if (!isSelectable) {
       button.classList.add("booking-day-disabled");
       button.disabled = true;
     }
 
     if (isPast) {
       button.classList.add("booking-day-past");
-    } else if (isBlocked) {
-      button.classList.add("booking-day-blocked");
-    } else if (isMinStayBlocked) {
-      button.classList.add("booking-day-blocked");
     } else if (isCalendarUnavailable) {
       button.classList.add("booking-day-unavailable-data");
+    } else if (isSelectedStart || isSelectedEnd) {
+      button.classList.add("booking-day-selected");
     } else if (inSelectedRange) {
       button.classList.add("booking-day-in-range");
+    } else if (isBlocked) {
+      button.classList.add(isSelectable ? "booking-day-checkout-capable" : "booking-day-blocked");
+    } else if (isMinStayBlocked) {
+      button.classList.add(canDepart ? "booking-day-checkout-capable" : "booking-day-blocked");
     }
 
-    if (isSelectedStart || isSelectedEnd) {
-      button.classList.add("booking-day-selected");
-    }
-
-    button.setAttribute("aria-label", new Intl.DateTimeFormat(locale, {
+    const ariaDate = new Intl.DateTimeFormat(locale, {
       weekday: "long",
       day: "numeric",
       month: "long",
       year: "numeric",
-    }).format(date));
+    }).format(date);
+    button.setAttribute(
+      "aria-label",
+      isBlocked && canDepart ? `${ariaDate}, ${texts.calendarDeparture}` : ariaDate,
+    );
 
-    if (!(isPast || isBlocked || isMinStayBlocked || isCalendarUnavailable)) {
+    if (isSelectable) {
       button.addEventListener("click", () => handleCalendarSelection(dateKey));
+      button.addEventListener("mouseenter", () => applyRangePreview(dateKey));
+      button.addEventListener("mouseleave", () => applyRangePreview(null));
+      button.addEventListener("focus", () => applyRangePreview(dateKey));
+      button.addEventListener("blur", () => applyRangePreview(null));
     }
 
     const dayNumber = document.createElement("span");
@@ -547,7 +563,9 @@
       state.textContent = texts.calendarDeparture;
     } else if (isCalendarUnavailable) {
       state.textContent = "";
-    } else if (isBlocked || isMinStayBlocked || isPast) {
+    } else if ((isBlocked || isMinStayBlocked) && canDepart) {
+      state.textContent = texts.calendarDeparture;
+    } else if (isPast || isBlocked || isMinStayBlocked) {
       state.textContent = "";
     } else if (nightlyRateByDate.has(dateKey)) {
       state.textContent = formatDayPrice(nightlyRateByDate.get(dateKey));
@@ -570,34 +588,107 @@
       if (dateKey === fields.checkInDate.value) {
         fields.checkInDate.value = "";
         fields.checkOutDate.value = "";
-      } else if (dateKey < fields.checkInDate.value || rangeContainsBlockedDate(fields.checkInDate.value, dateKey)) {
+      } else if (isValidCheckoutFor(fields.checkInDate.value, dateKey)) {
+        fields.checkOutDate.value = dateKey;
+      } else if (isSelectableArrival(dateKey)) {
+        // Start a fresh range from the clicked day (covers clicking a free
+        // day before the current arrival, or after a blocked gap).
         fields.checkInDate.value = dateKey;
         fields.checkOutDate.value = "";
-      } else {
-        fields.checkOutDate.value = dateKey;
       }
-    } else {
+    } else if (isSelectableArrival(dateKey)) {
+      // Start a fresh range from the clicked day.
       fields.checkInDate.value = dateKey;
       fields.checkOutDate.value = "";
+    } else if (isValidCheckoutFor(fields.checkInDate.value, dateKey)) {
+      // The clicked day cannot start a new stay (e.g. a booked night) but
+      // is a valid check-out from the current arrival: adjust departure only.
+      fields.checkOutDate.value = dateKey;
     }
 
     fields.checkOutDate.min = fields.checkInDate.value
-      ? nextAvailableDate(fields.checkInDate.value)
+      ? getMinimumCheckoutFor(fields.checkInDate.value)
       : getDefaultCheckOutMin();
     renderCalendars();
     setAvailabilityGuidance();
     handleQuoteRefresh();
   }
 
-  function nextAvailableDate(startDateKey) {
-    const cursor = new Date(`${startDateKey}T00:00:00`);
-    cursor.setDate(cursor.getDate() + 1);
+  // A date is a valid check-out when every night between check-in and that
+  // day is free. The check-out day itself may be blocked: the next guest
+  // arrives that evening, so leaving that morning is perfectly fine.
+  function isValidCheckoutFor(checkInKey, checkoutKey) {
+    if (!checkInKey || !checkoutKey || checkoutKey <= checkInKey) {
+      return false;
+    }
+    if (checkoutKey < getMinimumCheckoutFor(checkInKey)) {
+      return false;
+    }
+    if (blockedDates.has(checkInKey)) {
+      return false;
+    }
+    return !rangeContainsBlockedDate(checkInKey, checkoutKey);
+  }
 
-    while (blockedDates.has(formatDateKey(cursor))) {
-      cursor.setDate(cursor.getDate() + 1);
+  function isSelectableArrival(dateKey) {
+    return (
+      dateKey >= fields.checkInDate.min &&
+      !blockedDates.has(dateKey) &&
+      canStartStayOn(dateKey)
+    );
+  }
+
+  function getMinimumCheckoutFor(checkInKey) {
+    return formatDateKey(addDaysTo(checkInKey, minimumStayNights));
+  }
+
+  function addDaysTo(dateKey, days) {
+    const cursor = new Date(`${dateKey}T00:00:00`);
+    cursor.setDate(cursor.getDate() + days);
+    return cursor;
+  }
+
+  // Live range preview while hovering/focusing a potential check-out day.
+  function applyRangePreview(dateKey) {
+    clearRangePreview();
+
+    const checkInKey = fields.checkInDate.value;
+    const checkOutKey = fields.checkOutDate.value;
+    if (!checkInKey || checkOutKey || !dateKey || dateKey <= checkInKey) {
+      return;
+    }
+    if (!isValidCheckoutFor(checkInKey, dateKey)) {
+      return;
     }
 
-    return formatDateKey(cursor);
+    dayButtonsByKey.forEach((dayEl, key) => {
+      if (key > checkInKey && key < dateKey) {
+        dayEl.classList.add("booking-day-preview-in-range");
+      }
+    });
+
+    const checkoutEl = dayButtonsByKey.get(dateKey);
+    if (checkoutEl) {
+      checkoutEl.classList.add("booking-day-preview-checkout");
+      const state = checkoutEl.querySelector(".booking-day-state");
+      if (state) {
+        checkoutEl.dataset.restingStateText = state.textContent;
+        state.textContent = texts.calendarDeparture;
+      }
+    }
+  }
+
+  function clearRangePreview() {
+    dayButtonsByKey.forEach((dayEl) => {
+      dayEl.classList.remove("booking-day-preview-in-range", "booking-day-preview-checkout");
+      if (dayEl.dataset.restingStateText !== undefined) {
+        const state = dayEl.querySelector(".booking-day-state");
+        if (state) {
+          state.textContent = dayEl.dataset.restingStateText;
+        }
+        delete dayEl.dataset.restingStateText;
+      }
+    });
   }
 
   function isDateInsideSelectedRange(dateKey) {
@@ -638,24 +729,12 @@
   }
 
   function hasSelectableDepartureAfter(startKey) {
-    const earliestCheckout = new Date(`${startKey}T00:00:00`);
-    earliestCheckout.setDate(earliestCheckout.getDate() + minimumStayNights);
-
-    const cursor = new Date(earliestCheckout);
-
-    while (true) {
-      const dateKey = formatDateKey(cursor);
-
-      if (blockedDates.has(dateKey)) {
-        return false;
-      }
-
-      if (!rangeContainsBlockedDate(startKey, dateKey)) {
-        return true;
-      }
-
-      cursor.setDate(cursor.getDate() + 1);
+    if (!canStartStayOn(startKey)) {
+      return false;
     }
+    // The earliest possible check-out must only have free nights before it;
+    // the check-out day itself may be blocked by the next guest's arrival.
+    return !rangeContainsBlockedDate(startKey, getMinimumCheckoutFor(startKey));
   }
 
   function expandBlockedDates(ranges) {
@@ -811,9 +890,7 @@
     fields.checkOutDate.value = checkOutDate || "";
 
     if (fields.checkInDate.value) {
-      const nextDay = new Date(`${fields.checkInDate.value}T00:00:00`);
-      nextDay.setDate(nextDay.getDate() + 1);
-      fields.checkOutDate.min = toDateInputValue(nextDay);
+      fields.checkOutDate.min = getMinimumCheckoutFor(fields.checkInDate.value);
       currentMonthCursor = startOfMonth(new Date(`${fields.checkInDate.value}T00:00:00`));
     } else {
       fields.checkOutDate.min = getDefaultCheckOutMin();

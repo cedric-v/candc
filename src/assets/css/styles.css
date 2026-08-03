@@ -419,6 +419,11 @@ a:hover {
   background: rgba(91, 110, 125, 0.28);
 }
 
+.booking-calendar-dot-checkout {
+  background: transparent;
+  border: 1.5px dashed rgba(45, 80, 22, 0.6);
+}
+
 .booking-calendar-toolbar {
   display: flex;
   justify-content: space-between;
@@ -569,6 +574,46 @@ a:hover {
 
 .booking-day-unavailable-data .booking-day-state {
   color: rgba(91, 110, 125, 0.58);
+}
+
+/* A night that is already booked by the next arrival, but which can still be
+   used as a check-out day (the guest leaves in the morning, the next guest
+   arrives in the evening). Kept clickable, shown as a dashed departure day. */
+.booking-day-checkout-capable {
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.98);
+  border: 1px dashed rgba(45, 80, 22, 0.45);
+  color: var(--text-color);
+}
+
+.booking-day-checkout-capable:hover {
+  border-color: var(--primary-color);
+  transform: translateY(-1px);
+}
+
+.booking-day-checkout-capable .booking-day-state {
+  color: var(--primary-color);
+  font-weight: 700;
+}
+
+/* Live range preview while hovering a potential check-out day. */
+.booking-day-preview-in-range {
+  background: rgba(45, 80, 22, 0.1);
+  border-color: rgba(45, 80, 22, 0.22);
+}
+
+.booking-day-preview-in-range .booking-day-number {
+  color: var(--primary-color);
+}
+
+.booking-day-preview-checkout {
+  background: rgba(45, 80, 22, 0.08);
+  border: 1px solid var(--primary-color);
+}
+
+.booking-day-preview-checkout .booking-day-state {
+  color: var(--primary-color);
+  font-weight: 700;
 }
 
 .booking-day-blocked,
