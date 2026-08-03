@@ -182,8 +182,8 @@ Sources :
 
 Variables non secretes possibles :
 
-- `PUBLIC_BASE_URL`
-- `DEFAULT_BOOKING_UNIT_CODE`
+- `PUBLIC_BASE_URL` — requis, base de l'URL publique du site
+- `DEFAULT_BOOKING_UNIT_CODE` — code d'unite par defaut (`parking-space`)
 - `TOURIST_TAX_ADULT_CHF`
 - `WC_SHOWER_CLEANING_FEE_CHF`
 - `PAYMENT_FEE_RATE`
@@ -192,17 +192,29 @@ Variables non secretes possibles :
 - `DEFAULT_CHECK_IN_TIME`
 - `DEFAULT_CHECK_IN_END_TIME`
 - `DEFAULT_CHECK_OUT_TIME`
-- `ADMIN_NOTIFICATION_EMAIL`
-- `EMAIL_FROM`
-- `EMAIL_REPLY_TO`
+- `ENABLE_GOOGLE_CALENDAR_SYNC` — `true` pour activer la synchronisation Google Calendar (sinon `false`)
+- `MIN_STAY_NIGHTS_PARKING_SPACE`
+- `MIN_STAY_NIGHTS_ECO_STUDIO`
+- `ADMIN_NOTIFICATION_EMAIL` — destinataire en copie de chaque e-mail transactionnel
+- `EMAIL_FROM` — expediteur des e-mails transactionnels (format `Nom <adresse@domaine>`) ; requis, l'envoi est desactive tant qu'il manque
+- `EMAIL_REPLY_TO` — adresse de reponse ; si absente, les reponses partent vers l'expediteur
+- `GARAGE_INSTRUCTIONS` — JSON objet cle par code de langue (`fr`, `en`, `de`, `es`, `pt`, `it`, `nl`) ; injecte le contenu du placeholder `__GARAGE_INSTRUCTIONS__` dans l'e-mail d'arrivee parking. Valeur `{}` = aucune instruction. Le JSON doit rester valide : les retours a la ligne dans un texte doivent etre echappes en `\n` (des retours a la ligne bruts rendent le JSON invalide et l'instruction est silencieusement ignoree).
+- `WHATSAPP_LINE` — ligne WhatsApp de contact ; injecte dans `__WHATSAPP_LINE__` des e-mails
+- `STUDIO_ADDRESS` — adresse du studio ; injecte dans `__STUDIO_ADDRESS__` (confirmation et arrivee studio). Accepte une chaine simple **ou** un objet JSON cle par langue (`fr`/`en`/`de`...) pour localiser le nom du pays ; les langues sans cle reçoivent la valeur anglaise
+- `KEY_BOX_STUDIO_CODE` — code de la boite a cle studio ; injecte dans `__KEY_BOX_STUDIO_CODE__`
+- `SUMUP_API_BASE_URL`
 
 Secrets ou valeurs sensibles :
 
 - `SUMUP_API_KEY`
 - `SUMUP_MERCHANT_CODE`
+- `SUMUP_WEBHOOK_SECRET` — verifie la signature HMAC-SHA256 du webhook SumUp
 - `INTERNAL_SYNC_TOKEN`
 - `ADMIN_ACCESS_TOKEN`
 - `RESEND_API_KEY`
+- `NTFY_TOPIC_URL` — URL du topic ntfy.sh pour les notifications push hote
+- `WIFI_STUDIO_PASSWORD` — mot de passe Wi-Fi devant le garage (`__WIFI_STUDIO_PASSWORD__`)
+- `WIFI_TERRACE_PASSWORD` — mot de passe Wi-Fi de la terrasse (`__WIFI_TERRACE_PASSWORD__`)
 - `GOOGLE_SERVICE_ACCOUNT_EMAIL`
 - `GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY`
 
@@ -311,9 +323,9 @@ Important :
 
 Variables :
 
-- `RESEND_API_KEY`
-- `EMAIL_FROM`
-- `EMAIL_REPLY_TO`
+- `RESEND_API_KEY` (secret)
+- `EMAIL_FROM` — expediteur (format `Nom <adresse@domaine>`), requis : l'envoi est desactive tant qu'il manque
+- `EMAIL_REPLY_TO` — adresse de reponse ; si vide, les reponses partent vers l'expediteur
 
 ### Admin
 
