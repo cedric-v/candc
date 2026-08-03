@@ -32,6 +32,8 @@ export function getConfig(env) {
     checkInTime: env.DEFAULT_CHECK_IN_TIME || "15:00:00",
     checkInEndTime: env.DEFAULT_CHECK_IN_END_TIME || "21:00:00",
     checkOutTime: env.DEFAULT_CHECK_OUT_TIME || "10:00:00",
+    // Per-week rate for optional indoor WC-shower access (covers the first
+    // 7 nights, then CHF 10 per additional commenced week).
     wcShowerCleaningFeeChf: getNumberEnv(env, "WC_SHOWER_CLEANING_FEE_CHF", 10),
     touristTaxAdultChf: getNumberEnv(env, "TOURIST_TAX_ADULT_CHF", 3),
     paymentFeeRate: getNumberEnv(env, "PAYMENT_FEE_RATE", 0),

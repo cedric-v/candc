@@ -44,8 +44,8 @@
     "bookingRulesList": [
       "Pas de fêtes"
     ],
-    "wcShower": "Ajouter l'accès au WC-douche intérieure (10 CHF / séjour)",
-    "wcShowerNote": "Disponible sur demande lorsque nous sommes sur place, généralement entre 7h00 et 21h00.",
+    "wcShower": "Ajouter l'accès au WC-douche intérieure (10 CHF / semaine entamée)",
+    "wcShowerNote": "10 CHF pour les 7 premières nuits, puis 10 CHF par semaine entamée. Disponible sur demande lorsque nous sommes sur place, généralement entre 7h00 et 21h00.",
     "nonRefundable": "Choisir le tarif non remboursable pour obtenir 10 % de remise",
     "nonRefundableHint": "Ce choix n'est possible que si l'arrivée est dans plus de 24 heures.",
     "guestTitle": "Coordonnées",
@@ -162,8 +162,8 @@
     "bookingRulesList": [
       "No parties"
     ],
-    "wcShower": "Add indoor toilet and shower access (CHF 10 / stay)",
-    "wcShowerNote": "Available on request when we are on site, usually between 7 a.m. and 9 p.m.",
+    "wcShower": "Add indoor toilet and shower access (CHF 10 / commenced week)",
+    "wcShowerNote": "CHF 10 for the first 7 nights, then CHF 10 per commenced week. Available on request when we are on site, usually between 7 a.m. and 9 p.m.",
     "nonRefundable": "Choose the non-refundable rate to get a 10% discount",
     "nonRefundableHint": "This option is only available when arrival is more than 24 hours away.",
     "guestTitle": "Guest details",
@@ -276,8 +276,8 @@
     "bookingRulesList": [
       "Keine Partys"
     ],
-    "wcShower": "Innen-WC und Dusche hinzufugen (10 CHF / Aufenthalt)",
-    "wcShowerNote": "Auf Anfrage verfugbar, wenn wir vor Ort sind, normalerweise zwischen 7:00 und 21:00 Uhr.",
+    "wcShower": "Innen-WC und Dusche hinzufugen (10 CHF / angefangene Woche)",
+    "wcShowerNote": "10 CHF fur die ersten 7 Nachte, danach 10 CHF pro angefangener Woche. Auf Anfrage verfugbar, wenn wir vor Ort sind, normalerweise zwischen 7:00 und 21:00 Uhr.",
     "nonRefundable": "Nicht erstattbare Rate fur 10 % Rabatt wahlen",
     "nonRefundableHint": "Diese Option ist nur moglich, wenn die Anreise mehr als 24 Stunden entfernt ist.",
     "guestTitle": "Kontaktdaten",
@@ -390,8 +390,8 @@
     "bookingRulesList": [
       "No fiestas"
     ],
-    "wcShower": "Anadir acceso al WC-ducha interior (10 CHF / estancia)",
-    "wcShowerNote": "Disponible bajo peticion cuando estamos en el lugar, normalmente entre las 7:00 y las 21:00.",
+    "wcShower": "Anadir acceso al WC-ducha interior (10 CHF / semana iniciada)",
+    "wcShowerNote": "10 CHF por las 7 primeras noches, luego 10 CHF por semana iniciada. Disponible bajo peticion cuando estamos en el lugar, normalmente entre las 7:00 y las 21:00.",
     "nonRefundable": "Elegir la tarifa no reembolsable para obtener un 10 % de descuento",
     "nonRefundableHint": "Esta opcion solo esta disponible si la llegada es dentro de mas de 24 horas.",
     "guestTitle": "Datos del viajero",
@@ -504,8 +504,8 @@
     "bookingRulesList": [
       "Sem festas"
     ],
-    "wcShower": "Adicionar acesso ao WC-duche interior (10 CHF / estadia)",
-    "wcShowerNote": "Disponivel mediante pedido quando estamos no local, normalmente entre as 7h00 e as 21h00.",
+    "wcShower": "Adicionar acesso ao WC-duche interior (10 CHF / semana iniciada)",
+    "wcShowerNote": "10 CHF pelas 7 primeiras noites, depois 10 CHF por semana iniciada. Disponivel mediante pedido quando estamos no local, normalmente entre as 7h00 e as 21h00.",
     "nonRefundable": "Escolher a tarifa nao reembolsavel para obter 10% de desconto",
     "nonRefundableHint": "Esta opcao so esta disponivel se a chegada for dentro de mais de 24 horas.",
     "guestTitle": "Dados do hospede",
@@ -618,8 +618,8 @@
     "bookingRulesList": [
       "Niente feste"
     ],
-    "wcShower": "Aggiungi accesso a WC-doccia interna (10 CHF / soggiorno)",
-    "wcShowerNote": "Disponibile su richiesta quando siamo sul posto, di solito tra le 7:00 e le 21:00.",
+    "wcShower": "Aggiungi accesso a WC-doccia interna (10 CHF / settimana iniziata)",
+    "wcShowerNote": "10 CHF per le prime 7 notti, poi 10 CHF per ogni settimana iniziata. Disponibile su richiesta quando siamo sul posto, di solito tra le 7:00 e le 21:00.",
     "nonRefundable": "Scegli la tariffa non rimborsabile per ottenere il 10% di sconto",
     "nonRefundableHint": "Questa opzione e disponibile solo se l'arrivo e tra piu di 24 ore.",
     "guestTitle": "Dati del viaggiatore",
@@ -732,8 +732,8 @@
     "bookingRulesList": [
       "Geen feesten"
     ],
-    "wcShower": "Toegang tot binnen-wc en douche toevoegen (10 CHF / verblijf)",
-    "wcShowerNote": "Beschikbaar op aanvraag wanneer wij ter plaatse zijn, meestal tussen 7.00 en 21.00 uur.",
+    "wcShower": "Toegang tot binnen-wc en douche toevoegen (10 CHF / begonnen week)",
+    "wcShowerNote": "10 CHF voor de eerste 7 nachten, daarna 10 CHF per begonnen week. Beschikbaar op aanvraag wanneer wij ter plaatse zijn, meestal tussen 7.00 en 21.00 uur.",
     "nonRefundable": "Kies het niet-terugbetaalbare tarief voor 10% korting",
     "nonRefundableHint": "Deze optie is alleen beschikbaar als de aankomst meer dan 24 uur later is.",
     "guestTitle": "Gegevens van de gast",

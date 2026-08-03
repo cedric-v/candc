@@ -160,8 +160,56 @@ function runPricingTests() {
 
   assertEqual(parkingQuote.baseAmount, 40, "Parking base amount should total nightly rates");
   assertEqual(parkingQuote.touristTaxAmount, 12, "Parking tourist tax should charge adults only");
-  assertEqual(parkingQuote.optionsAmount, 10, "Parking WC-shower should add a flat CHF 10");
+  assertEqual(parkingQuote.optionsAmount, 10, "Parking WC-shower should cost CHF 10 for a 2-night stay (first 7 nights)");
   assertEqual(parkingQuote.totalAmount, 63.55, "Parking total should include 2.5% payment fee");
+
+  const parkingWc8NightQuote = calculateQuoteFromResolvedUnit(
+    {
+      ...parking,
+      unitType: parking.unitType,
+      displayName: parking.displayName,
+      checkInStartTime: parking.checkInStartTime,
+      currency: parking.currency,
+    },
+    createNightlyRates("2027-06-01", 8, 20),
+    {
+      unitCode: "parking-space",
+      checkInDate: "2027-06-01",
+      checkOutDate: "2027-06-09",
+      adults: 1,
+      children: 0,
+      infants: 0,
+      wcShowerRequested: true,
+      nonRefundableSelected: false,
+    },
+    config,
+  );
+
+  assertEqual(parkingWc8NightQuote.optionsAmount, 20, "Parking WC-shower should cost CHF 20 for an 8-night stay (second commenced week)");
+
+  const parkingWc15NightQuote = calculateQuoteFromResolvedUnit(
+    {
+      ...parking,
+      unitType: parking.unitType,
+      displayName: parking.displayName,
+      checkInStartTime: parking.checkInStartTime,
+      currency: parking.currency,
+    },
+    createNightlyRates("2027-06-01", 15, 20),
+    {
+      unitCode: "parking-space",
+      checkInDate: "2027-06-01",
+      checkOutDate: "2027-06-16",
+      adults: 1,
+      children: 0,
+      infants: 0,
+      wcShowerRequested: true,
+      nonRefundableSelected: false,
+    },
+    config,
+  );
+
+  assertEqual(parkingWc15NightQuote.optionsAmount, 30, "Parking WC-shower should cost CHF 30 for a 15-night stay (third commenced week)");
 
   const parkingLongStayQuote = calculateQuoteFromResolvedUnit(
     {

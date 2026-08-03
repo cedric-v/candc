@@ -25,6 +25,9 @@ export function calculateQuoteFromResolvedUnit(unit, nightlyRates, input, config
   const unitSettings = unit.settings || {};
   const adultTouristTaxChf =
     unitSettings.adultTouristTaxChf ?? config.touristTaxAdultChf;
+  // Per-week rate for the optional indoor WC-shower access: CHF 10 covers the
+  // first 7 nights, then CHF 10 per additional commenced week (no longer a
+  // one-time fee).
   const wcShowerCleaningFeeChf =
     unitSettings.wcShowerCleaningFeeChf ?? config.wcShowerCleaningFeeChf;
   const nonRefundableDiscountRate =
@@ -53,7 +56,10 @@ export function calculateQuoteFromResolvedUnit(unit, nightlyRates, input, config
   const cleaningFeeAmount = (cleaningFeeChf > 0 && nights < cleaningFeeThresholdNights)
     ? roundMoney(cleaningFeeChf)
     : 0;
-  const optionsAmount = (wcShowerRequested ? roundMoney(wcShowerCleaningFeeChf) : 0) + cleaningFeeAmount;
+  const wcShowerAmount = wcShowerRequested
+    ? roundMoney(Math.ceil(nights / 7) * wcShowerCleaningFeeChf)
+    : 0;
+  const optionsAmount = wcShowerAmount + cleaningFeeAmount;
 
   const accommodationAmount = roundMoney(baseAmount + guestSurchargeAmount);
   const appliedLongStayTier = resolveLongStayDiscountTier(unitSettings, nights);

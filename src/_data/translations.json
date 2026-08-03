@@ -80,7 +80,7 @@
       "description": "Place de stationnement tout équipée située en bordure de village, proche de Fribourg, avec vue sur les champs",
       "equipment": "Place de stationnement, prise électrique domestique suisse (type J / T11, 10 A), gestion des déchets, Wi-Fi rapide, robinet extérieur (eau potable au robinet), terrasse avec vue",
       "note": "Le camping-car / van n'est pas fourni, c'est à vous d'arriver avec le vôtre",
-      "toilet": "Accès à une toilette et une douche disponibles sur demande entre 7 h et 21 h, lorsque nous sommes sur place. Service optionnel moyennant 10 CHF de frais de nettoyage pour tout le séjour. Merci de vérifier la disponibilité en nous écrivant.",
+      "toilet": "Accès à une toilette et une douche disponibles sur demande entre 7 h et 21 h, lorsque nous sommes sur place. Service optionnel : 10 CHF pour les 7 premières nuits, puis 10 CHF par semaine supplémentaire. Merci de vérifier la disponibilité en nous écrivant.",
       "evChargingTitle": "🔌 Recharge voiture électrique",
       "evCharging": "Recharge voiture électrique (charge lente) : 15 CHF (10h) ou 30 CHF (journée/nuit complète)",
       "evCable": "Câble compatible Type 13 (220V, 10A) avec connecteur Type 2",
@@ -135,7 +135,7 @@
       "terraceParkView": "Terrasse avec vue sur la place",
       "toilet": "Toilettes et douche",
       "waterFaucet": "Robinet d'eau potable et gestion des déchets",
-      "indoorToiletShower": "WC-douche intérieure sur demande et avec supplément de nettoyage"
+      "indoorToiletShower": "WC-douche intérieure sur demande (10 CHF / semaine)"
     },
     "payment": {
       "title": "Moyens de paiement",
@@ -237,7 +237,7 @@
       "description": "Fully equipped parking space located on the edge of a village, overlooking fields",
       "equipment": "Parking space, Swiss domestic electrical outlet (type J / T11, 10 A), waste management, fast WiFi, outside tap (potable tap water), terrace with view",
       "note": "The motorhome / RV / van is not provided; you have to bring your own",
-      "toilet": "Access to a toilet and shower available on request between 7 a.m. and 9 p.m., when we are on site. Optional service for a 10 CHF cleaning fee for the entire stay. Please check availability by writing to us.",
+      "toilet": "Access to a toilet and shower available on request between 7 a.m. and 9 p.m., when we are on site. Optional service: CHF 10 for the first 7 nights, then CHF 10 per additional week. Please check availability by writing to us.",
       "evChargingTitle": "🔌 Electric car charging",
       "evCharging": "Electric vehicle charging (slow charge): 15 CHF (10h) or 30 CHF (full day/night)",
       "evCable": "Type 13 compatible cable (220V, 10A) with Type 2 connector",
@@ -292,7 +292,7 @@
       "terraceParkView": "Terrace with view of the spot",
       "toilet": "Toilet and shower",
       "waterFaucet": "Drinking water tap and waste management",
-      "indoorToiletShower": "Indoor toilet/shower on request and with cleaning fee"
+      "indoorToiletShower": "Indoor toilet/shower on request (CHF 10 / week)"
     },
     "payment": {
       "title": "Payment methods",
@@ -394,7 +394,7 @@
       "description": "Voll ausgestatteter Stellplatz am Dorfrand mit Blick auf Felder",
       "equipment": "Parkplatz, Schweizer Haushaltssteckdose (Typ J / T11, 10 A), Abfallentsorgung, schnelles WiFi, Außenwasserhahn (Trinkwasser aus dem Hahn), Terrasse mit Aussicht",
       "note": "Das Motorhome / Van wird nicht gestellt; Sie müssen Ihr eigenes mitbringen",
-      "toilet": "Zugang zu einer Toilette und einer Dusche auf Anfrage zwischen 7:00 und 21:00 Uhr möglich, wenn wir vor Ort sind. Optionaler Service gegen eine Reinigungsgebühr von 10 CHF für den gesamten Aufenthalt. Bitte prüfen Sie die Verfügbarkeit, indem Sie uns schreiben.",
+      "toilet": "Zugang zu einer Toilette und einer Dusche auf Anfrage zwischen 7:00 und 21:00 Uhr möglich, wenn wir vor Ort sind. Optionaler Service: 10 CHF für die ersten 7 Nächte, danach 10 CHF pro zusätzlicher Woche. Bitte prüfen Sie die Verfügbarkeit, indem Sie uns schreiben.",
       "evChargingTitle": "🔌 Elektroauto-Ladung",
       "evCharging": "Laden von Elektroautos (langsames Laden): 15 CHF (10h) oder 30 CHF (ganzer Tag/Nacht)",
       "evCable": "Typ 13 kompatibles Kabel (220V, 10A) mit Typ 2 Stecker",
@@ -449,7 +449,7 @@
       "terraceParkView": "Terrasse mit Blick auf den Platz",
       "toilet": "Toilette und Dusche",
       "waterFaucet": "Trinkwasserhahn und Abfallentsorgung",
-      "indoorToiletShower": "Innen-WC/Dusche auf Anfrage und gegen Reinigungsgebühr"
+      "indoorToiletShower": "Innen-WC/Dusche auf Anfrage (10 CHF / Woche)"
     },
     "payment": {
       "title": "Zahlungsmethoden",
@@ -551,7 +551,7 @@
       "description": "Plaza de aparcamiento totalmente equipada situada en el borde de un pueblo, con vistas a los campos",
       "equipment": "Plaza de aparcamiento, toma de corriente doméstica suiza (tipo J / T11, 10 A), gestión de residuos, WiFi rápido, grifo exterior (agua potable del grifo), terraza con vistas",
       "note": "La autocaravana / furgoneta no se proporciona; debe traer la suya propia",
-      "toilet": "Acceso a un aseo y una ducha disponibles bajo petición entre las 7:00 y las 21:00, cuando estemos presentes. Servicio opcional con un cargo de limpieza de 10 CHF para toda la estancia. Por favor, compruebe la disponibilidad escribiéndonos.",
+      "toilet": "Acceso a un aseo y una ducha disponibles bajo petición entre las 7:00 y las 21:00, cuando estemos presentes. Servicio opcional: 10 CHF por las 7 primeras noches, luego 10 CHF por semana adicional. Por favor, compruebe la disponibilidad escribiéndonos.",
       "evChargingTitle": "🔌 Carga de coche eléctrico",
       "evCharging": "Carga de coche eléctrico (carga lenta): 15 CHF (10h) o 30 CHF (día/noche completa)",
       "evCable": "Cable compatible con Tipo 13 (220V, 10A) con conector Tipo 2",
@@ -606,7 +606,7 @@
       "terraceParkView": "Terraza con vista a la plaza",
       "toilet": "Inodoro y ducha",
       "waterFaucet": "Grifo de agua potable y gestión de residuos",
-      "indoorToiletShower": "WC/ducha interior bajo petición y con suplemento de limpieza"
+      "indoorToiletShower": "WC/ducha interior bajo petición (10 CHF / semana)"
     },
     "payment": {
       "title": "Métodos de pago",
@@ -708,7 +708,7 @@
       "description": "Lugar de estacionamento totalmente equipado localizado na borda de uma aldeia, com vista para os campos",
       "equipment": "Lugar de estacionamento, tomada elétrica doméstica suíça (tipo J / T11, 10 A), gestão de resíduos, WiFi rápido, torneira exterior (água potável da torneira), terraço com vista",
       "note": "A autocaravana / carrinha não é fornecida; tem de trazer a sua própria",
-      "toilet": "Acesso a uma sanita e um duche disponíveis mediante pedido entre as 7h e as 21h, quando estivermos no local. Serviço opcional com uma taxa de limpeza de 10 CHF para toda a estadia. Por favor, verifique a disponibilidade escrevendo-nos.",
+      "toilet": "Acesso a uma sanita e um duche disponíveis mediante pedido entre as 7h e as 21h, quando estivermos no local. Serviço opcional: 10 CHF pelas 7 primeiras noites, depois 10 CHF por semana adicional. Por favor, verifique a disponibilidade escrevendo-nos.",
       "evChargingTitle": "🔌 Carregamento de carro elétrico",
       "evCharging": "Carregamento de carro elétrico (charge lente): 15 CHF (10h) ou 30 CHF (dia/noite completa)",
       "evCable": "Cabo compatível com Tipo 13 (220V, 10A) com conector Tipo 2",
@@ -763,7 +763,7 @@
       "terraceParkView": "Terraço com vista para o lugar",
       "toilet": "Sanitário e duche",
       "waterFaucet": "Torneira de água potável e gestão de resíduos",
-      "indoorToiletShower": "WC/duche interior mediante pedido e com taxa de limpeza"
+      "indoorToiletShower": "WC/duche interior mediante pedido (10 CHF / semana)"
     },
     "payment": {
       "title": "Métodos de pagamento",
@@ -865,7 +865,7 @@
       "description": "Posto auto completamente attrezzato situato ai margini di un villaggio, con vista sui campi",
       "equipment": "Posto auto, presa elettrica domestica svizzera (tipo J / T11, 10 A), gestione dei rifiuti, Wi-Fi veloce, rubinetto esterno (acqua potabile dal rubinetto), terrazza con vista",
       "note": "Il camper / van non viene fornito; devi portare il tuo",
-      "toilet": "Accesso a un bagno e una doccia disponibili su richiesta tra le 7:00 e le 21:00, quando siamo presenti. Servizio opzionale con un supplemento per la pulizia di 10 CHF per l'intero soggiorno. Si prega di verificare la disponibilità scrivendoci.",
+      "toilet": "Accesso a un bagno e una doccia disponibili su richiesta tra le 7:00 e le 21:00, quando siamo presenti. Servizio opzionale: 10 CHF per le prime 7 notti, poi 10 CHF a settimana aggiuntiva. Si prega di verificare la disponibilità scrivendoci.",
       "evChargingTitle": "🔌 Ricarica auto elettrica",
       "evCharging": "Ricarica auto elettrica (ricarica lenta): 15 CHF (10h) o 30 CHF (giorno/notte completa)",
       "evCable": "Cavo compatibile Tipo 13 (220V, 10A) con connettore Tipo 2",
@@ -920,7 +920,7 @@
       "terraceParkView": "Terrazza con vista sulla piazzola",
       "toilet": "WC e doccia",
       "waterFaucet": "Rubinetto dell'acqua potabile e gestione dei rifiuti",
-      "indoorToiletShower": "WC-doccia interna su richiesta e con supplemento di pulizia"
+      "indoorToiletShower": "WC-doccia interna su richiesta (10 CHF / settimana)"
     },
     "payment": {
       "title": "Metodi di pagamento",
@@ -1022,7 +1022,7 @@
       "description": "Volledig uitgeruste parkeerplaats gelegen aan de rand van een dorp, met uitzicht op de velden",
       "equipment": "Parkeerplaats, Zwitsers huishoudelijk stopcontact (type J / T11, 10 A), afvalbeheer, snelle WiFi, buitenkraan (drinkwater uit de kraan), terras met uitzicht",
       "note": "De camper / busje is niet inbegrepen; u dient uw eigen mee te nemen",
-      "toilet": "Toegang tot toilet en douche op aanvraag beschikbaar tussen 7.00 en 21.00 uur, wanneer we aanwezig zijn. Optionele service met 10 CHF schoonmaakkosten voor het gehele verblijf. Controleer de beschikbaarheid door ons te schrijven.",
+      "toilet": "Toegang tot toilet en douche op aanvraag beschikbaar tussen 7.00 en 21.00 uur, wanneer we aanwezig zijn. Optionele service: 10 CHF voor de eerste 7 nachten, daarna 10 CHF per extra week. Controleer de beschikbaarheid door ons te schrijven.",
       "evChargingTitle": "🔌 Opladen van elektrische auto's",
       "evCharging": "Opladen van elektrische voertuigen (langzaam laden): 15 CHF (10u) of 30 CHF (volledige dag/nacht)",
       "evCable": "Type 13 compatibele kabel (220V, 10A) met Type 2 connector",
@@ -1077,7 +1077,7 @@
       "terraceParkView": "Terras met uitzicht op de parkeerplaats",
       "toilet": "Toilet en douche",
       "waterFaucet": "Drinkwaterkraan en afvalbeheer",
-      "indoorToiletShower": "Binnen WC/douche op aanvraag en tegen schoonmaakkosten"
+      "indoorToiletShower": "Binnen WC/douche op aanvraag (10 CHF / week)"
     },
     "payment": {
       "title": "Betaalmethoden",

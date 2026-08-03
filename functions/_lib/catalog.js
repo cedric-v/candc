@@ -22,6 +22,8 @@ export const DEFAULT_UNITS = [
       requiresVehicleType: true,
       allowsWcShowerOption: true,
       adultTouristTaxChf: 3,
+      // CHF per commenced week for optional indoor WC-shower access (10 CHF
+      // covers the first 7 nights, then +10 CHF per additional week).
       wcShowerCleaningFeeChf: 10,
       longStayDiscountTiers: [
         { minNights: 7, rate: 0.1 },

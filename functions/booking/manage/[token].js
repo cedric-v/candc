@@ -57,7 +57,7 @@ export function onRequestGet(context) {
           </div>
           <label class="checkbox">
             <input id="wcShowerRequested" name="wcShowerRequested" type="checkbox" toolparamdescription="Set to true to add or keep indoor WC-shower access for the reservation.">
-            <span>Add or keep indoor WC-shower access (CHF 10 per stay)</span>
+            <span>Add or keep indoor WC-shower access (CHF 10 / week)</span>
           </label>
           <div class="field">
             <label for="remarks">Remarks</label>

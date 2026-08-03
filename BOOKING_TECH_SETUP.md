@@ -86,20 +86,27 @@ Verification recommandee :
 - `PUBLIC_BASE_URL`
 - `DEFAULT_BOOKING_UNIT_CODE`
 - `TOURIST_TAX_ADULT_CHF`
-- `WC_SHOWER_CLEANING_FEE_CHF`
+- `WC_SHOWER_CLEANING_FEE_CHF` — tarif hebdomadaire de l'option WC-douche (10 CHF couvre les 7 premieres nuites, puis 10 CHF par semaine entamee)
 - `PAYMENT_FEE_RATE`
 - `PAYMENT_FEE_FIXED_CHF`
 - `TIMEZONE`
 - `DEFAULT_CHECK_IN_TIME`
+- `DEFAULT_CHECK_IN_END_TIME`
 - `DEFAULT_CHECK_OUT_TIME`
 - `ENABLE_GOOGLE_CALENDAR_SYNC`
 - `MIN_STAY_NIGHTS_PARKING_SPACE`
 - `MIN_STAY_NIGHTS_ECO_STUDIO`
 - `ADMIN_ACCESS_TOKEN`
 - `ADMIN_NOTIFICATION_EMAIL`
-- `EMAIL_FROM`
-- `EMAIL_REPLY_TO`
+- `EMAIL_FROM` — expediteur des e-mails transactionnels (format `Nom <adresse@domaine>`) ; requis pour activer l'envoi
+- `EMAIL_REPLY_TO` — adresse de reponse ; si absente, les reponses vont a l'expediteur
 - `RESEND_API_KEY`
+- `GARAGE_INSTRUCTIONS` — JSON objet cle par code de langue (`fr`, `en`, `de`, `es`, `pt`, `it`, `nl`), injecte dans `__GARAGE_INSTRUCTIONS__` de l'e-mail d'arrivee parking ; `{}` = aucune instruction ; les retours a la ligne d'un texte doivent etre echappes en `\n` pour rester du JSON valide
+- `WIFI_STUDIO_PASSWORD` — secret ; injecte dans `__WIFI_STUDIO_PASSWORD__` (Wi-Fi devant le garage, e-mail d'arrivee parking)
+- `WIFI_TERRACE_PASSWORD` — secret ; injecte dans `__WIFI_TERRACE_PASSWORD__` (Wi-Fi de la terrasse, e-mail d'arrivee parking)
+- `KEY_BOX_STUDIO_CODE` — injecte dans `__KEY_BOX_STUDIO_CODE__` (boite a cle du studio : confirmation, arrivee studio, e-mail de depart)
+- `WHATSAPP_LINE` — ligne WhatsApp de contact (ex. `https://wa.me/41766738311`) ; injecte dans `__WHATSAPP_LINE__` (messages de confirmation et d'arrivee)
+- `STUDIO_ADDRESS` — adresse du studio ; injecte dans `__STUDIO_ADDRESS__` (confirmation et arrivee studio). Accepte une chaine simple **ou** un objet JSON cle par langue (ex. `{"fr": "... Suisse", "en": "... Switzerland", "de": "... Schweiz"}`) ; pour le JSON, les langues sans cle reçoivent la valeur anglaise
 - `SUMUP_API_BASE_URL`
 - `SUMUP_MERCHANT_CODE`
 - `SUMUP_API_KEY`

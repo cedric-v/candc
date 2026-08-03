@@ -100,7 +100,7 @@ Céline et Cédric`,
     indoorAccessNotice:
       "L'accès au WC et à la douche intérieure est disponible sur demande, uniquement lorsque nous sommes sur place, entre 7h00 et 21h00.",
     indoorAccessUpsell:
-      "Ce service optionnel est proposé contre un forfait de nettoyage de CHF 10 pour l'ensemble du séjour.",
+      "Ce service optionnel est proposé au tarif de CHF 10 pour les 7 premières nuits, puis CHF 10 par semaine supplémentaire.",
     manageReservation: "Gérer votre réservation",
     supportLine:
       `Cédric reste disponible si nécessaire via cette messagerie ou WhatsApp __WHATSAPP_LINE__ (messages uniquement)`,
@@ -141,7 +141,7 @@ Céline et Cédric`,
     arrivalWcIncluded:
       "L’accès au WC et à la douche intérieure a été ajouté à votre séjour. Il est disponible sur demande lorsque nous sommes sur place, généralement entre 7h00 et 21h00.",
     arrivalWcUpsell:
-      "L’accès au WC et à la douche intérieure est disponible sur demande entre 7h00 et 21h00 lorsque nous sommes sur place. Ce service optionnel est proposé contre un forfait de nettoyage de CHF 10 pour tout le séjour. Merci de nous contacter pour vérifier la disponibilité.",
+      "L’accès au WC et à la douche intérieure est disponible sur demande entre 7h00 et 21h00 lorsque nous sommes sur place. Ce service optionnel est proposé au tarif de CHF 10 pour les 7 premières nuits, puis CHF 10 par semaine supplémentaire. Merci de nous contacter pour vérifier la disponibilité.",
     arrivalEvCharge:
       "Vous pouvez aussi recharger votre voiture électrique si besoin, lorsque nous sommes sur place. Nous fournissons un câble compatible avec la prise suisse Type 13 (220 V, 10 A) équipé d’un connecteur Type 2. Ce service de recharge lente est proposé en supplément (CHF 15 pour 10h, CHF 30 pour toute la journée ou la nuit).",
     arrivalSupport:
@@ -245,7 +245,7 @@ Celine and Cedric`,    greeting: (name) => `Dear ${name},`,
     indoorAccessNotice:
       "Access to an indoor toilet and shower is available on request, only when we are on site, between 7 a.m. and 9 p.m.",
     indoorAccessUpsell:
-      "This optional service is available for a cleaning fee of CHF 10 for your entire stay.",
+      "This optional service costs CHF 10 for the first 7 nights, then CHF 10 per additional week.",
     manageReservation: "Manage your reservation",
     supportLine:
       `Cédric is available if needed via this messaging system or via WhatsApp __WHATSAPP_LINE__ (messages only)`,
@@ -286,7 +286,7 @@ Celine and Cedric`,    greeting: (name) => `Dear ${name},`,
     arrivalWcIncluded:
       "Indoor toilet and shower access has been added to your stay. It is available on request when we are on site, usually between 7 a.m. and 9 p.m.",
     arrivalWcUpsell:
-      "Access to an indoor toilet and shower is available on request between 7 a.m. and 9 p.m. when we are on site. This optional service is provided for a cleaning fee of CHF 10 for the entire stay. Please contact us to check availability.",
+      "Access to an indoor toilet and shower is available on request between 7 a.m. and 9 p.m. when we are on site. This optional service costs CHF 10 for the first 7 nights, then CHF 10 per additional week. Please contact us to check availability.",
     arrivalEvCharge:
       "You can also charge your electric car if you have one, and we are on site. We supply a charging cable compatible with the Type 13 socket (Swiss domestic: 220 V, 10 A) and fitted with a Type 2 connector. This slow recharging service is available at an additional charge (CHF 15 for 10h, CHF 30 for the whole day or night).",
     arrivalSupport:
@@ -390,7 +390,7 @@ Céline und Cédric`,    greeting: (name) => `Hallo ${name},`,
     indoorAccessNotice:
       "Der Zugang zu Innen-WC und Dusche ist auf Anfrage möglich, nur wenn wir vor Ort sind, zwischen 7:00 und 21:00 Uhr.",
     indoorAccessUpsell:
-      "Dieser optionale Service wird gegen eine Reinigungspauschale von CHF 10 pro Aufenthalt angeboten.",
+      "Dieser optionale Service kostet CHF 10 für die ersten 7 Nächte, danach CHF 10 pro zusätzlicher Woche.",
     manageReservation: "Reservierung verwalten",
     supportLine:
       `Cédric ist bei Bedarf über dieses Nachrichtensystem oder per WhatsApp erreichbar: __WHATSAPP_LINE__ (nur Nachrichten)`,
@@ -431,7 +431,7 @@ Céline und Cédric`,    greeting: (name) => `Hallo ${name},`,
     arrivalWcIncluded:
       "Der Zugang zu Innen-WC und Dusche wurde zu Ihrem Aufenthalt hinzugefügt. Er ist auf Anfrage möglich, wenn wir vor Ort sind, in der Regel zwischen 7:00 und 21:00 Uhr.",
     arrivalWcUpsell:
-      "Der Zugang zu Innen-WC und Dusche ist auf Anfrage zwischen 7:00 und 21:00 Uhr möglich, wenn wir vor Ort sind. Dieser optionale Service wird gegen eine Reinigungspauschale von CHF 10 für den gesamten Aufenthalt angeboten. Bitte kontaktieren Sie uns, um die Verfügbarkeit zu prüfen.",
+      "Der Zugang zu Innen-WC und Dusche ist auf Anfrage zwischen 7:00 und 21:00 Uhr möglich, wenn wir vor Ort sind. Dieser optionale Service kostet CHF 10 für die ersten 7 Nächte, danach CHF 10 pro zusätzlicher Woche. Bitte kontaktieren Sie uns, um die Verfügbarkeit zu prüfen.",
     arrivalEvCharge:
       "Sie können auch Ihr Elektroauto aufladen, wenn wir vor Ort sind. Wir stellen ein Kabel bereit, das mit der Schweizer Typ-13-Steckdose (220 V, 10 A) kompatibel ist und über einen Typ-2-Anschluss verfügt. Dieser langsame Ladeservice ist gegen Aufpreis verfügbar (CHF 15 für 10h, CHF 30 für den ganzen Tag oder die ganze Nacht).",
     arrivalSupport:
@@ -465,7 +465,7 @@ Céline und Cédric`,    greeting: (name) => `Hallo ${name},`,
     indoorAccessNotice:
       "El acceso al WC y a la ducha interior está disponible bajo petición, solo cuando estamos en el lugar, entre las 7:00 y las 21:00.",
     indoorAccessUpsell:
-      "Este servicio opcional está disponible por una tarifa de limpieza de CHF 10 para toda la estancia.",
+      "Este servicio opcional cuesta 10 CHF por las 7 primeras noches, luego 10 CHF por semana adicional.",
     manageReservation: "Gestionar tu reserva",
     supportLine:
       `Cédric está disponible si hace falta a través de este sistema de mensajería o por WhatsApp __WHATSAPP_LINE__ (solo mensajes)`,
@@ -506,7 +506,7 @@ Céline und Cédric`,    greeting: (name) => `Hallo ${name},`,
     arrivalWcIncluded:
       "El acceso al WC y a la ducha interior se ha añadido a tu estancia. Está disponible bajo petición cuando estamos en el lugar, normalmente entre las 7:00 y las 21:00.",
     arrivalWcUpsell:
-      "El acceso al WC y a la ducha interior está disponible bajo petición entre las 7:00 y las 21:00 cuando estamos en el lugar. Este servicio opcional se ofrece por una tarifa de limpieza de CHF 10 para toda la estancia. Contáctanos para comprobar la disponibilidad.",
+      "El acceso al WC y a la ducha interior está disponible bajo petición entre las 7:00 y las 21:00 cuando estamos en el lugar. Este servicio opcional cuesta 10 CHF por las 7 primeras noches, luego 10 CHF por semana adicional. Contáctanos para comprobar la disponibilidad.",
     arrivalEvCharge:
       "También puedes cargar tu coche eléctrico si lo necesitas y estamos en el lugar. Proporcionamos un cable compatible con el enchufe Type 13 suizo (220 V, 10 A) y equipado con un conector Type 2. Este servicio de carga lenta está disponible con cargo adicional (CHF 15 por 10h, CHF 30 por todo el día o la noche).",
     arrivalSupport:
@@ -540,7 +540,7 @@ Céline und Cédric`,    greeting: (name) => `Hallo ${name},`,
     indoorAccessNotice:
       "O acesso ao WC e ao duche interior está disponível mediante pedido, apenas quando estamos no local, entre as 7h00 e as 21h00.",
     indoorAccessUpsell:
-      "Este serviço opcional está disponível mediante uma taxa de limpeza de CHF 10 por toda a estadia.",
+      "Este serviço opcional custa CHF 10 pelas 7 primeiras noites, depois CHF 10 por semana adicional.",
     manageReservation: "Gerir a sua reserva",
     supportLine:
       `Cédric está disponível se necessário através deste sistema de mensagens ou por WhatsApp __WHATSAPP_LINE__ (apenas mensagens)`,
@@ -581,7 +581,7 @@ Céline und Cédric`,    greeting: (name) => `Hallo ${name},`,
     arrivalWcIncluded:
       "O acesso ao WC e ao duche interior foi adicionado à sua estadia. Está disponível mediante pedido quando estamos no local, normalmente entre as 7h00 e as 21h00.",
     arrivalWcUpsell:
-      "O acesso ao WC e ao duche interior está disponível mediante pedido entre as 7h00 e as 21h00 quando estamos no local. Este serviço opcional é disponibilizado mediante uma taxa de limpeza de CHF 10 para toda a estadia. Contacte-nos para verificar a disponibilidade.",
+      "O acesso ao WC e ao duche interior está disponível mediante pedido entre as 7h00 e as 21h00 quando estamos no local. Este serviço opcional custa CHF 10 pelas 7 primeiras noites, depois CHF 10 por semana adicional. Contacte-nos para verificar a disponibilidade.",
     arrivalEvCharge:
       "Também pode carregar o seu carro elétrico se necessário, quando estamos no local. Fornecemos um cabo compatível com a tomada suíça Type 13 (220 V, 10 A) e equipado com um conector Type 2. Este serviço de carregamento lento está disponível mediante custo adicional (CHF 15 por 10h, CHF 30 por todo o dia ou noite).",
     arrivalSupport:
@@ -615,7 +615,7 @@ Céline und Cédric`,    greeting: (name) => `Hallo ${name},`,
     indoorAccessNotice:
       "L'accesso al WC e alla doccia interna è disponibile su richiesta, solo quando siamo sul posto, tra le 7:00 e le 21:00.",
     indoorAccessUpsell:
-      "Questo servizio opzionale è disponibile con un costo di pulizia di CHF 10 per l'intero soggiorno.",
+      "Questo servizio opzionale costa CHF 10 per le prime 7 notti, poi CHF 10 a settimana aggiuntiva.",
     manageReservation: "Gestisci la tua prenotazione",
     supportLine:
       `Cédric è disponibile se necessario tramite questo sistema di messaggistica o via WhatsApp __WHATSAPP_LINE__ (solo messaggi)`,
@@ -656,7 +656,7 @@ Céline und Cédric`,    greeting: (name) => `Hallo ${name},`,
     arrivalWcIncluded:
       "L'accesso al WC e alla doccia interna è stato aggiunto al tuo soggiorno. È disponibile su richiesta quando siamo sul posto, di solito tra le 7:00 e le 21:00.",
     arrivalWcUpsell:
-      "L'accesso al WC e alla doccia interna è disponibile su richiesta tra le 7:00 e le 21:00 quando siamo sul posto. Questo servizio opzionale è disponibile con un costo di pulizia di CHF 10 per l'intero soggiorno. Contattaci per verificare la disponibilità.",
+      "L'accesso al WC e alla doccia interna è disponibile su richiesta tra le 7:00 e le 21:00 quando siamo sul posto. Questo servizio opzionale costa CHF 10 per le prime 7 notti, poi CHF 10 a settimana aggiuntiva. Contattaci per verificare la disponibilità.",
     arrivalEvCharge:
       "Puoi anche ricaricare la tua auto elettrica se necessario, quando siamo sul posto. Forniamo un cavo compatibile con la presa svizzera Type 13 (220 V, 10 A) dotato di connettore Type 2. Questo servizio di ricarica lenta è disponibile con un supplemento (CHF 15 per 10h, CHF 30 per l'intera giornata o notte).",
     arrivalSupport:
@@ -690,7 +690,7 @@ Céline und Cédric`,    greeting: (name) => `Hallo ${name},`,
     indoorAccessNotice:
       "Toegang tot het binnentoilet en de douche is op aanvraag beschikbaar, alleen wanneer wij aanwezig zijn, tussen 7.00 en 21.00 uur.",
     indoorAccessUpsell:
-      "Deze optionele service is beschikbaar tegen een schoonmaakvergoeding van CHF 10 voor het volledige verblijf.",
+      "Deze optionele service kost CHF 10 voor de eerste 7 nachten, daarna CHF 10 per extra week.",
     manageReservation: "Beheer je reservering",
     supportLine:
       `Cédric is indien nodig bereikbaar via dit berichtensysteem of via WhatsApp __WHATSAPP_LINE__ (alleen berichten)`,
@@ -731,7 +731,7 @@ Céline und Cédric`,    greeting: (name) => `Hallo ${name},`,
     arrivalWcIncluded:
       "Toegang tot het binnentoilet en de douche is toegevoegd aan je verblijf. Het is op aanvraag beschikbaar wanneer wij aanwezig zijn, meestal tussen 7.00 en 21.00 uur.",
     arrivalWcUpsell:
-      "Toegang tot het binnentoilet en de douche is op aanvraag beschikbaar tussen 7.00 en 21.00 uur wanneer wij aanwezig zijn. Deze optionele service wordt aangeboden tegen een schoonmaakvergoeding van CHF 10 voor het hele verblijf. Neem contact met ons op om de beschikbaarheid te controleren.",
+      "Toegang tot het binnentoilet en de douche is op aanvraag beschikbaar tussen 7.00 en 21.00 uur wanneer wij aanwezig zijn. Deze optionele service kost CHF 10 voor de eerste 7 nachten, daarna CHF 10 per extra week. Neem contact met ons op om de beschikbaarheid te controleren.",
     arrivalEvCharge:
       "Je kunt ook je elektrische auto opladen als dat nodig is, wanneer wij aanwezig zijn. Wij leveren een kabel die compatibel is met de Zwitserse Type 13-aansluiting (220 V, 10 A) en voorzien is van een Type 2-connector. Deze langzame oplaadservice is beschikbaar tegen een extra vergoeding (CHF 15 voor 10u, CHF 30 voor de hele dag of nacht).",
     arrivalSupport:
@@ -951,6 +951,23 @@ function parseGarageInstructions(raw) {
   }
 }
 
+function resolveLocalizedValue(raw, locale) {
+  // Accepte soit une chaine simple, soit un objet JSON cle par langue
+  // (ex. `{"fr": "...", "en": "..."}`). Pour le JSON, retombe sur
+  // l'entree anglaise puis sur une chaine vide.
+  if (raw && !/^REPLACE_WITH_/i.test(String(raw).trim())) {
+    try {
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+        return parsed[normalizeLocale(locale)] || parsed.en || "";
+      }
+    } catch {
+      // Pas du JSON : valeur chaine simple.
+    }
+  }
+  return isUnsetValue(raw) ? "" : raw;
+}
+
 function applyPlaceholders(text, config, locale, reservation = null) {
   const garageMap = parseGarageInstructions(config.garageInstructionsJson);
   const garageInstruction = garageMap[normalizeLocale(locale)] || "";
@@ -961,7 +978,7 @@ function applyPlaceholders(text, config, locale, reservation = null) {
     .replaceAll("__GARAGE_INSTRUCTIONS__", garageInstruction)
     .replaceAll("__KEY_BOX_STUDIO_CODE__", isUnsetValue(config.keyBoxStudioCode) ? "" : config.keyBoxStudioCode)
     .replaceAll("__WHATSAPP_LINE__", isUnsetValue(config.whatsappLine) ? "" : config.whatsappLine)
-    .replaceAll("__STUDIO_ADDRESS__", isUnsetValue(config.studioAddress) ? "" : config.studioAddress);
+    .replaceAll("__STUDIO_ADDRESS__", resolveLocalizedValue(config.studioAddress, locale));
 
   // Remove any leftover template placeholders (missing config values).
   return result.replace(/__[A-Z][A-Z_]*__/g, "");

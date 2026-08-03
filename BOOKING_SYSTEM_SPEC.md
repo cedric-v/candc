@@ -196,7 +196,7 @@ Champs obligatoires :
 
 #### Option WC-douche
 
-- 10 CHF forfait de nettoyage par sejour
+- 10 CHF pour les 7 premieres nuites, puis 10 CHF par semaine supplementaire (semaine entamee)
 - option selectable pendant la reservation
 - option modifiable ensuite depuis la page de gestion de reservation
 
@@ -435,7 +435,7 @@ Texte a integrer :
 
 Si le service n'a pas deja ete achete, afficher aussi :
 
-> This optional service is available for a cleaning fee of CHF 10 for your entire stay.
+> This optional service costs CHF 10 for the first 7 nights, then CHF 10 per additional week.
 
 Texte de fin :
 
@@ -456,6 +456,10 @@ Variables minimales :
 - dates de sejour
 - lien de gestion de reservation
 - statut option WC-douche
+
+Placeholder d'arrivee parking :
+
+- `__GARAGE_INSTRUCTIONS__` — consignes specifiques garage, injectees depuis la variable d'environnement `GARAGE_INSTRUCTIONS` (JSON cle par code de langue : `fr`, `en`, `de`, `es`, `pt`, `it`, `nl`) ; si la cle ou la variable manque, la ligne est retiree proprement
 
 Le bloc WC-douche dans ce mail doit rester informatif et cohérent avec l'achat effectif du service.
 
