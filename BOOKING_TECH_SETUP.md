@@ -96,8 +96,8 @@ Verification recommandee :
 - `ENABLE_GOOGLE_CALENDAR_SYNC`
 - `MIN_STAY_NIGHTS_PARKING_SPACE`
 - `MIN_STAY_NIGHTS_ECO_STUDIO`
-- `REVIEW_LINK_PARKING` — lien d'avis Google pour le parking ; injecte dans `__REVIEW_LINK__` de l'e-mail de demande d'avis (defaut : https://g.page/r/CbsI1IDQnZP4EBM/review)
-- `REVIEW_LINK_STUDIO` — lien d'avis Google pour le studio ; injecte dans `__REVIEW_LINK__` de l'e-mail de demande d'avis (defaut : https://g.page/r/Ca5HhJ5WSkT6EBM/review)
+- `REVIEW_LINK_PARKING` — lien d'avis Google pour le parking ; injecte dans `__REVIEW_LINK__` de l'e-mail de demande d'avis (variable Cloudflare Pages, production + preview : https://g.page/r/CbsI1IDQnZP4EBM/review)
+- `REVIEW_LINK_STUDIO` — lien d'avis Google pour le studio ; injecte dans `__REVIEW_LINK__` de l'e-mail de demande d'avis (variable Cloudflare Pages, production + preview : https://g.page/r/Ca5HhJ5WSkT6EBM/review)
 - `ADMIN_ACCESS_TOKEN`
 - `ADMIN_NOTIFICATION_EMAIL`
 - `EMAIL_FROM` — expediteur des e-mails transactionnels (format `Nom <adresse@domaine>`) ; requis pour activer l'envoi

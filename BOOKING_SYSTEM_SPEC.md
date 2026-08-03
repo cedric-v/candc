@@ -483,9 +483,9 @@ Le cron declenche a 12:00 heure locale le jour du depart (`check_out_date` du jo
 
 Contenu attendu :
 - prenom de l'invite (`__FIRST_NAME__`)
-- lien d'avis Google, propre a l'unite (`__REVIEW_LINK__`)
-  - parking : `REVIEW_LINK_PARKING` (defaut : https://g.page/r/CbsI1IDQnZP4EBM/review)
-  - studio : `REVIEW_LINK_STUDIO` (defaut : https://g.page/r/Ca5HhJ5WSkT6EBM/review)
+- lien d'avis Google, propre a l'unite (`__REVIEW_LINK__`), configure comme variable Cloudflare Pages (production + preview)
+  - parking : `REVIEW_LINK_PARKING` = https://g.page/r/CbsI1IDQnZP4EBM/review
+  - studio : `REVIEW_LINK_STUDIO` = https://g.page/r/Ca5HhJ5WSkT6EBM/review
 - remerciement et formule de signature (Celine et Cedric)
 
 Le message est localise dans la langue de reservation (7 langues).

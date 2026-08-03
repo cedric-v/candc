@@ -202,8 +202,8 @@ Variables non secretes possibles :
 - `WHATSAPP_LINE` — ligne WhatsApp de contact ; injecte dans `__WHATSAPP_LINE__` des e-mails
 - `STUDIO_ADDRESS` — adresse du studio ; injecte dans `__STUDIO_ADDRESS__` (confirmation et arrivee studio). Accepte une chaine simple **ou** un objet JSON cle par langue (`fr`/`en`/`de`...) pour localiser le nom du pays ; les langues sans cle reçoivent la valeur anglaise
 - `KEY_BOX_STUDIO_CODE` — code de la boite a cle studio ; injecte dans `__KEY_BOX_STUDIO_CODE__`
-- `REVIEW_LINK_PARKING` — lien d'avis Google pour le parking ; injecte dans `__REVIEW_LINK__` de l'e-mail de demande d'avis (defaut : https://g.page/r/CbsI1IDQnZP4EBM/review)
-- `REVIEW_LINK_STUDIO` — lien d'avis Google pour le studio ; injecte dans `__REVIEW_LINK__` de l'e-mail de demande d'avis (defaut : https://g.page/r/Ca5HhJ5WSkT6EBM/review)
+- `REVIEW_LINK_PARKING` — lien d'avis Google pour le parking ; injecte dans `__REVIEW_LINK__` de l'e-mail de demande d'avis. Configuree comme variable Cloudflare Pages (production + preview) : https://g.page/r/CbsI1IDQnZP4EBM/review
+- `REVIEW_LINK_STUDIO` — lien d'avis Google pour le studio ; injecte dans `__REVIEW_LINK__` de l'e-mail de demande d'avis. Configuree comme variable Cloudflare Pages (production + preview) : https://g.page/r/Ca5HhJ5WSkT6EBM/review
 - `SUMUP_API_BASE_URL`
 
 Secrets ou valeurs sensibles :
