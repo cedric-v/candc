@@ -36,7 +36,7 @@ try {
 }
 
 const keys = Object.keys(data).filter(
-  (key) => typeof data[key] === "string" && data[key].trim().length > 0,
+  (key) => !key.startsWith("_") && typeof data[key] === "string" && data[key].trim().length > 0,
 );
 
 if (!keys.length) {
