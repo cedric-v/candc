@@ -64,6 +64,13 @@ When changing public booking UI, also check:
 - `src/llms.txt`
 - `src/.well-known/site-context.json`
 
+When changing the customer-facing management or payment-confirmation pages, also check:
+
+- `functions/_lib/manage-i18n.js` — UI strings for the manage + confirmation pages in all 7 site languages (fr, en, de, es, pt, it, nl)
+- `functions/booking/manage/[token].js` — renders in the reservation's stored `locale` (Accept-Language fallback)
+- `functions/booking/confirmation.js` — same locale logic for the post-payment page
+- `functions/api/booking/manage/[token].js` — status notices must stay in sync with `manage-i18n.js`
+
 Current WebMCP exposure:
 
 - public parking booking page exposes:

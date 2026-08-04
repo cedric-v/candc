@@ -40,6 +40,10 @@ tout en gardant :
 - `GET /api/admin/booking`
 - `POST /api/admin/booking`
 
+## Localisation des pages de gestion
+
+Les pages client `/booking/manage/{token}` et `/booking/confirmation` sont rendues dans la langue de la reservation (`reservations.locale`, choisie lors de la reservation), avec repli sur l'en-tete `Accept-Language`. Les chaines UI (formulaire, boutons, notifications de statut, page de confirmation) vivent dans `functions/_lib/manage-i18n.js` pour les 7 langues du site (fr, en, de, es, pt, it, nl), au meme titre que les e-mails transactionnels (`functions/_lib/email.js`). Toute modification d'un texte visible sur ces pages doit passer par ce module.
+
 ## WebMCP / agent readiness
 
 Le projet expose maintenant une couche agent-ready progressive pour les usages en navigateur :
