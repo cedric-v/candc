@@ -1,4 +1,5 @@
 import { buildQuote } from "../../../_lib/pricing.js";
+import { getManageText } from "../../../_lib/manage-i18n.js";
 import {
   cancelReservation,
   getAvailabilityConflictsExcludingReservation,
@@ -19,6 +20,7 @@ import { createHostedCheckout, isSumUpConfigured, refundTransaction } from "../.
 import { normalizeBookingInput, validateBookingInput } from "../../../_lib/validation.js";
 
 function toManageResponse(reservation, env) {
+  const t = getManageText(reservation.locale);
   const canSelfManage = ["confirmed", "modified", "refund_due", "pending_refund"].includes(
     reservation.status,
   );
@@ -42,15 +44,13 @@ function toManageResponse(reservation, env) {
 
   const notices = [];
   if (paymentPending) {
-    notices.push(
-      "This reservation is still waiting for payment. Use the payment button below to confirm it. Date changes stay disabled until payment is completed.",
-    );
+    notices.push(t.noticeWaitingPayment);
   }
   if (reservation.status === "pending_refund") {
-    notices.push("A refund is being processed or still needs follow-up. We will email you once it is completed.");
+    notices.push(t.noticeRefundProcessing);
   }
   if (reservation.payment_status === "refunded") {
-    notices.push("A refund has already been recorded for this reservation.");
+    notices.push(t.noticeRefundRecorded);
   }
 
   return {
