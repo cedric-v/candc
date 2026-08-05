@@ -1,0 +1,9 @@
+# Faux positifs documentés — vérifiés manuellement, ne contiennent aucun secret réel.
+#
+# curl-auth-header : exemples de doc avec le placeholder `TON_SUMUP_API_KEY`
+# (DEPLOYMENT.md "Recuperation du SUMUP_MERCHANT_CODE", BOOKING_TECH_SETUP.md).
+DEPLOYMENT.md:curl-auth-header:313
+BOOKING_TECH_SETUP.md:curl-auth-header:152
+
+# NOTE : secrets.local.json (vraies clés locales, gitignoré) n'est volontairement PAS listé ici :
+# s'il était force-ajouté (`git add -f`), gitleaks doit continuer à le bloquer.
