@@ -1,4 +1,9 @@
 repos:
+  # NOTE: gitleaks est volontairement pinné sur v8.30.1 (dernière release stable officielle,
+  # celle distribuée par Homebrew) et NON sur ce que pre-commit autoupdate propose (v8.30.0).
+  # Raison : autoupdate résout le dernier tag atteignable depuis la branche par défaut (master),
+  # or le tag v8.30.1 pointe sur un commit de release jamais fusionné dans master (quirk amont).
+  # Ne pas accepter la "rétrogradation" proposée par autoupdate ; re-pinner v8.30.1 si besoin.
   - repo: https://github.com/gitleaks/gitleaks
     rev: v8.30.1
     hooks:
