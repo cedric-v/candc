@@ -15,6 +15,8 @@ const EMAIL_I18N = {
       arrival_instructions: "informations d'arrivée",
       departure_instructions: "instructions de départ",
       review_request: "Comment s'est passé votre séjour ?",
+      payment_reminder: "rappel de paiement",
+      payment_expired: "réservation expirée",
     },
     reviewBody: `Bonjour __FIRST_NAME__,
 
@@ -109,6 +111,14 @@ Céline et Cédric`,
     by: "avant",
     paymentPendingNotice:
       "Si le paiement n'a pas encore été finalisé, merci d'utiliser le lien de paiement affiché après la réservation ou de nous contacter si besoin.",
+    paymentReminderIntro:
+      "Nous réservons vos dates ({dates}) mais le paiement est toujours en attente.",
+    paymentReminderDeadline:
+      "Merci de finaliser le paiement dès que possible ; vos dates pourraient sinon être libérées et réservées par quelqu'un d'autre.",
+    paymentExpiredIntro:
+      "Le paiement de la réservation {reference} n'a pas été finalisé à temps et les dates ({dates}) ont été libérées.",
+    paymentExpiredReopen:
+      "Vous pouvez encore finaliser le paiement depuis votre lien de gestion si les dates sont toujours disponibles ; sinon, nous serons ravis de vous aider à trouver de nouvelles dates.",
     indoorAccessNotice:
       "L'accès au WC et à la douche intérieure est disponible sur demande, uniquement lorsque nous sommes sur place, entre 7h00 et 21h00.",
     indoorAccessUpsell:
@@ -173,6 +183,8 @@ Céline et Cédric`,
       arrival_instructions: "arrival information",
       departure_instructions: "departure information",
       review_request: "How was your stay at C&C?",
+      payment_reminder: "payment reminder",
+      payment_expired: "reservation expired",
     },
     reviewBody: `Hello __FIRST_NAME__,
 
@@ -266,6 +278,14 @@ Celine and Cedric`,    greeting: (name) => `Dear ${name},`,
     by: "by",
     paymentPendingNotice:
       "If payment has not been completed yet, please use the payment link shown after booking or contact us if needed.",
+    paymentReminderIntro:
+      "We are holding your dates ({dates}) for you, but the payment is still pending.",
+    paymentReminderDeadline:
+      "Please complete the payment as soon as possible, otherwise your dates may be released and booked by someone else.",
+    paymentExpiredIntro:
+      "The payment for reservation {reference} was not completed in time, and the dates ({dates}) have been released.",
+    paymentExpiredReopen:
+      "You can still complete the payment from your management link if the dates are still available; otherwise we would be happy to help you find new dates.",
     indoorAccessNotice:
       "Access to an indoor toilet and shower is available on request, only when we are on site, between 7 a.m. and 9 p.m.",
     indoorAccessUpsell:
@@ -330,6 +350,8 @@ Celine and Cedric`,    greeting: (name) => `Dear ${name},`,
       arrival_instructions: "Anreiseinformationen",
       departure_instructions: "Abreiseinformationen",
       review_request: "Wie war Ihr Aufenthalt bei C&C?",
+      payment_reminder: "Zahlungserinnerung",
+      payment_expired: "Reservierung abgelaufen",
     },
     reviewBody: `Guten Tag __FIRST_NAME__,
 
@@ -423,6 +445,14 @@ Céline und Cédric`,    greeting: (name) => `Hallo ${name},`,
     by: "bis",
     paymentPendingNotice:
       "Falls die Zahlung noch nicht abgeschlossen wurde, verwenden Sie bitte den nach der Buchung angezeigten Zahlungslink oder kontaktieren Sie uns bei Bedarf.",
+    paymentReminderIntro:
+      "Wir halten Ihre Daten ({dates}) für Sie reserviert, aber die Zahlung ist noch ausstehend.",
+    paymentReminderDeadline:
+      "Bitte schliessen Sie die Zahlung so bald wie möglich ab, sonst könnten Ihre Daten freigegeben und von jemand anderem gebucht werden.",
+    paymentExpiredIntro:
+      "Die Zahlung für die Reservierung {reference} wurde nicht rechtzeitig abgeschlossen und die Daten ({dates}) wurden freigegeben.",
+    paymentExpiredReopen:
+      "Sie können die Zahlung über Ihren Verwaltungslink noch abschliessen, falls die Daten verfügbar sind; andernfalls helfen wir Ihnen gerne, neue Daten zu finden.",
     indoorAccessNotice:
       "Der Zugang zu Innen-WC und Dusche ist auf Anfrage möglich, nur wenn wir vor Ort sind, zwischen 7:00 und 21:00 Uhr.",
     indoorAccessUpsell:
@@ -487,6 +517,8 @@ Céline und Cédric`,    greeting: (name) => `Hallo ${name},`,
       arrival_instructions: "información de llegada",
       departure_instructions: "información de salida",
       review_request: "¿Qué tal tu estancia en C&C?",
+      payment_reminder: "recordatorio de pago",
+      payment_expired: "reserva expirada",
     },
     reviewBody: `Hola __FIRST_NAME__,
 
@@ -510,6 +542,14 @@ Céline y Cédric`,
     by: "antes de",
     paymentPendingNotice:
       "Si el pago aún no se ha completado, utiliza el enlace de pago mostrado después de la reserva o contáctanos si lo necesitas.",
+    paymentReminderIntro:
+      "Estamos reservando tus fechas ({dates}), pero el pago sigue pendiente.",
+    paymentReminderDeadline:
+      "Completa el pago lo antes posible; de lo contrario, tus fechas podrían liberarse y ser reservadas por otra persona.",
+    paymentExpiredIntro:
+      "El pago de la reserva {reference} no se completó a tiempo y las fechas ({dates}) se han liberado.",
+    paymentExpiredReopen:
+      "Aún puedes completar el pago desde tu enlace de gestión si las fechas siguen disponibles; si no, estaremos encantados de ayudarte a encontrar nuevas fechas.",
     indoorAccessNotice:
       "El acceso al WC y a la ducha interior está disponible bajo petición, solo cuando estamos en el lugar, entre las 7:00 y las 21:00.",
     indoorAccessUpsell:
@@ -574,6 +614,8 @@ Céline y Cédric`,
       arrival_instructions: "informações de chegada",
       departure_instructions: "informações de partida",
       review_request: "Como foi a sua estadia no C&C?",
+      payment_reminder: "lembrete de pagamento",
+      payment_expired: "reserva expirada",
     },
     reviewBody: `Olá __FIRST_NAME__,
 
@@ -597,6 +639,14 @@ Céline e Cédric`,
     by: "até",
     paymentPendingNotice:
       "Se o pagamento ainda não tiver sido concluído, utilize a ligação de pagamento apresentada após a reserva ou contacte-nos se necessário.",
+    paymentReminderIntro:
+      "Estamos a reservar as suas datas ({dates}), mas o pagamento continua pendente.",
+    paymentReminderDeadline:
+      "Por favor, conclua o pagamento o mais depressa possível; caso contrário, as suas datas podem ser libertadas e reservadas por outra pessoa.",
+    paymentExpiredIntro:
+      "O pagamento da reserva {reference} não foi concluído a tempo e as datas ({dates}) foram libertadas.",
+    paymentExpiredReopen:
+      "Ainda pode concluir o pagamento a partir da sua ligação de gestão se as datas ainda estiverem disponíveis; caso contrário, teremos todo o prazer em ajudá-lo a encontrar novas datas.",
     indoorAccessNotice:
       "O acesso ao WC e ao duche interior está disponível mediante pedido, apenas quando estamos no local, entre as 7h00 e as 21h00.",
     indoorAccessUpsell:
@@ -661,6 +711,8 @@ Céline e Cédric`,
       arrival_instructions: "informazioni di arrivo",
       departure_instructions: "informazioni di partenza",
       review_request: "Com'è andato il tuo soggiorno al C&C?",
+      payment_reminder: "promemoria di pagamento",
+      payment_expired: "prenotazione scaduta",
     },
     reviewBody: `Ciao __FIRST_NAME__,
 
@@ -684,6 +736,14 @@ Céline e Cédric`,
     by: "entro le",
     paymentPendingNotice:
       "Se il pagamento non è ancora stato completato, utilizza il link di pagamento mostrato dopo la prenotazione oppure contattaci se necessario.",
+    paymentReminderIntro:
+      "Stiamo riservando le tue date ({dates}), ma il pagamento è ancora in sospeso.",
+    paymentReminderDeadline:
+      "Completa il pagamento il prima possibile; altrimenti le tue date potrebbero essere liberate e prenotate da qualcun altro.",
+    paymentExpiredIntro:
+      "Il pagamento della prenotazione {reference} non è stato completato in tempo e le date ({dates}) sono state liberate.",
+    paymentExpiredReopen:
+      "Puoi ancora completare il pagamento dal tuo link di gestione se le date sono ancora disponibili; altrimenti saremo felici di aiutarti a trovare nuove date.",
     indoorAccessNotice:
       "L'accesso al WC e alla doccia interna è disponibile su richiesta, solo quando siamo sul posto, tra le 7:00 e le 21:00.",
     indoorAccessUpsell:
@@ -748,6 +808,8 @@ Céline e Cédric`,
       arrival_instructions: "aankomstinformatie",
       departure_instructions: "vertrekinformatie",
       review_request: "Hoe was uw verblijf bij C&C?",
+      payment_reminder: "betalingsherinnering",
+      payment_expired: "reservering verlopen",
     },
     reviewBody: `Beste __FIRST_NAME__,
 
@@ -771,6 +833,14 @@ Céline en Cédric`,
     by: "uiterlijk",
     paymentPendingNotice:
       "Als de betaling nog niet is voltooid, gebruik dan de betaallink die na het boeken werd getoond of neem contact met ons op indien nodig.",
+    paymentReminderIntro:
+      "We houden je datums ({dates}) voor je vast, maar de betaling is nog in behandeling.",
+    paymentReminderDeadline:
+      "Voltooi de betaling zo snel mogelijk; anders kunnen je datums worden vrijgegeven en door iemand anders worden geboekt.",
+    paymentExpiredIntro:
+      "De betaling voor reservering {reference} is niet op tijd voltooid en de datums ({dates}) zijn vrijgegeven.",
+    paymentExpiredReopen:
+      "Je kunt de betaling nog steeds voltooien via je beheerlink als de datums nog beschikbaar zijn; anders helpen we je graag nieuwe datums te vinden.",
     indoorAccessNotice:
       "Toegang tot het binnentoilet en de douche is op aanvraag beschikbaar, alleen wanneer wij aanwezig zijn, tussen 7.00 en 21.00 uur.",
     indoorAccessUpsell:
@@ -1005,6 +1075,50 @@ function buildCancellationText(reservation) {
   ].join("\n");
 }
 
+function formatStayDates(reservation) {
+  return `${formatDateForLocale(reservation.check_in_date, reservation.locale)} → ${formatDateForLocale(reservation.check_out_date, reservation.locale)}`;
+}
+
+function buildPaymentReminderText(reservation, manageLink) {
+  const text = getEmailText(reservation.locale);
+
+  return [
+    text.greeting(reservation.guest_first_name),
+    "",
+    text.paymentReminderIntro.replace("{dates}", formatStayDates(reservation)),
+    "",
+    text.paymentReminderDeadline,
+    "",
+    `${text.manageReservation}: ${manageLink}`,
+    "",
+    text.supportLine,
+    "",
+    text.kindRegards,
+    "Celine and Cedric",
+  ].join("\n");
+}
+
+function buildPaymentExpiredText(reservation, manageLink) {
+  const text = getEmailText(reservation.locale);
+
+  return [
+    text.greeting(reservation.guest_first_name),
+    "",
+    text.paymentExpiredIntro
+      .replace("{reference}", reservation.public_reference)
+      .replace("{dates}", formatStayDates(reservation)),
+    "",
+    text.paymentExpiredReopen,
+    "",
+    `${text.manageReservation}: ${manageLink}`,
+    "",
+    text.supportLine,
+    "",
+    text.kindRegards,
+    "Celine and Cedric",
+  ].join("\n");
+}
+
 function buildDepartureText(reservation) {
   if (reservation.unit_type !== "studio") {
     throw new Error("departure_email_studio_only");
@@ -1110,6 +1224,12 @@ function buildEmailPayload(type, reservation, config, options = {}) {
       break;
     case "review_request":
       rawText = buildReviewRequestText(reservation);
+      break;
+    case "payment_reminder":
+      rawText = buildPaymentReminderText(reservation, manageLink || "-");
+      break;
+    case "payment_expired":
+      rawText = buildPaymentExpiredText(reservation, manageLink || "-");
       break;
     default:
       throw new Error(`unknown_email_type:${type}`);

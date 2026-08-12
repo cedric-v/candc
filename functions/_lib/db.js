@@ -280,6 +280,14 @@ export async function getNightlyRates(env, unit, startDate, endDate) {
   return nightlyRates;
 }
 
+function pendingHoldMinutes(env) {
+  return Math.max(1, Math.round(Number(getConfig(env).pendingPaymentHoldMinutes || 30)));
+}
+
+function pendingHoldCutoffModifier(env) {
+  return `-${pendingHoldMinutes(env)} minutes`;
+}
+
 export async function getAvailabilityConflicts(env, unitId, startDate, endDate) {
   const db = requireDb(env);
   const { results } = await db
@@ -288,13 +296,13 @@ export async function getAvailabilityConflicts(env, unitId, startDate, endDate) 
         SELECT id, unit_id, source, external_uid, reservation_id, start_date, end_date, status
         FROM calendar_blocks
         WHERE unit_id IS ?
-          AND (status IN ('active', 'confirmed') OR (status = 'pending_payment' AND created_at >= strftime('%Y-%m-%dT%H:%M:%SZ', 'now', '-30 minutes')))
+          AND (status IN ('active', 'confirmed') OR (status = 'pending_payment' AND created_at >= strftime('%Y-%m-%dT%H:%M:%SZ', 'now', ?)))
           AND start_date < ?
           AND end_date > ?
         ORDER BY start_date ASC
       `,
     )
-    .bind(unitId, endDate, startDate)
+    .bind(unitId, pendingHoldCutoffModifier(env), endDate, startDate)
     .all();
 
   return results || [];
@@ -314,14 +322,14 @@ export async function getAvailabilityConflictsExcludingReservation(
         SELECT id, unit_id, source, external_uid, reservation_id, start_date, end_date, status
         FROM calendar_blocks
         WHERE unit_id IS ?
-          AND (status IN ('active', 'confirmed') OR (status = 'pending_payment' AND created_at >= strftime('%Y-%m-%dT%H:%M:%SZ', 'now', '-30 minutes')))
+          AND (status IN ('active', 'confirmed') OR (status = 'pending_payment' AND created_at >= strftime('%Y-%m-%dT%H:%M:%SZ', 'now', ?)))
           AND start_date < ?
           AND end_date > ?
           AND (reservation_id IS NULL OR reservation_id != ?)
         ORDER BY start_date ASC
       `,
     )
-    .bind(unitId, endDate, startDate, reservationId)
+    .bind(unitId, pendingHoldCutoffModifier(env), endDate, startDate, reservationId)
     .all();
 
   return results || [];
@@ -502,7 +510,7 @@ export async function getReservationsForIcsFeed(env, unitId) {
           status
         FROM reservations
         WHERE unit_id IS ?
-          AND status IN ('pending_payment', 'pending_adjustment_payment', 'confirmed', 'modified', 'refund_due', 'pending_refund')
+          AND status IN ('confirmed', 'modified', 'refund_due', 'pending_refund')
         ORDER BY check_in_date ASC
       `,
     )
@@ -1114,22 +1122,179 @@ export async function cancelReservation(env, reservationId) {
 export async function releaseExpiredPendingPayments(env) {
   const db = requireDb(env);
   const nowIso = new Date().toISOString();
+  const cutoff = new Date(Date.now() - pendingHoldMinutes(env) * 60 * 1000).toISOString();
 
-  // Expire blocks older than 30 minutes
-  await db.batch([
-    db.prepare(`
-      UPDATE calendar_blocks
-      SET status = 'released', updated_at = ?
-      WHERE status = 'pending_payment'
-        AND created_at < strftime('%Y-%m-%dT%H:%M:%SZ', 'now', '-30 minutes')
-    `).bind(nowIso),
-    db.prepare(`
-      UPDATE reservations
-      SET status = 'payment_setup_failed', updated_at = ?, remarks = TRIM(COALESCE(remarks, '') || ?)
-      WHERE status = 'pending_payment'
-        AND created_at < strftime('%Y-%m-%dT%H:%M:%SZ', 'now', '-30 minutes')
-    `).bind(nowIso, "\n[automatic_release] Stale pending payment block released.")
-  ]);
+  // Identifie d'abord les réservations affectées pour pouvoir notifier
+  // ensuite (emails / logs) depuis l'appelant.
+  const affected = await db
+    .prepare(
+      `
+        SELECT
+          reservations.id AS reservation_id,
+          reservations.status AS reservation_status,
+          calendar_blocks.id AS block_id
+        FROM calendar_blocks
+        INNER JOIN reservations ON reservations.id = calendar_blocks.reservation_id
+        WHERE calendar_blocks.status = 'pending_payment'
+          AND calendar_blocks.created_at < ?
+          AND reservations.status IN ('pending_payment', 'pending_adjustment_payment')
+      `,
+    )
+    .bind(cutoff)
+    .all();
+
+  const rows = resultsOrEmpty(affected);
+  const expiredInitial = rows
+    .filter((row) => row.reservation_status === "pending_payment")
+    .map((row) => row.reservation_id);
+  const revertedAdjustments = rows
+    .filter((row) => row.reservation_status === "pending_adjustment_payment")
+    .map((row) => row.reservation_id);
+
+  const statements = [];
+
+  if (expiredInitial.length > 0) {
+    // Libère le bloc et marque la réservation comme expirée (le client peut
+    // encore reprendre le paiement depuis son lien, avec revérification).
+    statements.push(
+      db
+        .prepare(
+          `
+            UPDATE calendar_blocks
+            SET status = 'released', updated_at = ?
+            WHERE status = 'pending_payment'
+              AND created_at < ?
+              AND reservation_id IN (SELECT id FROM reservations WHERE status = 'pending_payment')
+          `,
+        )
+        .bind(nowIso, cutoff),
+      db
+        .prepare(
+          `
+            UPDATE reservations
+            SET status = 'payment_expired', updated_at = ?, remarks = TRIM(COALESCE(remarks, '') || ?)
+            WHERE status = 'pending_payment'
+              AND id IN (
+                SELECT reservation_id FROM calendar_blocks
+                WHERE status = 'pending_payment' AND created_at < ?
+              )
+          `,
+        )
+        .bind(nowIso, "\n[automatic_release] Payment hold expired; dates released.", cutoff),
+    );
+  }
+
+  if (revertedAdjustments.length > 0) {
+    // Un paiement complémentaire non réglé dans le délai : la réservation
+    // confirmée reste valide sur les nouvelles dates (le bloc redevient
+    // confirmé). L'hôte est notifié via le log de synchronisation pour un
+    // éventuel suivi manuel du complément.
+    statements.push(
+      db
+        .prepare(
+          `
+            UPDATE calendar_blocks
+            SET status = 'confirmed', updated_at = ?
+            WHERE status = 'pending_payment'
+              AND created_at < ?
+              AND reservation_id IN (SELECT id FROM reservations WHERE status = 'pending_adjustment_payment')
+          `,
+        )
+        .bind(nowIso, cutoff),
+      db
+        .prepare(
+          `
+            UPDATE reservations
+            SET status = 'modified', updated_at = ?, remarks = TRIM(COALESCE(remarks, '') || ?)
+            WHERE status = 'pending_adjustment_payment'
+              AND id IN (
+                SELECT reservation_id FROM calendar_blocks
+                WHERE status = 'pending_payment' AND created_at < ?
+              )
+          `,
+        )
+        .bind(nowIso, "\n[automatic_release] Adjustment payment hold expired; stay kept confirmed on new dates.", cutoff),
+    );
+  }
+
+  // Blocs orphelins (sans réservation) laissés en pending_payment.
+  statements.push(
+    db
+      .prepare(
+        `
+          UPDATE calendar_blocks
+          SET status = 'released', updated_at = ?
+          WHERE status = 'pending_payment'
+            AND created_at < ?
+            AND reservation_id IS NULL
+        `,
+      )
+      .bind(nowIso, cutoff),
+  );
+
+  await db.batch(statements);
+
+  return {
+    expiredInitial,
+    revertedAdjustments,
+  };
+}
+
+export async function renewPendingPaymentHold(env, reservationId) {
+  // Relance la fenêtre de hold d'un bloc en attente de paiement (reprise de
+  // paiement). Réinitialise `created_at` pour que la requête de conflit et le
+  // job de libération reccommencent un cycle complet.
+  const db = requireDb(env);
+  const nowIso = new Date().toISOString();
+
+  await db
+    .prepare(
+      `
+        UPDATE calendar_blocks
+        SET created_at = ?, updated_at = ?, status = 'pending_payment'
+        WHERE reservation_id = ?
+      `,
+    )
+    .bind(nowIso, nowIso, reservationId)
+    .run();
+}
+
+export async function getExpiringPendingPaymentReservations(env, withinMinutes) {
+  const db = requireDb(env);
+  const holdMinutes = pendingHoldMinutes(env);
+  // La fenêtre de rappel est bornée à la durée du hold : un rappel ne vise
+  // que les holds dont l'expiration est proche, jamais tous les en attente.
+  const windowMinutes = Math.max(
+    1,
+    Math.min(holdMinutes, Math.round(Number(withinMinutes || 20))),
+  );
+  const oldestWindow = new Date(
+    Date.now() - Math.max(0, holdMinutes - windowMinutes) * 60 * 1000,
+  ).toISOString();
+  const cutoff = new Date(Date.now() - holdMinutes * 60 * 1000).toISOString();
+
+  const { results } = await db
+    .prepare(
+      `
+        SELECT
+          reservations.*,
+          calendar_blocks.created_at AS hold_created_at
+        FROM reservations
+        INNER JOIN calendar_blocks ON calendar_blocks.reservation_id = reservations.id
+        WHERE reservations.status = 'pending_payment'
+          AND calendar_blocks.status = 'pending_payment'
+          AND calendar_blocks.created_at >= ?
+          AND calendar_blocks.created_at < ?
+      `,
+    )
+    .bind(cutoff, oldestWindow)
+    .all();
+
+  return results || [];
+}
+
+function resultsOrEmpty(result) {
+  return result && result.results ? result.results : [];
 }
 
 export async function insertEmailLog(env, emailLog) {

@@ -1,3 +1,6 @@
+import { insertPaymentRecord, getPaymentsForReservation } from "./db.js";
+import { isSumUpConfigured, refundTransaction } from "./sumup.js";
+
 function toNumber(value) {
   const numeric = Number(value || 0);
   return Number.isFinite(numeric) ? numeric : 0;
@@ -100,5 +103,123 @@ export function buildAutomaticRefundPlan(payments, requestedAmount) {
     uncoveredAmount: remaining,
     items,
     canFullyRefund: !(remaining > 0),
+  };
+}
+
+export async function recordManualRefundDue(env, reservation, amount, reason, meta = {}) {
+  await insertPaymentRecord(env, {
+    reservationId: reservation.id,
+    provider: "sumup",
+    providerCheckoutId: null,
+    providerPaymentReference: null,
+    type: "refund",
+    status: "manual_refund_due",
+    amount: roundMoney(amount),
+    currency: reservation.currency,
+    rawPayload: {
+      reason,
+      refundMode: "manual",
+      ...meta,
+    },
+  });
+
+  return {
+    mode: "manual",
+    amount: roundMoney(amount),
+  };
+}
+
+export async function attemptAutomaticRefund(env, reservation, amount, reason, meta = {}) {
+  const targetAmount = roundMoney(amount);
+  if (!(targetAmount > 0)) {
+    return {
+      mode: "none",
+      amount: 0,
+      remainingAmount: 0,
+      fullyRefunded: true,
+    };
+  }
+
+  if (!isSumUpConfigured(env)) {
+    const manual = await recordManualRefundDue(env, reservation, targetAmount, reason, meta);
+    return {
+      ...manual,
+      remainingAmount: targetAmount,
+      fullyRefunded: false,
+    };
+  }
+
+  const payments = await getPaymentsForReservation(env, reservation.id);
+  const refundPlan = buildAutomaticRefundPlan(payments, targetAmount);
+
+  if (!refundPlan.canFullyRefund) {
+    const manual = await recordManualRefundDue(
+      env,
+      reservation,
+      targetAmount,
+      reason,
+      {
+        ...meta,
+        refundPlan,
+      },
+    );
+
+    return {
+      ...manual,
+      remainingAmount: targetAmount,
+      fullyRefunded: false,
+    };
+  }
+
+  let refundedAmount = 0;
+
+  for (const item of refundPlan.items) {
+    try {
+      const refundResponse = await refundTransaction(env, item.providerPaymentReference, item.amount);
+      refundedAmount = roundMoney(refundedAmount + item.amount);
+
+      await insertPaymentRecord(env, {
+        reservationId: reservation.id,
+        provider: "sumup",
+        providerCheckoutId: item.checkoutId,
+        providerPaymentReference: item.providerPaymentReference,
+        type: "refund",
+        status: "refunded",
+        amount: item.amount,
+        currency: item.currency || reservation.currency,
+        rawPayload: {
+          reason,
+          refundMode: "automatic",
+          refundedPaymentReference: item.providerPaymentReference,
+          sourcePaymentId: item.sourcePaymentId,
+          sumUpResponse: refundResponse,
+          ...meta,
+        },
+      });
+    } catch (error) {
+      const remainingAmount = roundMoney(targetAmount - refundedAmount);
+      if (remainingAmount > 0) {
+        await recordManualRefundDue(env, reservation, remainingAmount, reason, {
+          ...meta,
+          automaticRefundFailure: error.message,
+          partialAutomaticRefundAmount: refundedAmount,
+          refundPlan,
+        });
+      }
+
+      return {
+        mode: refundedAmount > 0 ? "partial_automatic_then_manual" : "manual",
+        amount: refundedAmount,
+        remainingAmount: remainingAmount > 0 ? remainingAmount : 0,
+        fullyRefunded: false,
+      };
+    }
+  }
+
+  return {
+    mode: "automatic",
+    amount: refundedAmount,
+    remainingAmount: 0,
+    fullyRefunded: true,
   };
 }

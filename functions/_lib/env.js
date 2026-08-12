@@ -38,6 +38,15 @@ export function getConfig(env) {
     touristTaxAdultChf: getNumberEnv(env, "TOURIST_TAX_ADULT_CHF", 3),
     paymentFeeRate: getNumberEnv(env, "PAYMENT_FEE_RATE", 0),
     paymentFeeFixedChf: getNumberEnv(env, "PAYMENT_FEE_FIXED_CHF", 0),
+    // Durée (en minutes) pendant laquelle une réservation en attente de
+    // paiement tient ses dates sur le calendrier. Configurable par env pour
+    // ne pas hardcoder la règle métier (défaut 30 min).
+    pendingPaymentHoldMinutes: getNumberEnv(env, "PENDING_PAYMENT_HOLD_MINUTES", 30),
+    // Fenêtre (en minutes) avant expiration pendant laquelle un rappel de
+    // paiement est envoyé au client. Bornée à la durée du hold : seules les
+    // réservations dont le hold expire bientôt sont rappelées (défaut 20 min,
+    // aligné sur la cadence de maintenance de ~20 min).
+    pendingPaymentReminderWindowMinutes: getNumberEnv(env, "PENDING_PAYMENT_REMINDER_WINDOW_MINUTES", 20),
     sumUpApiBaseUrl: env.SUMUP_API_BASE_URL || "https://api.sumup.com",
     sumUpApiKey: env.SUMUP_API_KEY || "",
     sumUpMerchantCode: env.SUMUP_MERCHANT_CODE || "",

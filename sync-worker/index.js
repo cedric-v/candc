@@ -93,6 +93,14 @@ export default {
         return;
       }
 
+      // Libération fréquente des holds de paiement (rappel + expiration +
+      // emails) : en plus de la passe à la minute 0 via booking_ics.
+      if (controller.cron === "20 * * * *" || controller.cron === "40 * * * *") {
+        const res = await runJob(env, "hold_maintenance");
+        console.log(`Hold maintenance complete: status ${res.status}, response: ${res.body}`);
+        return;
+      }
+
       if (controller.cron === "5 * * * *") {
         if (!isArrivalEmailWindow(env)) {
           console.log("Skipping arrival email cron outside the 08:00 local window.");

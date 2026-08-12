@@ -1,7 +1,7 @@
 import { hasValidInternalToken } from "../../../_lib/auth.js";
 import { badRequest, json, serverError, unauthorized } from "../../../_lib/http.js";
 import { runArrivalEmails, runBookingIcsSync, runDepartureEmails, runReviewRequestEmails, validateCalendarSources } from "../../../_lib/jobs.js";
-import { releaseExpiredPendingPayments } from "../../../_lib/db.js";
+import { runPendingPaymentHoldMaintenance } from "../../../_lib/booking-ops.js";
 
 export async function onRequest(context) {
   try {
@@ -24,12 +24,16 @@ export async function onRequest(context) {
     const action = payload.action || "all";
 
     if (action === "booking_ics") {
-      await releaseExpiredPendingPayments(context.env);
+      await runPendingPaymentHoldMaintenance(context.env);
       return json(await runBookingIcsSync(context.env, payload.unitCode || null));
     }
 
     if (action === "arrival_emails") {
       return json(await runArrivalEmails(context.env, payload.targetDate || null));
+    }
+
+    if (action === "hold_maintenance") {
+      return json(await runPendingPaymentHoldMaintenance(context.env));
     }
 
     if (action === "departure_emails") {
@@ -45,7 +49,7 @@ export async function onRequest(context) {
     }
 
     if (action === "all") {
-      await releaseExpiredPendingPayments(context.env);
+      await runPendingPaymentHoldMaintenance(context.env);
       const bookingSync = await runBookingIcsSync(context.env, payload.unitCode || null);
       const arrivalEmails = await runArrivalEmails(context.env, payload.targetDate || null);
       const departureEmails = await runDepartureEmails(context.env, payload.targetDate || null);

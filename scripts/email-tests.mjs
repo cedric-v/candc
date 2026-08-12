@@ -22,6 +22,26 @@ const REVIEW_SUBJECTS = {
 const PARKING_REVIEW_LINK = "https://g.page/r/CbsI1IDQnZP4EBM/review";
 const STUDIO_REVIEW_LINK = "https://g.page/r/Ca5HhJ5WSkT6EBM/review";
 
+const PAYMENT_REMINDER_SUBJECTS = {
+  fr: "C&C Parking rappel de paiement - PARK-0001",
+  en: "C&C Parking payment reminder - PARK-0001",
+  de: "C&C Parking Zahlungserinnerung - PARK-0001",
+  es: "C&C Parking recordatorio de pago - PARK-0001",
+  pt: "C&C Parking lembrete de pagamento - PARK-0001",
+  it: "C&C Parking promemoria di pagamento - PARK-0001",
+  nl: "C&C Parking betalingsherinnering - PARK-0001",
+};
+
+const PAYMENT_EXPIRED_SUBJECTS = {
+  fr: "C&C Parking réservation expirée - PARK-0001",
+  en: "C&C Parking reservation expired - PARK-0001",
+  de: "C&C Parking Reservierung abgelaufen - PARK-0001",
+  es: "C&C Parking reserva expirada - PARK-0001",
+  pt: "C&C Parking reserva expirada - PARK-0001",
+  it: "C&C Parking prenotazione scaduta - PARK-0001",
+  nl: "C&C Parking reservering verlopen - PARK-0001",
+};
+
 function assert(condition, message) {
   if (!condition) {
     throw new Error(message);
@@ -103,9 +123,46 @@ async function runReviewEmailTests() {
   );
 }
 
-function main() {
-  runReviewEmailTests();
+async function runPendingPaymentEmailTests() {
+  const sent = [];
+  globalThis.fetch = async (url, options) => {
+    sent.push(JSON.parse(options.body));
+    return new Response(JSON.stringify({ id: "mock" }), { status: 200 });
+  };
+
+  // Subjects must be localized in the reservation's language.
+  for (const [locale, expectedSubject] of Object.entries(PAYMENT_REMINDER_SUBJECTS)) {
+    await sendTransactionalEmail(EMAIL_ENV, "payment_reminder", makeReservation({ locale }), {
+      manageToken: "tok",
+    });
+    const payload = sent[sent.length - 1];
+    assertEqual(payload.subject, expectedSubject, `Payment reminder subject should be localized for ${locale}`);
+    assert(
+      payload.text.includes("https://candc.ch/booking/manage/tok"),
+      `Payment reminder for ${locale} should contain the management link`,
+    );
+  }
+
+  for (const [locale, expectedSubject] of Object.entries(PAYMENT_EXPIRED_SUBJECTS)) {
+    await sendTransactionalEmail(EMAIL_ENV, "payment_expired", makeReservation({ locale }), {
+      manageToken: "tok",
+    });
+    const payload = sent[sent.length - 1];
+    assertEqual(payload.subject, expectedSubject, `Payment expired subject should be localized for ${locale}`);
+    assert(
+      payload.text.includes("PARK-0001"),
+      `Payment expired email for ${locale} should mention the reservation reference`,
+    );
+  }
+}
+
+async function main() {
+  await runReviewEmailTests();
+  await runPendingPaymentEmailTests();
   console.log("Email tests passed.");
 }
 
-main();
+main().catch((error) => {
+  console.error(error);
+  process.exit(1);
+});

@@ -1,11 +1,13 @@
 import {
   createManageToken,
+  getExpiringPendingPaymentReservations,
   getReservationForCalendarSync,
   getReservationForEmail,
   hasSuccessfulEmailLog,
   hasSuccessfulEmailLogForDate,
   insertEmailLog,
   insertSyncLog,
+  releaseExpiredPendingPayments,
   updateReservationGoogleCalendarEventId,
 } from "./db.js";
 import { getCurrentIsoDateInZone, getCurrentTimePartsInZone } from "./date.js";
@@ -201,4 +203,112 @@ export async function sendReservationNtfy(env, reservationId, eventType, options
     });
     throw error;
   }
+}
+
+export async function sendPaymentReminderEmail(env, reservationId) {
+  const reservation = await getReservationForEmail(env, reservationId);
+
+  if (!reservation) {
+    throw new Error("reservation_not_found");
+  }
+
+  const manageToken = await createManageToken(env, reservationId);
+  return sendReservationEmail(env, reservationId, "payment_reminder", {
+    manageToken,
+    dedupe: true,
+  });
+}
+
+export async function sendPaymentExpiredEmail(env, reservationId) {
+  const reservation = await getReservationForEmail(env, reservationId);
+
+  if (!reservation) {
+    throw new Error("reservation_not_found");
+  }
+
+  const manageToken = await createManageToken(env, reservationId);
+  return sendReservationEmail(env, reservationId, "payment_expired", {
+    manageToken,
+    dedupe: true,
+  });
+}
+
+// Maintenance des holds de paiement en attente, exécutée avant chaque
+// synchronisation Booking ICS (le cron horaire) :
+//   1. envoie un rappel aux clients dont le hold expire bientôt ;
+//   2. libère les holds expirés (réservations -> payment_expired, ou
+//      revert des ajustements non payés) ;
+//   3. notifie les clients dont le hold vient d'expirer.
+// Les échecs d'e-mail ne bloquent jamais la libération ni la synchronisation.
+export async function runPendingPaymentHoldMaintenance(env) {
+  const config = getConfig(env);
+  const reminderWindow = config.pendingPaymentReminderWindowMinutes;
+  const results = {
+    reminders: [],
+    expired: [],
+    reverted: [],
+  };
+
+  try {
+    const expiring = await getExpiringPendingPaymentReservations(env, reminderWindow);
+
+    for (const reservation of expiring) {
+      try {
+        await sendPaymentReminderEmail(env, reservation.id);
+        results.reminders.push({ reservationId: reservation.id, status: "sent" });
+      } catch (error) {
+        results.reminders.push({ reservationId: reservation.id, status: "failed", error: error.message });
+      }
+    }
+  } catch (error) {
+    await insertSyncLog(env, {
+      unitId: null,
+      syncType: "pending_payment_hold_maintenance",
+      status: "failed",
+      message: `Reminder step failed: ${error.message}`,
+    });
+  }
+
+  let releaseResult;
+  try {
+    releaseResult = await releaseExpiredPendingPayments(env);
+  } catch (error) {
+    await insertSyncLog(env, {
+      unitId: null,
+      syncType: "pending_payment_hold_maintenance",
+      status: "failed",
+      message: `Release step failed: ${error.message}`,
+    });
+    return { ok: false, results };
+  }
+
+  for (const reservationId of releaseResult.expiredInitial) {
+    results.expired.push({ reservationId });
+    try {
+      await sendPaymentExpiredEmail(env, reservationId);
+      results.expired[results.expired.length - 1].email = "sent";
+    } catch (error) {
+      results.expired[results.expired.length - 1].email = "failed";
+      results.expired[results.expired.length - 1].error = error.message;
+    }
+  }
+
+  for (const reservationId of releaseResult.revertedAdjustments) {
+    results.reverted.push({ reservationId });
+  }
+
+  if (
+    releaseResult.expiredInitial.length > 0 ||
+    releaseResult.revertedAdjustments.length > 0
+  ) {
+    await insertSyncLog(env, {
+      unitId: null,
+      syncType: "pending_payment_hold_maintenance",
+      status: "success",
+      message: `Released ${releaseResult.expiredInitial.length} expired hold(s), reverted ${releaseResult.revertedAdjustments.length} unpaid adjustment(s)`,
+      payloadSummary: results,
+    });
+  }
+
+  return { ok: true, results };
 }

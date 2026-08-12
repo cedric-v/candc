@@ -64,6 +64,10 @@ const fr = {
   requestFailed: "La requête a échoué",
   noticeWaitingPayment:
     "Cette réservation attend toujours son paiement. Utilisez le bouton de paiement ci-dessous pour la confirmer. La modification des dates reste désactivée tant que le paiement n'est pas terminé.",
+  noticePaymentExpired:
+    "Le paiement n'a pas été finalisé à temps et vos dates ont été libérées. Vous pouvez encore tenter de finaliser le paiement si les dates sont disponibles, ou refaire une réservation.",
+  datesNoLongerAvailable:
+    "Ces dates ne sont plus disponibles. Vous pouvez annuler la réservation ou choisir d'autres dates.",
   noticeRefundProcessing:
     "Un remboursement est en cours de traitement ou nécessite encore un suivi. Nous vous enverrons un e-mail dès qu'il sera terminé.",
   noticeRefundRecorded: "Un remboursement a déjà été enregistré pour cette réservation.",
@@ -151,6 +155,10 @@ const en = {
   requestFailed: "Request failed",
   noticeWaitingPayment:
     "This reservation is still waiting for payment. Use the payment button below to confirm it. Date changes stay disabled until payment is completed.",
+  noticePaymentExpired:
+    "The payment was not completed in time and your dates have been released. You can still try to complete the payment if the dates are available, or make a new reservation.",
+  datesNoLongerAvailable:
+    "These dates are no longer available. You can cancel the reservation or choose different dates.",
   noticeRefundProcessing:
     "A refund is being processed or still needs follow-up. We will email you once it is completed.",
   noticeRefundRecorded: "A refund has already been recorded for this reservation.",
@@ -238,6 +246,10 @@ const de = {
   requestFailed: "Die Anfrage ist fehlgeschlagen",
   noticeWaitingPayment:
     "Diese Buchung wartet noch auf die Zahlung. Verwenden Sie den Zahlungsbutton unten, um sie zu bestätigen. Datumsänderungen bleiben bis zum Abschluss der Zahlung deaktiviert.",
+  noticePaymentExpired:
+    "Die Zahlung wurde nicht rechtzeitig abgeschlossen und Ihre Daten wurden freigegeben. Sie können die Zahlung noch versuchen abzuschliessen, falls die Daten verfügbar sind, oder eine neue Reservierung vornehmen.",
+  datesNoLongerAvailable:
+    "Diese Daten sind nicht mehr verfügbar. Sie können die Reservierung stornieren oder andere Daten wählen.",
   noticeRefundProcessing:
     "Eine Erstattung wird bearbeitet oder muss noch nachverfolgt werden. Wir senden Ihnen eine E-Mail, sobald sie abgeschlossen ist.",
   noticeRefundRecorded: "Für diese Buchung wurde bereits eine Erstattung erfasst.",
@@ -325,6 +337,10 @@ const es = {
   requestFailed: "La solicitud falló",
   noticeWaitingPayment:
     "Esta reserva sigue esperando el pago. Usa el botón de pago de abajo para confirmarla. Los cambios de fecha permanecen desactivados hasta que se complete el pago.",
+  noticePaymentExpired:
+    "El pago no se completó a tiempo y tus fechas se han liberado. Todavía puedes intentar completar el pago si las fechas están disponibles, o hacer una nueva reserva.",
+  datesNoLongerAvailable:
+    "Estas fechas ya no están disponibles. Puedes cancelar la reserva o elegir otras fechas.",
   noticeRefundProcessing:
     "Se está procesando un reembolso o aún necesita seguimiento. Te enviaremos un correo cuando esté completado.",
   noticeRefundRecorded: "Ya se ha registrado un reembolso para esta reserva.",
@@ -412,6 +428,10 @@ const pt = {
   requestFailed: "O pedido falhou",
   noticeWaitingPayment:
     "Esta reserva continua a aguardar pagamento. Use o botão de pagamento abaixo para a confirmar. As alterações de datas permanecem desativadas até o pagamento estar concluído.",
+  noticePaymentExpired:
+    "O pagamento não foi concluído a tempo e as suas datas foram libertadas. Ainda pode tentar concluir o pagamento se as datas estiverem disponíveis, ou fazer uma nova reserva.",
+  datesNoLongerAvailable:
+    "Estas datas já não estão disponíveis. Pode cancelar a reserva ou escolher outras datas.",
   noticeRefundProcessing:
     "Um reembolso está a ser processado ou ainda precisa de acompanhamento. Enviaremos um e-mail assim que estiver concluído.",
   noticeRefundRecorded: "Já foi registado um reembolso para esta reserva.",
@@ -499,6 +519,10 @@ const it = {
   requestFailed: "La richiesta è fallita",
   noticeWaitingPayment:
     "Questa prenotazione è ancora in attesa di pagamento. Usa il pulsante di pagamento qui sotto per confermarla. Le modifiche alle date restano disabilitate finché il pagamento non è completato.",
+  noticePaymentExpired:
+    "Il pagamento non è stato completato in tempo e le tue date sono state liberate. Puoi ancora provare a completare il pagamento se le date sono disponibili, oppure fare una nuova prenotazione.",
+  datesNoLongerAvailable:
+    "Queste date non sono più disponibili. Puoi annullare la prenotazione o scegliere altre date.",
   noticeRefundProcessing:
     "Un rimborso è in fase di elaborazione o necessita ancora di un seguito. Ti invieremo un'e-mail appena sarà completato.",
   noticeRefundRecorded: "Per questa prenotazione è già stato registrato un rimborso.",
@@ -586,6 +610,10 @@ const nl = {
   requestFailed: "De aanvraag is mislukt",
   noticeWaitingPayment:
     "Deze reservering wacht nog op betaling. Gebruik de betaalknop hieronder om te bevestigen. Datumwijzigingen blijven uitgeschakeld totdat de betaling is voltooid.",
+  noticePaymentExpired:
+    "De betaling is niet op tijd voltooid en je datums zijn vrijgegeven. Je kunt nog proberen de betaling te voltooien als de datums beschikbaar zijn, of een nieuwe reservering maken.",
+  datesNoLongerAvailable:
+    "Deze datums zijn niet meer beschikbaar. Je kunt de reservering annuleren of andere datums kiezen.",
   noticeRefundProcessing:
     "Een terugbetaling wordt verwerkt of heeft nog vervolg nodig. We sturen u een e-mail zodra deze is afgerond.",
   noticeRefundRecorded: "Voor deze reservering is al een terugbetaling geregistreerd.",

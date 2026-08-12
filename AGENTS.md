@@ -48,6 +48,12 @@ Important:
 
 ## Booking-specific guidance
 
+Pending-payment behavior (important):
+
+- a direct booking holds its dates for `PENDING_PAYMENT_HOLD_MINUTES` (default 30) via a `pending_payment` calendar block; after expiry the reservation becomes `payment_expired` and the dates are released
+- the ICS export feed only contains confirmed stays (`confirmed`, `modified`, `refund_due`, `pending_refund`) — pending holds never block Booking.com/other OTAs
+- availability is re-checked before confirming any payment (SumUp webhook) and before resuming payment (`resume_payment`); a conflict leads to a refund and `conflict_refund_due` (initial) or a revert to `modified` (unpaid adjustment)
+
 When changing booking behavior, check all of:
 
 - `functions/_lib/validation.js`

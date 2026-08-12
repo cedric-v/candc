@@ -87,7 +87,7 @@ Le moteur de disponibilite doit tenir compte de :
 - reservations directes confirmees
 - blocs importes depuis Booking.com ICS
 - blocages manuels admin
-- reservations en attente de paiement si un mecanisme de hold est active
+- reservations en attente de paiement pendant la fenetre de hold (par defaut 30 minutes, configurable via `PENDING_PAYMENT_HOLD_MINUTES`)
 
 ## Langues
 
@@ -414,6 +414,8 @@ Exigences :
 - copie a bonjour@candc.ch
 - e-mail de mise a jour apres modification
 - e-mail d'annulation
+- e-mail de rappel de paiement (avant expiration du hold)
+- e-mail d'expiration de paiement (dates liberees, reprise possible)
 - e-mail d'arrivee le jour meme a 08:00
 - e-mail de depart la veille a 18:00 (studio uniquement)
 
@@ -706,6 +708,11 @@ Frequence recommandee MVP :
 
 - toutes les 30 minutes
 
+### Maintenance des holds de paiement
+
+- toutes les 20 minutes (cron `20 * * * *` et `40 * * * *` du worker sync) en plus de la passe horaire
+- envoi des rappels avant expiration, liberation des holds expires, e-mails d'expiration
+
 ### E-mails d'arrivee
 
 Frequence recommande :
@@ -733,15 +740,37 @@ Frequence recommandee :
 
 ## Regles de disponibilite et conflits
 
-Au moment de la creation du paiement :
+### Hold de paiement
+
+A la creation d'une reservation directe, un bloc calendrier `pending_payment` est cree et tient les dates pendant une fenetre configurable (`PENDING_PAYMENT_HOLD_MINUTES`, defaut 30 minutes). Pendant cette fenetre :
+
+- le site bloque les memes dates pour les nouvelles reservations directes ;
+- le flux ICS sortant est limite aux reservations confirmees (les holds non payes ne bloquent PAS Booking.com / autres OTA : l'ICS n'exporte que `confirmed`, `modified`, `refund_due`, `pending_refund`) ;
+- a expiration, le bloc est libere, la reservation passe en `payment_expired` et le client recoit un e-mail.
+
+### Statuts lies au paiement
+
+- `pending_payment` : en attente du paiement initial, dates tenues pendant le hold.
+- `payment_expired` : hold expire, dates liberees. Le client peut reprendre le paiement depuis son lien de gestion, mais la disponibilite est re-verifiee avant de relancer un checkout.
+- `payment_setup_failed` : le checkout SumUp n'a pas pu etre cree (erreur de configuration/fournisseur).
+- `conflict_refund_due` : le paiement est arrive alors que les dates avaient ete reprises ; la reservation n'est pas confirmee, un remboursement est declenche.
+- `pending_adjustment_payment` : modification demandee avec paiement complementaire en attente ; si le hold expire sans paiement, la reservation reste confirmee sur les nouvelles dates (`modified`) et l'hote est notifie pour suivi.
+
+### Verification en deux temps
+
+Au moment de la creation du paiement (reservation initiale ou reprise de paiement) :
 
 - revérifier la disponibilite
-- refuser si un conflit apparait
+- refuser si un conflit apparait (la reprise de paiement `resume_payment` refuse avec 409 si les dates ne sont plus libres)
 
-Au moment de la confirmation du paiement :
+Au moment de la confirmation du paiement (webhook SumUp) :
 
-- revérifier la disponibilite une deuxieme fois
-- si conflit critique, ne pas confirmer automatiquement sans traitement prevu
+- revérifier la disponibilite une deuxieme fois avant de confirmer
+- si conflit critique, ne pas confirmer : remboursement (integral pour un paiement initial, du montant de l'ajustement pour un complement), passage en `conflict_refund_due` (initial) ou revert en `modified` (ajustement), bloc libere, hote et client notifies
+
+### Rappel avant expiration
+
+Un e-mail de rappel est envoye aux clients dont le hold expire bientot (fenetre `PENDING_PAYMENT_REMINDER_WINDOW_MINUTES`, defaut 20 minutes, bornee a la duree du hold) lors de chaque passe de maintenance (~20 min).
 
 Pour limiter les collisions :
 

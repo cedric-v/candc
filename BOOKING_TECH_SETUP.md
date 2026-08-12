@@ -93,6 +93,8 @@ Verification recommandee :
 - `WC_SHOWER_CLEANING_FEE_CHF` — tarif hebdomadaire de l'option WC-douche (10 CHF couvre les 7 premieres nuites, puis 10 CHF par semaine entamee)
 - `PAYMENT_FEE_RATE`
 - `PAYMENT_FEE_FIXED_CHF`
+- `PENDING_PAYMENT_HOLD_MINUTES` — duree (minutes) pendant laquelle une reservation en attente de paiement tient ses dates ; defaut `30`
+- `PENDING_PAYMENT_REMINDER_WINDOW_MINUTES` — fenetre (minutes) avant expiration pendant laquelle le job horaire envoie un e-mail de rappel ; bornee a la duree du hold ; defaut `20`
 - `TIMEZONE`
 - `DEFAULT_CHECK_IN_TIME`
 - `DEFAULT_CHECK_IN_END_TIME`
@@ -274,11 +276,13 @@ Le scaffold couvre :
 - remises long sejour unifiees par unite, avec jusqu'a `4` paliers configurables dans l'admin
 - gestion des periodes tarifaires par unite
 - creation d'une reservation `pending_payment`
-- blocage calendrier associe a une unite
+- blocage calendrier associe a une unite pendant la fenetre de hold (configurable via `PENDING_PAYMENT_HOLD_MINUTES`)
 - generation d'un token de gestion
-- export ICS de base par unite
+- export ICS de base par unite, limite aux reservations confirmees (les holds non payes ne bloquent pas les OTA)
 - creation d'un Hosted Checkout SumUp si les credentials sont configures
-- webhook SumUp pour confirmer ou liberer la reservation selon le statut de paiement
+- webhook SumUp pour confirmer ou liberer la reservation selon le statut de paiement, avec re-verification de la disponibilite avant confirmation (anti-double-reservation : si conflit, remboursement et statut `conflict_refund_due` ou revert d'ajustement)
+- reprise de paiement (`resume_payment`) avec re-verification de la disponibilite et renouvellement de la fenetre de hold
+- expiration automatique des holds : statut `payment_expired`, e-mails de rappel et d'expiration, revert des ajustements non payes
 - import Booking.com ICS par endpoint interne authentifie
 - remplacement des blocages externes importes par unite
 - journalisation des synchronisations dans `sync_logs`
@@ -286,11 +290,13 @@ Le scaffold couvre :
 - mise a jour automatique Google Calendar depuis le webhook SumUp uniquement si `ENABLE_GOOGLE_CALENDAR_SYNC=true` et si la configuration Google est complete
 - e-mail transactionnel de creation de reservation
 - e-mails de modification, annulation et rappel d'arrivee
+- e-mails de rappel de paiement et d'expiration de paiement (hold)
 - page client de gestion de reservation via lien magique
 - mini interface admin protegee par token
 - endpoint interne unifie pour lancer les jobs Booking ICS, arrival emails et validation OTA
 - worker cron dedie dans `sync-worker/` avec plusieurs responsabilites separees :
   - sync OTA horaire
+  - maintenance des holds de paiement toutes les 20 minutes (`hold_maintenance` : rappels, expiration, emails) en plus de la passe horaire
   - e-mails d'arrivee via un cron separe, declenche uniquement pendant la fenetre locale de `08:00 Europe/Zurich`
   - e-mails de depart via un cron separe, declenche uniquement pendant la fenetre locale de `18:00 Europe/Zurich`
   - e-mails de demande d'avis via un cron separe, declenche uniquement pendant la fenetre locale de `12:00 Europe/Zurich`
