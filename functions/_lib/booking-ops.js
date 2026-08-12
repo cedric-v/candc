@@ -16,6 +16,16 @@ import { isEmailConfigured, sendTransactionalEmail } from "./email.js";
 import { isGoogleCalendarConfigured, upsertReservationEvent } from "./google-calendar.js";
 import { isNtfyConfigured, sendNtfyNotification } from "./ntfy.js";
 
+// Réservations créées par les vérifications automatiques (npm run
+// check:payment, funnel_check) : marquées par la remarque [smoke-test].
+// Aucun e-mail/notification ne doit partir pour elles.
+function isSmokeTestReservation(reservation) {
+  return (
+    typeof reservation.remarks === "string" &&
+    reservation.remarks.includes("[smoke-test]")
+  );
+}
+
 export async function syncReservationToGoogleCalendar(env, reservationId) {
   if (!isGoogleCalendarConfigured(env)) {
     return { ok: false, reason: "google_calendar_not_configured" };
@@ -48,6 +58,13 @@ export async function sendReservationEmail(env, reservationId, emailType, option
 
   if (!reservation) {
     throw new Error("reservation_not_found");
+  }
+
+  // Réservations de test (check-live-payment / fumée) : aucun e-mail ni
+  // notification — ne pas consommer le quota Resend/ntfy ni polluer la
+  // boîte admin (CC automatique).
+  if (!options.force && isSmokeTestReservation(reservation)) {
+    return { ok: true, skipped: true, reason: "smoke_test" };
   }
 
   const recipient = options.to || reservation.guest_email;
@@ -146,6 +163,12 @@ export async function sendReservationNtfy(env, reservationId, eventType, options
 
   if (!reservation) {
     throw new Error("reservation_not_found");
+  }
+
+  // Réservations de test : ne pas consommer le quota journalier ntfy.sh ni
+  // envoyer de push parasite à l'hôte.
+  if (isSmokeTestReservation(reservation)) {
+    return { ok: true, skipped: true, reason: "smoke_test" };
   }
 
   const unitLabel = reservation.unit_display_name || reservation.unit_code || reservation.unit_type || "reservation";

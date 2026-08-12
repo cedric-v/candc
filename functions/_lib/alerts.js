@@ -1,6 +1,12 @@
 import { getConfig } from "./env.js";
-import { isEmailConfigured } from "./email.js";
 import { isNtfyConfigured, sendNtfyNotification } from "./ntfy.js";
+
+// Deliberately self-contained: this module is imported by error paths of
+// availability/quote, which should not pull in the large email-template
+// module. The Resend check is re-implemented inline on purpose.
+function isEmailConfigured(config) {
+  return Boolean(config.resendApiKey && config.emailFrom);
+}
 
 // Alerts the site admin (ADMIN_NOTIFICATION_EMAIL, default bonjour@candc.ch)
 // when something goes wrong on the booking API. Used on server-error paths
@@ -97,7 +103,7 @@ export async function sendAdminAlert(
     }
   }
 
-  if (isEmailConfigured(env)) {
+  if (isEmailConfigured(config)) {
     try {
       const response = await fetch("https://api.resend.com/emails", {
         method: "POST",
