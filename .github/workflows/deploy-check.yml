@@ -28,11 +28,11 @@ jobs:
       # des steps (le contexte secrets n'y est pas autorisé).
       CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
-          node-version: 20
+          node-version: 24
           cache: npm
 
       - name: Wait for Pages deployment (API token)
