@@ -99,7 +99,7 @@
     <link rel="alternate" hreflang="x-default" href="https://candc.ch{{ xDefaultUrl }}">
     
     <!-- CSS -->
-    <link rel="stylesheet" href="{{ '/assets/css/styles.css' | relativeUrl }}?v={{ build.assetVersion }}">
+    <link rel="stylesheet" href="{{ '/assets/css/styles.css' | relativeUrl }}?v={{ build.hash('/assets/css/styles.css') }}">
 
     
     <link rel="icon" type="image/x-icon" href="{{ '/favicon.ico' | relativeUrl }}">
