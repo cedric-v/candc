@@ -288,6 +288,14 @@ d'un delai fixe de 4 min), ajouter un secret de depot `CF_API_TOKEN` :
 - sans ce secret, le workflow attend 4 min puis teste quand meme (le
   deployment est normalement termine en ~2-3 min).
 
+> **Sauvegarde du jeton** : GitHub n'affiche plus jamais la valeur d'un
+> secret apres creation (elle est masquee). Gardez-en une copie locale dans
+> `secrets.local.json` sous la cle `_CF_API_TOKEN_GITHUB` (cle ignoree par
+> `npm run secrets:push`) et/ou dans un gestionnaire de mots de passe — c'est
+> le seul moyen de la restaurer si le secret GitHub est ecrase. Ce jeton est
+> un secret **GitHub**, pas un secret Cloudflare Pages : les edits de
+> variables d'environnement du dashboard Cloudflare ne peuvent pas l'ecraser.
+
 ### Alertes admin en cas d'erreur
 
 Le backend envoie un e-mail a `ADMIN_NOTIFICATION_EMAIL` (defaut
