@@ -702,6 +702,11 @@ Le modele de donnees doit etre multi-unite.
 
 ## Taches planifiees
 
+Le worker Cloudflare `candc-cron-sync` (`sync-worker/`) fonctionne sur **un seul cron `*/20 * * * *`** (contrainte du plan Workers Free : 5 crons max par compte, partages entre tous les workers). Toutes les 20 minutes il déclenche :
+
+- `booking_ics` : import ICS Booking.com/Airbnb + maintenance des holds de paiement (rappels, expiration, e-mails) ;
+- les e-mails d'arrivee / depart / avis, filtres en JS sur les fenetres locales (`08:00` / `18:00` / `12:00` `Europe/Zurich`), avec deduplication via `email_logs`.
+
 ### Synchronisation Booking ICS
 
 Frequence recommandee MVP :
@@ -710,7 +715,7 @@ Frequence recommandee MVP :
 
 ### Maintenance des holds de paiement
 
-- toutes les 20 minutes (cron `20 * * * *` et `40 * * * *` du worker sync) en plus de la passe horaire
+- toutes les 20 minutes (chaque passe du cron `*/20 * * * *`)
 - envoi des rappels avant expiration, liberation des holds expires, e-mails d'expiration
 
 ### E-mails d'arrivee

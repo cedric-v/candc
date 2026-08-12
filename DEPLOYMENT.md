@@ -396,11 +396,9 @@ Important :
 
 - le backend des jobs est pret
 - le declenchement automatique est assure par le Worker Cloudflare `candc-cron-sync` (situe dans `sync-worker/`)
-- ce Worker separe maintenant :
-  - un cron horaire de sync calendrier
-  - un cron distinct pour les e-mails d'arrivee, filtre sur `08:00` locale `Europe/Zurich`
-  - un cron distinct pour les e-mails de depart, filtre sur `18:00` locale `Europe/Zurich`
-  - un cron distinct pour les e-mails de demande d'avis, filtre sur `12:00` locale `Europe/Zurich`
+- ce Worker tourne sur **un seul cron `*/20 * * * *`** (le plan Workers Free limite a `5` crons par compte, partages entre tous les workers du compte) et déclenche toutes les 20 minutes :
+  - `booking_ics` : sync calendrier OTA + maintenance des holds de paiement (rappel, expiration, e-mails)
+  - e-mails d'arrivee, de depart et de demande d'avis, filtres en JS sur `08:00` / `18:00` / `12:00` locale `Europe/Zurich`, dedupliques via `email_logs`
 - ce Worker requiert la variable secrete `INTERNAL_SYNC_TOKEN`
 - en cas de reservation confirmee le jour meme apres 08:00 locale, l'e-mail d'arrivee est envoye immediatement par fallback sans attendre le prochain cron
 - l'interface admin expose aussi :

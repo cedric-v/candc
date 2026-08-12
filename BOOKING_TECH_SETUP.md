@@ -294,12 +294,9 @@ Le scaffold couvre :
 - page client de gestion de reservation via lien magique
 - mini interface admin protegee par token
 - endpoint interne unifie pour lancer les jobs Booking ICS, arrival emails et validation OTA
-- worker cron dedie dans `sync-worker/` avec plusieurs responsabilites separees :
-  - sync OTA horaire
-  - maintenance des holds de paiement toutes les 20 minutes (`hold_maintenance` : rappels, expiration, emails) en plus de la passe horaire
-  - e-mails d'arrivee via un cron separe, declenche uniquement pendant la fenetre locale de `08:00 Europe/Zurich`
-  - e-mails de depart via un cron separe, declenche uniquement pendant la fenetre locale de `18:00 Europe/Zurich`
-  - e-mails de demande d'avis via un cron separe, declenche uniquement pendant la fenetre locale de `12:00 Europe/Zurich`
+- worker cron dedie dans `sync-worker/` sur un seul cron `*/20 * * * *` (limite de 5 crons par compte sur le plan Workers Free) couvrant :
+  - sync OTA + maintenance des holds de paiement toutes les 20 minutes (`booking_ics` : rappels, expiration, emails)
+  - e-mails d'arrivee, de depart et de demande d'avis, filtres en JS sur les fenetres locales (`08:00` / `18:00` / `12:00` `Europe/Zurich`), dedupliques via `email_logs`
 - fallback d'e-mail d'arrivee immediat pour les reservations confirmees le jour meme apres 08:00 locale
 - remboursements automatiques SumUp pour les cas eligibles, avec fallback `manual_refund_due` si la transaction n'est pas remboursable automatiquement
 - tests metier dedies dans `scripts/booking-logic-tests.mjs`

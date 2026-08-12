@@ -31,42 +31,18 @@ async function runJob(env, action) {
 }
 
 function isArrivalEmailWindow(env) {
-  const parts = new Intl.DateTimeFormat("en-GB", {
-    timeZone: env.TIMEZONE || "Europe/Zurich",
-    hour: "2-digit",
-    minute: "2-digit",
-    hourCycle: "h23",
-  }).formatToParts(new Date());
-
-  const values = {};
-  for (const part of parts) {
-    if (part.type !== "literal") {
-      values[part.type] = Number(part.value);
-    }
-  }
-
-  return values.hour === 8;
+  return currentLocalHour(env) === 8;
 }
 
 function isDepartureEmailWindow(env) {
-  const parts = new Intl.DateTimeFormat("en-GB", {
-    timeZone: env.TIMEZONE || "Europe/Zurich",
-    hour: "2-digit",
-    minute: "2-digit",
-    hourCycle: "h23",
-  }).formatToParts(new Date());
-
-  const values = {};
-  for (const part of parts) {
-    if (part.type !== "literal") {
-      values[part.type] = Number(part.value);
-    }
-  }
-
-  return values.hour === 18;
+  return currentLocalHour(env) === 18;
 }
 
 function isReviewEmailWindow(env) {
+  return currentLocalHour(env) === 12;
+}
+
+function currentLocalHour(env) {
   const parts = new Intl.DateTimeFormat("en-GB", {
     timeZone: env.TIMEZONE || "Europe/Zurich",
     hour: "2-digit",
@@ -81,60 +57,36 @@ function isReviewEmailWindow(env) {
     }
   }
 
-  return values.hour === 12;
+  return values.hour;
 }
 
 export default {
+  // Un seul cron `*/20 * * * *` couvre tous les jobs (limite de 5 crons par
+  // compte sur le plan Workers Free, partagée entre tous les workers) :
+  //   - `booking_ics` (toutes les 20 min) : import ICS OTA + maintenance des
+  //     holds de paiement (rappel, expiration, e-mails) exécutée en premier ;
+  //   - e-mails d'arrivée / départ / avis : déclenchés toutes les 20 min mais
+  //     filtrés en JS sur la fenêtre locale (08:00 / 18:00 / 12:00) ;
+  //     la déduplication par `email_logs` évite tout envoi en double.
   async scheduled(controller, env, ctx) {
     try {
-      if (controller.cron === "0 * * * *") {
-        const res = await runJob(env, "booking_ics");
-        console.log(`Calendar sync complete: status ${res.status}, response: ${res.body}`);
-        return;
-      }
+      const sync = await runJob(env, "booking_ics");
+      console.log(`Calendar sync + hold maintenance: status ${sync.status}, response: ${sync.body}`);
 
-      // Libération fréquente des holds de paiement (rappel + expiration +
-      // emails) : en plus de la passe à la minute 0 via booking_ics.
-      if (controller.cron === "20 * * * *" || controller.cron === "40 * * * *") {
-        const res = await runJob(env, "hold_maintenance");
-        console.log(`Hold maintenance complete: status ${res.status}, response: ${res.body}`);
-        return;
-      }
-
-      if (controller.cron === "5 * * * *") {
-        if (!isArrivalEmailWindow(env)) {
-          console.log("Skipping arrival email cron outside the 08:00 local window.");
-          return;
-        }
-
+      if (isArrivalEmailWindow(env)) {
         const res = await runJob(env, "arrival_emails");
         console.log(`Arrival email cron complete: status ${res.status}, response: ${res.body}`);
-        return;
       }
 
-      if (controller.cron === "10 * * * *") {
-        if (!isDepartureEmailWindow(env)) {
-          console.log("Skipping departure email cron outside the 18:00 local window.");
-          return;
-        }
-
+      if (isDepartureEmailWindow(env)) {
         const res = await runJob(env, "departure_emails");
         console.log(`Departure email cron complete: status ${res.status}, response: ${res.body}`);
-        return;
       }
 
-      if (controller.cron === "15 * * * *") {
-        if (!isReviewEmailWindow(env)) {
-          console.log("Skipping review email cron outside the 12:00 local window.");
-          return;
-        }
-
+      if (isReviewEmailWindow(env)) {
         const res = await runJob(env, "review_emails");
         console.log(`Review email cron complete: status ${res.status}, response: ${res.body}`);
-        return;
       }
-
-      console.log(`No handler configured for cron ${controller.cron}`);
     } catch (err) {
       console.error(`Scheduled job failed: ${err.message}`);
     }
