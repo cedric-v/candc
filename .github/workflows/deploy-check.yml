@@ -23,6 +23,10 @@ jobs:
     name: Post-deploy booking check
     runs-on: ubuntu-latest
     timeout-minutes: 25
+    env:
+      # Exposé au niveau du job pour pouvoir tester sa présence dans les `if:`
+      # des steps (le contexte secrets n'y est pas autorisé).
+      CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
     steps:
       - uses: actions/checkout@v4
 
@@ -32,7 +36,7 @@ jobs:
           cache: npm
 
       - name: Wait for Pages deployment (API token)
-        if: ${{ secrets.CF_API_TOKEN != '' }}
+        if: env.CF_API_TOKEN != ''
         run: node scripts/wait-for-pages-deploy.mjs
         env:
           CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
@@ -41,7 +45,7 @@ jobs:
           COMMIT_SHA: ${{ github.sha }}
 
       - name: Wait for Pages build (no API token)
-        if: ${{ secrets.CF_API_TOKEN == '' }}
+        if: env.CF_API_TOKEN == ''
         run: sleep 240
 
       - name: Install dependencies
