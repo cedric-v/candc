@@ -96,6 +96,26 @@ When changing sync behavior, also check:
 - `functions/_lib/ntfy.js`
 - `functions/_lib/jobs.js`
 
+## Admin alerts and monitoring
+
+- `functions/_lib/alerts.js` — `sendAdminAlert()` warns the admin
+  (`ADMIN_NOTIFICATION_EMAIL`, default bonjour@candc.ch) by email (Resend)
+  and ntfy push on booking-critical server errors only: reservation
+  creation 500, SumUp checkout/webhook failures, availability/quote 500s.
+  Deduped to one alert per key per 30 min (via `email_logs`, reservation_id
+  NULL). Never used for normal 400/409 responses. Check all error paths in:
+  `functions/api/booking/reservations.js`, `availability.js`, `quote.js`,
+  `functions/api/booking/sumup/webhook.js`.
+- `runFunnelHealthCheck` (jobs.js, action `funnel_check`) — read-only
+  periodic probe (availability + quote for future windows, no reservation
+  created) triggered every 2 h by the sync worker; alerts the admin on
+  failure. `functions/api/internal/jobs/run.js` exposes the action.
+- Post-deploy verification: `.github/workflows/deploy-check.yml` waits for
+  the Cloudflare Pages deployment, builds, runs `npm test` and the live
+  payment funnel check (`npm run check:payment`). Needs the optional
+  `CF_API_TOKEN` repo secret (Pages read + account read) to wait for the
+  exact deployment instead of a fixed delay.
+
 ## Verification
 
 Run after meaningful changes:
@@ -114,6 +134,9 @@ npm run check:payment
 ```
 
 (exit 0 = SumUp secrets bound and a hosted-checkout link is generated; exit 1 = secrets missing, restore with `npm run secrets:push` and redeploy — see DEPLOYMENT.md "Processus recommande").
+
+A GitHub Action (`.github/workflows/deploy-check.yml`) runs this check
+automatically after every push to `main` once the Pages deployment is live.
 
 ## Known unfinished areas
 

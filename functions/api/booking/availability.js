@@ -7,6 +7,7 @@ import {
 import { getConfig } from "../../_lib/env.js";
 import { isIsoDateString } from "../../_lib/date.js";
 import { badRequest, json, serverError } from "../../_lib/http.js";
+import { sendAdminAlert } from "../../_lib/alerts.js";
 
 export async function onRequestGet(context) {
   const { request, env } = context;
@@ -72,6 +73,18 @@ export async function onRequestGet(context) {
     });
   } catch (error) {
     console.error("Failed to compute availability:", error);
+    try {
+      await sendAdminAlert(context.env, {
+        key: "availability_check_failed",
+        subject: "⚠️ Booking API: échec du contrôle de disponibilité",
+        message: `Le contrôle de disponibilité a échoué sur ${getConfig(env).publicBaseUrl} (from=${from} to=${to} unitCode=${unitCode}).
+
+${error?.stack || error?.message || String(error)}`,
+        tags: "critical",
+      });
+    } catch {
+      // Alerting must never mask the original error.
+    }
     return serverError("Failed to compute availability");
   }
 }

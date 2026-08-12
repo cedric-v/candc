@@ -266,6 +266,42 @@ Donc :
 
 4. Verifier automatiquement apres chaque deployment : `npm run check:payment` (exit 0 = paiement actif, exit 1 = secrets non lies).
 
+### Verification automatique post-deploiement (GitHub Actions)
+
+Le workflow `.github/workflows/deploy-check.yml` se declenche a chaque push sur
+`main` (ce qui deploie aussi Cloudflare Pages) et verifie :
+
+1. que le deployment Pages du commit est en ligne (attente active) ;
+2. que le site build (`npm run build`) et que les tests locaux passent
+   (`npm test`) ;
+3. que le funnel de paiement en ligne repond correctement
+   (`npm run check:payment` — cree puis annule une reservation de test et
+   verifie le lien de checkout SumUp).
+
+Tout echec fait echouer le workflow (visible dans l'onglet Actions de GitHub).
+
+Pour que le workflow attende **exactement** le deployment du commit (au lieu
+d'un delai fixe de 4 min), ajouter un secret de depot `CF_API_TOKEN` :
+
+- token Cloudflare avec permissions `Pages > Read` et `Account > Read`
+  (cree dans le dashboard Cloudflare : My Profile -> API Tokens) ;
+- sans ce secret, le workflow attend 4 min puis teste quand meme (le
+  deployment est normalement termine en ~2-3 min).
+
+### Alertes admin en cas d'erreur
+
+Le backend envoie un e-mail a `ADMIN_NOTIFICATION_EMAIL` (defaut
+bonjour@candc.ch) **et** un push ntfy quand une erreur serveur survient sur
+le funnel de reservation (creation de reservation, checkout ou webhook
+SumUp, disponibilite, tarif). De duplication : 1 alerte max / cle / 30 min.
+`npm run check:payment` + le workflow post-deploiement + la verification
+periodique `funnel_check` (toutes les 2 h via le cron) couvrent les
+regressions entre deux deploiements.
+
+> `NTFY_TOPIC_URL` doit etre une URL complete (`https://ntfy.sh/mon-topic`).
+> Une valeur sans `https://` echoue sur `fetch()` ; le code la normalise
+> automatiquement depuis le correctif du 12 aout 2026.
+
 Valeurs actuelles recommandees pour le parking :
 
 - `PAYMENT_FEE_RATE=0.025`

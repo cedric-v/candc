@@ -2,6 +2,8 @@ import { DEFAULT_UNITS } from "../functions/_lib/catalog.js";
 import { calculateQuoteFromResolvedUnit } from "../functions/_lib/pricing.js";
 import { buildAutomaticRefundPlan } from "../functions/_lib/refunds.js";
 import { validateBookingInput } from "../functions/_lib/validation.js";
+import { sendAdminAlert } from "../functions/_lib/alerts.js";
+import { normalizeTopicUrl } from "../functions/_lib/ntfy.js";
 
 function assert(condition, message) {
   if (!condition) {
@@ -454,11 +456,114 @@ function runRefundPlanTests() {
   assertEqual(plan.items[1].amount, 15, "Initial payment should cover the remaining CHF 15");
 }
 
+function makeMockDb() {
+  const rows = [];
+  return {
+    rows,
+    prepare(sql) {
+      const stmt = {
+        _sql: sql,
+        _bound: [],
+        bind(...args) {
+          this._bound = args;
+          return this;
+        },
+        async all() {
+          if (this._sql.includes("FROM email_logs")) {
+            const [emailType, recipient, cutoff] = this._bound;
+            return {
+              results: rows.filter(
+                (row) =>
+                  row.status === "alerted" &&
+                  row.email_type === emailType &&
+                  row.recipient === recipient &&
+                  row.created_at >= cutoff,
+              ),
+            };
+          }
+          return { results: [] };
+        },
+        async run() {
+          rows.push({
+            email_type: this._bound[2],
+            recipient: this._bound[3],
+            status: this._bound[4],
+            created_at: this._bound[6],
+          });
+          return { meta: {} };
+        },
+      };
+      return stmt;
+    },
+  };
+}
+
+async function runAlertTests() {
+  // 1. Aucun canal configuré : l'alerte signale ok:false sans lever d'erreur.
+  const envNoChannels = {
+    PUBLIC_BASE_URL: "https://candc.ch",
+    ADMIN_NOTIFICATION_EMAIL: "admin@candc.ch",
+  };
+  const noChannelResult = await sendAdminAlert(envNoChannels, {
+    key: "test_alert_no_channels",
+    subject: "test",
+    message: "test",
+  });
+  assert(!noChannelResult.ok, "Alert with no channels should report not delivered");
+  assertEqual(noChannelResult.results.email, "skipped", "Email should be skipped when Resend is not configured");
+  assertEqual(noChannelResult.results.ntfy, "skipped", "ntfy should be skipped when no topic URL");
+
+  // 3. Normalisation d'URL ntfy : une valeur sans schéma reçoit https://.
+  assertEqual(
+    normalizeTopicUrl("ntfy.sh/candc-booking-1782"),
+    "https://ntfy.sh/candc-booking-1782",
+    "ntfy topic URL without scheme should be normalized",
+  );
+  assertEqual(
+    normalizeTopicUrl("https://ntfy.sh/candc-booking-1782"),
+    "https://ntfy.sh/candc-booking-1782",
+    "ntfy topic URL with scheme should stay unchanged",
+  );
+
+  // 2. Canal e-mail simulé + D1 mock : la première alerte part, la seconde
+  //    (même clé, fenêtre de 30 min) est dédupliquée.
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async (url) => {
+    if (String(url).startsWith("https://api.resend.com/emails")) {
+      return { ok: true, json: async () => ({ id: "test-alert-id" }) };
+    }
+    throw new Error(`unexpected fetch: ${url}`);
+  };
+
+  try {
+    const env = {
+      PUBLIC_BASE_URL: "https://candc.ch",
+      ADMIN_NOTIFICATION_EMAIL: "admin@candc.ch",
+      EMAIL_FROM: "C&C <reservations@candc.ch>",
+      RESEND_API_KEY: "test-key",
+      DB: makeMockDb(),
+    };
+
+    const first = await sendAdminAlert(env, { key: "dup_test", subject: "s", message: "m" });
+    assert(first.ok, "First alert should be delivered");
+    assertEqual(first.results.email, "sent", "Email channel should report sent");
+
+    const second = await sendAdminAlert(env, { key: "dup_test", subject: "s", message: "m" });
+    assert(Boolean(second.skipped), "Second alert with the same key should be deduped");
+
+    const third = await sendAdminAlert(env, { key: "other_key", subject: "s", message: "m" });
+    assert(third.ok, "Alert with a different key should not be deduped");
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+}
+
 function main() {
   runValidationTests();
   runGuestContactValidationTests();
   runPricingTests();
   runRefundPlanTests();
+  runAlertTests();
   console.log("Booking logic tests passed.");
 }
 

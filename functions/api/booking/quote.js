@@ -2,6 +2,7 @@ import { buildQuote } from "../../_lib/pricing.js";
 import { getAvailabilityConflicts, getUnitByCode } from "../../_lib/db.js";
 import { getConfig } from "../../_lib/env.js";
 import { badRequest, conflict, json, serverError } from "../../_lib/http.js";
+import { sendAdminAlert } from "../../_lib/alerts.js";
 import { normalizeBookingInput, validateBookingInput } from "../../_lib/validation.js";
 
 export async function onRequestPost(context) {
@@ -58,6 +59,18 @@ export async function onRequestPost(context) {
     }
 
     console.error("Failed to build quote:", error);
+    try {
+      await sendAdminAlert(context.env, {
+        key: "quote_failed",
+        subject: "⚠️ Booking API: échec du calcul du tarif",
+        message: `Le calcul du tarif a échoué (unitCode=${payload.unitCode}, ${payload.checkInDate} → ${payload.checkOutDate}).
+
+${error?.stack || error?.message || String(error)}`,
+        tags: "critical",
+      });
+    } catch {
+      // Alerting must never mask the original error.
+    }
     return serverError("Failed to build quote");
   }
 }

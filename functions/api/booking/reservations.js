@@ -1,4 +1,5 @@
 import { getConfig } from "../../_lib/env.js";
+import { sendAdminAlert } from "../../_lib/alerts.js";
 import {
   getAvailabilityConflicts,
   getUnitByCode,
@@ -121,6 +122,18 @@ export async function onRequestPost(context) {
       );
 
       console.error("Failed to create SumUp checkout:", error);
+      try {
+        await sendAdminAlert(context.env, {
+          key: "sumup_checkout_failed",
+          subject: "⚠️ SumUp: échec de création du checkout",
+          message: `Réservation ${reservationRecord.publicReference} (${payload.unitCode}, ${payload.checkInDate} → ${payload.checkOutDate}, CHF ${pricing.totalAmount}) créée mais le checkout SumUp n'a pas pu être généré.
+
+${error?.stack || error?.message || String(error)}`,
+          tags: "critical",
+        });
+      } catch {
+        // Alerting must never mask the original error.
+      }
       return serverError("Failed to create SumUp checkout");
     }
 
@@ -179,6 +192,18 @@ export async function onRequestPost(context) {
     }
 
     console.error("Failed to create reservation:", error);
+    try {
+      await sendAdminAlert(context.env, {
+        key: "reservation_create_failed",
+        subject: "⚠️ Booking API: échec de création de réservation",
+        message: `La création de réservation a échoué sur ${getConfig(context.env).publicBaseUrl}.
+
+${error?.stack || error?.message || String(error)}`,
+        tags: "critical",
+      });
+    } catch {
+      // Alerting must never mask the original error.
+    }
     return serverError("Failed to create reservation");
   }
 }

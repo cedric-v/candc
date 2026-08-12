@@ -4,6 +4,7 @@ import {
   getDepartureReservationsForDate,
   getImportCalendarSources,
   getReviewRequestReservationsForDate,
+  getUnitByCode,
   insertSyncLog,
   replaceExternalCalendarBlocks,
   updateCalendarSourceSync,
@@ -12,6 +13,7 @@ import { getCurrentIsoDateInZone } from "./date.js";
 import { getConfig } from "./env.js";
 import { sendReservationEmail } from "./booking-ops.js";
 import { parseIcsEvents } from "./ics-import.js";
+import { sendAdminAlert } from "./alerts.js";
 
 function redactSecret(value, visibleChars = 6) {
   if (!value || typeof value !== "string") {
@@ -382,4 +384,140 @@ export async function validateCalendarSources(env, unitCode = null) {
     ok: results.every((result) => result.status === "success"),
     results,
   };
+}
+
+async function fetchWithTimeout(url, init = {}, timeoutMs = 10000) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetch(url, { ...init, signal: controller.signal });
+    const body = await response.json().catch(() => null);
+    return { ok: response.ok, status: response.status, body };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+// Vérification périodique (lire seule) que le funnel public de réservation
+// répond correctement : disponibilité + tarif pour des fenêtres de dates
+// lointaines (jamais de réservation créée). Si le site répond en erreur ou
+// avec une forme inattendue, un e-mail / push admin est envoyé (dédupé sur
+// 30 min) et un log est écrit. Un créneau indisponible n'est PAS une erreur :
+// on essaie plusieurs fenêtres avant de conclure.
+export async function runFunnelHealthCheck(env) {
+  const config = getConfig(env);
+  const baseUrl = config.publicBaseUrl;
+  const unitCodes = [];
+  for (const code of [...new Set([config.defaultUnitCode, "eco-studio"])]) {
+    const unit = await getUnitByCode(env, code);
+    if (unit) {
+      unitCodes.push(code);
+    }
+  }
+
+  const probeWindowDays = 30;
+  const attemptsPerUnit = 6;
+  const results = { ok: true, checks: [] };
+
+  for (const unitCode of unitCodes) {
+    const unitResult = { unitCode, status: "ok", details: [] };
+    let unitOk = true;
+    let foundWindow = false;
+
+    for (let i = 0; i < attemptsPerUnit; i += 1) {
+      const startDays = probeWindowDays * (i + 1);
+      const from = new Date(Date.now() + startDays * 86400000).toISOString().slice(0, 10);
+      const to = new Date(Date.now() + (startDays + 5) * 86400000).toISOString().slice(0, 10);
+
+      const availability = await fetchWithTimeout(
+        `${baseUrl}/api/booking/availability?from=${from}&to=${to}&unitCode=${encodeURIComponent(unitCode)}`,
+      );
+
+      if (!availability.ok || !availability.body?.unit?.code) {
+        unitOk = false;
+        unitResult.details.push({
+          step: "availability",
+          from,
+          to,
+          status: "failed",
+          http: availability.status,
+        });
+        break;
+      }
+
+      if (availability.body.available === false) {
+        unitResult.details.push({ step: "availability", from, to, status: "unavailable_window" });
+        continue;
+      }
+
+      const quote = await fetchWithTimeout(`${baseUrl}/api/booking/quote`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          unitCode,
+          locale: "fr",
+          checkInDate: from,
+          checkOutDate: to,
+          adults: 2,
+          children: 0,
+          infants: 0,
+          vehicleType: unitCode === "parking-space" ? "van" : "",
+          wcShowerRequested: false,
+          nonRefundableSelected: false,
+        }),
+      });
+
+      if (!quote.ok || typeof quote.body?.quote?.totalAmount !== "number") {
+        unitOk = false;
+        unitResult.details.push({ step: "quote", from, to, status: "failed", http: quote.status });
+        break;
+      }
+
+      unitResult.details.push({
+        step: "quote",
+        from,
+        to,
+        status: "ok",
+        totalAmount: quote.body.quote.totalAmount,
+      });
+      foundWindow = true;
+      break;
+    }
+
+    if (!unitOk) {
+      results.ok = false;
+      unitResult.status = "failed";
+    } else if (!foundWindow) {
+      unitResult.details.push({ step: "all_windows_unavailable" });
+    }
+
+    results.checks.push(unitResult);
+  }
+
+  await insertSyncLog(env, {
+    unitId: null,
+    syncType: "funnel_health_check",
+    status: results.ok ? "success" : "failed",
+    message: results.ok
+      ? "Booking funnel health check passed"
+      : "Booking funnel health check FAILED — admin alerted",
+    payloadSummary: { results },
+  });
+
+  if (!results.ok) {
+    try {
+      await sendAdminAlert(env, {
+        key: "funnel_health_check_failed",
+        subject: "⚠️ Funnel de réservation: vérification périodique en échec",
+        message: `Le funnel de réservation (disponibilité / tarif) répond en erreur sur ${baseUrl}.
+
+${JSON.stringify(results, null, 2)}`,
+        tags: "critical",
+      });
+    } catch {
+      // Alerting must never mask the original failure.
+    }
+  }
+
+  return results;
 }

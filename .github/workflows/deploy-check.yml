@@ -1,0 +1,57 @@
+name: deploy-check
+
+# Après chaque push sur main (qui déclenche un déploiement Cloudflare Pages),
+# vérifie que le site build, que les tests locaux passent et que le funnel de
+# réservation en ligne répond correctement (disponibilité + tarif + checkout
+# SumUp via `npm run check:payment`, qui crée puis annule une réservation de
+# test). Tout échec fait échouer le workflow.
+#
+# Le secret `CF_API_TOKEN` (lecture Pages + lecture compte) est optionnel :
+# s'il est présent, le workflow attend que LE déploiement de ce commit soit
+# en ligne avant de tester ; sinon il attend une durée fixe. Voir
+# DEPLOYMENT.md (section Vérification post-déploiement).
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Post-deploy booking check
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Wait for Pages deployment (API token)
+        if: ${{ secrets.CF_API_TOKEN != '' }}
+        run: node scripts/wait-for-pages-deploy.mjs
+        env:
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CF_ACCOUNT_ID: 0bf811c45bce0791347e92465f3e06f8
+          CF_PROJECT: candc-ch
+          COMMIT_SHA: ${{ github.sha }}
+
+      - name: Wait for Pages build (no API token)
+        if: ${{ secrets.CF_API_TOKEN == '' }}
+        run: sleep 240
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build site
+        run: npm run build
+
+      - name: Run local tests
+        run: npm test
+
+      - name: Live payment funnel check
+        run: npm run check:payment

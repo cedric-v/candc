@@ -43,6 +43,14 @@ function isReviewEmailWindow(env) {
 }
 
 function currentLocalHour(env) {
+  return currentLocalParts(env).hour;
+}
+
+function currentLocalMinutes(env) {
+  return currentLocalParts(env).minute;
+}
+
+function currentLocalParts(env) {
   const parts = new Intl.DateTimeFormat("en-GB", {
     timeZone: env.TIMEZONE || "Europe/Zurich",
     hour: "2-digit",
@@ -57,7 +65,7 @@ function currentLocalHour(env) {
     }
   }
 
-  return values.hour;
+  return values;
 }
 
 export default {
@@ -86,6 +94,14 @@ export default {
       if (isReviewEmailWindow(env)) {
         const res = await runJob(env, "review_emails");
         console.log(`Review email cron complete: status ${res.status}, response: ${res.body}`);
+      }
+
+      // Vérification de santé du funnel de réservation (disponibilité +
+      // tarif) toutes les 2 heures (heure paire, minute 20) ; en cas
+      // d'échec, un e-mail / push admin est envoyé par le job lui-même.
+      if (currentLocalHour(env) % 2 === 0 && currentLocalMinutes(env) === 20) {
+        const res = await runJob(env, "funnel_check");
+        console.log(`Funnel health check complete: status ${res.status}, response: ${res.body}`);
       }
     } catch (err) {
       console.error(`Scheduled job failed: ${err.message}`);

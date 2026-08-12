@@ -20,6 +20,7 @@ import { badRequest, json, serverError, unauthorized } from "../../../_lib/http.
 import { getCheckout, mapCheckoutStatus, verifyWebhookSignature } from "../../../_lib/sumup.js";
 import { attemptAutomaticRefund } from "../../../_lib/refunds.js";
 import { getConfig } from "../../../_lib/env.js";
+import { sendAdminAlert } from "../../../_lib/alerts.js";
 
 function roundMoney(value) {
   return Math.round((Number(value || 0) + Number.EPSILON) * 100) / 100;
@@ -166,6 +167,18 @@ export async function onRequestPost(context) {
     return new Response(null, { status: 204 });
   } catch (error) {
     console.error("Failed to process SumUp webhook:", error);
+    try {
+      await sendAdminAlert(context.env, {
+        key: "sumup_webhook_failed",
+        subject: "⚠️ SumUp webhook: traitement échoué",
+        message: `Un webhook SumUp n'a pas pu être traité. Si le paiement a bien été encaissé, la réservation n'a peut-être PAS été confirmée — vérifier manuellement.
+
+${error?.stack || error?.message || String(error)}`,
+        tags: "critical",
+      });
+    } catch {
+      // Alerting must never mask the original error.
+    }
     return serverError("Failed to process SumUp webhook");
   }
 }

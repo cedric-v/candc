@@ -550,6 +550,7 @@ Actions prises en charge :
 - `departure_emails`
 - `review_emails`
 - `validate_calendars`
+- `funnel_check` — vérification de santé du funnel public (disponibilité + tarif, sans créer de réservation) ; en cas d'échec, un e-mail/push admin est envoyé (`functions/_lib/alerts.js`)
 - `all`
 
 Exemple :

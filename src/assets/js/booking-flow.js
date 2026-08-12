@@ -393,8 +393,23 @@
       submitStatus.textContent = texts.config;
       submitStatus.className = "booking-submit-status booking-submit-status-warning";
     } catch (error) {
-      submitStatus.textContent = texts.reservationError;
-      submitStatus.className = "booking-submit-status booking-submit-status-error";
+      const isConflict = error?.payload?.error === "conflict" || error?.payload?.status === 409;
+
+      if (isConflict) {
+        // The selected nights were just taken (another guest/OTA or the
+        // 30-minute pending-payment hold of a previous attempt). Show the
+        // clear unavailable message instead of the generic failure and
+        // refresh the calendar so the newly blocked nights are visible.
+        latestQuote = null;
+        submitStatus.textContent = texts.unavailable;
+        submitStatus.className = "booking-submit-status booking-submit-status-error";
+        setAvailabilityStatus(texts.unavailable, "error");
+        resetSummary();
+        loadCalendarAvailability();
+      } else {
+        submitStatus.textContent = texts.reservationError;
+        submitStatus.className = "booking-submit-status booking-submit-status-error";
+      }
     } finally {
       submitButton.disabled = false;
     }

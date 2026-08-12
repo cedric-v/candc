@@ -515,9 +515,30 @@ Des notifications push temps reel sont envoyees a l'hote via ntfy.sh pour chaque
 - **Modification** — unite, invite, dates, delta CHF
 - **Paiement confirme** — unite, invite, dates, statut confirme
 
-La variable d'environnement `NTFY_TOPIC_URL` (URL du topic ntfy.sh) controle l'activation.
+La variable d'environnement `NTFY_TOPIC_URL` (URL du topic ntfy.sh, ex. `https://ntfy.sh/mon-topic`) controle l'activation.
+Le code tolère une valeur sans `https://` (normalisée automatiquement).
 Si elle est absente, les notifications sont silencieusement ignorees.
 Les echecs ntfy ne bloquent jamais les operations de reservation ou de paiement.
+
+## Alertes admin en cas d'erreur
+
+`functions/_lib/alerts.js` (`sendAdminAlert`) avertit l'admin
+(`ADMIN_NOTIFICATION_EMAIL`, defaut bonjour@candc.ch) par e-mail (Resend)
+**et** push ntfy lorsque le backend de reservation repond en erreur :
+
+- creation de reservation en erreur (500)
+- echec de creation du checkout SumUp
+- echec de traitement d'un webhook SumUp (paiement recu non confirme)
+- echec du controle de disponibilite ou du calcul de tarif (500)
+
+La de duplication (une alerte par cle toutes les 30 min, journalisee dans
+`email_logs` avec `reservation_id` NULL) evite de spammer l'admin sur une
+erreur repetee. Les reponses normales 400/409 (dates prises, payload
+invalide) ne declenchent **jamais** d'alerte.
+
+Une verification periodique du funnel (disponibilite + tarif, sans creer de
+reservation) tourne toutes les 2 h via le cron `funnel_check` et alerte
+l'admin en cas de regression entre deux deploiements.
 
 ## Modele de donnees recommande
 
