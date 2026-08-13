@@ -42,6 +42,15 @@ function isReviewEmailWindow(env) {
   return currentLocalHour(env) === 12;
 }
 
+// Fenêtre quotidienne 04:20–04:39 (heure locale) pour l'anonymisation des
+// données sensibles (LPD / RGPD). Testée en minutes pour tolérer le jitter
+// du cron Cloudflare (contrairement à un test minute-à-minute exact) tout
+// en ne se déclenchant qu'une seule fois par jour grâce aux déclenchements
+// toutes les 20 min (04:20 entre dans la fenêtre, 04:40 en sort).
+function isRetentionWindow(env) {
+  return currentLocalHour(env) === 4 && currentLocalMinutes(env) >= 20 && currentLocalMinutes(env) < 40;
+}
+
 function currentLocalHour(env) {
   return currentLocalParts(env).hour;
 }
@@ -104,10 +113,11 @@ export default {
         console.log(`Funnel health check complete: status ${res.status}, response: ${res.body}`);
       }
 
-      // Anonymisation quotidienne (04:20 heure locale) des données sensibles
-      // des voyageurs au-delà de la période de conservation (LPD / RGPD) ;
-      // idempotent et sans effet si rien n'est à purger.
-      if (currentLocalHour(env) === 4 && currentLocalMinutes(env) === 20) {
+      // Anonymisation quotidienne (fenêtre 04:20–04:39 heure locale) des
+      // données sensibles des voyageurs au-delà de la période de
+      // conservation (LPD / RGPD) ; idempotent et sans effet si rien n'est
+      // à purger.
+      if (isRetentionWindow(env)) {
         const res = await runJob(env, "retention");
         console.log(`Sensitive data retention complete: status ${res.status}, response: ${res.body}`);
       }
