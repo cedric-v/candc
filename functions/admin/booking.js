@@ -571,6 +571,8 @@ export function onRequestGet() {
             });
             const rows = (data.reservations || []).map((item) => ({
               ...item,
+              reference: item.public_reference,
+              unit: item.unit_display_name || item.unit_code,
               stay: formatAdminDate(item.check_in_date) + ' → ' + formatAdminDate(item.check_out_date),
               guest: item.guest_first_name + ' ' + item.guest_last_name,
               status: item.status + ' / ' + (item.payment_status || '-'),
