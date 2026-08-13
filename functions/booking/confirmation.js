@@ -2,6 +2,7 @@ import { html } from "../_lib/http.js";
 import { getReservationByPublicReference } from "../_lib/db.js";
 import { htmlDocument, escapeHtml } from "../_lib/ui.js";
 import { getManageText, localeFromAcceptLanguage } from "../_lib/manage-i18n.js";
+import { getCookie, MANAGE_TOKEN_COOKIE } from "../_lib/cookies.js";
 
 function getConfirmationCopy(reservation, t) {
   if (!reservation) {
@@ -33,7 +34,8 @@ function getConfirmationCopy(reservation, t) {
 export async function onRequestGet(context) {
   const url = new URL(context.request.url);
   const reference = url.searchParams.get("reference") || "";
-  const manageToken = url.searchParams.get("manageToken") || "";
+  const manageToken =
+    getCookie(context.request, MANAGE_TOKEN_COOKIE) || url.searchParams.get("manageToken") || "";
   const reservation = reference
     ? await getReservationByPublicReference(context.env, reference)
     : null;

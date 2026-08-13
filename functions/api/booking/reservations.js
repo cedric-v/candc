@@ -9,6 +9,7 @@ import {
 } from "../../_lib/db.js";
 import { buildQuote } from "../../_lib/pricing.js";
 import { badRequest, conflict, json, serverError } from "../../_lib/http.js";
+import { isSecureRequest, setManageTokenCookie } from "../../_lib/cookies.js";
 import { generateOpaqueToken, sha256Hex } from "../../_lib/security.js";
 import { sendReservationEmail, sendReservationNtfy, sendNewBookingAdminEmail } from "../../_lib/booking-ops.js";
 import { createHostedCheckout, isSumUpConfigured } from "../../_lib/sumup.js";
@@ -88,7 +89,7 @@ export async function onRequestPost(context) {
         // Admin alert failures should not block reservation creation.
       }
 
-      return json(
+      const response = json(
         {
           reservation: {
             id: reservationRecord.reservationId,
@@ -106,6 +107,10 @@ export async function onRequestPost(context) {
         },
         { status: 201 },
       );
+      setManageTokenCookie(response.headers, manageToken, {
+        secure: isSecureRequest(context.request),
+      });
+      return response;
     }
 
     let checkout;
@@ -116,7 +121,7 @@ export async function onRequestPost(context) {
         checkoutReference: reservationRecord.publicReference,
         currency: pricing.currency,
         description: `${unit.displayName} ${reservationRecord.publicReference}`,
-        redirectUrl: `${config.publicBaseUrl}/booking/confirmation/?reference=${encodeURIComponent(reservationRecord.publicReference)}&manageToken=${encodeURIComponent(manageToken)}`,
+        redirectUrl: `${config.publicBaseUrl}/booking/confirmation/?reference=${encodeURIComponent(reservationRecord.publicReference)}`,
         returnUrl: `${config.publicBaseUrl}/api/booking/sumup/webhook`,
       });
     } catch (error) {
@@ -175,7 +180,7 @@ ${error?.stack || error?.message || String(error)}`,
       // Admin alert failures should not block reservation creation.
     }
 
-    return json(
+    const response = json(
       {
         reservation: {
           id: reservationRecord.reservationId,
@@ -196,6 +201,10 @@ ${error?.stack || error?.message || String(error)}`,
       },
       { status: 201 },
     );
+    setManageTokenCookie(response.headers, manageToken, {
+      secure: isSecureRequest(context.request),
+    });
+    return response;
   } catch (error) {
     if (error instanceof SyntaxError) {
       return badRequest("Request body must be valid JSON");

@@ -17,6 +17,7 @@ import { badRequest, conflict, json, notFound, serverError } from "../../../_lib
 import { sendReservationEmail, sendReservationNtfy, syncReservationToGoogleCalendar } from "../../../_lib/booking-ops.js";
 import { attemptAutomaticRefund } from "../../../_lib/refunds.js";
 import { generateOpaqueToken, sha256Hex } from "../../../_lib/security.js";
+import { isSecureRequest, setManageTokenCookie } from "../../../_lib/cookies.js";
 import { createHostedCheckout, isSumUpConfigured } from "../../../_lib/sumup.js";
 import { normalizeBookingInput, validateBookingInput } from "../../../_lib/validation.js";
 
@@ -284,7 +285,7 @@ export async function onRequestPost(context) {
         checkoutReference,
         currency: reservation.currency,
         description: `${unit.displayName} ${reservation.public_reference}`,
-        redirectUrl: `${getConfig(context.env).publicBaseUrl}/booking/confirmation/?reference=${encodeURIComponent(reservation.public_reference)}&manageToken=${encodeURIComponent(context.params.token)}`,
+        redirectUrl: `${getConfig(context.env).publicBaseUrl}/booking/confirmation/?reference=${encodeURIComponent(reservation.public_reference)}`,
         returnUrl: `${getConfig(context.env).publicBaseUrl}/api/booking/sumup/webhook`,
       });
 
@@ -300,7 +301,7 @@ export async function onRequestPost(context) {
         rawPayload: checkout,
       });
 
-      return json({
+      const response = json({
         ok: true,
         action: "resume_payment",
         payment: {
@@ -310,6 +311,10 @@ export async function onRequestPost(context) {
           hostedCheckoutUrl: checkout.hosted_checkout_url || null,
         },
       });
+      setManageTokenCookie(response.headers, context.params.token, {
+        secure: isSecureRequest(context.request),
+      });
+      return response;
     }
 
     if (reservation.status === "pending_payment") {
