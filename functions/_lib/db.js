@@ -1190,40 +1190,49 @@ export async function releaseExpiredPendingPayments(env) {
   const expiredInitial = rows
     .filter((row) => row.reservation_status === "pending_payment")
     .map((row) => row.reservation_id);
+  const expiredInitialBlockIds = rows
+    .filter((row) => row.reservation_status === "pending_payment")
+    .map((row) => row.block_id);
   const revertedAdjustments = rows
     .filter((row) => row.reservation_status === "pending_adjustment_payment")
     .map((row) => row.reservation_id);
+  const revertedAdjustmentBlockIds = rows
+    .filter((row) => row.reservation_status === "pending_adjustment_payment")
+    .map((row) => row.block_id);
+
+  const inPlaceholders = (ids) => ids.map(() => "?").join(", ");
 
   const statements = [];
 
   if (expiredInitial.length > 0) {
-    // Libère le bloc et marque la réservation comme expirée (le client peut
-    // encore reprendre le paiement depuis son lien, avec revérification).
+    // Marque la réservation comme expirée (le client peut encore reprendre le
+    // paiement depuis son lien, avec revérification) et libère le bloc.
+    // IMPORTANT : dans un batch D1 (transaction), chaque instruction voit les
+    // modifications des instructions précédentes. Les WHERE ci-dessous se
+    // basent donc sur les identifiants détectés AVANT la transaction, jamais
+    // sur un sous-requête du statut du bloc (sinon la mise à jour de la
+    // réservation ne matche plus rien une fois le bloc passé en 'released').
     statements.push(
-      db
-        .prepare(
-          `
-            UPDATE calendar_blocks
-            SET status = 'released', updated_at = ?
-            WHERE status = 'pending_payment'
-              AND created_at < ?
-              AND reservation_id IN (SELECT id FROM reservations WHERE status = 'pending_payment')
-          `,
-        )
-        .bind(nowIso, cutoff),
       db
         .prepare(
           `
             UPDATE reservations
             SET status = 'payment_expired', updated_at = ?, remarks = TRIM(COALESCE(remarks, '') || ?)
-            WHERE status = 'pending_payment'
-              AND id IN (
-                SELECT reservation_id FROM calendar_blocks
-                WHERE status = 'pending_payment' AND created_at < ?
-              )
+            WHERE id IN (${inPlaceholders(expiredInitial)})
+              AND status = 'pending_payment'
           `,
         )
-        .bind(nowIso, "\n[automatic_release] Payment hold expired; dates released.", cutoff),
+        .bind(nowIso, "\n[automatic_release] Payment hold expired; dates released.", ...expiredInitial),
+      db
+        .prepare(
+          `
+            UPDATE calendar_blocks
+            SET status = 'released', updated_at = ?
+            WHERE id IN (${inPlaceholders(expiredInitialBlockIds)})
+              AND status = 'pending_payment'
+          `,
+        )
+        .bind(nowIso, ...expiredInitialBlockIds),
     );
   }
 
@@ -1231,32 +1240,29 @@ export async function releaseExpiredPendingPayments(env) {
     // Un paiement complémentaire non réglé dans le délai : la réservation
     // confirmée reste valide sur les nouvelles dates (le bloc redevient
     // confirmé). L'hôte est notifié via le log de synchronisation pour un
-    // éventuel suivi manuel du complément.
+    // éventuel suivi manuel du complément. Même règle que ci-dessus : les
+    // WHERE utilisent les identifiants pré-détectés.
     statements.push(
-      db
-        .prepare(
-          `
-            UPDATE calendar_blocks
-            SET status = 'confirmed', updated_at = ?
-            WHERE status = 'pending_payment'
-              AND created_at < ?
-              AND reservation_id IN (SELECT id FROM reservations WHERE status = 'pending_adjustment_payment')
-          `,
-        )
-        .bind(nowIso, cutoff),
       db
         .prepare(
           `
             UPDATE reservations
             SET status = 'modified', updated_at = ?, remarks = TRIM(COALESCE(remarks, '') || ?)
-            WHERE status = 'pending_adjustment_payment'
-              AND id IN (
-                SELECT reservation_id FROM calendar_blocks
-                WHERE status = 'pending_payment' AND created_at < ?
-              )
+            WHERE id IN (${inPlaceholders(revertedAdjustments)})
+              AND status = 'pending_adjustment_payment'
           `,
         )
-        .bind(nowIso, "\n[automatic_release] Adjustment payment hold expired; stay kept confirmed on new dates.", cutoff),
+        .bind(nowIso, "\n[automatic_release] Adjustment payment hold expired; stay kept confirmed on new dates.", ...revertedAdjustments),
+      db
+        .prepare(
+          `
+            UPDATE calendar_blocks
+            SET status = 'confirmed', updated_at = ?
+            WHERE id IN (${inPlaceholders(revertedAdjustmentBlockIds)})
+              AND status = 'pending_payment'
+          `,
+        )
+        .bind(nowIso, ...revertedAdjustmentBlockIds),
     );
   }
 
