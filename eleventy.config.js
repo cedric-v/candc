@@ -1,6 +1,5 @@
 // eleventy.config.js
 const i18n = require("eleventy-plugin-i18n");
-const htmlmin = require("html-minifier-next");
 const Image = require("@11ty/eleventy-img");
 const fs = require("fs");
 const path = require("path");
@@ -477,9 +476,11 @@ module.exports = function (eleventyConfig) {
   });
 
   // 9. Minification HTML
-  eleventyConfig.addTransform("htmlmin", function (content, outputPath) {
+  eleventyConfig.addTransform("htmlmin", async function (content, outputPath) {
     if (process.env.ELEVENTY_ENV === 'prod' && outputPath && outputPath.endsWith(".html")) {
-      return htmlmin.minify(content, {
+      // html-minifier-next v7 is ESM-only; load it dynamically from this CJS config
+      const { minify } = await import("html-minifier-next");
+      return minify(content, {
         removeComments: true,
         collapseWhitespace: true,
         minifyCSS: true,
