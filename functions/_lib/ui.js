@@ -200,7 +200,80 @@ export function htmlDocument({ title, body, lang = "fr" }) {
       }
       .small { font-size: 0.9rem; color: var(--muted); }
       .mono { font-family: "SFMono-Regular", "Menlo", monospace; }
-    </style>
+      .table-scroll {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      .table-scroll table {
+        min-width: 640px;
+      }
+      /* Tableau réservations admin : cellules compactes + cartes empilées sur
+         mobile pour éviter tout débordement horizontal. */
+      .admin-res-table td.admin-res-actions {
+        text-align: right;
+        white-space: nowrap;
+        width: 1%;
+      }
+      .wc-flag {
+        display: inline-flex;
+        align-items: center;
+        padding: 4px 10px;
+        border-radius: 999px;
+        background: #fde9d8;
+        color: #8a4b0e;
+        border: 1px solid #ecb27e;
+        font-size: 0.78rem;
+        font-weight: 700;
+        white-space: nowrap;
+        letter-spacing: 0.02em;
+      }
+      @media (max-width: 719px) {
+        .table-scroll table.admin-res-table {
+          min-width: 0;
+        }
+        .admin-res-table,
+        .admin-res-table tbody,
+        .admin-res-table tr,
+        .admin-res-table td {
+          display: block;
+        }
+        .admin-res-table thead {
+          display: none;
+        }
+        .admin-res-table tbody {
+          display: grid;
+          gap: 14px;
+        }
+        .admin-res-table > tbody > tr.admin-res-row {
+          background: #fbfaf5;
+          border: 1px solid var(--border);
+          border-radius: 16px;
+          padding: 12px 14px;
+        }
+        .admin-res-table td {
+          border: 0;
+          padding: 5px 0;
+        }
+        .admin-res-table td::before {
+          content: attr(data-label);
+          display: block;
+          font-size: 0.7rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          color: var(--muted);
+        }
+        .admin-res-table td.admin-res-actions::before {
+          content: none;
+        }
+        .admin-res-table td.admin-res-actions {
+          text-align: right;
+          padding-top: 10px;
+        }
+        .admin-res-table tr[hidden] {
+          display: none !important;
+        }
+      }
   </head>
   <body>
     <main class="shell">

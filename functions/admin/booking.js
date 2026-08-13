@@ -33,6 +33,36 @@ export function onRequestGet() {
       </section>
     </div>
     <section class="card stack" style="margin-top:18px">
+      <h2>Reservations</h2>
+      <div class="field-row three">
+        <div class="field">
+          <label for="resScope">Period</label>
+          <select id="resScope">
+            <option value="upcoming" selected>Upcoming</option>
+            <option value="past">Past</option>
+            <option value="all">All</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="resStatus">Status</label>
+          <select id="resStatus">
+            <option value="active" selected>Active (paid)</option>
+            <option value="attention">Needs attention</option>
+            <option value="closed">Closed</option>
+            <option value="all">All statuses</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="resUnit">Unit</label>
+          <select id="resUnit">
+            <option value="">All units</option>
+          </select>
+        </div>
+      </div>
+      <p class="small" id="admin-reservations-hint">Upcoming stays that are confirmed and paid by default; other statuses are hidden until you select them.</p>
+      <div id="admin-reservations" class="small">No data loaded yet.</div>
+    </section>
+    <section class="card stack" style="margin-top:18px">
       <h2>Operational health</h2>
       <div id="admin-operational-health" class="small">No data loaded yet.</div>
     </section>
@@ -143,36 +173,6 @@ export function onRequestGet() {
       </form>
     </section>
     <section class="card stack" style="margin-top:18px">
-      <h2>Reservations</h2>
-      <div class="field-row three">
-        <div class="field">
-          <label for="resScope">Period</label>
-          <select id="resScope">
-            <option value="upcoming" selected>Upcoming</option>
-            <option value="past">Past</option>
-            <option value="all">All</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="resStatus">Status</label>
-          <select id="resStatus">
-            <option value="active" selected>Active (paid)</option>
-            <option value="attention">Needs attention</option>
-            <option value="closed">Closed</option>
-            <option value="all">All statuses</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="resUnit">Unit</label>
-          <select id="resUnit">
-            <option value="">All units</option>
-          </select>
-        </div>
-      </div>
-      <p class="small" id="admin-reservations-hint">Upcoming stays that are confirmed and paid by default; other statuses are hidden until you select them.</p>
-      <div id="admin-reservations" class="small">No data loaded yet.</div>
-    </section>
-    <section class="card stack" style="margin-top:18px">
       <h2>Configured pricing periods</h2>
       <div id="admin-rate-periods" class="small">No data loaded yet.</div>
     </section>
@@ -266,7 +266,7 @@ export function onRequestGet() {
           if (!rows.length) {
             return '<p class="small">No data yet.</p>';
           }
-          return '<table><thead><tr>' + headers.map((header) => '<th>' + escapeHtml(header.label) + '</th>').join('') + '</tr></thead><tbody>' + rows.map((row) => '<tr>' + headers.map((header) => '<td>' + escapeHtml(row[header.key] ?? '-') + '</td>').join('') + '</tr>').join('') + '</tbody></table>';
+          return '<div class="table-scroll"><table><thead><tr>' + headers.map((header) => '<th>' + escapeHtml(header.label) + '</th>').join('') + '</tr></thead><tbody>' + rows.map((row) => '<tr>' + headers.map((header) => '<td data-label="' + escapeHtml(header.label) + '">' + escapeHtml(row[header.key] ?? '-') + '</td>').join('') + '</tr>').join('') + '</tbody></table></div>';
         }
 
         function maskIdDocument(value) {
@@ -300,12 +300,21 @@ export function onRequestGet() {
             return '<p class="small">No data yet.</p>';
           }
 
+          // Unités qui proposent l'option WC-douche intérieure (réglage
+          // unit-level, pas de règle métier codée en dur).
+          const wcUnits = new Set(
+            (adminUnits || [])
+              .filter((unit) => unit.settings?.allowsWcShowerOption)
+              .map((unit) => unit.code),
+          );
+
           const headers = [
             { key: 'reference', label: 'Reference' },
             { key: 'unit', label: 'Unit' },
             { key: 'stay', label: 'Stay' },
             { key: 'guest', label: 'Guest' },
             { key: 'status', label: 'Status' },
+            { key: 'wc', label: 'Toilets' },
             { key: 'total', label: 'Total' },
           ];
 
@@ -318,14 +327,34 @@ export function onRequestGet() {
               .map((guest) => [guest.firstName, guest.lastName].filter(Boolean).join(' '))
               .filter(Boolean)
               .join(', ') || '-';
+            const offersWc = wcUnits.has(item.unit_code);
+            const wcRequested = offersWc && Boolean(item.wc_shower_requested);
 
-            const cells = headers.map((header) => '<td>' + escapeHtml(item[header.key] ?? '-') + '</td>').join('');
+            const cells = headers.map((header) => {
+              let content;
+              if (header.key === 'wc') {
+                content = wcRequested
+                  ? '<span class="wc-flag" title="Indoor WC and shower access requested">WC access requested</span>'
+                  : '—';
+              } else {
+                content = escapeHtml(item[header.key] ?? '-');
+              }
+              return '<td data-label="' + escapeHtml(header.label) + '">' + content + '</td>';
+            }).join('');
+
+            const wcStatus = offersWc
+              ? (item.wc_shower_requested
+                  ? (item.wc_shower_confirmed ? 'Requested — confirmed' : 'Requested — not confirmed')
+                  : 'Not requested')
+              : 'Not offered';
+
             const detailsRows = [
               ['Email', item.guest_email || '-'],
               ['Phone', phone],
               ['Address', address],
               ['Date of birth', item.guest_date_of_birth || '-'],
               ['Nationality', item.guest_nationality || '-'],
+              ['WC/shower access', wcStatus],
               ['Locale', item.locale || '-'],
               ['Additional guests', additionalGuests],
               ['Remarks', item.remarks || '-'],
@@ -340,15 +369,15 @@ export function onRequestGet() {
               '</div>';
 
             return (
-              '<tr>' + cells +
-              '<td><button type="button" class="admin-res-toggle" data-target="' + escapeHtml(detailsId) + '" style="padding:6px 12px;font-size:0.82rem">Details ▾</button></td></tr>' +
-              '<tr class="admin-res-details" id="' + escapeHtml(detailsId) + '" hidden><td colspan="7">' +
+              '<tr class="admin-res-row">' + cells +
+              '<td class="admin-res-actions" data-label=""><button type="button" class="admin-res-toggle" data-target="' + escapeHtml(detailsId) + '" style="padding:6px 12px;font-size:0.82rem">Details ▾</button></td></tr>' +
+              '<tr class="admin-res-details" id="' + escapeHtml(detailsId) + '" hidden><td colspan="8">' +
               '<div class="meta">' + detailsRows + idRow + '</div>' +
               '</td></tr>'
             );
           }).join('');
 
-          return '<table><thead><tr>' + headers.map((header) => '<th>' + escapeHtml(header.label) + '</th>').join('') + '<th></th></tr></thead><tbody>' + rowsHtml + '</tbody></table>';
+          return '<div class="table-scroll"><table class="admin-res-table"><thead><tr>' + headers.map((header) => '<th>' + escapeHtml(header.label) + '</th>').join('') + '<th></th></tr></thead><tbody>' + rowsHtml + '</tbody></table></div>';
         }
 
         function isIsoDateOnly(value) {

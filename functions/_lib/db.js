@@ -1556,6 +1556,7 @@ export async function listAdminReservations(env, options = {}) {
           reservations.total_amount,
           reservations.currency,
           reservations.wc_shower_requested,
+          reservations.wc_shower_confirmed,
           rentable_units.display_name AS unit_display_name,
           (
             SELECT payments.status
