@@ -208,6 +208,30 @@ Formulation recommandee :
 
 > L'acces au WC et a la douche interieure est propose sur demande, lorsque nous sommes sur place, generalement entre 7h00 et 21h00. Nous faisons le maximum pour l'assurer aux voyageurs qui choisissent cette option, mais les horaires exacts peuvent exceptionnellement etre adaptes selon notre presence sur place.
 
+#### Confirmation de l'option WC-douche (implementee)
+
+- **Auto-confirmation au paiement** : des que le paiement de la reservation est encaisse
+  (webhook SumUp, hors conflit de dates), `wc_shower_confirmed` passe a 1 si la demande
+  est active (`wc_shower_requested = 1`) — l'entitlement paye est considere comme confirme.
+  Cela vaut aussi pour un complement d'ajustement paye (ajout de l'option en cours de sejour).
+  L'operation est idempotente (ne change le flag que s'il est a 0).
+- **Toggle admin** (panel `/admin/booking`, colonne Toilets) : l'hote peut revoquer ou
+  re-confirmer manuellement l'acces. Une revocation rembourse automatiquement la portion WC
+  (CHF 10 par semaine entamee, ou tarif unit-level `wcShowerCleaningFeeChf`) via la mecanique
+  de refunds existante : automatique SumUp si configure, sinon `manual_refund_due` a traiter.
+  Un log de sync (`sync_type = wc_confirmation`) trace l'action et le remboursement.
+- L'export Google Calendar reflete l'etat confirme / non confirme.
+
+#### Amelioration possible : confirmation manuelle pour les arrivees < 24h (option C)
+
+Pour l'instant, l'auto-confirmation s'applique aussi aux reservations de derniere minute
+(arrivee moins de 24h apres le paiement), avec le toggle admin en secours. Si les
+reservations < 24h posent probleme (certitude de presence de l'hote incertaine), une
+amelioration possible serait de laisser ces reservations-la en `not confirmed` jusqu'a
+validation manuelle par l'hote : s'appuyer sur le champ `arrival_less_than_24h` deja
+present pour desactiver l'auto-confirmation, et conserver l'auto-confirmation pour les
+reservations faites a l'avance. Le toggle admin existant couvre deja ce cas manuellement.
+
 #### Remise long sejour
 
 - si duree du sejour >= 30 nuits : remise de 15 %

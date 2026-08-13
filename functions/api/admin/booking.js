@@ -1,17 +1,23 @@
 import { hasValidAdminToken } from "../../_lib/auth.js";
 import {
+  getReservationForEmail,
+  getUnitByCode,
+  insertSyncLog,
   listCalendarHealthForAdmin,
   listAdminReservations,
   listOperationalJobHealth,
   listRatePeriods,
   listRecentSyncLogs,
   listUnitsForAdmin,
+  setReservationWcConfirmation,
   updateUnitSettings,
   upsertRatePeriod,
 } from "../../_lib/db.js";
 import { getConfig } from "../../_lib/env.js";
-import { getCurrentIsoDateInZone, isIsoDateString } from "../../_lib/date.js";
+import { getCurrentIsoDateInZone, isIsoDateString, diffNights } from "../../_lib/date.js";
 import { runArrivalEmails, runBookingIcsSync, runSensitiveDataRetention, validateCalendarSources } from "../../_lib/jobs.js";
+import { attemptAutomaticRefund } from "../../_lib/refunds.js";
+import { syncReservationToGoogleCalendar } from "../../_lib/booking-ops.js";
 import { badRequest, json, serverError, unauthorized } from "../../_lib/http.js";
 
 export async function onRequestGet(context) {
@@ -136,6 +142,70 @@ export async function onRequestPost(context) {
         unitId: payload.unitId,
         tiers: dedupedTiers,
       });
+    }
+
+    if (action === "update_wc_confirmation") {
+      // Option A : l'admin confirme ou révoque manuellement l'accès WC-douche
+      // d'une réservation. Une révocation rembourse automatiquement la portion
+      // WC (tarif unit-level ou défaut) via la mécanique de refunds existante.
+      const reservationId = payload.reservationId;
+      const wcConfirmed = Boolean(payload.wcConfirmed);
+
+      if (!reservationId) {
+        return badRequest("reservationId is required");
+      }
+
+      const reservation = await getReservationForEmail(context.env, reservationId);
+
+      if (!reservation) {
+        return badRequest("Unknown reservation");
+      }
+
+      if (!reservation.wc_shower_requested) {
+        return badRequest("This reservation has no WC/shower access requested");
+      }
+
+      if (Boolean(reservation.wc_shower_confirmed) === wcConfirmed) {
+        return json({ ok: true, action, wcConfirmed, noop: true });
+      }
+
+      await setReservationWcConfirmation(context.env, reservationId, wcConfirmed);
+
+      let refund = null;
+      if (!wcConfirmed && reservation.payment_status === "paid") {
+        const nights = diffNights(reservation.check_in_date, reservation.check_out_date);
+        const config = getConfig(context.env);
+        const unit = await getUnitByCode(context.env, reservation.unit_code);
+        const wcFeeChf =
+          Number(unit?.settings?.wcShowerCleaningFeeChf) || config.wcShowerCleaningFeeChf;
+        const wcAmount = Math.ceil(nights / 7) * wcFeeChf;
+
+        if (wcAmount > 0) {
+          refund = await attemptAutomaticRefund(
+            context.env,
+            reservation,
+            wcAmount,
+            "wc_shower_access_revoked_by_host",
+            { reservationId },
+          );
+
+          await insertSyncLog(context.env, {
+            unitId: reservation.unit_id || null,
+            syncType: "wc_confirmation",
+            status: refund.mode === "manual" ? "warning" : "info",
+            message: `WC/shower access revoked by host for ${reservation.public_reference}; refund ${refund.mode} (${refund.amount} ${reservation.currency})`,
+            payloadSummary: { reservationId, wcConfirmed: false, refund },
+          });
+        }
+      }
+
+      try {
+        await syncReservationToGoogleCalendar(context.env, reservationId);
+      } catch {
+        // Les erreurs de sync calendrier ne doivent pas bloquer l'action admin.
+      }
+
+      return json({ ok: true, action, wcConfirmed, refund });
     }
 
     if (action === "run_booking_sync") {

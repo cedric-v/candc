@@ -333,9 +333,18 @@ export function onRequestGet() {
             const cells = headers.map((header) => {
               let content;
               if (header.key === 'wc') {
-                content = wcRequested
-                  ? '<span class="wc-flag" title="Indoor WC and shower access requested">WC access requested</span>'
-                  : '—';
+                if (wcRequested) {
+                  const confirmed = Boolean(item.wc_shower_confirmed);
+                  content =
+                    '<span class="wc-flag' + (confirmed ? ' confirmed' : '') + '" title="Indoor WC and shower access ' + (confirmed ? 'confirmed' : 'requested') + '">' +
+                    (confirmed ? 'WC confirmed' : 'WC access requested') +
+                    '</span>' +
+                    '<button type="button" class="admin-wc-toggle" data-id="' + escapeHtml(item.id) + '" data-action="' + (confirmed ? 'revoke' : 'confirm') + '" style="padding:4px 10px;font-size:0.78rem" title="' + (confirmed ? 'Revoke WC access (refunds the WC fee)' : 'Confirm WC access') + '">' +
+                    (confirmed ? 'Revoke' : 'Confirm') +
+                    '</button>';
+                } else {
+                  content = '—';
+                }
               } else {
                 content = escapeHtml(item[header.key] ?? '-');
               }
@@ -733,9 +742,10 @@ export function onRequestGet() {
           }
         });
 
-        // Détail dépliable des réservations (coordonnées client) et
-        // révélation masquée du n° de pièce d'identité.
-        reservationsWrap.addEventListener('click', (event) => {
+        // Détail dépliable des réservations (coordonnées client), révélation
+        // masquée du n° de pièce d'identité et confirmation/révocation manuelle
+        // de l'accès WC-douche (option A).
+        reservationsWrap.addEventListener('click', async (event) => {
           const toggle = event.target.closest('.admin-res-toggle');
           if (toggle) {
             const details = document.getElementById(toggle.dataset.target);
@@ -762,6 +772,33 @@ export function onRequestGet() {
                 reveal.textContent = 'Reveal';
               }
             }
+            return;
+          }
+
+          const wcToggle = event.target.closest('.admin-wc-toggle');
+          if (wcToggle) {
+            const reservationId = wcToggle.dataset.id;
+            const wcConfirmed = wcToggle.dataset.action === 'confirm';
+            wcToggle.disabled = true;
+            try {
+              const result = await apiFetch('POST', {
+                action: 'update_wc_confirmation',
+                reservationId,
+                wcConfirmed,
+              });
+              adminNotice.className = 'notice ' + (result.noop ? 'info' : 'success');
+              adminNotice.textContent = result.noop
+                ? 'WC access is already in the requested state.'
+                : (wcConfirmed
+                    ? 'WC access confirmed.'
+                    : 'WC access revoked.' + (result.refund ? ' Refund ' + result.refund.amount + ' ' + result.refund.mode + '.' : ''));
+              await loadReservations();
+            } catch (error) {
+              adminNotice.className = 'notice error';
+              adminNotice.textContent = error.message;
+              wcToggle.disabled = false;
+            }
+            return;
           }
         });
       })();

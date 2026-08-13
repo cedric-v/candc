@@ -727,6 +727,27 @@ export async function updateReservationAndCalendarStatus(env, reservationId, res
   ]);
 }
 
+// Passe le flag de confirmation WC-douche à 1 ou 0 pour une réservation qui
+// a demandé l'option. La garde `wc_shower_requested = 1` empêche de confirmer
+// une option qui n'a pas été demandée (ou a été retirée par le client).
+export async function setReservationWcConfirmation(env, reservationId, confirmed) {
+  const db = requireDb(env);
+  const nowIso = new Date().toISOString();
+
+  const result = await db
+    .prepare(
+      `
+        UPDATE reservations
+        SET wc_shower_confirmed = ?, updated_at = ?
+        WHERE id = ? AND wc_shower_requested = 1
+      `,
+    )
+    .bind(confirmed ? 1 : 0, nowIso, reservationId)
+    .run();
+
+  return Boolean(result?.meta?.changes > 0);
+}
+
 export async function markReservationPaymentSetupFailed(env, reservationId, reason) {
   const db = requireDb(env);
   const nowIso = new Date().toISOString();

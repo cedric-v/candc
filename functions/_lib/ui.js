@@ -227,6 +227,11 @@ export function htmlDocument({ title, body, lang = "fr" }) {
         white-space: nowrap;
         letter-spacing: 0.02em;
       }
+      .wc-flag.confirmed {
+        background: #ddeee5;
+        color: var(--success);
+        border-color: #a8d5bd;
+      }
       @media (max-width: 719px) {
         .table-scroll table.admin-res-table {
           min-width: 0;

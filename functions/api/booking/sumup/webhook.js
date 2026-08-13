@@ -6,6 +6,7 @@ import {
   getReservationForEmail,
   hasSuccessfulEmailLog,
   insertSyncLog,
+  setReservationWcConfirmation,
   updatePaymentByCheckoutId,
   updateReservationAndCalendarStatus,
 } from "../../../_lib/db.js";
@@ -125,6 +126,18 @@ export async function onRequestPost(context) {
       mappedStatus.reservationStatus,
       mappedStatus.calendarBlockStatus,
     );
+
+    // Option A : dès que le paiement est encaissé (hors conflit, le cas
+    // conflit retourne avant ce point), l'accès WC-douche demandé et payé est
+    // considéré comme confirmé. Idempotent : ne passe le flag à 1 que si la
+    // demande est active et pas déjà confirmée.
+    if (mappedStatus.paymentStatus === "paid") {
+      try {
+        await setReservationWcConfirmation(context.env, reservation.id, true);
+      } catch {
+        // L'auto-confirmation WC ne doit jamais bloquer le traitement du webhook.
+      }
+    }
 
     if (mappedStatus.reservationStatus === "confirmed") {
       try {
