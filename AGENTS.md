@@ -59,6 +59,12 @@ Pending-payment behavior (important):
 - the ICS export feed only contains confirmed stays (`confirmed`, `modified`, `refund_due`, `pending_refund`) — pending holds never block Booking.com/other OTAs
 - availability is re-checked before confirming any payment (SumUp webhook) and before resuming payment (`resume_payment`); a conflict leads to a refund and `conflict_refund_due` (initial) or a revert to `modified` (unpaid adjustment)
 
+WC/shower access confirmation (important):
+
+- a paid reservation with `wc_shower_requested = 1` is auto-confirmed (`wc_shower_confirmed = 1`) by the SumUp webhook on payment (including paid adjustment payments); see `functions/api/booking/sumup/webhook.js` and `setReservationWcConfirmation` in `db.js`
+- the admin panel can manually confirm or revoke WC access (admin action `update_wc_confirmation` in `functions/api/admin/booking.js`); revoking refunds the WC fee portion (unit-level `wcShowerCleaningFeeChf` or env default) via the existing refund machinery and logs a `wc_confirmation` sync log
+- the flag is only ever set for reservations with `wc_shower_requested = 1` (unit-level `allowsWcShowerOption` gates the option itself); the Google Calendar export reflects the confirmed state
+
 When changing booking behavior, check all of:
 
 - `functions/_lib/validation.js`
