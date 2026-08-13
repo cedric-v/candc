@@ -3,12 +3,21 @@ const i18n = require("eleventy-plugin-i18n");
 const Image = require("@11ty/eleventy-img");
 const fs = require("fs");
 const path = require("path");
+require("dotenv").config();
 
 const PATH_PREFIX = process.env.ELEVENTY_ENV === 'prod' ? "" : "";
+// ID de mesure GA4 injecté au build via la variable d'environnement
+// `GA_MEASUREMENT_ID` (réglages Cloudflare Pages Production + Preview, ou
+// `.env` local gitignoré). Le dépôt public ne contient jamais l'ID réel :
+// valeur placeholder en repli si la variable n'est pas définie.
+const GA_MEASUREMENT_ID = process.env.GA_MEASUREMENT_ID || "G-XXXXXXXXXX";
 
 module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy({ "src/llms.txt": "llms.txt" });
   eleventyConfig.addPassthroughCopy({ "src/.well-known": ".well-known" });
+
+  // 0. Variables de build exposées aux templates (voir .env.example)
+  eleventyConfig.addGlobalData("gaMeasurementId", GA_MEASUREMENT_ID);
 
   // 1. Gestion des Images avec eleventy-img (AVIF/WebP/JPEG responsives)
   eleventyConfig.addShortcode("image", async function (src, alt, cls = "", loading = "lazy", sizes = "100vw", fetchpriority = "", width = "", height = "") {

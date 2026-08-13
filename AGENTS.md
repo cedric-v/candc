@@ -44,9 +44,11 @@ Important:
 - prefer extending unit-level settings instead of hardcoding business rules
 - keep public site content static-friendly unless a dynamic flow is clearly required
 - GA4 is loaded via a single consent-gated gtag snippet in
-  `src/_includes/base.njk` (measurement ID `G-M1Z1M7SR51`, loaded only after
-  the visitor accepts cookies in the banner); do not add other GA/GTM
-  snippets elsewhere, and do not load GA before consent
+  `src/_includes/base.njk` (loaded only after the visitor accepts cookies in
+  the banner); the measurement ID is injected at build time from the
+  `GA_MEASUREMENT_ID` env var (Cloudflare Pages dashboard / local `.env`,
+  see `.env.example`) — never hardcode it; do not add other GA/GTM snippets
+  elsewhere, and do not load GA before consent
 - preserve existing agent-ready surfaces unless you are intentionally changing discovery or WebMCP behavior
 
 ## Booking-specific guidance

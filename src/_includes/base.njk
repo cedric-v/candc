@@ -134,7 +134,7 @@
     const banner = document.getElementById('cookie-banner');
     const acceptBtn = document.getElementById('cookie-accept');
     const declineBtn = document.getElementById('cookie-decline');
-    const GA_ID = 'G-M1Z1M7SR51';
+    const GA_ID = '{{ gaMeasurementId }}';
 
     window.showCookiePreferences = function() {
       localStorage.removeItem('cookie-consent');

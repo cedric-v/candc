@@ -264,9 +264,15 @@ Important:
 
 ## Analytics
 
-Audience analysis is managed via **Cloudflare Zaraz**.
+GA4 is loaded via a single consent-gated gtag snippet in
+`src/_includes/base.njk` (loaded only after the visitor accepts cookies in
+the banner). The measurement ID is injected at build time from the
+`GA_MEASUREMENT_ID` env var (Cloudflare Pages dashboard / local `.env`,
+see `.env.example`); the public repo only ever contains the
+`G-XXXXXXXXXX` placeholder.
 
-No GTM or GA snippets should be added directly into templates unless intentionally changing the analytics strategy.
+No other GA/GTM snippets should be added into templates, and GA must never
+be loaded before consent.
 
 ## License
 
