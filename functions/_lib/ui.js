@@ -274,6 +274,7 @@ export function htmlDocument({ title, body, lang = "fr" }) {
           display: none !important;
         }
       }
+    </style>
   </head>
   <body>
     <main class="shell">
