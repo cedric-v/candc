@@ -177,3 +177,14 @@ If you add a new rentable unit, update:
 - `rentable_units` seed data
 - any relevant `external_calendar_sources`
 - front funnel entrypoints if the unit should be customer-facing
+
+## Git hygiene (parallel work)
+
+Another agent/session is working in parallel on this repository (e.g. manage-token
+lifecycle refactors). The working tree can therefore contain uncommitted changes
+that are NOT yours at any moment.
+
+- always check `git status --short` before committing and stage ONLY the files
+  you touched (explicit `git add <file>...`), never `git add -A`
+- never commit or revert files modified by the parallel session
+- if you need a full snapshot, prefer `git stash -u` or commit your own files only
