@@ -58,6 +58,9 @@ export function getConfig(env) {
     sumUpWebhookSecret: env.SUMUP_WEBHOOK_SECRET || "",
     internalSyncToken: env.INTERNAL_SYNC_TOKEN || "",
     adminAccessToken: env.ADMIN_ACCESS_TOKEN || "",
+    // Durée de validité (jours) des liens de gestion (« gérer ma réservation »).
+    // Après expiration, le client doit recevoir un nouveau lien par e-mail.
+    manageTokenTtlDays: getNumberEnv(env, "MANAGE_TOKEN_TTL_DAYS", 365),
     adminNotificationEmail: env.ADMIN_NOTIFICATION_EMAIL || "bonjour@candc.ch",
     emailFrom: env.EMAIL_FROM || "",
     emailReplyTo: env.EMAIL_REPLY_TO || "",

@@ -171,9 +171,8 @@ export async function runArrivalEmails(env, targetDate = null) {
 
   for (const reservation of reservations) {
     try {
-      const manageToken = await createManageToken(env, reservation.id);
       const response = await sendReservationEmail(env, reservation.id, "arrival_instructions", {
-        manageToken,
+        manageTokenFactory: () => createManageToken(env, reservation.id, { rotate: true }),
         dedupe: true,
         forDate: isoDate,
       });

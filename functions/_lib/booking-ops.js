@@ -90,8 +90,18 @@ export async function sendReservationEmail(env, reservationId, emailType, option
     }
   }
 
+  // Résolution paresseuse du token de gestion : un token de renouvellement
+  // n'est émis (et l'ancien lien révoqué en cas de rotation) que si l'e-mail
+  // va réellement partir. Évite de révoquer un lien actif sans en livrer un
+  // nouveau quand l'envoi est dédoublonné ou que la configuration e-mail
+  // manque.
+  const resolvedOptions =
+    !options.manageToken && typeof options.manageTokenFactory === "function"
+      ? { ...options, manageToken: await options.manageTokenFactory() }
+      : options;
+
   try {
-    const response = await sendTransactionalEmail(env, emailType, reservation, options);
+    const response = await sendTransactionalEmail(env, emailType, reservation, resolvedOptions);
     await insertEmailLog(env, {
       reservationId,
       emailType,
@@ -147,9 +157,8 @@ export async function sendImmediateArrivalEmailIfNeeded(env, reservationId) {
     return { ok: false, reason: "before_arrival_email_window" };
   }
 
-  const manageToken = await createManageToken(env, reservationId);
   const response = await sendReservationEmail(env, reservationId, "arrival_instructions", {
-    manageToken,
+    manageTokenFactory: () => createManageToken(env, reservationId, { rotate: true }),
     dedupe: true,
     forDate: today,
   });
@@ -248,9 +257,8 @@ export async function sendPaymentReminderEmail(env, reservationId) {
     throw new Error("reservation_not_found");
   }
 
-  const manageToken = await createManageToken(env, reservationId);
   return sendReservationEmail(env, reservationId, "payment_reminder", {
-    manageToken,
+    manageTokenFactory: () => createManageToken(env, reservationId),
     dedupe: true,
   });
 }
@@ -262,9 +270,10 @@ export async function sendPaymentExpiredEmail(env, reservationId) {
     throw new Error("reservation_not_found");
   }
 
-  const manageToken = await createManageToken(env, reservationId);
   return sendReservationEmail(env, reservationId, "payment_expired", {
-    manageToken,
+    // L'expiration du hold invalide l'ancien lien : on émet un lien neuf
+    // (rotation) que l'e-mail va livrer.
+    manageTokenFactory: () => createManageToken(env, reservationId, { rotate: true }),
     dedupe: true,
   });
 }

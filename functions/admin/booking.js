@@ -143,7 +143,33 @@ export function onRequestGet() {
       </form>
     </section>
     <section class="card stack" style="margin-top:18px">
-      <h2>Recent reservations</h2>
+      <h2>Reservations</h2>
+      <div class="field-row three">
+        <div class="field">
+          <label for="resScope">Period</label>
+          <select id="resScope">
+            <option value="upcoming" selected>Upcoming</option>
+            <option value="past">Past</option>
+            <option value="all">All</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="resStatus">Status</label>
+          <select id="resStatus">
+            <option value="active" selected>Active (paid)</option>
+            <option value="attention">Needs attention</option>
+            <option value="closed">Closed</option>
+            <option value="all">All statuses</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="resUnit">Unit</label>
+          <select id="resUnit">
+            <option value="">All units</option>
+          </select>
+        </div>
+      </div>
+      <p class="small" id="admin-reservations-hint">Upcoming stays that are confirmed and paid by default; other statuses are hidden until you select them.</p>
       <div id="admin-reservations" class="small">No data loaded yet.</div>
     </section>
     <section class="card stack" style="margin-top:18px">
@@ -170,6 +196,9 @@ export function onRequestGet() {
         const unitSelect = document.getElementById('unitId');
         const longStayUnitSelect = document.getElementById('longStayUnitId');
         const reservationsWrap = document.getElementById('admin-reservations');
+        const resScope = document.getElementById('resScope');
+        const resStatus = document.getElementById('resStatus');
+        const resUnit = document.getElementById('resUnit');
         const ratePeriodsWrap = document.getElementById('admin-rate-periods');
         const syncLogsWrap = document.getElementById('admin-sync-logs');
         const calendarHealthWrap = document.getElementById('admin-calendar-health');
@@ -202,8 +231,14 @@ export function onRequestGet() {
           loadDashboard();
         }
 
-        async function apiFetch(method, body) {
-          const response = await fetch(apiUrl, {
+        async function apiFetch(method, body, query = {}) {
+          const url = new URL(apiUrl, window.location.origin);
+          for (const [key, value] of Object.entries(query)) {
+            if (value !== undefined && value !== null && value !== '') {
+              url.searchParams.set(key, value);
+            }
+          }
+          const response = await fetch(url, {
             method,
             headers: {
               'content-type': 'application/json',
@@ -459,15 +494,11 @@ export function onRequestGet() {
             if (longStayUnitSelect.value) {
               fillLongStayForm(longStayUnitSelect.value);
             }
-            reservationsWrap.innerHTML = renderReservations(
-              data.reservations.map((item) => ({
-                ...item,
-                stay: formatAdminDate(item.check_in_date) + ' → ' + formatAdminDate(item.check_out_date),
-                guest: item.guest_first_name + ' ' + item.guest_last_name,
-                status: item.status + ' / ' + (item.payment_status || '-'),
-                total: item.total_amount + ' ' + item.currency,
-              })),
-            );
+            const selectedResUnit = resUnit.value;
+            resUnit.innerHTML = '<option value="">All units</option>' + adminUnits.map((unit) => '<option value="' + escapeHtml(unit.code) + '">' + escapeHtml(unit.display_name) + '</option>').join('');
+            if (selectedResUnit && adminUnits.some((unit) => unit.code === selectedResUnit)) {
+              resUnit.value = selectedResUnit;
+            }
             ratePeriodsWrap.innerHTML = renderTable(
               data.ratePeriods.map((item) => ({
                 unit: item.unit_display_name,
@@ -521,11 +552,33 @@ export function onRequestGet() {
                 { key: 'message', label: 'Message' },
               ],
             );
+            await loadReservations();
             adminNotice.className = 'notice success';
             adminNotice.textContent = 'Dashboard loaded.';
           } catch (error) {
             adminNotice.className = 'notice error';
             adminNotice.textContent = error.message;
+          }
+        }
+
+        async function loadReservations() {
+          try {
+            reservationsWrap.innerHTML = '<p class="small">Loading reservations…</p>';
+            const data = await apiFetch('GET', undefined, {
+              scope: resScope.value,
+              status: resStatus.value,
+              unit: resUnit.value,
+            });
+            const rows = (data.reservations || []).map((item) => ({
+              ...item,
+              stay: formatAdminDate(item.check_in_date) + ' → ' + formatAdminDate(item.check_out_date),
+              guest: item.guest_first_name + ' ' + item.guest_last_name,
+              status: item.status + ' / ' + (item.payment_status || '-'),
+              total: item.total_amount + ' ' + item.currency,
+            }));
+            reservationsWrap.innerHTML = renderReservations(rows);
+          } catch (error) {
+            reservationsWrap.innerHTML = '<p class="small">Failed to load reservations: ' + escapeHtml(error.message) + '</p>';
           }
         }
 
@@ -535,6 +588,10 @@ export function onRequestGet() {
           sessionStorage.setItem('candcAdminToken', adminToken);
           await loadDashboard();
         });
+
+        resScope.addEventListener('change', loadReservations);
+        resStatus.addEventListener('change', loadReservations);
+        resUnit.addEventListener('change', loadReservations);
 
         ratePeriodForm.addEventListener('submit', async (event) => {
           event.preventDefault();

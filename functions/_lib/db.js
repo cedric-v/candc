@@ -462,7 +462,7 @@ export async function insertPendingReservation(env, unit, reservation, pricing, 
         reservationId,
         manageTokenHash,
         "manage_booking",
-        null,
+        manageTokenExpiresAtIso(env),
         null,
         nowIso,
       ),
@@ -474,11 +474,41 @@ export async function insertPendingReservation(env, unit, reservation, pricing, 
   };
 }
 
-export async function createManageToken(env, reservationId) {
+function manageTokenExpiresAtIso(env) {
+  const days = Math.max(1, Math.round(Number(getConfig(env).manageTokenTtlDays || 365)));
+  return new Date(Date.now() + days * 86400000).toISOString();
+}
+
+export async function revokeReservationManageTokens(env, reservationId) {
   const db = requireDb(env);
+  await db
+    .prepare(
+      `
+        UPDATE booking_tokens
+        SET revoked_at = ?
+        WHERE reservation_id = ?
+          AND purpose = 'manage_booking'
+          AND revoked_at IS NULL
+      `,
+    )
+    .bind(new Date().toISOString(), reservationId)
+    .run();
+}
+
+export async function createManageToken(env, reservationId, { rotate = false } = {}) {
+  const db = requireDb(env);
+
+  if (rotate) {
+    // Renouvellement : un seul lien de gestion actif à la fois pour une
+    // réservation. Les anciens liens cessent de fonctionner immédiatement
+    // (getReservationForManageToken filtre revoked_at IS NULL).
+    await revokeReservationManageTokens(env, reservationId);
+  }
+
   const manageToken = generateOpaqueToken();
   const manageTokenHash = await sha256Hex(manageToken);
   const nowIso = new Date().toISOString();
+  const expiresAt = manageTokenExpiresAtIso(env);
 
   await db
     .prepare(
@@ -488,7 +518,7 @@ export async function createManageToken(env, reservationId) {
         ) VALUES (?, ?, ?, ?, ?, ?, ?)
       `,
     )
-    .bind(crypto.randomUUID(), reservationId, manageTokenHash, "manage_booking", null, null, nowIso)
+    .bind(crypto.randomUUID(), reservationId, manageTokenHash, "manage_booking", expiresAt, null, nowIso)
     .run();
 
   return manageToken;
@@ -1116,6 +1146,19 @@ export async function cancelReservation(env, reservationId) {
         `,
       )
       .bind(nowIso, reservationId),
+    // Une réservation annulée ne garde pas de lien de gestion actif : les
+    // liens existants renvoient « Unknown or expired booking link ».
+    db
+      .prepare(
+        `
+          UPDATE booking_tokens
+          SET revoked_at = ?
+          WHERE reservation_id = ?
+            AND purpose = 'manage_booking'
+            AND revoked_at IS NULL
+        `,
+      )
+      .bind(nowIso, reservationId),
   ]);
 }
 
@@ -1427,8 +1470,53 @@ export async function getReviewRequestReservationsForDate(env, isoDate) {
   return results || [];
 }
 
-export async function listAdminReservations(env, limit = 50) {
+const ADMIN_RESERVATION_STATUS_GROUPS = {
+  // Réservations confirmées et payées : ce que l'hôte prépare (vue par défaut).
+  active: ["confirmed", "modified"],
+  // Statuts nécessitant une action humaine : paiement en attente, remboursements dus.
+  attention: ["pending_payment", "refund_due", "pending_refund", "conflict_refund_due"],
+  // Terminées ou libérées automatiquement : plus rien à faire.
+  closed: ["payment_expired", "cancelled"],
+};
+
+export async function listAdminReservations(env, options = {}) {
   const db = requireDb(env);
+  const limit = Math.min(300, Math.max(1, Number(options.limit || 100)));
+  const scope = options.scope || "upcoming";
+  const statusGroup = options.statusGroup || "active";
+  const unitCode = options.unitCode || null;
+  const todayIso = options.todayIso || null;
+
+  const conditions = [];
+  const binds = [];
+
+  if (scope === "upcoming" && todayIso) {
+    conditions.push("reservations.check_out_date >= ?");
+    binds.push(todayIso);
+  } else if (scope === "past" && todayIso) {
+    conditions.push("reservations.check_out_date < ?");
+    binds.push(todayIso);
+  }
+
+  if (unitCode) {
+    conditions.push("reservations.unit_code = ?");
+    binds.push(unitCode);
+  }
+
+  const group = ADMIN_RESERVATION_STATUS_GROUPS[statusGroup];
+  if (group) {
+    conditions.push(`reservations.status IN (${group.map(() => "?").join(", ")})`);
+    binds.push(...group);
+  }
+
+  const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
+  // À venir : séjour en cours / prochaine arrivée la plus proche de la date
+  // actuelle en premier. Passé et tout : plus récent d'abord.
+  const orderBy =
+    scope === "upcoming"
+      ? "reservations.check_in_date ASC, reservations.created_at ASC"
+      : "reservations.check_in_date DESC, reservations.created_at DESC";
+
   const { results } = await db
     .prepare(
       `
@@ -1472,11 +1560,12 @@ export async function listAdminReservations(env, limit = 50) {
           ) AS payment_status
         FROM reservations
         LEFT JOIN rentable_units ON rentable_units.id = reservations.unit_id
-        ORDER BY reservations.check_in_date DESC, reservations.created_at DESC
+        ${whereClause}
+        ORDER BY ${orderBy}
         LIMIT ?
       `,
     )
-    .bind(limit)
+    .bind(...binds, limit)
     .all();
 
   return results || [];

@@ -9,9 +9,10 @@ import {
   updateUnitSettings,
   upsertRatePeriod,
 } from "../../_lib/db.js";
+import { getConfig } from "../../_lib/env.js";
+import { getCurrentIsoDateInZone, isIsoDateString } from "../../_lib/date.js";
 import { runArrivalEmails, runBookingIcsSync, runSensitiveDataRetention, validateCalendarSources } from "../../_lib/jobs.js";
 import { badRequest, json, serverError, unauthorized } from "../../_lib/http.js";
-import { isIsoDateString } from "../../_lib/date.js";
 
 export async function onRequestGet(context) {
   try {
@@ -19,10 +20,19 @@ export async function onRequestGet(context) {
       return unauthorized("Missing or invalid admin token");
     }
 
+    const url = new URL(context.request.url);
+    const reservationOptions = {
+      scope: url.searchParams.get("scope") || "upcoming",
+      statusGroup: url.searchParams.get("status") || "active",
+      unitCode: url.searchParams.get("unit") || null,
+      limit: Number(url.searchParams.get("limit") || 100),
+      todayIso: getCurrentIsoDateInZone(getConfig(context.env).timeZone),
+    };
+
     const [units, reservations, ratePeriods, syncLogs, calendarHealth, operationalHealth] =
       await Promise.all([
       listUnitsForAdmin(context.env),
-      listAdminReservations(context.env, 60),
+      listAdminReservations(context.env, reservationOptions),
       listRatePeriods(context.env),
       listRecentSyncLogs(context.env, 25),
       listCalendarHealthForAdmin(context.env),

@@ -294,7 +294,7 @@ Le scaffold couvre :
 - e-mails de modification, annulation et rappel d'arrivee
 - e-mails de rappel de paiement et d'expiration de paiement (hold)
 - page client de gestion de reservation via lien magique
-- mini interface admin protegee par token, avec coordonnees client par reservation (ligne "Details" depliable, numero de piece d'identite masque par defaut avec revelation sur demande)
+- mini interface admin protegee par token, avec coordonnees client par reservation (ligne "Details" depliable, numero de piece d'identite masque par defaut avec revelation sur demande) ; liste des reservations filtrable (periode : a venir / passees / toutes ; statut : actives payees par defaut, attention requise, fermees, toutes ; unite) — la vue par defaut montre les sejours a venir confirmes et payes, du plus proche de la date actuelle au plus lointain
 - endpoint interne unifie pour lancer les jobs Booking ICS, arrival emails et validation OTA
 - worker cron dedie dans `sync-worker/` sur un seul cron `*/20 * * * *` (limite de 5 crons par compte sur le plan Workers Free) couvrant :
   - sync OTA + maintenance des holds de paiement toutes les 20 minutes (`booking_ics` : rappels, expiration, emails)

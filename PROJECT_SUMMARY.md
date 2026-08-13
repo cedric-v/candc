@@ -87,6 +87,7 @@ Important :
 - mini interface admin par token
 - alerte e-mail dediee `admin_new_booking` a la creation (coordonnees completes, numero de piece d'identite masque)
 - coordonnees client completes consultables dans l'admin (ligne "Details" par reservation, numero de piece d'identite masque par defaut avec revelation sur demande)
+- liste des reservations admin filtrable : a venir par defaut (sejours en cours et prochaines arrivees, la plus proche de la date actuelle en premier), filtres periode / statut (actives payees, attention requise, fermees) / unite
 - anonymisation quotidienne des donnees sensibles (nationalite, date de naissance, numero de piece) 12 mois apres la fin du sejour (LPD/RGPD, job `retention`)
 - endpoint interne pour jobs de sync et d'e-mails, y compris le mail d'arrivee localise et le mail de depart studio
 - remboursements automatiques SumUp pour les annulations flexibles et les diminutions de total, avec fallback manuel si la couverture transactionnelle est insuffisante
