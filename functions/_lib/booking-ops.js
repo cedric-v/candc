@@ -112,6 +112,19 @@ export async function sendReservationEmail(env, reservationId, emailType, option
   }
 }
 
+// Alerte e-mail dédiée à l'admin (ADMIN_NOTIFICATION_EMAIL) à la création
+// d'une réservation : coordonnées complètes du voyageur, n° de pièce
+// d'identité masqué (LPD / RGPD). Les réservations de test ([smoke-test])
+// sont ignorées par `sendReservationEmail` (comportement par défaut).
+export async function sendNewBookingAdminEmail(env, reservationId, options = {}) {
+  const config = getConfig(env);
+  return sendReservationEmail(env, reservationId, "admin_new_booking", {
+    ...options,
+    to: config.adminNotificationEmail,
+    cc: false,
+  });
+}
+
 export async function sendImmediateArrivalEmailIfNeeded(env, reservationId) {
   const config = getConfig(env);
   const reservation = await getReservationForEmail(env, reservationId);

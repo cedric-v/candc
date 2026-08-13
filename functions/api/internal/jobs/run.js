@@ -1,6 +1,6 @@
 import { hasValidInternalToken } from "../../../_lib/auth.js";
 import { badRequest, json, serverError, unauthorized } from "../../../_lib/http.js";
-import { runArrivalEmails, runBookingIcsSync, runDepartureEmails, runFunnelHealthCheck, runReviewRequestEmails, validateCalendarSources } from "../../../_lib/jobs.js";
+import { runArrivalEmails, runBookingIcsSync, runDepartureEmails, runFunnelHealthCheck, runReviewRequestEmails, runSensitiveDataRetention, validateCalendarSources } from "../../../_lib/jobs.js";
 import { runPendingPaymentHoldMaintenance } from "../../../_lib/booking-ops.js";
 
 export async function onRequest(context) {
@@ -50,6 +50,10 @@ export async function onRequest(context) {
 
     if (action === "funnel_check") {
       return json(await runFunnelHealthCheck(context.env));
+    }
+
+    if (action === "retention") {
+      return json(await runSensitiveDataRetention(context.env));
     }
 
     if (action === "all") {

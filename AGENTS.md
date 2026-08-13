@@ -110,6 +110,20 @@ When changing sync behavior, also check:
   periodic probe (availability + quote for future windows, no reservation
   created) triggered every 2 h by the sync worker; alerts the admin on
   failure. `functions/api/internal/jobs/run.js` exposes the action.
+- `runSensitiveDataRetention` (jobs.js, action `retention`, daily 04:20 via
+  sync worker, manual trigger in admin) — anonymizes the sensitive guest
+  identity fields (`guest_id_document_number`, `guest_nationality`,
+  `guest_date_of_birth`) once the stay ended more than
+  `SENSITIVE_DATA_RETENTION_MONTHS` (default 12) ago; booking/billing data
+  stays (10-year accounting records). See the privacy policy
+  (`src/fr/legal.njk`, section "Durée de conservation des données").
+- On direct-booking creation, in addition to the CC'd confirmation email, a
+  dedicated `admin_new_booking` alert email (French, full guest contact
+  details, ID document number masked for LPD/GDPR compliance) is sent to
+  `ADMIN_NOTIFICATION_EMAIL` via `sendNewBookingAdminEmail` (booking-ops.js).
+  The admin dashboard shows per-reservation expandable guest details with a
+  masked-by-default ID document number (`functions/admin/booking.js`,
+  `functions/api/admin/booking.js`, `listAdminReservations` in db.js).
 - Post-deploy verification: `.github/workflows/deploy-check.yml` waits for
   the Cloudflare Pages deployment, builds, runs `npm test` and the live
   payment funnel check (`npm run check:payment`). Needs the optional

@@ -27,6 +27,7 @@ export function onRequestGet() {
           <button class="btn-secondary" type="button" id="sync-booking-button">Run calendar sync</button>
           <button class="btn-secondary" type="button" id="validate-calendar-button">Validate OTA feeds</button>
           <button class="btn-secondary" type="button" id="send-arrival-button">Send today's arrival emails</button>
+          <button class="btn-secondary" type="button" id="retention-button">Anonymize old sensitive data</button>
         </div>
         <p class="small">These actions reuse the same backend jobs that will later be called by automated triggers. They sync all active imported OTA calendars configured in the system.</p>
       </section>
@@ -176,6 +177,7 @@ export function onRequestGet() {
         const syncBookingButton = document.getElementById('sync-booking-button');
         const validateCalendarButton = document.getElementById('validate-calendar-button');
         const sendArrivalButton = document.getElementById('send-arrival-button');
+        const retentionButton = document.getElementById('retention-button');
         const adminTimeZone = 'Europe/Zurich';
         const dateFormatter = new Intl.DateTimeFormat('fr-CH', {
           timeZone: adminTimeZone,
@@ -230,6 +232,88 @@ export function onRequestGet() {
             return '<p class="small">No data yet.</p>';
           }
           return '<table><thead><tr>' + headers.map((header) => '<th>' + escapeHtml(header.label) + '</th>').join('') + '</tr></thead><tbody>' + rows.map((row) => '<tr>' + headers.map((header) => '<td>' + escapeHtml(row[header.key] ?? '-') + '</td>').join('') + '</tr>').join('') + '</tbody></table>';
+        }
+
+        function maskIdDocument(value) {
+          const raw = String(value ?? '').trim();
+          if (!raw) {
+            return '-';
+          }
+          if (raw.length <= 4) {
+            return '••••';
+          }
+          return '••••••••' + raw.slice(-4);
+        }
+
+        function parseAdditionalGuests(raw) {
+          if (!raw) {
+            return [];
+          }
+          try {
+            const parsed = JSON.parse(raw);
+            return Array.isArray(parsed) ? parsed : [];
+          } catch {
+            return [];
+          }
+        }
+
+        // Tableau des réservations avec un détail dépliable par ligne :
+        // coordonnées complètes du client. Le n° de pièce d'identité est
+        // masqué par défaut (LPD / RGPD) et révélable sur demande.
+        function renderReservations(rows) {
+          if (!rows.length) {
+            return '<p class="small">No data yet.</p>';
+          }
+
+          const headers = [
+            { key: 'reference', label: 'Reference' },
+            { key: 'unit', label: 'Unit' },
+            { key: 'stay', label: 'Stay' },
+            { key: 'guest', label: 'Guest' },
+            { key: 'status', label: 'Status' },
+            { key: 'total', label: 'Total' },
+          ];
+
+          const rowsHtml = rows.map((item) => {
+            const ref = item.public_reference || item.id;
+            const detailsId = 'admin-details-' + ref;
+            const address = [item.guest_address_street, item.guest_address_zip, item.guest_address_city, item.guest_address_country].filter(Boolean).join(', ') || '-';
+            const phone = item.guest_mobile_phone || item.guest_phone || '-';
+            const additionalGuests = parseAdditionalGuests(item.additional_guests_json)
+              .map((guest) => [guest.firstName, guest.lastName].filter(Boolean).join(' '))
+              .filter(Boolean)
+              .join(', ') || '-';
+
+            const cells = headers.map((header) => '<td>' + escapeHtml(item[header.key] ?? '-') + '</td>').join('');
+            const detailsRows = [
+              ['Email', item.guest_email || '-'],
+              ['Phone', phone],
+              ['Address', address],
+              ['Date of birth', item.guest_date_of_birth || '-'],
+              ['Nationality', item.guest_nationality || '-'],
+              ['Locale', item.locale || '-'],
+              ['Additional guests', additionalGuests],
+              ['Remarks', item.remarks || '-'],
+            ].map(([label, value]) =>
+              '<div class="meta-row"><span class="label">' + escapeHtml(label) + '</span><span class="value">' + escapeHtml(value) + '</span></div>',
+            ).join('');
+
+            const idRow =
+              '<div class="meta-row"><span class="label">ID document</span>' +
+              '<span class="value admin-id-value" data-full="' + escapeHtml(item.guest_id_document_number || '') + '">' + escapeHtml(maskIdDocument(item.guest_id_document_number)) + '</span> ' +
+              (item.guest_id_document_number ? '<button type="button" class="admin-id-reveal" style="padding:4px 12px;font-size:0.8rem" data-action="reveal">Reveal</button>' : '') +
+              '</div>';
+
+            return (
+              '<tr>' + cells +
+              '<td><button type="button" class="admin-res-toggle" data-target="' + escapeHtml(detailsId) + '" style="padding:6px 12px;font-size:0.82rem">Details ▾</button></td></tr>' +
+              '<tr class="admin-res-details" id="' + escapeHtml(detailsId) + '" hidden><td colspan="7">' +
+              '<div class="meta">' + detailsRows + idRow + '</div>' +
+              '</td></tr>'
+            );
+          }).join('');
+
+          return '<table><thead><tr>' + headers.map((header) => '<th>' + escapeHtml(header.label) + '</th>').join('') + '<th></th></tr></thead><tbody>' + rowsHtml + '</tbody></table>';
         }
 
         function isIsoDateOnly(value) {
@@ -375,23 +459,14 @@ export function onRequestGet() {
             if (longStayUnitSelect.value) {
               fillLongStayForm(longStayUnitSelect.value);
             }
-            reservationsWrap.innerHTML = renderTable(
+            reservationsWrap.innerHTML = renderReservations(
               data.reservations.map((item) => ({
-                reference: item.public_reference,
-                unit: item.unit_display_name,
+                ...item,
                 stay: formatAdminDate(item.check_in_date) + ' → ' + formatAdminDate(item.check_out_date),
                 guest: item.guest_first_name + ' ' + item.guest_last_name,
                 status: item.status + ' / ' + (item.payment_status || '-'),
                 total: item.total_amount + ' ' + item.currency,
               })),
-              [
-                { key: 'reference', label: 'Reference' },
-                { key: 'unit', label: 'Unit' },
-                { key: 'stay', label: 'Stay' },
-                { key: 'guest', label: 'Guest' },
-                { key: 'status', label: 'Status' },
-                { key: 'total', label: 'Total' },
-              ],
             );
             ratePeriodsWrap.innerHTML = renderTable(
               data.ratePeriods.map((item) => ({
@@ -553,6 +628,52 @@ export function onRequestGet() {
           } catch (error) {
             adminNotice.className = 'notice error';
             adminNotice.textContent = error.message;
+          }
+        });
+
+        retentionButton.addEventListener('click', async () => {
+          try {
+            adminNotice.className = 'notice info';
+            adminNotice.textContent = 'Anonymizing sensitive guest data…';
+            const result = await apiFetch('POST', { action: 'run_sensitive_data_retention' });
+            adminNotice.className = 'notice success';
+            adminNotice.textContent = 'Retention done: ' + (result.anonymized ?? 0) + ' reservation(s) anonymized (check-out before ' + (result.cutoffDate || 'cutoff') + ').';
+            await loadDashboard();
+          } catch (error) {
+            adminNotice.className = 'notice error';
+            adminNotice.textContent = error.message;
+          }
+        });
+
+        // Détail dépliable des réservations (coordonnées client) et
+        // révélation masquée du n° de pièce d'identité.
+        reservationsWrap.addEventListener('click', (event) => {
+          const toggle = event.target.closest('.admin-res-toggle');
+          if (toggle) {
+            const details = document.getElementById(toggle.dataset.target);
+            if (details) {
+              const hidden = details.hidden;
+              details.hidden = !hidden;
+              toggle.textContent = hidden ? 'Details ▴' : 'Details ▾';
+            }
+            return;
+          }
+
+          const reveal = event.target.closest('.admin-id-reveal');
+          if (reveal) {
+            const valueEl = reveal.parentElement.querySelector('.admin-id-value');
+            if (valueEl) {
+              const full = valueEl.dataset.full || '';
+              if (reveal.dataset.action === 'reveal') {
+                valueEl.textContent = full;
+                reveal.dataset.action = 'hide';
+                reveal.textContent = 'Hide';
+              } else {
+                valueEl.textContent = maskIdDocument(full);
+                reveal.dataset.action = 'reveal';
+                reveal.textContent = 'Reveal';
+              }
+            }
           }
         });
       })();

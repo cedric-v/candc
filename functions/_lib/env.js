@@ -47,6 +47,11 @@ export function getConfig(env) {
     // réservations dont le hold expire bientôt sont rappelées (défaut 20 min,
     // aligné sur la cadence de maintenance de ~20 min).
     pendingPaymentReminderWindowMinutes: getNumberEnv(env, "PENDING_PAYMENT_REMINDER_WINDOW_MINUTES", 20),
+    // Durée (en mois) de conservation des données sensibles du voyageur
+    // (n° de pièce d'identité, nationalité, date de naissance) après la fin
+    // du séjour ; au-delà, elles sont anonymisées (NULL) par le job
+    // `runSensitiveDataRetention` (LPD / RGPD). Défaut : 12 mois.
+    sensitiveDataRetentionMonths: getNumberEnv(env, "SENSITIVE_DATA_RETENTION_MONTHS", 12),
     sumUpApiBaseUrl: env.SUMUP_API_BASE_URL || "https://api.sumup.com",
     sumUpApiKey: env.SUMUP_API_KEY || "",
     sumUpMerchantCode: env.SUMUP_MERCHANT_CODE || "",

@@ -412,6 +412,7 @@ Exigences :
 
 - confirmation immediate de reservation
 - copie a bonjour@candc.ch
+- e-mail d'alerte admin dedie `admin_new_booking` a la creation (coordonnees completes du client, numero de piece d'identite masque — LPD/RGPD ; en plus du CC ci-dessus)
 - e-mail de mise a jour apres modification
 - e-mail d'annulation
 - e-mail de rappel de paiement (avant expiration du hold)
@@ -540,6 +541,39 @@ Une verification periodique du funnel (disponibilite + tarif, sans creer de
 reservation) tourne toutes les 2 h via le cron `funnel_check` et alerte
 l'admin en cas de regression entre deux deploiements.
 
+## Alerte admin a la creation de reservation
+
+A la creation d'une reservation directe, en plus du CC automatique du mail
+client, un e-mail dedie `admin_new_booking` est envoye a
+`ADMIN_NOTIFICATION_EMAIL` (francais, independant de la langue du voyageur)
+avec les coordonnees completes du client (nom, email, telephones, adresse,
+date de naissance, nationalite, invites additionnels, remarques).
+
+Conformite LPD / RGPD : le numero de piece d'identite n'est **jamais**
+transmis en clair par e-mail — seuls les 4 derniers caracteres sont
+visibles ; le numero complet n'est consultable que dans l'interface admin
+(`GET /api/admin/booking`, ligne "Details" par reservation, numero masque
+par defaut avec revelation sur demande).
+
+Les reservations de test (`[smoke-test]`) ne declenchent ni mail ni push.
+
+## Conservation des donnees sensibles (LPD / RGPD)
+
+Les donnees sensibles du voyageur (numero de piece d'identite, nationalite,
+date de naissance) sont collectees pour l'obligation legale d'enregistrement
+des voyageurs et la taxe de sejour, et ne sont conservees que le temps
+necessaire.
+
+Le job `runSensitiveDataRetention` (action `retention`, declenche chaque
+jour a 04:20 heure locale par le sync worker, bouton manuel dans l'admin)
+anonymise ces trois colonnes (mise a `NULL`) pour les reservations dont le
+sejour s'est termine il y a plus de `SENSITIVE_DATA_RETENTION_MONTHS` mois
+(defaut 12).
+
+Les donnees de reservation et de facturation (nom, adresse, montants) sont
+conservees 10 ans conformement aux obligations comptables et fiscales
+(voir `src/fr/legal.njk`, section "Durée de conservation des données").
+
 ## Modele de donnees recommande
 
 Le modele de donnees doit etre multi-unite.
@@ -590,10 +624,20 @@ Le modele de donnees doit etre multi-unite.
 - `guest_last_name`
 - `guest_email`
 - `guest_phone`
+- `guest_mobile_phone`
+- `guest_address_street`
+- `guest_address_zip`
+- `guest_address_city`
+- `guest_address_country`
+- `guest_date_of_birth`
+- `guest_nationality`
+- `guest_id_document_number`
+- `additional_guests_json`
 - `vehicle_type`
 - `vehicle_length_m`
 - `adults`
 - `children`
+- `infants`
 - `remarks`
 - `guest_details_json`
 - `check_in_date`
@@ -610,8 +654,10 @@ Le modele de donnees doit etre multi-unite.
 - `base_amount`
 - `tourist_tax_amount`
 - `options_amount`
+- `guest_surcharge_amount`
 - `long_stay_discount_amount`
 - `non_refundable_discount_amount`
+- `weekly_stay_discount_amount`
 - `payment_fee_amount`
 - `total_amount`
 - `currency`

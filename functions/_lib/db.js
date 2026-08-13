@@ -1440,6 +1440,23 @@ export async function listAdminReservations(env, limit = 50) {
           reservations.guest_first_name,
           reservations.guest_last_name,
           reservations.guest_email,
+          reservations.guest_phone,
+          reservations.guest_mobile_phone,
+          reservations.guest_address_street,
+          reservations.guest_address_zip,
+          reservations.guest_address_city,
+          reservations.guest_address_country,
+          reservations.guest_date_of_birth,
+          reservations.guest_nationality,
+          reservations.guest_id_document_number,
+          reservations.additional_guests_json,
+          reservations.remarks,
+          reservations.locale,
+          reservations.vehicle_type,
+          reservations.adults,
+          reservations.children,
+          reservations.infants,
+          reservations.created_at,
           reservations.check_in_date,
           reservations.check_out_date,
           reservations.total_amount,
@@ -1463,6 +1480,42 @@ export async function listAdminReservations(env, limit = 50) {
     .all();
 
   return results || [];
+}
+
+export async function anonymizeExpiredGuestSensitiveData(env, cutoffDate) {
+  // Conformité LPD / RGPD : les données sensibles du voyageur (n° de pièce
+  // d'identité, nationalité, date de naissance) ne sont conservées que le
+  // temps nécessaire à l'obligation légale d'enregistrement des voyageurs.
+  // Après la période de conservation configurée, ces colonnes sont mises à
+  // NULL (les données de réservation / facturation restent conservées pour
+  // les obligations comptables).
+  const db = requireDb(env);
+  const nowIso = new Date().toISOString();
+
+  const result = await db
+    .prepare(
+      `
+        UPDATE reservations
+        SET
+          guest_id_document_number = NULL,
+          guest_nationality = NULL,
+          guest_date_of_birth = NULL,
+          updated_at = ?
+        WHERE check_out_date < ?
+          AND (
+            guest_id_document_number IS NOT NULL
+            OR guest_nationality IS NOT NULL
+            OR guest_date_of_birth IS NOT NULL
+          )
+      `,
+    )
+    .bind(nowIso, cutoffDate)
+    .run();
+
+  return {
+    cutoffDate,
+    anonymized: Number(result?.meta?.changes || 0),
+  };
 }
 
 export async function listUnitsForAdmin(env) {

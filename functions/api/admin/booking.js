@@ -9,7 +9,7 @@ import {
   updateUnitSettings,
   upsertRatePeriod,
 } from "../../_lib/db.js";
-import { runArrivalEmails, runBookingIcsSync, validateCalendarSources } from "../../_lib/jobs.js";
+import { runArrivalEmails, runBookingIcsSync, runSensitiveDataRetention, validateCalendarSources } from "../../_lib/jobs.js";
 import { badRequest, json, serverError, unauthorized } from "../../_lib/http.js";
 import { isIsoDateString } from "../../_lib/date.js";
 
@@ -138,6 +138,10 @@ export async function onRequestPost(context) {
 
     if (action === "validate_calendar_sources") {
       return json(await validateCalendarSources(context.env, payload.unitCode || null));
+    }
+
+    if (action === "run_sensitive_data_retention") {
+      return json(await runSensitiveDataRetention(context.env));
     }
 
     return badRequest("Unsupported admin action");

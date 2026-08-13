@@ -1079,6 +1079,79 @@ function formatStayDates(reservation) {
   return `${formatDateForLocale(reservation.check_in_date, reservation.locale)} → ${formatDateForLocale(reservation.check_out_date, reservation.locale)}`;
 }
 
+function maskIdDocument(value) {
+  // Conformité LPD / RGPD : le n° de pièce d'identité n'est jamais transmis
+  // en clair dans les e-mails — seuls les 4 derniers caractères sont visibles.
+  const raw = String(value || "").trim();
+  if (!raw) {
+    return "—";
+  }
+  if (raw.length <= 4) {
+    return "••••";
+  }
+  return `••••••••${raw.slice(-4)}`;
+}
+
+function parseAdditionalGuests(raw) {
+  if (!raw) {
+    return [];
+  }
+  try {
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+// Alerte e-mail dédiée à l'admin (ADMIN_NOTIFICATION_EMAIL) à la création
+// d'une réservation, en complément du CC automatique du mail client.
+// Contient les coordonnées complètes du voyageur mais jamais le n° de pièce
+// d'identité en clair (masqué — cf. LPD / RGPD).
+function buildAdminNewBookingPayload(reservation, config, options = {}) {
+  const unitLabel = reservation.unit_display_name || reservation.unit_code || reservation.unit_type || "réservation";
+  const additionalGuests = parseAdditionalGuests(reservation.additional_guests_json)
+    .map((guest) => [guest.firstName, guest.lastName].filter(Boolean).join(" "))
+    .filter(Boolean);
+
+  const lines = [
+    `Nouvelle réservation créée sur ${config.publicBaseUrl}`,
+    "",
+    `Référence : ${reservation.public_reference}`,
+    `Unité : ${unitLabel}`,
+    `Dates : ${reservation.check_in_date} → ${reservation.check_out_date}`,
+    `Statut : ${reservation.payment_status === "paid" ? "payée" : "en attente de paiement"}`,
+    `Total : ${formatMoney(reservation.total_amount, reservation.currency, "fr")}`,
+    "",
+    "Client",
+    `Nom : ${reservation.guest_first_name} ${reservation.guest_last_name || ""}`.trimEnd(),
+    `Email : ${reservation.guest_email}`,
+    `Téléphone mobile : ${reservation.guest_mobile_phone || reservation.guest_phone || "—"}`,
+    `Adresse : ${[reservation.guest_address_street, reservation.guest_address_zip, reservation.guest_address_city, reservation.guest_address_country].filter(Boolean).join(", ") || "—"}`,
+    `Date de naissance : ${reservation.guest_date_of_birth || "—"}`,
+    `Nationalité : ${reservation.guest_nationality || "—"}`,
+    `N° de pièce d'identité : ${maskIdDocument(reservation.guest_id_document_number)} (masqué — n° complet visible uniquement dans l'interface admin)`,
+  ];
+
+  if (additionalGuests.length > 0) {
+    lines.push(`Invités additionnels : ${additionalGuests.join(", ")}`);
+  }
+
+  if (reservation.remarks) {
+    lines.push(`Remarques : ${reservation.remarks}`);
+  }
+
+  lines.push(
+    "",
+    `Lien de gestion : ${options.manageToken ? manageUrl(config, options.manageToken) : "—"}`,
+  );
+
+  return {
+    subject: `Nouvelle réservation ${reservation.public_reference} — ${unitLabel}`,
+    text: lines.join("\n"),
+  };
+}
+
 function buildPaymentReminderText(reservation, manageLink) {
   const text = getEmailText(reservation.locale);
 
@@ -1231,6 +1304,10 @@ function buildEmailPayload(type, reservation, config, options = {}) {
     case "payment_expired":
       rawText = buildPaymentExpiredText(reservation, manageLink || "-");
       break;
+    case "admin_new_booking":
+      // Alerte dédiée à l'admin : contenu français indépendant de la langue
+      // du voyageur, coordonnées complètes mais n° de pièce d'identité masqué.
+      return buildAdminNewBookingPayload(reservation, config, options);
     default:
       throw new Error(`unknown_email_type:${type}`);
   }
@@ -1259,7 +1336,9 @@ export async function sendTransactionalEmail(env, type, reservation, options = {
 
   const { subject, text } = buildEmailPayload(type, reservation, config, options);
   const to = options.to || reservation.guest_email;
-  const cc = options.cc || config.adminNotificationEmail || null;
+  // `cc: false` permet d'envoyer un e-mail strictement à l'admin sans le CC
+  // automatique (évite un doublon quand `to` est déjà l'adresse admin).
+  const cc = options.cc === false ? null : options.cc || config.adminNotificationEmail || null;
   const headers = {
     authorization: `Bearer ${config.resendApiKey}`,
     "content-type": "application/json",

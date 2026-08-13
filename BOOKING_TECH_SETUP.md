@@ -95,6 +95,7 @@ Verification recommandee :
 - `PAYMENT_FEE_FIXED_CHF`
 - `PENDING_PAYMENT_HOLD_MINUTES` — duree (minutes) pendant laquelle une reservation en attente de paiement tient ses dates ; defaut `30`
 - `PENDING_PAYMENT_REMINDER_WINDOW_MINUTES` — fenetre (minutes) avant expiration pendant laquelle le job horaire envoie un e-mail de rappel ; bornee a la duree du hold ; defaut `20`
+- `SENSITIVE_DATA_RETENTION_MONTHS` — duree (mois) de conservation des donnees sensibles du voyageur (numero de piece d'identite, nationalite, date de naissance) apres la fin du sejour ; au-dela, anonymisees (`NULL`) par le job quotidien `retention` ; defaut `12`
 - `TIMEZONE`
 - `DEFAULT_CHECK_IN_TIME`
 - `DEFAULT_CHECK_IN_END_TIME`
@@ -289,14 +290,17 @@ Le scaffold couvre :
 - synchro Google Calendar par reservation confirmee
 - mise a jour automatique Google Calendar depuis le webhook SumUp uniquement si `ENABLE_GOOGLE_CALENDAR_SYNC=true` et si la configuration Google est complete
 - e-mail transactionnel de creation de reservation
+- alerte admin dediee `admin_new_booking` a la creation (coordonnees completes, numero de piece d'identite masque, LPD/RGPD)
 - e-mails de modification, annulation et rappel d'arrivee
 - e-mails de rappel de paiement et d'expiration de paiement (hold)
 - page client de gestion de reservation via lien magique
-- mini interface admin protegee par token
+- mini interface admin protegee par token, avec coordonnees client par reservation (ligne "Details" depliable, numero de piece d'identite masque par defaut avec revelation sur demande)
 - endpoint interne unifie pour lancer les jobs Booking ICS, arrival emails et validation OTA
 - worker cron dedie dans `sync-worker/` sur un seul cron `*/20 * * * *` (limite de 5 crons par compte sur le plan Workers Free) couvrant :
   - sync OTA + maintenance des holds de paiement toutes les 20 minutes (`booking_ics` : rappels, expiration, emails)
   - e-mails d'arrivee, de depart et de demande d'avis, filtres en JS sur les fenetres locales (`08:00` / `18:00` / `12:00` `Europe/Zurich`), dedupliques via `email_logs`
+  - verification funnel (`funnel_check`) toutes les 2 h a la minute 20
+  - anonymisation quotidienne des donnees sensibles (`retention`) a `04:20` heure locale, au-dela de `SENSITIVE_DATA_RETENTION_MONTHS` mois apres la fin du sejour
 - fallback d'e-mail d'arrivee immediat pour les reservations confirmees le jour meme apres 08:00 locale
 - remboursements automatiques SumUp pour les cas eligibles, avec fallback `manual_refund_due` si la transaction n'est pas remboursable automatiquement
 - tests metier dedies dans `scripts/booking-logic-tests.mjs`
@@ -372,11 +376,27 @@ Le scaffold ne couvre pas encore :
   "guestFirstName": "Jean",
   "guestLastName": "Dupont",
   "guestEmail": "jean@example.com",
-  "guestPhone": "+41790000000",
+  "guestMobilePhone": "+41790000000",
+  "guestAddressStreet": "Rue 1",
+  "guestAddressZip": "1000",
+  "guestAddressCity": "Lausanne",
+  "guestAddressCountry": "CH",
+  "guestDateOfBirth": "1990-01-01",
+  "guestNationality": "CH",
+  "guestIdDocumentNumber": "",
+  "additionalGuests": [],
   "remarks": "Arrivee vers 18h",
   "acceptedTerms": true
 }
 ```
+
+Depuis `migrations/0012_add_guest_details_fields.sql`, les coordonnees du
+client sont requises cote serveur : telephone mobile, adresse complete,
+date de naissance et nationalite. Le numero de piece d'identite
+(`guestIdDocumentNumber`) est obligatoire pour les voyageurs **non suisses**
+(`guestNationality !== "ch"`), en lien avec l'obligation legale
+d'enregistrement des voyageurs. Ces donnees sont stockees dans
+`reservations` et jamais exposees dans les flux ICS publics.
 
 ## Etape recommandee suivante
 

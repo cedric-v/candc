@@ -1,4 +1,5 @@
 import {
+  anonymizeExpiredGuestSensitiveData,
   createManageToken,
   getArrivalReservationsForDate,
   getDepartureReservationsForDate,
@@ -384,6 +385,31 @@ export async function validateCalendarSources(env, unitCode = null) {
     ok: results.every((result) => result.status === "success"),
     results,
   };
+}
+
+// Conformité LPD / RGPD : anonymise les données sensibles du voyageur
+// (n° de pièce d'identité, nationalité, date de naissance) des réservations
+// dont le séjour s'est terminé il y a plus de `SENSITIVE_DATA_RETENTION_MONTHS`
+// mois (défaut 12). Les données de réservation et de facturation restent
+// conservées (obligations comptables, 10 ans). Idempotent et sans risque.
+export async function runSensitiveDataRetention(env) {
+  const config = getConfig(env);
+  const months = Math.max(1, Number(config.sensitiveDataRetentionMonths || 12));
+  const cutoff = new Date();
+  cutoff.setUTCMonth(cutoff.getUTCMonth() - months);
+  const cutoffIso = cutoff.toISOString().slice(0, 10);
+
+  const result = await anonymizeExpiredGuestSensitiveData(env, cutoffIso);
+
+  await insertSyncLog(env, {
+    unitId: null,
+    syncType: "sensitive_data_retention",
+    status: "success",
+    message: `Anonymized sensitive guest data for ${result.anonymized} reservation(s) with check-out before ${cutoffIso}`,
+    payloadSummary: result,
+  });
+
+  return { ok: true, ...result };
 }
 
 async function fetchWithTimeout(url, init = {}, timeoutMs = 10000) {

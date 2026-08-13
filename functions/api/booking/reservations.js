@@ -10,7 +10,7 @@ import {
 import { buildQuote } from "../../_lib/pricing.js";
 import { badRequest, conflict, json, serverError } from "../../_lib/http.js";
 import { generateOpaqueToken, sha256Hex } from "../../_lib/security.js";
-import { sendReservationEmail, sendReservationNtfy } from "../../_lib/booking-ops.js";
+import { sendReservationEmail, sendReservationNtfy, sendNewBookingAdminEmail } from "../../_lib/booking-ops.js";
 import { createHostedCheckout, isSumUpConfigured } from "../../_lib/sumup.js";
 import { normalizeBookingInput, validateBookingInput } from "../../_lib/validation.js";
 
@@ -81,6 +81,11 @@ export async function onRequestPost(context) {
         await sendReservationNtfy(context.env, reservationRecord.reservationId, "new_booking");
       } catch {
         // ntfy failures should not block reservation creation.
+      }
+      try {
+        await sendNewBookingAdminEmail(context.env, reservationRecord.reservationId, { manageToken });
+      } catch {
+        // Admin alert failures should not block reservation creation.
       }
 
       return json(
@@ -163,6 +168,11 @@ ${error?.stack || error?.message || String(error)}`,
       await sendReservationNtfy(context.env, reservationRecord.reservationId, "new_booking");
     } catch {
       // ntfy failures should not block reservation creation.
+    }
+    try {
+      await sendNewBookingAdminEmail(context.env, reservationRecord.reservationId, { manageToken });
+    } catch {
+      // Admin alert failures should not block reservation creation.
     }
 
     return json(

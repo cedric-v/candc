@@ -103,6 +103,14 @@ export default {
         const res = await runJob(env, "funnel_check");
         console.log(`Funnel health check complete: status ${res.status}, response: ${res.body}`);
       }
+
+      // Anonymisation quotidienne (04:20 heure locale) des données sensibles
+      // des voyageurs au-delà de la période de conservation (LPD / RGPD) ;
+      // idempotent et sans effet si rien n'est à purger.
+      if (currentLocalHour(env) === 4 && currentLocalMinutes(env) === 20) {
+        const res = await runJob(env, "retention");
+        console.log(`Sensitive data retention complete: status ${res.status}, response: ${res.body}`);
+      }
     } catch (err) {
       console.error(`Scheduled job failed: ${err.message}`);
     }

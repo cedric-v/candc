@@ -85,6 +85,9 @@ Important :
 - e-mails transactionnels localises selon la langue de reservation (textes studio dispo en FR, EN, DE ; fallback EN pour es, pt, it, nl)
 - page client de gestion via lien magique
 - mini interface admin par token
+- alerte e-mail dediee `admin_new_booking` a la creation (coordonnees completes, numero de piece d'identite masque)
+- coordonnees client completes consultables dans l'admin (ligne "Details" par reservation, numero de piece d'identite masque par defaut avec revelation sur demande)
+- anonymisation quotidienne des donnees sensibles (nationalite, date de naissance, numero de piece) 12 mois apres la fin du sejour (LPD/RGPD, job `retention`)
 - endpoint interne pour jobs de sync et d'e-mails, y compris le mail d'arrivee localise et le mail de depart studio
 - remboursements automatiques SumUp pour les annulations flexibles et les diminutions de total, avec fallback manuel si la couverture transactionnelle est insuffisante
 - tableau de sante admin pour les sources calendaires et les jobs operationnels
@@ -98,6 +101,7 @@ Important :
 - token de gestion client aleatoire, stocke uniquement sous forme de hash
 - webhook paiement revalide contre SumUp avant confirmation
 - routes admin et sync internes protegees par token dedie
+- donnees sensibles (numero de piece d'identite, nationalite, date de naissance) jamais exposees en clair dans les e-mails (masquees) et anonymisees au-dela de la periode de conservation (voir la politique de confidentialite, `src/fr/legal.njk`)
 - sync Google Calendar desactivee par defaut
 - depot public assaini : les URLs ICS, feed tokens, IDs de calendrier et valeurs `wrangler.toml` reelles ne doivent pas etre committes
 - protections Cloudflare attendues en production sur les endpoints d'ecriture, en particulier `POST /api/booking/reservations`
