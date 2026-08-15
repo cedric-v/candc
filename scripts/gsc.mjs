@@ -235,6 +235,78 @@ async function inspectUrl(token, site, urlPath, json) {
 }
 
 /* ------------------------------------------------------------------ */
+/* Audit d'indexation de toutes les URLs du sitemap                    */
+/* ------------------------------------------------------------------ */
+async function auditSite(token, site, { local = false, sitemapUrl = null, concurrency = 4 } = {}) {
+  let xml;
+  if (local) {
+    const localPath = join(process.cwd(), "_site", "sitemap.xml");
+    if (!existsSync(localPath)) throw new Error(`Sitemap local introuvable : ${localPath}`);
+    xml = readFileSync(localPath, "utf8");
+  } else {
+    const domain = site.replace(/^sc-domain:/, "").replace(/\/+$/, "");
+    const url =
+      sitemapUrl ||
+      (site.startsWith("https://") ? `${site.replace(/\/+$/, "")}/sitemap.xml` : `https://${domain}/sitemap.xml`);
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`Sitemap ${url} → HTTP ${res.status}`);
+    xml = await res.text();
+  }
+
+  const urls = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
+  if (!urls.length) throw new Error("Aucune URL trouvée dans le sitemap");
+  console.log(`\n🔍 Audit d'indexation — ${urls.length} URLs (${site})`);
+
+  const results = [];
+  let idx = 0;
+  async function worker() {
+    while (idx < urls.length) {
+      const url = urls[idx++];
+      try {
+        const res = await fetch(INSPECT_API, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+          body: JSON.stringify({ inspectionUrl: url, siteUrl: site }),
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        const r = data.inspectionResult || {};
+        const i = r.indexStatusResult || {};
+        results.push({
+          url,
+          verdict: i.verdict || "VERDICT_UNSPECIFIED",
+          state: i.coverageState || "",
+          reason: i.indexingState || "",
+        });
+      } catch (e) {
+        results.push({ url, verdict: "ERROR", state: "", reason: e.message });
+      }
+      await new Promise((r) => setTimeout(r, 120)); // léger throttling (quotas API)
+    }
+  }
+  await Promise.all(Array.from({ length: concurrency }, worker));
+
+  const groups = { PASS: [], PARTIAL: [], NEUTRAL: [], FAIL: [], VERDICT_UNSPECIFIED: [], ERROR: [] };
+  for (const r of results) {
+    if (groups[r.verdict]) groups[r.verdict].push(r);
+    else groups.ERROR.push(r);
+  }
+  const icon = { PASS: "✅", PARTIAL: "🟡", NEUTRAL: "⚪", FAIL: "🔴", VERDICT_UNSPECIFIED: "❓", ERROR: "💥" };
+  for (const [verdict, list] of Object.entries(groups)) {
+    if (!list.length) continue;
+    console.log(`\n${icon[verdict]} ${verdict} — ${list.length} URL(s)`);
+    for (const r of list) {
+      const extra = r.reason && r.reason !== r.state ? `  ${r.reason}` : "";
+      console.log(`   ${r.url}${r.state ? `  [${r.state}]` : ""}${extra}`);
+    }
+  }
+
+  const indexed = groups.PASS.length;
+  const total = results.length;
+  console.log(`\n📈 Taux d'indexation : ${indexed}/${total} (${total ? ((indexed / total) * 100).toFixed(0) : 0}%)`);
+}
+
+/* ------------------------------------------------------------------ */
 /* Main                                                                 */
 /* ------------------------------------------------------------------ */
 async function main() {
@@ -295,6 +367,13 @@ async function main() {
     case "inspect":
       await inspectUrl(token, site, flag("--url"), json);
       break;
+    case "audit":
+      await auditSite(token, site, {
+        local: hasFlag("--local"),
+        sitemapUrl: flag("--sitemap"),
+        concurrency: Number(flag("--jobs", "4")),
+      });
+      break;
     default:
       console.error(`Commande inconnue : "${cmd}".\n\n` + [
         "Usage :",
@@ -303,6 +382,7 @@ async function main() {
         "  node scripts/gsc.mjs pages --site <url> [--days 28]",
         "  node scripts/gsc.mjs sitemaps --site <url>",
         "  node scripts/gsc.mjs inspect --site <url> --url <path>",
+        "  node scripts/gsc.mjs audit --site <url> [--local] [--sitemap <url>] [--jobs N]",
       ].join("\n"));
       process.exit(2);
   }
