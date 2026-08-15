@@ -140,6 +140,34 @@
         "author": "Yassine",
         "rating": 5,
         "caption": "Pas de commentaire"
+      },
+      {
+        "image": "assets/img/testimonials/avis-studio-fadil.png",
+        "alt": "Super séjour de plus d'un mois, la tranquillité et la nature. Bien équipé, une place de stationnement disponible gratuitement devant l'entrée avec une petite terrasse. L'hôte est très sympathique. Je recommande vraiment surtout au niveau tarif c'est très raisonnable.",
+        "author": "Fadil",
+        "rating": 5,
+        "caption": "Super séjour de plus d'un mois, la tranquillité et la nature"
+      },
+      {
+        "image": "assets/img/testimonials/avis-studio-vikas.png",
+        "alt": "Cédric et Céline sont des hôtes très sympathiques et réactifs. Ils ont toujours été heureux d'aider et de guider. Le studio est bien équipé, propre et bien situé dans une belle région avec des transports publics et un supermarché à proximité. Une place de parking se trouve juste devant le studio. Nous avons vraiment apprécié notre séjour, merci ! Heureux de recommander.",
+        "author": "Vikas",
+        "rating": 5,
+        "caption": "Cédric et Céline sont des hôtes très sympathiques et réactifs"
+      },
+      {
+        "image": "assets/img/testimonials/avis-studio-alen.png",
+        "alt": "Tout était très bien et sans complications.",
+        "author": "Alen",
+        "rating": 5,
+        "caption": "Tout était très bien et sans complications."
+      },
+      {
+        "image": "assets/img/testimonials/avis-studio-steve.png",
+        "alt": "Endroit charmant à côté d'une ferme, parfait pour les familles.",
+        "author": "Steve",
+        "rating": 5,
+        "caption": "Endroit charmant à côté d'une ferme, parfait pour les familles."
       }
     ],
     "en": [
@@ -282,6 +310,34 @@
         "author": "Yassine",
         "rating": 5,
         "caption": "No comment"
+      },
+      {
+        "image": "assets/img/testimonials/avis-studio-fadil.png",
+        "alt": "Super stay of more than a month, tranquillity and nature. Well equipped, with a free parking space available in front of the entrance and a small terrace. The host is very friendly. I really recommend it, especially the price, which is very reasonable.",
+        "author": "Fadil",
+        "rating": 5,
+        "caption": "Super stay of more than a month, tranquillity and nature."
+      },
+      {
+        "image": "assets/img/testimonials/avis-studio-vikas.png",
+        "alt": "Cédric and Céline are very friendly and responsive host. They were always happy to help and guide. The studio is well equipped, clean and well located in a beautiful area with public transport and supermarket connectivity. Car parking space is just in front of the studio. We really enjoyed our stay, thank you! Happy to recommend.",
+        "author": "Vikas",
+        "rating": 5,
+        "caption": "Cédric and Céline are very friendly and responsive host."
+      },
+      {
+        "image": "assets/img/testimonials/avis-studio-alen.png",
+        "alt": "Everything was great and uncomplicated.",
+        "author": "Alen",
+        "rating": 5,
+        "caption": "Everything was great and uncomplicated."
+      },
+      {
+        "image": "assets/img/testimonials/avis-studio-steve.png",
+        "alt": "lovely place next to a farm, perfect for families.",
+        "author": "Steve",
+        "rating": 5,
+        "caption": "lovely place next to a farm, perfect for families."
       }
     ],
     "de": [
@@ -424,6 +480,34 @@
         "author": "Yassine",
         "rating": 5,
         "caption": "Kein Kommentar"
+      },
+      {
+        "image": "assets/img/testimonials/avis-studio-fadil.png",
+        "alt": "Super Aufenthalt von über einem Monat, Ruhe und Natur. Gut ausgestattet, mit einem kostenlosen Parkplatz direkt vor dem Eingang und einer kleinen Terrasse. Der Gastgeber ist sehr sympathisch. Ich kann es wirklich empfehlen, vor allem der Preis ist sehr vernünftig.",
+        "author": "Fadil",
+        "rating": 5,
+        "caption": "Super Aufenthalt von über einem Monat, Ruhe und Natur."
+      },
+      {
+        "image": "assets/img/testimonials/avis-studio-vikas.png",
+        "alt": "Cédric und Céline sind sehr freundliche und reaktionsschnelle Gastgeber. Sie waren immer bereit zu helfen und zu beraten. Das Studio ist gut ausgestattet, sauber und liegt in einer schönen Gegend mit guter Anbindung an öffentliche Verkehrsmittel und Supermärkte. Der Parkplatz befindet sich direkt vor dem Studio. Wir haben unseren Aufenthalt sehr genossen, danke! Gerne zu empfehlen.",
+        "author": "Vikas",
+        "rating": 5,
+        "caption": "Cédric und Céline sind sehr freundliche und reaktionsschnelle Gastgeber"
+      },
+      {
+        "image": "assets/img/testimonials/avis-studio-alen.png",
+        "alt": "Alles besten und unkompliziert",
+        "author": "Alen",
+        "rating": 5,
+        "caption": "Alles besten und unkompliziert"
+      },
+      {
+        "image": "assets/img/testimonials/avis-studio-steve.png",
+        "alt": "Wunderschöner Ort neben einem Bauernhof, perfekt für Familien.",
+        "author": "Steve",
+        "rating": 5,
+        "caption": "Wunderschöner Ort neben einem Bauernhof, perfekt für Familien."
       }
     ],
     "es": [
@@ -566,6 +650,34 @@
         "author": "Yassine",
         "rating": 5,
         "caption": "Sin comentarios"
+      },
+      {
+        "image": "assets/img/testimonials/avis-studio-fadil.png",
+        "alt": "Súper estancia de más de un mes, tranquilidad y naturaleza. Bien equipado, con una plaza de aparcamiento gratuita disponible frente a la entrada y una pequeña terraza. El anfitrión es muy simpático. Lo recomiendo de verdad, sobre todo el precio, que es muy razonable.",
+        "author": "Fadil",
+        "rating": 5,
+        "caption": "Súper estancia de más de un mes, tranquilidad y naturaleza."
+      },
+      {
+        "image": "assets/img/testimonials/avis-studio-vikas.png",
+        "alt": "Cédric y Céline son anfitriones muy amables y atentos. Siempre estaban dispuestos a ayudar y orientar. El estudio está bien equipado, limpio y bien situado en una zona bonita con conexión de transporte público y supermercados. La plaza de aparcamiento está justo delante del estudio. Disfrutamos mucho de nuestra estancia, ¡gracias! Encantados de recomendarlo.",
+        "author": "Vikas",
+        "rating": 5,
+        "caption": "Cédric y Céline son anfitriones muy amables y atentos"
+      },
+      {
+        "image": "assets/img/testimonials/avis-studio-alen.png",
+        "alt": "Todo fue estupendo y sin complicaciones.",
+        "author": "Alen",
+        "rating": 5,
+        "caption": "Todo fue estupendo y sin complicaciones."
+      },
+      {
+        "image": "assets/img/testimonials/avis-studio-steve.png",
+        "alt": "Lugar encantador junto a una granja, perfecto para familias.",
+        "author": "Steve",
+        "rating": 5,
+        "caption": "Lugar encantador junto a una granja, perfecto para familias."
       }
     ],
     "pt": [
@@ -708,6 +820,34 @@
         "author": "Yassine",
         "rating": 5,
         "caption": "Sem comentário"
+      },
+      {
+        "image": "assets/img/testimonials/avis-studio-fadil.png",
+        "alt": "Excelente estadia de mais de um mês, tranquilidade e natureza. Bem equipado, com um lugar de estacionamento gratuito em frente à entrada e um pequeno terraço. O anfitrião é muito simpático. Recomendo mesmo, principalmente o preço, que é muito razoável.",
+        "author": "Fadil",
+        "rating": 5,
+        "caption": "Excelente estadia de mais de um mês, tranquilidade e natureza."
+      },
+      {
+        "image": "assets/img/testimonials/avis-studio-vikas.png",
+        "alt": "O Cédric e a Céline são anfitriões muito simpáticos e atenciosos. Estavam sempre dispostos a ajudar e orientar. O estúdio está bem equipado, limpo e bem localizado numa zona bonita com transportes públicos e supermercados por perto. O lugar de estacionamento fica mesmo em frente ao estúdio. Adorámos a nossa estadia, obrigado! Recomendamos com prazer.",
+        "author": "Vikas",
+        "rating": 5,
+        "caption": "O Cédric e a Céline são anfitriões muito simpáticos e atenciosos"
+      },
+      {
+        "image": "assets/img/testimonials/avis-studio-alen.png",
+        "alt": "Tudo foi ótimo e sem complicações.",
+        "author": "Alen",
+        "rating": 5,
+        "caption": "Tudo foi ótimo e sem complicações."
+      },
+      {
+        "image": "assets/img/testimonials/avis-studio-steve.png",
+        "alt": "Lugar adorável ao lado de uma quinta, perfeito para famílias.",
+        "author": "Steve",
+        "rating": 5,
+        "caption": "Lugar adorável ao lado de uma quinta, perfeito para famílias."
       }
     ],
     "it": [
@@ -850,6 +990,34 @@
         "author": "Yassine",
         "rating": 5,
         "caption": "Nessun commento"
+      },
+      {
+        "image": "assets/img/testimonials/avis-studio-fadil.png",
+        "alt": "Soggiorno super di oltre un mese, tranquillità e natura. Ben attrezzato, con un posto auto gratuito davanti all'ingresso e una piccola terrazza. L'ospite è molto gentile. Lo raccomando davvero, soprattutto il prezzo, che è molto ragionevole.",
+        "author": "Fadil",
+        "rating": 5,
+        "caption": "Soggiorno super di oltre un mese, tranquillità e natura."
+      },
+      {
+        "image": "assets/img/testimonials/avis-studio-vikas.png",
+        "alt": "Cédric e Céline sono host molto gentili e reattivi. Sono sempre stati felici di aiutare e consigliare. Lo studio è ben attrezzato, pulito e ben posizionato in una bella zona con collegamenti di trasporto pubblico e supermercati. Il parcheggio è proprio di fronte allo studio. Abbiamo davvero apprezzato il soggiorno, grazie! Felici di raccomandarlo.",
+        "author": "Vikas",
+        "rating": 5,
+        "caption": "Cédric e Céline sono host molto gentili e reattivi"
+      },
+      {
+        "image": "assets/img/testimonials/avis-studio-alen.png",
+        "alt": "Tutto è stato perfetto e senza complicazioni.",
+        "author": "Alen",
+        "rating": 5,
+        "caption": "Tutto è stato perfetto e senza complicazioni."
+      },
+      {
+        "image": "assets/img/testimonials/avis-studio-steve.png",
+        "alt": "Posto incantevole accanto a una fattoria, perfetto per le famiglie.",
+        "author": "Steve",
+        "rating": 5,
+        "caption": "Posto incantevole accanto a una fattoria, perfetto per le famiglie."
       }
     ],
     "nl": [
@@ -992,6 +1160,34 @@
         "author": "Yassine",
         "rating": 5,
         "caption": "No comment"
+      },
+      {
+        "image": "assets/img/testimonials/avis-studio-fadil.png",
+        "alt": "Super verblijf van meer dan een maand, rust en natuur. Goed uitgerust, met een gratis parkeerplaats voor de ingang en een klein terras. De gastheer is zeer vriendelijk. Ik raad het echt aan, vooral de prijs is zeer redelijk.",
+        "author": "Fadil",
+        "rating": 5,
+        "caption": "Super verblijf van meer dan een maand, rust en natuur."
+      },
+      {
+        "image": "assets/img/testimonials/avis-studio-vikas.png",
+        "alt": "Cédric en Céline zijn zeer vriendelijke en responsieve gastheren. Ze hielpen en gaven altijd graag advies. De studio is goed uitgerust, schoon en goed gelegen in een mooie omgeving met openbaar vervoer en supermarkten in de buurt. De parkeerplaats ligt vlak voor de studio. We hebben enorm genoten van ons verblijf, bedankt! Met plezier aan te bevelen.",
+        "author": "Vikas",
+        "rating": 5,
+        "caption": "Cédric en Céline zijn zeer vriendelijke en responsieve gastheren"
+      },
+      {
+        "image": "assets/img/testimonials/avis-studio-alen.png",
+        "alt": "Alles was geweldig en ongecompliceerd.",
+        "author": "Alen",
+        "rating": 5,
+        "caption": "Alles was geweldig en ongecompliceerd."
+      },
+      {
+        "image": "assets/img/testimonials/avis-studio-steve.png",
+        "alt": "Heerlijke plek naast een boerderij, perfect voor gezinnen.",
+        "author": "Steve",
+        "rating": 5,
+        "caption": "Heerlijke plek naast een boerderij, perfect voor gezinnen."
       }
     ]
   },
@@ -1094,6 +1290,20 @@
         "author": "Stefan",
         "rating": 5,
         "caption": "L'environnement est très beau, l'emplacement avec toutes les commodités !!"
+      },
+      {
+        "image": "assets/img/testimonials/parking/nouvel-avis-CC-parking-space-Fentac-5-sur-5.png",
+        "alt": "Merci a Cedric pour son accueil. Nous avons passé une excellente soirée sur la terrasse annoncée et une nuit calme sur l'emplacement devant chez lui.",
+        "author": "Fentac BM",
+        "rating": 5,
+        "caption": "Merci a Cedric pour son accueil"
+      },
+      {
+        "image": "assets/img/testimonials/parking/nouvel-avis-CC-parking-space-Mathis-5-sur-5.png",
+        "alt": "Ce client n'a pas laissé de commentaire.",
+        "author": "Mathis Point",
+        "rating": 5,
+        "caption": "Pas de commentaire"
       }
     ],
     "en": [
@@ -1194,6 +1404,20 @@
         "author": "Stefan",
         "rating": 5,
         "caption": "The surroundings are very beautiful, the spot with all amenities!!"
+      },
+      {
+        "image": "assets/img/testimonials/parking/nouvel-avis-CC-parking-space-Fentac-5-sur-5.png",
+        "alt": "Thank you to Cédric for his welcome. We had a great evening on the advertised terrace and a quiet night on the pitch in front of his house.",
+        "author": "Fentac BM",
+        "rating": 5,
+        "caption": "Thank you to Cédric for his welcome"
+      },
+      {
+        "image": "assets/img/testimonials/parking/nouvel-avis-CC-parking-space-Mathis-5-sur-5.png",
+        "alt": "This customer did not leave a comment.",
+        "author": "Mathis Point",
+        "rating": 5,
+        "caption": "No comment"
       }
     ],
     "de": [
@@ -1294,6 +1518,20 @@
         "author": "Stefan",
         "rating": 5,
         "caption": "Die Umgebung ist sehr schön, der Platz mit allen Annehmlichkeiten!!"
+      },
+      {
+        "image": "assets/img/testimonials/parking/nouvel-avis-CC-parking-space-Fentac-5-sur-5.png",
+        "alt": "Danke an Cédric für den Empfang. Wir verbrachten einen wunderbaren Abend auf der angekündigten Terrasse und eine ruhige Nacht auf dem Stellplatz vor seinem Haus.",
+        "author": "Fentac BM",
+        "rating": 5,
+        "caption": "Danke an Cédric für den Empfang"
+      },
+      {
+        "image": "assets/img/testimonials/parking/nouvel-avis-CC-parking-space-Mathis-5-sur-5.png",
+        "alt": "Dieser Kunde hat keinen Kommentar hinterlassen.",
+        "author": "Mathis Point",
+        "rating": 5,
+        "caption": "Kein Kommentar"
       }
     ],
     "es": [
@@ -1394,6 +1632,20 @@
         "author": "Stefan",
         "rating": 5,
         "caption": "El entorno es muy bonito, el lugar con todas las comodidades!!"
+      },
+      {
+        "image": "assets/img/testimonials/parking/nouvel-avis-CC-parking-space-Fentac-5-sur-5.png",
+        "alt": "Gracias a Cédric por su acogida. Pasamos una excelente velada en la terraza anunciada y una noche tranquila en el emplazamiento frente a su casa.",
+        "author": "Fentac BM",
+        "rating": 5,
+        "caption": "Gracias a Cédric por su acogida"
+      },
+      {
+        "image": "assets/img/testimonials/parking/nouvel-avis-CC-parking-space-Mathis-5-sur-5.png",
+        "alt": "Este cliente no dejó ningún comentario.",
+        "author": "Mathis Point",
+        "rating": 5,
+        "caption": "Sin comentarios"
       }
     ],
     "pt": [
@@ -1494,6 +1746,20 @@
         "author": "Stefan",
         "rating": 5,
         "caption": "O ambiente é muito bonito, o lugar com todas as comodidades!!"
+      },
+      {
+        "image": "assets/img/testimonials/parking/nouvel-avis-CC-parking-space-Fentac-5-sur-5.png",
+        "alt": "Obrigado ao Cédric pelo acolhimento. Passámos uma excelente noite no terraço anunciado e uma noite tranquila no lugar em frente à casa dele.",
+        "author": "Fentac BM",
+        "rating": 5,
+        "caption": "Obrigado ao Cédric pelo acolhimento"
+      },
+      {
+        "image": "assets/img/testimonials/parking/nouvel-avis-CC-parking-space-Mathis-5-sur-5.png",
+        "alt": "Este cliente não deixou um comentário.",
+        "author": "Mathis Point",
+        "rating": 5,
+        "caption": "Sem comentário"
       }
     ],
     "it": [
@@ -1594,6 +1860,20 @@
         "author": "Stefan",
         "rating": 5,
         "caption": "L'ambiente è molto bello, il posto con tutti i comfort!!"
+      },
+      {
+        "image": "assets/img/testimonials/parking/nouvel-avis-CC-parking-space-Fentac-5-sur-5.png",
+        "alt": "Grazie a Cédric per l'accoglienza. Abbiamo trascorso un'ottima serata sulla terrazza annunciata e una notte tranquilla sull'area davanti a casa sua.",
+        "author": "Fentac BM",
+        "rating": 5,
+        "caption": "Grazie a Cédric per l'accoglienza"
+      },
+      {
+        "image": "assets/img/testimonials/parking/nouvel-avis-CC-parking-space-Mathis-5-sur-5.png",
+        "alt": "Questo cliente non ha lasciato un commento.",
+        "author": "Mathis Point",
+        "rating": 5,
+        "caption": "Nessun commento"
       }
     ],
     "nl": [
@@ -1694,6 +1974,20 @@
         "author": "Stefan",
         "rating": 5,
         "caption": "De omgeving is erg mooi, de plek met alle voorzieningen!!"
+      },
+      {
+        "image": "assets/img/testimonials/parking/nouvel-avis-CC-parking-space-Fentac-5-sur-5.png",
+        "alt": "Bedankt aan Cédric voor het warme onthaal. We hebben een uitstekende avond doorgebracht op het aangekondigde terras en een rustige nacht op de plek voor zijn huis.",
+        "author": "Fentac BM",
+        "rating": 5,
+        "caption": "Bedankt aan Cédric voor het warme onthaal"
+      },
+      {
+        "image": "assets/img/testimonials/parking/nouvel-avis-CC-parking-space-Mathis-5-sur-5.png",
+        "alt": "This customer did not leave a comment.",
+        "author": "Mathis Point",
+        "rating": 5,
+        "caption": "No comment"
       }
     ]
   }
