@@ -1,6 +1,6 @@
 // eleventy.config.js
 const i18n = require("eleventy-plugin-i18n");
-const Image = require("@11ty/eleventy-img");
+const Image = require("@11ty/eleventy-img").default;
 const fs = require("fs");
 const path = require("path");
 require("dotenv").config();
