@@ -1568,6 +1568,7 @@ export async function listAdminReservations(env, options = {}) {
           reservations.remarks,
           reservations.locale,
           reservations.vehicle_type,
+          reservations.vehicle_length_m,
           reservations.adults,
           reservations.children,
           reservations.infants,

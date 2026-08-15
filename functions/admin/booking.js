@@ -226,6 +226,16 @@ export function onRequestGet() {
         let adminToken = sessionStorage.getItem('candcAdminToken') || '';
         let adminUnits = [];
 
+        // Codes stockés en base (voir validation.js) -> libellés d'affichage.
+        const VEHICLE_TYPE_LABELS = {
+          standard_car: 'Standard car',
+          car_roof_tent: 'Car with roof tent',
+          van: 'Van',
+          caravan: 'Caravan',
+          motorhome_upto_6_5m: 'Motorhome up to 6.5 m',
+          motorhome_over_6_5m: 'Motorhome over 6.5 m',
+        };
+
         if (adminToken) {
           document.getElementById('adminToken').value = adminToken;
           loadDashboard();
@@ -329,6 +339,17 @@ export function onRequestGet() {
               .join(', ') || '-';
             const offersWc = wcUnits.has(item.unit_code);
             const wcRequested = offersWc && Boolean(item.wc_shower_requested);
+            // Réservations parking uniquement : le type de véhicule n'est
+            // demandé que par les unités avec requiresVehicleType.
+            const vehicleTypeLabel = item.vehicle_type
+              ? (VEHICLE_TYPE_LABELS[item.vehicle_type] || item.vehicle_type)
+              : null;
+            const vehicleDetail = vehicleTypeLabel
+              ? vehicleTypeLabel +
+                (item.vehicle_length_m
+                  ? ' — ' + String(item.vehicle_length_m).replace('.', ',') + ' m'
+                  : '')
+              : null;
 
             const cells = headers.map((header) => {
               let content;
@@ -363,6 +384,7 @@ export function onRequestGet() {
               ['Address', address],
               ['Date of birth', item.guest_date_of_birth || '-'],
               ['Nationality', item.guest_nationality || '-'],
+              ...(vehicleDetail ? [['Vehicle', vehicleDetail]] : []),
               ['WC/shower access', wcStatus],
               ['Locale', item.locale || '-'],
               ['Additional guests', additionalGuests],
