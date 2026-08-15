@@ -8,3 +8,8 @@ _site/
 wrangler.toml
 # local secret values backup (used by npm run secrets:push)
 secrets.local.json
+
+# Google service account keys (never commit — public repo)
+*-gsc-*.json
+*service-account*.json
+config.gsc.json
