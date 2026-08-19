@@ -59,3 +59,6 @@ jobs:
 
       - name: Live payment funnel check
         run: npm run check:payment
+
+      - name: Live pages check (no 404, images served)
+        run: npm run check:pages

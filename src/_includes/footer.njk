@@ -35,24 +35,24 @@
         <div class="footer-column">
           <h3>Langue / Language</h3>
           <ul class="language-list">
-            {% set languages = ['fr', 'en', 'de', 'es', 'pt', 'it'] %}
+            {% set languages = ['fr', 'en', 'de', 'nl', 'es', 'pt', 'it'] %}
             {% set pageAvailableLocales = availableLocales or (page.data and page.data.availableLocales) or languages %}
             {% if page.url == '/fr/legal/' %}
               {% set pageAvailableLocales = ['fr'] %}
             {% endif %}
-            {% set langFullNames = {'fr': 'Français', 'en': 'English', 'de': 'Deutsch', 'es': 'Español', 'pt': 'Português', 'it': 'Italiano'} %}
+            {% set langFullNames = {'fr': 'Français', 'en': 'English', 'de': 'Deutsch', 'es': 'Español', 'pt': 'Português', 'it': 'Italiano', 'nl': 'Nederlands'} %}
             {% for lang in pageAvailableLocales %}
               {% if lang != locale %}
                 {% set currentUrl = page.url %}
                 {% if lang == 'fr' %}
-                  {% set targetUrl = currentUrl | replace('/en/', '/fr/') | replace('/de/', '/fr/') | replace('/es/', '/fr/') | replace('/pt/', '/fr/') | replace('/it/', '/fr/') %}
+                  {% set targetUrl = currentUrl | replace('/en/', '/fr/') | replace('/de/', '/fr/') | replace('/es/', '/fr/') | replace('/pt/', '/fr/') | replace('/it/', '/fr/') | replace('/nl/', '/fr/') %}
                   {% if targetUrl == '' %}{% set targetUrl = '/fr/' %}{% endif %}
                 {% else %}
                   {% set langPrefix = '/' + lang + '/' %}
                   {% if currentUrl == '/' %}
                     {% set targetUrl = langPrefix %}
                   {% else %}
-                    {% set targetUrl = currentUrl | replace('/fr/', langPrefix) | replace('/en/', langPrefix) | replace('/de/', langPrefix) | replace('/es/', langPrefix) | replace('/pt/', langPrefix) | replace('/it/', langPrefix) %}
+                    {% set targetUrl = currentUrl | replace('/fr/', langPrefix) | replace('/en/', langPrefix) | replace('/de/', langPrefix) | replace('/es/', langPrefix) | replace('/pt/', langPrefix) | replace('/it/', langPrefix) | replace('/nl/', langPrefix) %}
                     {% if targetUrl == currentUrl %}
                       {% set targetUrl = '/' + lang + currentUrl %}
                     {% endif %}
