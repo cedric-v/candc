@@ -112,6 +112,21 @@ Si les images reviennent a des `<img>` simples (non optimises) apres un deploiem
 
 Note : meme si `sharp` echoue, le site reste fonctionnel : le repli utilise des chemins absolus (`/assets/img/...`), donc les images source s'affichent quand meme.
 
+### Cache des feuilles CSS et lightbox
+
+La feuille CSS est servie avec un cache long et immutable (`/assets/*`). Le template `src/_includes/base.njk` ajoute donc un hash du contenu a l'URL de la feuille (`styles.css?v=<hash>`). Apres toute modification CSS, le hash doit changer dans le HTML genere ; cela force les navigateurs et le cache Cloudflare a demander le nouvel asset.
+
+Le lightbox utilise une image placeholder HTML de `1x1` pixel avant le clic. Le CSS de `.lightbox-container img` doit conserver `width: auto` et `height: auto` (avec `!important` si necessaire) afin que les attributs `width="1" height="1"` du placeholder ne limitent pas l'image chargee au clic.
+
+Verification post-deploiement :
+
+```bash
+curl -sS https://candc.ch/fr/parking/ | grep -o 'styles.css?v=[^" ]*' | head -1
+curl -sS 'https://candc.ch/assets/css/styles.css?v=<hash>' | grep -A5 'lightbox-container img'
+```
+
+Si le domaine personnalise sert encore un ancien hash apres un nouveau deployment, verifier d'abord le deployment Pages actif et l'URL de la feuille CSS dans le HTML de `candc.ch`. Un sous-domaine de deployment Pages peut servir la bonne version alors que le cache du domaine personnalise n'est pas encore actualise ; recharger l'URL avec le nouveau hash permet de confirmer l'asset attendu.
+
 ## Configuration booking backend
 
 Copier d'abord :
