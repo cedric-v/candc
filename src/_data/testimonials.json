@@ -168,6 +168,13 @@
         "author": "Steve",
         "rating": 5,
         "caption": "Endroit charmant à côté d'une ferme, parfait pour les familles."
+      },
+      {
+        "image": "assets/img/testimonials/avis-studio-lt.png",
+        "alt": "Excellent. Endroit très calme à la campagne, non loin de l'autoroute.",
+        "author": "Gediminas",
+        "rating": 5,
+        "caption": "Excellent"
       }
     ],
     "en": [
@@ -338,6 +345,13 @@
         "author": "Steve",
         "rating": 5,
         "caption": "lovely place next to a farm, perfect for families."
+      },
+      {
+        "image": "assets/img/testimonials/avis-studio-lt.png",
+        "alt": "Excellent. Very quiet place in the countryside, not far from the highway.",
+        "author": "Gediminas",
+        "rating": 5,
+        "caption": "Excellent"
       }
     ],
     "de": [
@@ -508,6 +522,13 @@
         "author": "Steve",
         "rating": 5,
         "caption": "Wunderschöner Ort neben einem Bauernhof, perfekt für Familien."
+      },
+      {
+        "image": "assets/img/testimonials/avis-studio-lt.png",
+        "alt": "Ausgezeichnet. Sehr ruhiger Ort auf dem Land, nicht weit von der Autobahn.",
+        "author": "Gediminas",
+        "rating": 5,
+        "caption": "Ausgezeichnet"
       }
     ],
     "es": [
@@ -678,6 +699,13 @@
         "author": "Steve",
         "rating": 5,
         "caption": "Lugar encantador junto a una granja, perfecto para familias."
+      },
+      {
+        "image": "assets/img/testimonials/avis-studio-lt.png",
+        "alt": "Excelente. Lugar muy tranquilo en el campo, no lejos de la autopista.",
+        "author": "Gediminas",
+        "rating": 5,
+        "caption": "Excelente"
       }
     ],
     "pt": [
@@ -848,6 +876,13 @@
         "author": "Steve",
         "rating": 5,
         "caption": "Lugar adorável ao lado de uma quinta, perfeito para famílias."
+      },
+      {
+        "image": "assets/img/testimonials/avis-studio-lt.png",
+        "alt": "Excelente. Lugar muito tranquilo no campo, não longe da autoestrada.",
+        "author": "Gediminas",
+        "rating": 5,
+        "caption": "Excelente"
       }
     ],
     "it": [
@@ -1018,6 +1053,13 @@
         "author": "Steve",
         "rating": 5,
         "caption": "Posto incantevole accanto a una fattoria, perfetto per le famiglie."
+      },
+      {
+        "image": "assets/img/testimonials/avis-studio-lt.png",
+        "alt": "Eccellente. Posto molto tranquillo in campagna, non lontano dall'autostrada.",
+        "author": "Gediminas",
+        "rating": 5,
+        "caption": "Eccellente"
       }
     ],
     "nl": [
@@ -1188,6 +1230,13 @@
         "author": "Steve",
         "rating": 5,
         "caption": "Heerlijke plek naast een boerderij, perfect voor gezinnen."
+      },
+      {
+        "image": "assets/img/testimonials/avis-studio-lt.png",
+        "alt": "Uitstekend. Heel rustige plek op het platteland, niet ver van de snelweg.",
+        "author": "Gediminas",
+        "rating": 5,
+        "caption": "Uitstekend"
       }
     ]
   },
