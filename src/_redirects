@@ -1,6 +1,8 @@
 http://candc.ch/* https://candc.ch/:splat 301!
 https://www.candc.ch/* https://candc.ch/:splat 301!
 / /fr/ 301
+/parking/ /fr/parking/ 301!
+/eco-studio/ /fr/eco-studio/ 301!
 /pt/pt /pt/ 301
 /pt/pt/ /pt/ 301
 /en/legal/ /fr/legal/ 301
