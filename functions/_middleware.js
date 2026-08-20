@@ -19,6 +19,28 @@ const SECURITY_HEADERS = {
 };
 
 export async function onRequest(context) {
+  // These legacy, language-neutral URLs used to be static noindex pages.
+  // Handle them before static asset routing so search engines receive a real
+  // permanent redirect even when an old deployment/cache still contains the
+  // former HTML fallback.
+  const { pathname } = new URL(context.request.url);
+  const legacyRedirects = {
+    "/parking": "/fr/parking/",
+    "/parking/": "/fr/parking/",
+    "/eco-studio": "/fr/eco-studio/",
+    "/eco-studio/": "/fr/eco-studio/",
+  };
+  if (legacyRedirects[pathname]) {
+    const location = new URL(legacyRedirects[pathname], context.request.url);
+    return new Response(null, {
+      status: 301,
+      headers: {
+        Location: location.toString(),
+        "Cache-Control": "public, max-age=86400",
+      },
+    });
+  }
+
   const response = await context.next();
 
   if (response) {
