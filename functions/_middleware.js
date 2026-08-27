@@ -7,11 +7,15 @@ const SECURITY_HEADERS = {
     "default-src 'self'",
     // Inline scripts/styles are required today by the manage, admin and
     // confirmation pages, and by the cookie banner in the static templates.
-    "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com",
+    "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://challenges.cloudflare.com",
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "font-src 'self' https://fonts.gstatic.com",
     "img-src 'self' data:",
-    "connect-src 'self' https://www.google-analytics.com https://analytics.google.com",
+    // GA4 collecte via des endpoints régionaux (region1/region2/eu), d'où les
+    // wildcards ; challenges.cloudflare.com est requis pour le widget Turnstile
+    // (script + iframe) du formulaire de contact.
+    "connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com",
+    "frame-src https://challenges.cloudflare.com",
     "object-src 'none'",
     "base-uri 'self'",
     "frame-ancestors 'none'",
