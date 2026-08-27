@@ -1,7 +1,35 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended"],
-  "automerge": true,
-  "platformAutomerge": true,
-  "automergeType": "pr"
+  "timezone": "Europe/Zurich",
+  "schedule": ["after 5am and before 8am on tuesday"],
+  "lockFileMaintenance": {
+    "enabled": true,
+    "automerge": true,
+    "extends": ["schedule:weekly"]
+  },
+  "packageRules": [
+    {
+      "description": "devDependencies et build : minor + patch en auto-merge (CI bloque si regression)",
+      "matchDepTypes": ["devDependencies"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true
+    },
+    {
+      "description": "dependencies de prod (eleventy, etc.) : never automerge — revue humaine",
+      "matchDepTypes": ["dependencies"],
+      "automerge": false
+    },
+    {
+      "description": "Majors de tout le reste : jamais auto-merge",
+      "matchUpdateTypes": ["major"],
+      "automerge": false
+    },
+    {
+      "description": "GitHub Actions workflows : patch/minor auto-merge",
+      "matchManagers": ["github-actions"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true
+    }
+  ]
 }

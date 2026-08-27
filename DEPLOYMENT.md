@@ -221,6 +221,19 @@ Variables non secretes possibles :
 - `REVIEW_LINK_STUDIO` — lien d'avis Google pour le studio ; injecte dans `__REVIEW_LINK__` de l'e-mail de demande d'avis. Configuree comme variable Cloudflare Pages (production + preview) : https://g.page/r/Ca5HhJ5WSkT6EBM/review
 - `SUMUP_API_BASE_URL`
 
+Variables de **build** Eleventy (non secretes, exposees aux templates au moment
+ou Cloudflare Pages compile le site — cf. `eleventy.config.js`) :
+
+- `GA_MEASUREMENT_ID` — ID de mesure GA4, injecte dans le snippet consent-gated
+de `src/_includes/base.njk` ; placeholder `G-XXXXXXXXXX` si absent (jamais de
+valeur reelle commitee)
+- `TURNSTILE_SITE_KEY` — site key publique du widget Cloudflare Turnstile pour
+le formulaire de contact (`data-turnstile-sitekey` sur les pages contact).
+Laisser vide tant que le widget n'est pas cree : le formulaire fonctionne
+sans captcha. Le secret correspondant `TURNSTILE_SECRET_KEY` est un secret
+Pages functions (via `npm run secrets:push`) : la verification serveur ne
+s'active que lorsque ce dernier est defini.
+
 Secrets ou valeurs sensibles (la liste complete des 9 secrets du projet) :
 
 - `SUMUP_API_KEY`
@@ -280,6 +293,40 @@ Donc :
    ```
 
 4. Verifier automatiquement apres chaque deployment : `npm run check:payment` (exit 0 = paiement actif, exit 1 = secrets non lies).
+
+### CI avant deploiement et protection de branche
+
+Le workflow `.github/workflows/ci.yml` tourne sur chaque pull request et sur
+chaque push sur `main` : audit des dependances de prod (`npm audit --omit=dev`),
+build (`npm run build`) et suite complete de tests (`npm test`). Aucun secret
+requis. Le check du funnel de paiement live reste exclusivement dans
+deploy-check (il exige le site en prod + les secrets SumUp).
+
+Protection de branche `main` (branche protegee, cf. Settings -> Branches) :
+
+- changement uniquements via pull request ; checks obligatoires :
+  `Build & test` (ci.yml) et `scan` (gitleaks) ; branches a jour obligatoire ;
+- force-push et suppression interdits ; applique aussi aux admins ;
+- parade d'urgence : desactiver temporairement la regle dans le dashboard
+  GitHub (Settings -> Branches) puis la reactiver.
+
+Workflow complet : PR -> ci.yml bloque avant merge -> merge -> build CF Pages
+-> deploy-check.yml (tests + funnel paiement live) -> gitleaks.
+
+### Renovate bot
+
+Les mises a jour de dependances passent par Renovate (`renovate.json`) :
+
+- `devDependencies` : minor + patch en **auto-merge** (la protection de branche
+garantit que la CI est verte avant le merge) ; majors en revue manuelle ;
+- `dependencies` de prod (eleventy et al.) : **jamais** auto-merge, revue
+humaine systematique ;
+- GitHub Actions workflows : patch/minor auto-merge ;
+- lockfile maintenance hebdomadaire ; planification mardi matin (Europe/Zurich).
+
+Pre-requis deja en place : option depot **Allow auto-merge** activee et
+`platformAutomerge` dans la config Renovate — sinon l'auto-merge Renovate
+degrade silencieusement vers un simple commentaire sur la PR.
 
 ### Verification automatique post-deploiement (GitHub Actions)
 
@@ -464,6 +511,24 @@ Important :
   - un tableau de sante des sources calendaires
   - l'etat des derniers jobs operationnels
   - une action `Validate OTA feeds` pour verifier import et export ICS sans attendre un cron
+
+### Formulaire de contact (`functions/api/contact.js`)
+
+Endpoint public `POST /api/contact/` utilise par les 7 pages
+contact `<locale>/contact.njk` (include partage
+`src/_includes/contact-section.njk`, logique client
+`src/assets/js/contact-form.js`, libelles dans `translations.json`
+sous `contactForm.*`) :
+
+- envoi via Resend (`RESEND_API_KEY` + `EMAIL_FROM`, memes secrets que les
+e-mails transactionnels) vers `ADMIN_NOTIFICATION_EMAIL` (defaut
+bonjour@candc.ch), avec `reply_to` = visiteur et accuse de reception localise ;
+- anti-spam : honeypot silencieux, time-trap (< 1,5 s refuse), validation
+serveur stricte (sujets whitelistes), rate limit IP/e-mail 1 h via KV si le
+binding `CONTACT_KV` existe ;
+- Cloudflare Turnstile : verification automatiquement activee si
+`TURNSTILE_SECRET_KEY` est defini (cf. variable de build
+`TURNSTILE_SITE_KEY` ci-dessus) ; sans secret, elle est simplement sautee.
 
 ## Notes importantes
 

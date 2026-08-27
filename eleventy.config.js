@@ -12,12 +12,19 @@ const PATH_PREFIX = process.env.ELEVENTY_ENV === 'prod' ? "" : "";
 // valeur placeholder en repli si la variable n'est pas définie.
 const GA_MEASUREMENT_ID = process.env.GA_MEASUREMENT_ID || "G-XXXXXXXXXX";
 
+// Site key Cloudflare Turnstile pour le formulaire de contact, injectée au
+// build via `TURNSTILE_SITE_KEY` (variable build publique). Le secret
+// correspondant (TURNSTILE_SECRET_KEY) est un secret Pages functions : tant que
+// l'un des deux manque, la vérification Turnstile reste simplement inactive.
+const TURNSTILE_SITE_KEY = process.env.TURNSTILE_SITE_KEY || "";
+
 module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy({ "src/llms.txt": "llms.txt" });
   eleventyConfig.addPassthroughCopy({ "src/.well-known": ".well-known" });
 
   // 0. Variables de build exposées aux templates (voir .env.example)
   eleventyConfig.addGlobalData("gaMeasurementId", GA_MEASUREMENT_ID);
+  eleventyConfig.addGlobalData("turnstileSiteKey", TURNSTILE_SITE_KEY);
 
   // 1. Gestion des Images avec eleventy-img (AVIF/WebP/JPEG responsives)
   eleventyConfig.addShortcode("image", async function (src, alt, cls = "", loading = "lazy", sizes = "100vw", fetchpriority = "", width = "", height = "") {
