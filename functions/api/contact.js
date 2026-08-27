@@ -48,6 +48,40 @@ function isEmailLike(value) {
 	return value.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
 
+/**
+ * Normalise un numéro de mobile optionnel au format international (E.164).
+ *
+ * Formats acceptés :
+ *  - international   : «+41 79 123 45 67», «0041791234567»
+ *  - suisse national : «079 123 45 67» -> +41791234567 (préfixes mobiles CH 7[4-9])
+ * Tout autre format (national hors Suisse, numéro incomplet) est refusé :
+ * l'expéditeur doit alors fournir l'indicatif international.
+ *
+ * Retourne une chaîne normalisée («+41791234567»), "" si champ vide,
+ * ou null si le format est invalide.
+ */
+export function normalizeIntlMobile(raw) {
+	let value = String(raw ?? "").trim();
+	if (!value) return "";
+	// Artefact courant «+41 (0)79 …»
+	value = value.replace(/\(0\)/g, " ");
+	const hasPlus = value.startsWith("+");
+	const digits = value.replace(/[^0-9]/g, "");
+	let intl;
+	if (hasPlus) {
+		intl = digits;
+	} else if (digits.length > 8 && digits.startsWith("00")) {
+		intl = digits.slice(2);
+	} else if (digits.startsWith("0")) {
+		// Supposition Suisse uniquement pour les préfixes mobiles connus
+		intl = /^07[4-9]/.test(digits) ? `41${digits.slice(1)}` : null;
+	} else {
+		return null;
+	}
+	if (!intl || !/^[0-9]{8,15}$/.test(intl)) return null;
+	return `+${intl}`;
+}
+
 async function rateLimited(context, email) {
 	const kv = context.env.CONTACT_KV;
 	if (!kv) return false;
@@ -107,7 +141,11 @@ export async function onRequestPost(context) {
 
 	const name = String(data.name || "").trim().slice(0, 120);
 	const email = String(data.email || "").trim().toLowerCase();
-	const phone = String(data.phone || "").trim().slice(0, 30);
+	const phoneInput = String(data.phone || "").trim().slice(0, 30);
+	const phone = normalizeIntlMobile(phoneInput);
+	if (phone === null) {
+		return json({ success: false, error: "invalid_phone" }, 400);
+	}
 	const topic = String(data.topic || "").trim().slice(0, 40);
 	const message = String(data.message || "").trim().slice(0, 5000);
 	const locale = ["fr", "en", "de", "es", "pt", "it", "nl"].includes(data.locale) ? data.locale : "fr";
@@ -200,8 +238,7 @@ async function sendResend(env, body) {
 }
 
 async function sendContactNotification(env, { name, email, phone, topic, message, locale }) {
-	const to = env.ADMIN_NOTIFICATION_EMAIL || "bonjour@candc.ch";
-	const subjectByLocale = {
+	const to = env.ADMIN_NOTIFICATION_EMAIL || "bonjour@candc.ch";const subjectByLocale = {
 		fr: `Nouveau message de contact — ${name}`,
 		en: `New contact message — ${name}`,
 		de: `Neue Kontaktanfrage — ${name}`,

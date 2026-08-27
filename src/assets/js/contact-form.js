@@ -92,7 +92,35 @@
     }
   }
 
-  /* ----------------------- Validation inline ------------------------ */
+  /* ---------------- Validation inline ---------------- */
+
+  /* Normalisation/validité d'un numéro de mobile (miroir de la logique
+     serveur dans functions/api/contact.js) :
+     - formats internationaux acceptés : +XX… ou 00XX…
+     - format suisse sans indicatif : 079… (mobiles CH, préfixe 7[4-9])
+     - tout autre numéro doit utiliser l'indicatif international.
+     Retour : numéro E.164 («+41791234567») ou null si invalide. */
+  function normalizeIntlMobile(raw) {
+    var value = String(raw || "").trim();
+    if (!value) return "";
+    // Artefact courant «+41 (0)79 …»
+    value = value.replace(/\(0\)/g, " ");
+    var hasPlus = value.charAt(0) === "+";
+    var digits = value.replace(/[^0-9]/g, "");
+    var intl;
+    if (hasPlus) {
+      intl = digits;
+    } else if (digits.indexOf("00") === 0 && digits.length > 8) {
+      intl = digits.slice(2);
+    } else if (digits.indexOf("0") === 0) {
+      // Supposition Suisse uniquement pour les préfixes mobiles connus
+      intl = /^07[4-9]/.test(digits) ? "41" + digits.slice(1) : null;
+    } else {
+      return null;
+    }
+    if (!intl || !/^[0-9]{8,15}$/.test(intl)) return null;
+    return "+" + intl;
+  }
 
   function validateField(input) {
     var value = (input.value || "").trim();
@@ -108,11 +136,20 @@
       fieldError(input, msg("err-email"));
       return false;
     }
+    if (input.name === "phone" && value) {
+      var normalized = normalizeIntlMobile(value);
+      if (normalized === null) {
+        fieldError(input, msg("err-phone"));
+        return false;
+      }
+    }
     fieldError(input, "");
     return true;
   }
 
-  form.querySelectorAll("input[required], textarea[required], input[type='email']").forEach(function (input) {
+  form.querySelectorAll(
+    "input[required], textarea[required], input[type='email'], input[name='phone']"
+  ).forEach(function (input) {
     input.addEventListener("blur", function () {
       validateField(input);
     });
@@ -146,6 +183,8 @@
     });
     var emailInput = form.querySelector("input[type='email']");
     if (emailInput && valid && emailInput.value.trim() && !validateField(emailInput)) valid = false;
+    var phoneInput = form.elements.phone;
+    if (phoneInput && valid && phoneInput.value.trim() && !validateField(phoneInput)) valid = false;
     if (!valid) {
       var firstInvalid = form.querySelector("[aria-invalid='true']");
       if (firstInvalid) firstInvalid.focus();
@@ -183,6 +222,9 @@
           try { window.turnstile.reset(turnstileWidgetId); } catch (e) {}
         }
         setStatus(msg("success"), "success");
+      } else if (result.error === "invalid_phone" && phoneInput) {
+        fieldError(phoneInput, msg("err-phone"));
+        phoneInput.focus();
       } else {
         setStatus(msg("error"), "error");
       }
