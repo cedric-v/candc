@@ -375,5 +375,5 @@
     {% include "superhost.njk" %}
   </div>
 
-  <script src="{{ '/assets/js/contact-form.js' | relativeUrl }}" defer></script>
+  <script src="{{ '/assets/js/contact-form.js' | relativeUrl }}?v={{ build.hash('/assets/js/contact-form.js') }}" defer></script>
 </section>
