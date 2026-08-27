@@ -128,6 +128,12 @@ When changing sync behavior, also check:
   `SENSITIVE_DATA_RETENTION_MONTHS` (default 12) ago; booking/billing data
   stays (10-year accounting records). See the privacy policy
   (`src/fr/legal.njk`, section "Durée de conservation des données").
+- Contact form: public `POST /api/contact/` (`functions/api/contact.js`) sends
+  via Resend to `ADMIN_NOTIFICATION_EMAIL` (default bonjour@candc.ch); spam
+  protection = honeypot + time-trap + optional Turnstile (auto-enabled when
+  `TURNSTILE_SECRET_KEY` is bound; site key injected at build time via
+  `TURNSTILE_SITE_KEY`, see `.env.example`). UI strings live in
+  `translations.json` under `contactForm.*`.
 - On direct-booking creation, in addition to the CC'd confirmation email, a
   dedicated `admin_new_booking` alert email (French, full guest contact
   details, ID document number masked for LPD/GDPR compliance) is sent to
@@ -162,6 +168,18 @@ npm run check:payment
 
 A GitHub Action (`.github/workflows/deploy-check.yml`) runs this check
 automatically after every push to `main` once the Pages deployment is live.
+
+CI / deployment pipeline (see DEPLOYMENT.md "CI avant deploiement"):
+
+- `.github/workflows/ci.yml` — pre-merge gate on every PR and push to main:
+  `npm audit --omit=dev`, build, full test suite. No secrets required.
+- branch protection on `main`: changes only via pull request; required checks
+  are `Build & test` (ci) and `scan` (gitleaks); force-push/deletion blocked,
+  enforced for admins too.
+- Renovate (`renovate.json`) keeps dependencies updated: devDependencies
+  minor+patch auto-merge through the required CI; prod `dependencies` and all
+  major updates always get human review. Repo setting *Allow auto-merge* must
+  stay enabled.
 
 ## Known unfinished areas
 
