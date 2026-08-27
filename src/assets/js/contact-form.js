@@ -72,6 +72,17 @@
     });
   }
 
+  /* Si le script ne se charge jamais (CSP, réseau…), on n'attend pas
+     indéfiniment : la requête part et le serveur tranche. */
+  function loadTurnstileWithTimeout() {
+    return Promise.race([
+      loadTurnstile(),
+      new Promise(function (resolve) {
+        setTimeout(resolve, 8000);
+      }),
+    ]);
+  }
+
   function turnstileToken() {
     if (!turnstileReady || !window.turnstile || turnstileWidgetId === null) return "";
     try {
@@ -145,7 +156,7 @@
     setStatus("", "");
 
     try {
-      await loadTurnstile();
+      await loadTurnstileWithTimeout();
 
       var payload = {
         name: form.elements.name.value,
