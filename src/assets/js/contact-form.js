@@ -43,19 +43,31 @@
     input.setAttribute("aria-invalid", message ? "true" : "false");
   }
 
-  /* ---------- Turnstile (lazy, invisible si non configuré) ---------- */
+  /* ------------------ Turnstile (pré-chargé, invisible) ------------- */
+
+  /* Bonne pratique : le widget est rendu dès l'affichage du formulaire
+     (mode « interaction-only »), la vérification se résout alors en
+     arrière-plan dans l'écrasante majorité des cas. Au moment de l'envoi,
+     le jeton est déjà disponible → un seul clic sur « Envoyer ».
+     Le défi visuel n'apparaît que si Cloudflare juge le trafic suspect,
+     et peut être complété pendant le remplissage du formulaire. */
+  var turnstileLoadPromise = null;
 
   function loadTurnstile() {
-    if (!turnstileSiteKey || turnstileBox.dataset.loaded) return Promise.resolve();
-    turnstileBox.dataset.loaded = "1";
-
-    return new Promise(function (resolve) {
+    if (!turnstileSiteKey) return Promise.resolve();
+    if (turnstileLoadPromise) return turnstileLoadPromise;
+    turnstileLoadPromise = new Promise(function (resolve) {
       window.onContactTurnstileLoad = function () {
         try {
           turnstileWidgetId = window.turnstile.render(turnstileBox, {
             sitekey: turnstileSiteKey,
             action: "contact-form",
             appearance: "interaction-only",
+            // Jeton expiré (TTL ~5 min de lecture de page) : on ré-solve
+            // silencieusement pour qu'un nouveau jeton soit prêt à l'envoi.
+            "expired-callback": function () {
+              try { window.turnstile.reset(turnstileWidgetId); } catch (e) {}
+            },
           });
           turnstileReady = true;
         } catch (e) {
@@ -70,7 +82,11 @@
       s.defer = true;
       document.head.appendChild(s);
     });
+    return turnstileLoadPromise;
   }
+
+  // Pré-chargement immédiat : ce script s'exécute après le parse du DOM.
+  loadTurnstile();
 
   /* Si le script ne se charge jamais (CSP, réseau…), on n'attend pas
      indéfiniment : la requête part et le serveur tranche. */
@@ -195,6 +211,9 @@
     setStatus("", "");
 
     try {
+      // Jeton normalement déjà prêt (widget pré-chargé). Si le script
+      // n'est toujours pas là, on laisse jusqu'à 8 s puis la requête
+      // part : le serveur tranche en dernier recours.
       await loadTurnstileWithTimeout();
 
       var payload = {
