@@ -154,7 +154,34 @@
       "body2": "Bonne nouvelle : il reste encore de la place pour vous ici.",
       "funFactLabel": "Le saviez-vous ?",
       "funFact": "Notre emplacement est si calme que même les pages perdues viennent s'y poser."
-    }
+    },
+    "contactForm": {
+      "title": "Écrivez-nous",
+      "intro": "Une question sur le studio ou le parking ? Laissez-nous un message, nous revenons vers vous très vite.",
+      "name": "Nom complet",
+      "email": "E-mail",
+      "phone": "Téléphone",
+      "subject": "Objet",
+      "message": "Votre message",
+      "messagePlaceholder": "Décrivez votre demande en quelques mots (dates, nombre de personnes, question…)",
+      "optional": "facultatif",
+      "subjects": {
+        "booking": "Question sur une réservation",
+        "studio": "Studio éco meublé",
+        "parking": "Place de stationnement",
+        "monthly": "Location au mois (professionnels)",
+        "other": "Autre demande"
+      },
+      "submit": "Envoyer le message",
+      "sending": "Envoi en cours…",
+      "success": "Merci ! Votre message est bien arrivé, nous vous répondrons très vite.",
+      "error": "Une erreur est survenue lors de l'envoi. Merci de réessayer ou de nous écrire directement à bonjour@candc.ch.",
+      "errRequired": "Merci de compléter ce champ.",
+      "errEmail": "Merci d'indiquer une adresse e-mail valide.",
+      "privacy": "Vos informations servent uniquement à répondre à votre demande et ne sont jamais partagées.",
+      "privacyLink": "Consultez notre politique de confidentialité."
+    },
+    "replyTime": "Nous répondons généralement sous 24 h."
   },
   "en": {
     "siteName": "C & C",
@@ -311,7 +338,34 @@
       "body2": "Good news: there's still room for you here.",
       "funFactLabel": "Did you know?",
       "funFact": "Our location is so quiet that even lost pages come to rest here."
-    }
+    },
+    "contactForm": {
+      "title": "Write to us",
+      "intro": "A question about the studio or the parking space? Leave us a message and we'll get back to you shortly.",
+      "name": "Full name",
+      "email": "Email",
+      "phone": "Phone",
+      "subject": "Subject",
+      "message": "Your message",
+      "messagePlaceholder": "Describe your request in a few words (dates, number of guests, question…)",
+      "optional": "optional",
+      "subjects": {
+        "booking": "Booking question",
+        "studio": "Eco studio",
+        "parking": "Parking space",
+        "monthly": "Monthly rental (business)",
+        "other": "Other request"
+      },
+      "submit": "Send message",
+      "sending": "Sending…",
+      "success": "Thank you! Your message has arrived — we'll get back to you very soon.",
+      "error": "Something went wrong while sending. Please try again or email us directly at bonjour@candc.ch.",
+      "errRequired": "Please complete this field.",
+      "errEmail": "Please enter a valid email address.",
+      "privacy": "Your details are only used to answer your request and are never shared.",
+      "privacyLink": ""
+    },
+    "replyTime": "We usually reply within 24 hours."
   },
   "de": {
     "siteName": "C & C",
@@ -468,7 +522,34 @@
       "body2": "Gute Nachricht: Hier ist noch Platz für Sie.",
       "funFactLabel": "Wussten Sie schon?",
       "funFact": "Unser Standort ist so ruhig, dass sogar verlorene Seiten hier Halt machen."
-    }
+    },
+    "contactForm": {
+      "title": "Schreiben Sie uns",
+      "intro": "Eine Frage zum Studio oder zum Stellplatz? Hinterlassen Sie uns eine Nachricht – wir melden uns schnellstmöglich.",
+      "name": "Vollständiger Name",
+      "email": "E-Mail",
+      "phone": "Telefon",
+      "subject": "Betreff",
+      "message": "Ihre Nachricht",
+      "messagePlaceholder": "Beschreiben Sie Ihr Anliegen kurz (Daten, Anzahl Personen, Frage …)",
+      "optional": "optional",
+      "subjects": {
+        "booking": "Frage zu einer Reservierung",
+        "studio": "Öko-Studio",
+        "parking": "Stellplatz",
+        "monthly": "Monatsmiete (Geschäftskunden)",
+        "other": "Andere Anfrage"
+      },
+      "submit": "Nachricht senden",
+      "sending": "Wird gesendet…",
+      "success": "Vielen Dank! Ihre Nachricht ist bei uns eingegangen – wir melden uns baldmöglichst.",
+      "error": "Beim Senden ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut oder schreiben Sie uns direkt an bonjour@candc.ch.",
+      "errRequired": "Bitte füllen Sie dieses Feld aus.",
+      "errEmail": "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
+      "privacy": "Ihre Angaben werden ausschliesslich zur Beantwortung Ihrer Anfrage verwendet und niemals weitergegeben.",
+      "privacyLink": ""
+    },
+    "replyTime": "Wir antworten in der Regel innerhalb von 24 Stunden."
   },
   "es": {
     "siteName": "C & C",
@@ -625,7 +706,34 @@
       "body2": "Buena noticia: todavía hay espacio para usted aquí.",
       "funFactLabel": "¿Sabía que?",
       "funFact": "Nuestra ubicación es tan tranquila que incluso las páginas perdidas vienen a posarse aquí."
-    }
+    },
+    "contactForm": {
+      "title": "Escríbenos",
+      "intro": "¿Una pregunta sobre el estudio o el aparcamiento? Déjanos un mensaje y te contestaremos muy pronto.",
+      "name": "Nombre completo",
+      "email": "Correo electrónico",
+      "phone": "Teléfono",
+      "subject": "Asunto",
+      "message": "Tu mensaje",
+      "messagePlaceholder": "Describe tu solicitud en unas palabras (fechas, número de personas, pregunta…)",
+      "optional": "opcional",
+      "subjects": {
+        "booking": "Consulta sobre una reserva",
+        "studio": "Estudio ecológico",
+        "parking": "Plaza de aparcamiento",
+        "monthly": "Alquiler mensual (profesionales)",
+        "other": "Otra consulta"
+      },
+      "submit": "Enviar mensaje",
+      "sending": "Enviando…",
+      "success": "¡Gracias! Hemos recibido tu mensaje y te contestaremos muy pronto.",
+      "error": "Se ha producido un error al enviar. Inténtalo de nuevo o escríbenos directamente a bonjour@candc.ch.",
+      "errRequired": "Por favor, completa este campo.",
+      "errEmail": "Introduce una dirección de correo válida.",
+      "privacy": "Tus datos solo se utilizan para responder a tu solicitud y nunca se comparten.",
+      "privacyLink": ""
+    },
+    "replyTime": "Solemos responder en menos de 24 horas."
   },
   "pt": {
     "siteName": "C & C",
@@ -782,7 +890,34 @@
       "body2": "Boas notícias: ainda há lugar para si aqui.",
       "funFactLabel": "Sabia que?",
       "funFact": "A nossa localização é tão tranquila que até as páginas perdidas vêm pousar aqui."
-    }
+    },
+    "contactForm": {
+      "title": "Escreva-nos",
+      "intro": "Uma questão sobre o estúdio ou o estacionamento? Deixe-nos uma mensagem e responderemos em breve.",
+      "name": "Nome completo",
+      "email": "E-mail",
+      "phone": "Telefone",
+      "subject": "Assunto",
+      "message": "A sua mensagem",
+      "messagePlaceholder": "Descreva o seu pedido em poucas palavras (datas, número de pessoas, questão…)",
+      "optional": "opcional",
+      "subjects": {
+        "booking": "Questão sobre uma reserva",
+        "studio": "Estúdio ecológico",
+        "parking": "Lugar de estacionamento",
+        "monthly": "Arrendamento mensal (empresas)",
+        "other": "Outro pedido"
+      },
+      "submit": "Enviar mensagem",
+      "sending": "A enviar…",
+      "success": "Obrigado! Recebemos a sua mensagem e responderemos muito em breve.",
+      "error": "Ocorreu um erro ao enviar. Tente novamente ou escreva-nos diretamente para bonjour@candc.ch.",
+      "errRequired": "Preencha este campo, por favor.",
+      "errEmail": "Indique um endereço de e-mail válido.",
+      "privacy": "Os seus dados são utilizados apenas para responder ao seu pedido e nunca são partilhados.",
+      "privacyLink": ""
+    },
+    "replyTime": "Respondemos normalmente em menos de 24 horas."
   },
   "it": {
     "siteName": "C & C",
@@ -939,7 +1074,34 @@
       "body2": "Buona notizia: c'è ancora posto per voi qui.",
       "funFactLabel": "Lo sapevate?",
       "funFact": "La nostra posizione è così tranquilla che anche le pagine smarrite vengono a posarsi qui."
-    }
+    },
+    "contactForm": {
+      "title": "Scrivici",
+      "intro": "Una domanda sullo studio o sul parcheggio? Lasciaci un messaggio e ti risponderemo al più presto.",
+      "name": "Nome completo",
+      "email": "E-mail",
+      "phone": "Telefono",
+      "subject": "Oggetto",
+      "message": "Il tuo messaggio",
+      "messagePlaceholder": "Descrivi la tua richiesta in poche parole (date, numero di persone, domanda…)",
+      "optional": "facoltativo",
+      "subjects": {
+        "booking": "Domanda su una prenotazione",
+        "studio": "Studio ecologico",
+        "parking": "Posto auto",
+        "monthly": "Affitto mensile (aziende)",
+        "other": "Altra richiesta"
+      },
+      "submit": "Invia messaggio",
+      "sending": "Invio in corso…",
+      "success": "Grazie! Abbiamo ricevuto il tuo messaggio e ti risponderemo al più presto.",
+      "error": "Si è verificato un errore durante l'invio. Riprova o scrivici direttamente a bonjour@candc.ch.",
+      "errRequired": "Compila questo campo.",
+      "errEmail": "Inserisci un indirizzo e-mail valido.",
+      "privacy": "I tuoi dati vengono utilizzati solo per rispondere alla tua richiesta e non sono mai condivisi.",
+      "privacyLink": ""
+    },
+    "replyTime": "Di solito rispondiamo entro 24 ore."
   },
   "nl": {
     "siteName": "C & C",
@@ -1096,6 +1258,33 @@
       "body2": "Goed nieuws: er is nog plek voor u hier.",
       "funFactLabel": "Wist u dat?",
       "funFact": "Onze locatie is zo rustig dat zelfs verdwaalde pagina's hier komen neerstrijken."
-    }
+    },
+    "contactForm": {
+      "title": "Schrijf ons",
+      "intro": "Een vraag over de studio of de parkeerplaats? Laat een bericht achter en wij nemen snel contact met u op.",
+      "name": "Volledige naam",
+      "email": "E-mailadres",
+      "phone": "Telefoon",
+      "subject": "Onderwerp",
+      "message": "Uw bericht",
+      "messagePlaceholder": "Beschrijf uw vraag in enkele woorden (data, aantal personen, vraag…)",
+      "optional": "optioneel",
+      "subjects": {
+        "booking": "Vraag over een reservering",
+        "studio": "Ecostudio",
+        "parking": "Parkeerplaats",
+        "monthly": "Maandhuur (zakelijk)",
+        "other": "Andere vraag"
+      },
+      "submit": "Bericht versturen",
+      "sending": "Versturen…",
+      "success": "Bedankt! Uw bericht is ontvangen — wij nemen zo snel mogelijk contact met u op.",
+      "error": "Er ging iets mis bij het verzenden. Probeer het opnieuw of mail ons direct op bonjour@candc.ch.",
+      "errRequired": "Vul dit veld in.",
+      "errEmail": "Vul een geldig e-mailadres in.",
+      "privacy": "Uw gegevens worden alleen gebruikt om uw vraag te beantwoorden en worden nooit gedeeld.",
+      "privacyLink": ""
+    },
+    "replyTime": "Meestal antwoorden wij binnen 24 uur."
   }
 }

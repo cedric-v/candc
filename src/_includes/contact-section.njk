@@ -1,0 +1,364 @@
+{# Section de contact partagée par toutes les langues (src/<locale>/contact.njk).
+   Nécessite `t` et `locale` (définis dans chaque page via {% set t %}).
+   Structure UX : formulaire principal à gauche, moyens de contact rapides à droite. #}
+
+<style>
+  .contact-container {
+    max-width: 68rem;
+    margin: 0 auto;
+    padding: var(--spacing-3xl) var(--spacing-xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2xl);
+  }
+
+  .contact-hero {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  .contact-hero h1 {
+    font-size: clamp(2.25rem, 5vw, 3rem);
+    font-weight: 700;
+    color: var(--primary-color);
+  }
+
+  .contact-hero p {
+    max-width: 42rem;
+    margin: 0 auto;
+    color: var(--text-muted);
+    font-size: 1.05rem;
+  }
+
+  .contact-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.8fr) minmax(0, 1fr);
+    gap: var(--spacing-2xl);
+    align-items: start;
+  }
+
+  @media (max-width: 56rem) {
+    .contact-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* --------------------------- Formulaire --------------------------- */
+
+  .contact-form-card {
+    border-radius: var(--border-radius-xl);
+    border: 1px solid rgba(45, 80, 22, 0.15);
+    background: var(--white);
+    padding: clamp(1.25rem, 3vw, var(--spacing-2xl));
+    box-shadow: var(--shadow);
+    container-type: inline-size;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+    gap: var(--spacing-lg);
+  }
+
+  .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .form-field label {
+    font-weight: 600;
+    color: var(--primary-color);
+  }
+
+  .optional-hint {
+    font-weight: 400;
+    color: var(--text-muted);
+  }
+
+  .form-field input,
+  .form-field select,
+  .form-field textarea {
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: 1px solid rgba(45, 80, 22, 0.3);
+    border-radius: var(--border-radius-lg);
+    background: var(--white);
+    font: inherit;
+    color: inherit;
+    transition: border-color var(--transition-normal), box-shadow var(--transition-normal);
+  }
+
+  .form-field textarea {
+    resize: vertical;
+    min-height: 8rem;
+  }
+
+  .form-field input:focus-visible,
+  .form-field select:focus-visible,
+  .form-field textarea:focus-visible,
+  .btn:focus-visible,
+  a:focus-visible {
+    outline: 2px solid var(--secondary-color);
+    outline-offset: 2px;
+  }
+
+  .form-field [aria-invalid='true'] {
+    border-color: #dc2626;
+  }
+
+  .field-error {
+    margin: 0;
+    color: #b91c1c;
+    font-size: 0.875rem;
+  }
+
+  .form-status {
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-weight: 500;
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .form-status--success {
+    background: rgba(45, 125, 60, 0.12);
+    color: #14532d;
+  }
+
+  .form-status--error {
+    background: rgba(220, 38, 38, 0.08);
+    color: #991b1b;
+  }
+
+  .form-submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    background: var(--secondary-color);
+    color: var(--white);
+    padding: var(--spacing-md) calc(var(--spacing-xl) * 1.5);
+    border: none;
+    border-radius: var(--border-radius-full);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color var(--transition-normal), transform var(--transition-normal);
+  }
+
+  .form-submit:hover {
+    background: color-mix(in srgb, var(--secondary-color), black 10%);
+  }
+
+  .form-submit[disabled] {
+    opacity: 0.6;
+    cursor: progress;
+  }
+
+  .form-privacy {
+    margin-top: var(--spacing-lg);
+    margin-bottom: 0;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  /* Honeypot : invisible pour les humains */
+  .honeypot-field {
+    position: absolute !important;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  /* ----------------------------- Aside ------------------------------ */
+
+  .contact-aside {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+  }
+
+  .contact-card {
+    border-radius: var(--border-radius-xl);
+    border: 1px solid rgba(45, 80, 22, 0.15);
+    background: var(--white);
+    padding: var(--spacing-xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  .contact-card h2 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+  }
+
+  .contact-card p {
+    margin: 0;
+    color: var(--text-muted);
+  }
+
+  .whatsapp-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-lg);
+    background: #25D366;
+    color: var(--white);
+    border-radius: var(--border-radius-full);
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color var(--transition-normal);
+  }
+
+  .whatsapp-btn:hover {
+    background: #20BA5A;
+  }
+
+  .email-link {
+    color: var(--primary-color);
+    font-weight: 500;
+    word-break: break-word;
+  }
+
+  .reply-time {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-size: 0.9rem;
+    color: var(--text-muted);
+  }
+</style>
+
+<section class="contact-container">
+  <div class="contact-hero">
+    <h1>{{ t.contactUs }}</h1>
+    <p>{{ t.contactForm.intro }}</p>
+  </div>
+
+  <div class="contact-grid">
+    <!-- Colonne principale : formulaire -->
+    <div class="contact-form-card">
+      <form
+        method="post"
+        action="/api/contact/"
+        class="contact-form"
+        data-contact-form
+        data-locale="{{ locale }}"
+        data-turnstile-sitekey="{{ turnstileSiteKey }}"
+        data-msg-sending="{{ t.contactForm.sending }}"
+        data-msg-success="{{ t.contactForm.success }}"
+        data-msg-error="{{ t.contactForm.error }}"
+        data-msg-err-required="{{ t.contactForm.errRequired }}"
+        data-msg-err-email="{{ t.contactForm.errEmail }}"
+        novalidate
+      >
+        <div class="form-row">
+          <div class="form-field">
+            <label for="cf-name">{{ t.contactForm.name }} <span aria-hidden="true">*</span></label>
+            <input id="cf-name" name="name" type="text" autocomplete="name" maxlength="120" required aria-describedby="cf-name-error">
+            <p class="field-error" id="cf-name-error" hidden></p>
+          </div>
+          <div class="form-field">
+            <label for="cf-email">{{ t.contactForm.email }} <span aria-hidden="true">*</span></label>
+            <input id="cf-email" name="email" type="email" autocomplete="email" inputmode="email" autocapitalize="none" spellcheck="false" maxlength="254" required aria-describedby="cf-email-error">
+            <p class="field-error" id="cf-email-error" hidden></p>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-field">
+            <label for="cf-phone">{{ t.contactForm.phone }} <span class="optional-hint">({{ t.contactForm.optional }})</span></label>
+            <input id="cf-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" maxlength="30">
+          </div>
+          <div class="form-field">
+            <label for="cf-topic">{{ t.contactForm.subject }}</label>
+            <select id="cf-topic" name="topic">
+              <option value="booking">{{ t.contactForm.subjects.booking }}</option>
+              <option value="studio">{{ t.contactForm.subjects.studio }}</option>
+              <option value="parking">{{ t.contactForm.subjects.parking }}</option>
+              <option value="monthly">{{ t.contactForm.subjects.monthly }}</option>
+              <option value="other">{{ t.contactForm.subjects.other }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label for="cf-message">{{ t.contactForm.message }} <span aria-hidden="true">*</span></label>
+          <textarea id="cf-message" name="message" rows="6" maxlength="5000" required placeholder="{{ t.contactForm.messagePlaceholder }}" aria-describedby="cf-message-error"></textarea>
+          <p class="field-error" id="cf-message-error" hidden></p>
+        </div>
+
+        {# Honeypot : invisible pour les personnes, piège pour les robots #}
+        <div class="honeypot-field" aria-hidden="true">
+          <label for="cf-website">{{ t.contactForm.email }}</label>
+          <input id="cf-website" name="website" type="text" tabindex="-1" autocomplete="off">
+        </div>
+
+        <div data-contact-turnstile></div>
+        <p class="form-status" data-contact-status role="status" aria-live="polite" hidden></p>
+
+        <button type="submit" class="form-submit" data-contact-submit>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
+          <span data-contact-submit-label>{{ t.contactForm.submit }}</span>
+        </button>
+
+        <p class="form-privacy">
+          🔒 {{ t.contactForm.privacy }}
+          {% if t.contactForm.privacyLink %}
+            <a href="/fr/legal/" target="_blank" rel="noopener">{{ t.contactForm.privacyLink }}</a>
+          {% endif %}
+        </p>
+      </form>
+    </div>
+
+    <!-- Colonne latérale : autres façons de nous joindre -->
+    <aside class="contact-aside">
+      <div class="contact-card">
+        <h2>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="#25D366" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+          {{ t.whatsapp }}
+        </h2>
+        <a href="https://wa.me/message/J3EROZAQFOSJM1" target="_blank" rel="noopener noreferrer" class="whatsapp-btn">
+          {{ t.whatsapp }}
+        </a>
+        <p class="reply-time">⏱️ {{ t.replyTime }}</p>
+      </div>
+
+      <div class="contact-card">
+        <h2>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+            <polyline points="22,6 12,13 2,6"></polyline>
+          </svg>
+          {{ t.email }}
+        </h2>
+        <p><a href="#" class="email-obfuscated email-link"></a></p>
+      </div>
+
+      <div class="contact-card">
+        <h2>📍 {{ t.address }}</h2>
+        <a href="{{ ('/' ~ locale ~ '/location/') | relativeUrl }}" class="btn btn-secondary" style="display: inline-block; text-decoration: none;">
+          {{ t.addressButton }}
+        </a>
+      </div>
+
+      {% include "superhost.njk" %}
+    </aside>
+  </div>
+
+  <script src="{{ '/assets/js/contact-form.js' | relativeUrl }}" defer></script>
+</section>
