@@ -238,6 +238,13 @@
     font-size: 0.9rem;
     color: var(--text-muted);
   }
+
+  /* Badge Superhost Airbnb affiché sous le formulaire */
+  .contact-superhost {
+    max-width: 42rem;
+    width: 100%;
+    margin: 0 auto;
+  }
 </style>
 
 <section class="contact-container">
@@ -261,6 +268,7 @@
         data-msg-error="{{ t.contactForm.error }}"
         data-msg-err-required="{{ t.contactForm.errRequired }}"
         data-msg-err-email="{{ t.contactForm.errEmail }}"
+        data-msg-err-phone="{{ t.contactForm.errPhone }}"
         novalidate
       >
         <div class="form-row">
@@ -279,7 +287,8 @@
         <div class="form-row">
           <div class="form-field">
             <label for="cf-phone">{{ t.contactForm.phone }} <span class="optional-hint">({{ t.contactForm.optional }})</span></label>
-            <input id="cf-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" maxlength="30">
+            <input id="cf-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" maxlength="30" aria-describedby="cf-phone-error">
+            <p class="field-error" id="cf-phone-error" hidden></p>
           </div>
           <div class="form-field">
             <label for="cf-topic">{{ t.contactForm.subject }}</label>
@@ -356,9 +365,15 @@
         </a>
       </div>
 
-      {% include "superhost.njk" %}
     </aside>
   </div>
 
-  <script src="{{ '/assets/js/contact-form.js' | relativeUrl }}" defer></script>
+  {# Superhost Airbnb : sous le formulaire (pas en colonne latérale),
+     sans lien sortant sur la page de contact. #}
+  {% set hideSuperhostLink = true %}
+  <div class="contact-superhost">
+    {% include "superhost.njk" %}
+  </div>
+
+  <script src="{{ '/assets/js/contact-form.js' | relativeUrl }}?v={{ build.hash('/assets/js/contact-form.js') }}" defer></script>
 </section>
