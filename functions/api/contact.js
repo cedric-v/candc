@@ -88,7 +88,10 @@ async function rateLimited(context, email) {
 	const kv = context.env.CONTACT_KV;
 	if (!kv) return false;
 	const ip = context.request.headers.get("CF-Connecting-IP") || "unknown";
-	const keys = [`contact:ip:${ip}`, `contact:email:${email}`];
+// Namespace KV partagé avec le projet cedric-v (voir DEPLOYMENT.md) : les clés
+// sont préfixées « candc:contact: » pour isoler les compteurs de rate limit de
+// ceux du site cedricv.com (préfixe « cedricv:contact: »).
+	const keys = [`candc:contact:ip:${ip}`, `candc:contact:email:${email}`];
 	try {
 		for (const key of keys) {
 			if (await kv.get(key)) return true;
