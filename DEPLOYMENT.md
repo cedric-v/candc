@@ -524,8 +524,9 @@ sous `contactForm.*`) :
 e-mails transactionnels) vers `ADMIN_NOTIFICATION_EMAIL` (defaut
 bonjour@candc.ch), avec `reply_to` = visiteur et accuse de reception localise ;
 - anti-spam : honeypot silencieux, time-trap (< 1,5 s refuse), validation
-serveur stricte (sujets whitelistes), rate limit IP/e-mail 1 h via KV si le
-binding `CONTACT_KV` existe ;
+serveur stricte (sujets whitelistes), rate limit IP/e-mail 1 h via le binding
+KV `CONTACT_KV` (actif en production ; fail-open si le KV est indisponible,
+et Turnstile est vérifié avant pour que les bots ne consomment pas de quota) ;
 - Cloudflare Turnstile : verification automatiquement activee si
 `TURNSTILE_SECRET_KEY` est defini (cf. variable de build
 `TURNSTILE_SITE_KEY` ci-dessus) ; sans secret, elle est simplement sautee.

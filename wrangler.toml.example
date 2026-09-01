@@ -7,6 +7,14 @@ binding = "DB"
 database_name = "candc-booking"
 database_id = "REPLACE_WITH_D1_DATABASE_ID"
 
+# Rate limit du formulaire de contact (1 message/h par IP et par e-mail).
+# Créer le namespace avec : npx wrangler kv namespace create CONTACT_KV
+# puis reporter son id ci-dessous (plan gratuit suffisant : 2 écritures par
+# soumission légitime, les bots sont rejetés par Turnstile avant d'écrire).
+[[kv_namespaces]]
+binding = "CONTACT_KV"
+id = "REPLACE_WITH_CONTACT_KV_NAMESPACE_ID"
+
 [vars]
 PUBLIC_BASE_URL = "https://candc.ch"
 DEFAULT_BOOKING_UNIT_CODE = "parking-space"
