@@ -229,12 +229,13 @@ de `src/_includes/base.njk` ; placeholder `G-XXXXXXXXXX` si absent (jamais de
 valeur reelle commitee)
 - `TURNSTILE_SITE_KEY` — site key publique du widget Cloudflare Turnstile pour
 le formulaire de contact (`data-turnstile-sitekey` sur les pages contact).
-Laisser vide tant que le widget n'est pas cree : le formulaire fonctionne
-sans captcha. Le secret correspondant `TURNSTILE_SECRET_KEY` est un secret
-Pages functions (via `npm run secrets:push`) : la verification serveur ne
-s'active que lorsque ce dernier est defini.
+Widget cree et **actif en production** (site key `0x4AAAAA...` definie en
+variable de build Pages). Le secret correspondant `TURNSTILE_SECRET_KEY` est
+un secret Pages functions : la verification serveur ne s'active que lorsque
+celui-ci est defini — c'est le cas en production (verifie via
+`wrangler pages secret list`).
 
-Secrets ou valeurs sensibles (la liste complete des 9 secrets du projet) :
+Secrets ou valeurs sensibles (liste des secrets du projet) :
 
 - `SUMUP_API_KEY`
 - `SUMUP_MERCHANT_CODE`
@@ -242,6 +243,11 @@ Secrets ou valeurs sensibles (la liste complete des 9 secrets du projet) :
 - `INTERNAL_SYNC_TOKEN`
 - `ADMIN_ACCESS_TOKEN`
 - `RESEND_API_KEY`
+- `TURNSTILE_SECRET_KEY` — verification serveur du captcha contact (actif en
+production). ATTENTION : absent de `secrets.local.json` — `npm run
+secrets:push` ne le restaurerait PAS en cas de perte ; recuperer la valeur
+dans le dashboard (Pages → Settings → Environment variables) ou la
+regenerer depuis le widget Turnstile et l'ajouter au fichier local.
 - `NTFY_TOPIC_URL` — URL du topic ntfy.sh pour les notifications push hote
 - `WIFI_STUDIO_PASSWORD` — mot de passe Wi-Fi devant le garage (`__WIFI_STUDIO_PASSWORD__`)
 - `WIFI_TERRACE_PASSWORD` — mot de passe Wi-Fi de la terrasse (`__WIFI_TERRACE_PASSWORD__`)
