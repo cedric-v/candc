@@ -130,10 +130,18 @@ When changing sync behavior, also check:
   (`src/fr/legal.njk`, section "Durée de conservation des données").
 - Contact form: public `POST /api/contact/` (`functions/api/contact.js`) sends
   via Resend to `ADMIN_NOTIFICATION_EMAIL` (default bonjour@candc.ch); spam
-  protection = honeypot + time-trap + optional Turnstile (auto-enabled when
-  `TURNSTILE_SECRET_KEY` is bound; site key injected at build time via
-  `TURNSTILE_SITE_KEY`, see `.env.example`). UI strings live in
-  `translations.json` under `contactForm.*`.
+  protection = honeypot + time-trap + Turnstile (active in production: site
+  key injected at build time via `TURNSTILE_SITE_KEY`, secret
+  `TURNSTILE_SECRET_KEY` bound; checked BEFORE the rate limit so bots never
+  consume KV quota) + KV rate limit 1 msg/h per IP and per email (binding
+  `CONTACT_KV` in `wrangler.toml`, fail-open if KV unavailable). UI strings
+  live in `translations.json` under `contactForm.*`.
+- Contact email obfuscation: `bonjour@candc.ch` must NEVER appear in clear
+  text in HTML/JS — and never as a simple JS string concatenation either,
+  because the build minifier (terser `minifyJS`) folds it back into a literal,
+  making it harvestable in every page's HTML. Always use the base64
+  `atob('Ym9uam91ckBjYW5kYy5jaA==')` pattern (footer.njk, contact/parking
+  pages, `src/fr/legal.njk`).
 - On direct-booking creation, in addition to the CC'd confirmation email, a
   dedicated `admin_new_booking` alert email (French, full guest contact
   details, ID document number masked for LPD/GDPR compliance) is sent to
