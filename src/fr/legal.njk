@@ -17,7 +17,7 @@ availableLocales:
       <div class="legal-section">
         <h2 class="text-xl font-bold text-primary mb-4">1. Mentions Légales</h2>
         <p><strong>Éditeur du site :</strong> Céline et Cédric Vonlanthen, Impasse de la Pommeraie 5, 1782 Formangueires, Suisse</p>
-        <p><strong>Contact :</strong> bonjour@candc.ch</p>
+        <p><strong>Contact :</strong> <span class="email-obfuscated">(adresse affichée avec JavaScript)</span></p>
         <p><strong>Site web :</strong> <a href="https://candc.ch">https://candc.ch</a></p>
         <p><strong>Hébergement :</strong> Cloudflare, Inc., 101 Townsend St, San Francisco, CA 94107, USA.</p>
       </div>
@@ -83,7 +83,7 @@ availableLocales:
         <h2 class="text-xl font-bold text-primary mb-4">3. Politique de Confidentialité (Protection des données)</h2>
         
         <h3 class="text-lg font-semibold text-primary mt-6 mb-2">1. Responsable du traitement</h3>
-        <p>Les données sont traitées par Céline et Cédric Vonlanthen (bonjour@candc.ch).</p>
+        <p>Les données sont traitées par Céline et Cédric Vonlanthen (<span class="email-obfuscated">(adresse affichée avec JavaScript)</span>).</p>
 
         <h3 class="text-lg font-semibold text-primary mt-6 mb-2">2. Données collectées</h3>
         <p>Nous collectons les données nécessaires à la gestion de votre réservation, de votre paiement, de vos éventuelles demandes de modification ou d’annulation et à la facturation. Cela peut notamment inclure vos nom, prénom, e-mail, téléphone, langue de réservation, informations sur le séjour, données de facturation et communications relatives à la réservation.</p>
@@ -110,7 +110,18 @@ availableLocales:
         <p>Pour les paiements par carte, nous utilisons SumUp. Vos coordonnées bancaires complètes ne transitent pas par nos serveurs et sont traitées de manière sécurisée par le prestataire de paiement selon ses propres conditions et standards de sécurité.</p>
 
         <h3 class="text-lg font-semibold text-primary mt-6 mb-2">7. Vos droits</h3>
-        <p>Conformément à la loi suisse sur la protection des données (LPD) et, le cas échéant, au RGPD, vous disposez notamment d’un droit d’accès, de rectification et, dans les limites prévues par la loi, d’un droit d’opposition ou de suppression. Vous pouvez exercer vos droits sur simple demande à bonjour@candc.ch.</p>
+        <p>Conformément à la loi suisse sur la protection des données (LPD) et, le cas échéant, au RGPD, vous disposez notamment d’un droit d’accès, de rectification et, dans les limites prévues par la loi, d’un droit d’opposition ou de suppression. Vous pouvez exercer vos droits sur simple demande à <span class="email-obfuscated">(adresse affichée avec JavaScript)</span>.</p>
+
+  <script>
+    // Protection anti-spam : email encodé en base64 puis décodé au runtime
+    // (non récoltable par les robots qui ne lisent que le HTML statique).
+    (function () {
+      var email = atob('Ym9uam91ckBjYW5kYy5jaA==');
+      document.querySelectorAll('.email-obfuscated').forEach(function (el) {
+        el.textContent = email;
+      });
+    })();
+  </script>
       </div>
 
     </div>

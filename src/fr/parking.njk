@@ -328,10 +328,7 @@ ogImage: assets/img/logo-cc.jpg
     });
 
     // Protection anti-spam
-    const user = 'bonjour';
-    const domain = 'candc';
-    const tld = 'ch';
-    const email = user + '@' + domain + '.' + tld;
+    const email = atob('Ym9uam91ckBjYW5kYy5jaA=='); // anti-spam : base64 (le minifier replie les concaténations en littéral récoltable)
     
     document.querySelectorAll('.email-obfuscated').forEach(el => {
       el.href = 'mailto:' + email;
