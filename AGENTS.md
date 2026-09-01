@@ -134,7 +134,10 @@ When changing sync behavior, also check:
   key injected at build time via `TURNSTILE_SITE_KEY`, secret
   `TURNSTILE_SECRET_KEY` bound; checked BEFORE the rate limit so bots never
   consume KV quota) + KV rate limit 1 msg/h per IP and per email (binding
-  `CONTACT_KV` in `wrangler.toml`, fail-open if KV unavailable). UI strings
+  `CONTACT_KV` in `wrangler.toml`, fail-open if KV unavailable; rate-limit
+  keys are prefixed `candc:contact:` because the KV namespace is shared with
+  the cedric-v project (cedricv.com uses `cedricv:contact:` /
+  `cedricv:newsletter:` keys — no collision, independent counters). UI strings
   live in `translations.json` under `contactForm.*`.
 - Contact email obfuscation: `bonjour@candc.ch` must NEVER appear in clear
   text in HTML/JS — and never as a simple JS string concatenation either,
