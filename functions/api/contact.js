@@ -82,15 +82,22 @@ export function normalizeIntlMobile(raw) {
 	return `+${intl}`;
 }
 
+// Fail-open : si le KV est indisponible (quota, incident), on laisse passer
+// plutôt que de bloquer le formulaire — Turnstile reste la barrière principale.
 async function rateLimited(context, email) {
 	const kv = context.env.CONTACT_KV;
 	if (!kv) return false;
 	const ip = context.request.headers.get("CF-Connecting-IP") || "unknown";
 	const keys = [`contact:ip:${ip}`, `contact:email:${email}`];
-	for (const key of keys) {
-		if (await kv.get(key)) return true;
+	try {
+		for (const key of keys) {
+			if (await kv.get(key)) return true;
+		}
+		await Promise.all(keys.map((key) => kv.put(key, "1", { expirationTtl: 3600 })));
+	} catch (error) {
+		console.error("[contact] rate limit KV unavailable, fail-open:", error?.message || error);
+		return false;
 	}
-	await Promise.all(keys.map((key) => kv.put(key, "1", { expirationTtl: 3600 })));
 	return false;
 }
 
@@ -160,14 +167,15 @@ export async function onRequestPost(context) {
 	}
 
 	try {
-		if (await rateLimited(context, email)) {
-			return json({ success: false, error: "rate_limited" }, 429);
-		}
-
-		// Vérification Turnstile uniquement quand le secret est configuré :
-		// la protection s'active sans redéploiement du code.
+		// Vérification Turnstile d'abord (quand le secret est configuré) : les
+		// bots sont rejetés avant de consommer des écritures KV, ce qui préserve
+		// le quota du plan gratuit pour les vrais visiteurs.
 		if (env.TURNSTILE_SECRET_KEY && !(await turnstileValid(request, data.turnstileToken, env))) {
 			return json({ success: false, error: "bot_check_failed" }, 400);
+		}
+
+		if (await rateLimited(context, email)) {
+			return json({ success: false, error: "rate_limited" }, 429);
 		}
 
 		await sendContactNotification(env, { name, email, phone, topic, message, locale });

@@ -54,13 +54,13 @@ ogImage: assets/img/logo-cc.jpg
 </script>
 
 <script>
-  // Protection anti-spam : construction dynamique de l'email
+  // Protection anti-spam : email encodé en base64 puis décodé au runtime.
+  // Ne PAS écrire l'adresse en clair ni en concaténation simple : le minifier
+  // de build (terser, minifyJS) replie les concaténations en littéral, ce qui
+  // rendrait l'adresse récoltable dans le HTML de la page.
   (function() {
-    const user = 'bonjour';
-    const domain = 'candc';
-    const tld = 'ch';
-    const email = user + '@' + domain + '.' + tld;
-    
+    const email = atob('Ym9uam91ckBjYW5kYy5jaA==');
+
     document.querySelectorAll('.email-obfuscated').forEach(el => {
       el.href = 'mailto:' + email;
       // Only replace text content if it's empty or doesn't have a specific label span
