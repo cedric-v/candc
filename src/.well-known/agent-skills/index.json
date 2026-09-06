@@ -1,0 +1,54 @@
+{
+  "$schema": "https://schemas.agentskills.io/discovery/0.2.0/schema.json",
+  "skills": [
+    {
+      "name": "find-candc-stay",
+      "type": "skill-md",
+      "description": "Help a traveller choose between the C&C parking space and the eco studio near Fribourg, and point to the right booking page.",
+      "url": "/.well-known/agent-skills/find-candc-stay/SKILL.md",
+      "digest": "sha256:b87a82c6ceaa61667eb04f8c44ec719e31de029628b3bad77517f7597cc16db8"
+    },
+    {
+      "name": "check-availability",
+      "type": "skill-md",
+      "description": "Check whether the C&C parking space or eco studio is available for a given date range, via browser WebMCP tools or the public API.",
+      "url": "/.well-known/agent-skills/check-availability/SKILL.md",
+      "digest": "sha256:1bd68930fe03ce1e7e4529a7409bf1ef2b523e9b4645ededda72d4b76bce4c8e"
+    },
+    {
+      "name": "quote-stay",
+      "type": "skill-md",
+      "description": "Calculate a direct-booking quote for a C&C stay, including city tax and long-stay discounts.",
+      "url": "/.well-known/agent-skills/quote-stay/SKILL.md",
+      "digest": "sha256:1aea35a4d917f9e1b8f5bd4dd703d7129793f10b915c7bb1d1a4b02229f9b5dc"
+    },
+    {
+      "name": "start-booking",
+      "type": "skill-md",
+      "description": "Start the direct-booking checkout for a C&C reservation. The user always confirms dates, traveller details, and payment.",
+      "url": "/.well-known/agent-skills/start-booking/SKILL.md",
+      "digest": "sha256:d7267818d75e97063a5874af485143203d0e9d33b02b42fb3885d1ebdd05156b"
+    },
+    {
+      "name": "house-rules",
+      "type": "skill-md",
+      "description": "Answer questions about C&C house rules, included equipment, optional services, and payment methods.",
+      "url": "/.well-known/agent-skills/house-rules/SKILL.md",
+      "digest": "sha256:032ec5085b87e3081420d744a3ff0476489bf645e9cbe78cf9ce0f0281914b25"
+    },
+    {
+      "name": "cancellation-policy",
+      "type": "skill-md",
+      "description": "Explain the C&C cancellation policy and how to manage an existing reservation with its token.",
+      "url": "/.well-known/agent-skills/cancellation-policy/SKILL.md",
+      "digest": "sha256:377fdf2777f105e17cce143b1fcd240e81f5b913d4f6fbf6f22b51d4ddbfb7e2"
+    },
+    {
+      "name": "directions",
+      "type": "skill-md",
+      "description": "Provide location, access, and itinerary guidance for C&C in La Sonnaz, Fribourg, Switzerland.",
+      "url": "/.well-known/agent-skills/directions/SKILL.md",
+      "digest": "sha256:e698a03b84580e68db0426cace49b55b8d95757e30d16c2982a7f476df685cb6"
+    }
+  ]
+}

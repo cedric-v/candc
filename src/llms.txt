@@ -44,6 +44,9 @@ Both the parking and studio funnels are exposed on the site.
 
 - [llms.txt](https://candc.ch/llms.txt)
 - [site-context.json](https://candc.ch/.well-known/site-context.json)
+- [server-card.json](https://candc.ch/.well-known/mcp/server-card.json)
+- [agent-skills index](https://candc.ch/.well-known/agent-skills/index.json)
+- [api-catalog](https://candc.ch/.well-known/api-catalog)
 - Progressive WebMCP on parking and studio reservations
 
 Pages currently exposed to agents in browser context:
@@ -52,21 +55,21 @@ Pages currently exposed to agents in browser context:
 - [Studio reservation](https://candc.ch/fr/eco-studio/booking/)
 - [Reservation management](https://candc.ch/booking/manage/{token})
 
-Public WebMCP tools currently planned:
+Public WebMCP tools currently available:
 
-- `check_parking_availability`
-- `quote_parking_stay`
-- `start_parking_reservation_checkout`
-- `check_studio_availability`
-- `quote_studio_stay`
-- `start_studio_reservation_checkout`
-- `update_existing_reservation`
+- `check_parking_availability` (imperative, parking booking page)
+- `quote_parking_stay` (imperative, parking booking page)
+- `start_parking_reservation_checkout` (declarative, parking booking form)
+- `check_studio_availability` (imperative, studio booking page)
+- `quote_studio_stay` (imperative, studio booking page)
+- `start_studio_reservation_checkout` (declarative, studio booking form)
 
 Notes:
 
 - WebMCP here is a visible browser layer, added as progressive enhancement
 - the admin back-office is not exposed as a public WebMCP tool
 - both parking and studio funnels are agent-ready on the UI side
+- `update_existing_reservation` is not a browser tool; updates go through the management page or the reservations API with the reservation token
 
 ## Planned integrations
 
@@ -92,6 +95,9 @@ Notes:
 
 - [Sitemap](https://candc.ch/sitemap.xml)
 - [Site context](https://candc.ch/.well-known/site-context.json)
+- [Server card](https://candc.ch/.well-known/mcp/server-card.json)
+- [Agent skills index](https://candc.ch/.well-known/agent-skills/index.json)
+- [API catalog](https://candc.ch/.well-known/api-catalog)
 
 ## Useful notes for AI agents
 
