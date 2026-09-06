@@ -17,7 +17,7 @@ C&C — La Sonnaz (Formangueires), Canton of Fribourg, Switzerland.
 
 ## By train / bike
 
-- 1 km from Belfaux-Village station (connected to Fribourg).
+- 1 km from Belfaux-Village train station (connected to Fribourg).
 - About 15 minutes by bike from Fribourg; ~20 minutes walking then train from the University of Fribourg (Unifr).
 
 ## Landmarks nearby

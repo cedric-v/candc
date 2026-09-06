@@ -48,7 +48,7 @@
       "type": "skill-md",
       "description": "Provide location, access, and itinerary guidance for C&C in La Sonnaz, Fribourg, Switzerland.",
       "url": "/.well-known/agent-skills/directions/SKILL.md",
-      "digest": "sha256:e698a03b84580e68db0426cace49b55b8d95757e30d16c2982a7f476df685cb6"
+      "digest": "sha256:90a5df3e680f3aa3c2218f3f72d5d22e6afa8c756be7c39ec8a525e12421efbe"
     }
   ]
 }
