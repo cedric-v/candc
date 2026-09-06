@@ -1,0 +1,30 @@
+{
+  "$schema": "https://modelcontextprotocol.io/schemas/server-card/v1.0",
+  "version": "1.0.0",
+  "protocolVersion": "2025-06-18",
+  "serverInfo": {
+    "name": "candc-webmcp",
+    "title": "C&C WebMCP",
+    "version": "1.0.0",
+    "description": "Browser-exposed WebMCP tools for checking availability, quoting stays, and starting the direct-booking checkout for the C&C parking space and eco studio near Fribourg, Switzerland."
+  },
+  "homepageUrl": "https://candc.ch/fr/",
+  "transports": [
+    {
+      "type": "webmcp",
+      "url": "https://candc.ch/fr/parking/booking/",
+      "description": "Parking reservation funnel: check_parking_availability, quote_parking_stay, start_parking_reservation_checkout. Requires a compatible browser agent with WebMCP support."
+    },
+    {
+      "type": "webmcp",
+      "url": "https://candc.ch/fr/eco-studio/booking/",
+      "description": "Eco studio reservation funnel: check_studio_availability, quote_studio_stay, start_studio_reservation_checkout. Requires a compatible browser agent with WebMCP support."
+    }
+  ],
+  "capabilities": {
+    "tools": true
+  },
+  "authentication": {
+    "type": "none"
+  }
+}

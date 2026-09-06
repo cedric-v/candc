@@ -1,0 +1,43 @@
+{
+  "linkset": [
+    {
+      "anchor": "https://candc.ch/api/booking",
+      "service-desc": [
+        {
+          "href": "https://candc.ch/.well-known/site-context.json",
+          "type": "application/json"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "https://candc.ch/llms.txt",
+          "type": "text/plain"
+        }
+      ],
+      "availability": [
+        {
+          "href": "https://candc.ch/api/booking/availability?from={from}&to={to}&unitCode={unitCode}",
+          "type": "application/json"
+        }
+      ],
+      "quote": [
+        {
+          "href": "https://candc.ch/api/booking/quote",
+          "type": "application/json"
+        }
+      ],
+      "reservations": [
+        {
+          "href": "https://candc.ch/api/booking/reservations",
+          "type": "application/json"
+        }
+      ],
+      "status": [
+        {
+          "href": "https://candc.ch/api/booking/availability?from={today}&to={tomorrow}&unitCode=parking-space",
+          "type": "application/json"
+        }
+      ]
+    }
+  ]
+}
