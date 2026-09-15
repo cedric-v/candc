@@ -175,6 +175,13 @@
         "author": "Gediminas",
         "rating": 4.5,
         "caption": "Excellent"
+      },
+      {
+        "image": "assets/img/testimonials/avis-studio-florence.jpg",
+        "alt": "Très bien, pour la deuxième fois…",
+        "author": "Florence",
+        "rating": 5,
+        "caption": "Très bien, pour la deuxième fois…"
       }
     ],
     "en": [
@@ -352,6 +359,13 @@
         "author": "Gediminas",
         "rating": 4.5,
         "caption": "Excellent"
+      },
+      {
+        "image": "assets/img/testimonials/avis-studio-florence.jpg",
+        "alt": "Very good, for the second time…",
+        "author": "Florence",
+        "rating": 5,
+        "caption": "Very good, for the second time…"
       }
     ],
     "de": [
@@ -529,6 +543,13 @@
         "author": "Gediminas",
         "rating": 4.5,
         "caption": "Ausgezeichnet"
+      },
+      {
+        "image": "assets/img/testimonials/avis-studio-florence.jpg",
+        "alt": "Sehr gut, zum zweiten Mal…",
+        "author": "Florence",
+        "rating": 5,
+        "caption": "Sehr gut, zum zweiten Mal…"
       }
     ],
     "es": [
@@ -706,6 +727,13 @@
         "author": "Gediminas",
         "rating": 4.5,
         "caption": "Excelente"
+      },
+      {
+        "image": "assets/img/testimonials/avis-studio-florence.jpg",
+        "alt": "Muy bien, por segunda vez…",
+        "author": "Florence",
+        "rating": 5,
+        "caption": "Muy bien, por segunda vez…"
       }
     ],
     "pt": [
@@ -883,6 +911,13 @@
         "author": "Gediminas",
         "rating": 4.5,
         "caption": "Excelente"
+      },
+      {
+        "image": "assets/img/testimonials/avis-studio-florence.jpg",
+        "alt": "Muito bom, pela segunda vez…",
+        "author": "Florence",
+        "rating": 5,
+        "caption": "Muito bom, pela segunda vez…"
       }
     ],
     "it": [
@@ -1060,6 +1095,13 @@
         "author": "Gediminas",
         "rating": 4.5,
         "caption": "Eccellente"
+      },
+      {
+        "image": "assets/img/testimonials/avis-studio-florence.jpg",
+        "alt": "Molto bene, per la seconda volta…",
+        "author": "Florence",
+        "rating": 5,
+        "caption": "Molto bene, per la seconda volta…"
       }
     ],
     "nl": [
@@ -1237,6 +1279,13 @@
         "author": "Gediminas",
         "rating": 4.5,
         "caption": "Uitstekend"
+      },
+      {
+        "image": "assets/img/testimonials/avis-studio-florence.jpg",
+        "alt": "Heel goed, voor de tweede keer…",
+        "author": "Florence",
+        "rating": 5,
+        "caption": "Heel goed, voor de tweede keer…"
       }
     ]
   },
@@ -1367,6 +1416,13 @@
         "author": "Nazariy",
         "rating": 5,
         "caption": "Tout était parfait, le propriétaire très sympathique et attentionné."
+      },
+      {
+        "image": "assets/img/testimonials/parking/albert-parking-review.jpg",
+        "alt": "Un séjour extrêmement agréable, à recommander absolument près de Fribourg, dans un cadre paisible. Cédric et sa compagne ont été d'une hospitalité remarquable. J'y retournerai sans hésiter.",
+        "author": "Alberto Melero",
+        "rating": 5,
+        "caption": "Séjour extrêmement agréable, hôtes d'une hospitalité remarquable"
       }
     ],
     "en": [
@@ -1495,6 +1551,13 @@
         "author": "Nazariy",
         "rating": 5,
         "caption": "Everything was perfect, the owner was very nice and attentive."
+      },
+      {
+        "image": "assets/img/testimonials/parking/albert-parking-review.jpg",
+        "alt": "A super pleasant stay, truly highly recommended near Freiburg, in a peaceful setting. Cédric was super hospitable, as was his partner — I would definitely come back.",
+        "author": "Alberto Melero",
+        "rating": 5,
+        "caption": "Super pleasant stay, super hospitable hosts"
       }
     ],
     "de": [
@@ -1623,6 +1686,13 @@
         "author": "Nazariy",
         "rating": 5,
         "caption": "Alles war perfekt, der Gastgeber sehr nett und aufmerksam."
+      },
+      {
+        "image": "assets/img/testimonials/parking/albert-parking-review.jpg",
+        "alt": "Ein super angenehmer Aufenthalt, absolut empfehlenswert in der Nähe von Freiburg, in ruhiger Umgebung. Cédric und seine Partnerin waren super gastfreundlich – ich komme gerne wieder.",
+        "author": "Alberto Melero",
+        "rating": 5,
+        "caption": "Super angenehmer Aufenthalt, super gastfreundliche Gastgeber"
       }
     ],
     "es": [
@@ -1751,6 +1821,13 @@
         "author": "Nazariy",
         "rating": 5,
         "caption": "Todo perfecto, el dueño muy majo y atento"
+      },
+      {
+        "image": "assets/img/testimonials/parking/albert-parking-review.jpg",
+        "alt": "Una estancia súper agradable, la verdad que súper recomendable cerca de Friburgo, pero tranquilo. Cédric súper hospitalario, tanto él como su pareja, para repetir.",
+        "author": "Alberto Melero",
+        "rating": 5,
+        "caption": "Estancia súper agradable, anfitriones súper hospitalarios"
       }
     ],
     "pt": [
@@ -1879,6 +1956,13 @@
         "author": "Nazariy",
         "rating": 5,
         "caption": "Tudo perfeito, o proprietário muito simpático e atencioso."
+      },
+      {
+        "image": "assets/img/testimonials/parking/albert-parking-review.jpg",
+        "alt": "Uma estadia super agradável, verdadeiramente super recomendável perto de Friburgo, mas tranquilo. Cédric super hospitalário, tanto ele como a companheira, para repetir.",
+        "author": "Alberto Melero",
+        "rating": 5,
+        "caption": "Estadia super agradável, anfitriões super hospitalares"
       }
     ],
     "it": [
@@ -2007,6 +2091,13 @@
         "author": "Nazariy",
         "rating": 5,
         "caption": "Tutto perfetto, il proprietario molto gentile e premuroso."
+      },
+      {
+        "image": "assets/img/testimonials/parking/albert-parking-review.jpg",
+        "alt": "Un soggiorno super piacevole, davvero super consigliabile vicino a Friburgo, ma tranquillo. Cédric super ospitale, sia lui che la sua compagna, da ripetere.",
+        "author": "Alberto Melero",
+        "rating": 5,
+        "caption": "Soggiorno super piacevole, host super ospitali"
       }
     ],
     "nl": [
@@ -2135,6 +2226,13 @@
         "author": "Nazariy",
         "rating": 5,
         "caption": "Alles perfect, de eigenaar erg aardig en attent."
+      },
+      {
+        "image": "assets/img/testimonials/parking/albert-parking-review.jpg",
+        "alt": "Een super aangenaam verblijf, echt super aanbevolen dicht bij Freiburg, maar rustig. Cédric super gastvrij, zowel hij als zijn partner, om terug te komen.",
+        "author": "Alberto Melero",
+        "rating": 5,
+        "caption": "Super aangenaam verblijf, super gastvrije hosts"
       }
     ]
   }
