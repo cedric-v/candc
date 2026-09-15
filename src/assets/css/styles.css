@@ -1528,6 +1528,11 @@ input.form-input[type="date"] {
   margin-top: var(--spacing-3xl);
 }
 
+/* Bloc résumé des notes Airbnb (page eco-studio) : espace sous le CTA */
+.eco-rating-summary {
+  margin-top: calc(var(--spacing-3xl) + var(--spacing-md));
+}
+
 .mb-4 {
   margin-bottom: var(--spacing-lg);
 }
