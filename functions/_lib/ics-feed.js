@@ -1,4 +1,4 @@
-import { getReservationsForIcsFeed, getUnitByFeedToken } from "./db.js";
+import { getManualCalendarBlocksForUnit, getReservationsForIcsFeed, getUnitByFeedToken } from "./db.js";
 import { buildReservationFeed } from "./ics.js";
 import { notFound, serverError, text } from "./http.js";
 
@@ -13,8 +13,11 @@ export async function onRequestGet(context) {
       return notFound();
     }
 
-    const reservations = await getReservationsForIcsFeed(env, unit.id);
-    const body = buildReservationFeed(reservations);
+    const [reservations, manualBlocks] = await Promise.all([
+      getReservationsForIcsFeed(env, unit.id),
+      getManualCalendarBlocksForUnit(env, unit.id),
+    ]);
+    const body = buildReservationFeed(reservations, manualBlocks);
 
     return text(body, {
       headers: {

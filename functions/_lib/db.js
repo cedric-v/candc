@@ -550,6 +550,15 @@ export async function getReservationsForIcsFeed(env, unitId) {
   return results || [];
 }
 
+// Blocages manuels actifs pour une unité, utilisés par le flux iCal d'export
+// afin qu'ils soient aussi répercutés sur Booking.com / Airbnb.
+export async function getManualCalendarBlocksForUnit(env, unitId) {
+  const blocks = await listManualCalendarBlocks(env);
+  return blocks.filter(
+    (block) => block.unit_id === unitId && block.status === "active",
+  );
+}
+
 export async function replaceExternalCalendarBlocks(env, sourceRecord, events) {
   const db = requireDb(env);
   const nowIso = new Date().toISOString();
@@ -618,6 +627,110 @@ export async function updateCalendarSourceSync(env, sourceId, syncStatus) {
       payloadSummary: syncStatus.payloadSummary || null,
     });
   }
+}
+
+// Blocages manuels créés depuis l'admin : source = 'manual', sans
+// réservation associée. Ils bloquent la disponibilité directe (voir
+// getAvailabilityConflicts) mais ne sont jamais touchés par l'import ICS,
+// qui ne supprime que les blocs de sa propre source (`booking_ics`, etc.).
+// La colonne `note` vient de la migration 0015 ; les helpers retombent sur
+// une requête sans note si elle n'est pas encore appliquée.
+export const MANUAL_CALENDAR_BLOCK_SOURCE = "manual";
+
+export async function listManualCalendarBlocks(env) {
+  const db = requireDb(env);
+  const runQuery = (withNote) =>
+    db
+      .prepare(
+        `
+          SELECT
+            calendar_blocks.id,
+            calendar_blocks.unit_id,
+            calendar_blocks.source,
+            calendar_blocks.start_date,
+            calendar_blocks.end_date,
+            calendar_blocks.status,
+            ${withNote ? "calendar_blocks.note," : ""}
+            calendar_blocks.created_at,
+            calendar_blocks.updated_at,
+            rentable_units.code AS unit_code,
+            rentable_units.display_name AS unit_display_name
+          FROM calendar_blocks
+          LEFT JOIN rentable_units ON rentable_units.id = calendar_blocks.unit_id
+          WHERE calendar_blocks.source = ?
+            AND calendar_blocks.reservation_id IS NULL
+          ORDER BY calendar_blocks.start_date ASC
+        `,
+      )
+      .bind(MANUAL_CALENDAR_BLOCK_SOURCE)
+      .all();
+
+  try {
+    const { results } = await runQuery(true);
+    return results || [];
+  } catch (error) {
+    if (!/note/i.test(error?.message || "")) {
+      throw error;
+    }
+
+    const { results } = await runQuery(false);
+    return (results || []).map((row) => ({ ...row, note: null }));
+  }
+}
+
+export async function createManualCalendarBlock(env, block) {
+  const db = requireDb(env);
+  const id = crypto.randomUUID();
+  const nowIso = new Date().toISOString();
+  const insert = (withNote) =>
+    db
+      .prepare(
+        `
+          INSERT INTO calendar_blocks (
+            id, unit_id, source, external_uid, reservation_id, start_date, end_date, status${withNote ? ", note" : ""}, created_at, updated_at
+          ) VALUES (?, ?, ?, NULL, NULL, ?, ?, 'active'${withNote ? ", ?" : ""}, ?, ?)
+        `,
+      )
+      .bind(
+        id,
+        block.unitId,
+        MANUAL_CALENDAR_BLOCK_SOURCE,
+        block.startDate,
+        block.endDate,
+        ...(withNote ? [block.note || null] : []),
+        nowIso,
+        nowIso,
+      )
+      .run();
+
+  try {
+    await insert(true);
+  } catch (error) {
+    if (!/note/i.test(error?.message || "")) {
+      throw error;
+    }
+
+    await insert(false);
+  }
+
+  return id;
+}
+
+export async function deleteManualCalendarBlock(env, blockId) {
+  const db = requireDb(env);
+  const result = await db
+    .prepare(
+      `
+        DELETE FROM calendar_blocks
+        WHERE id = ?
+          AND source = ?
+          AND reservation_id IS NULL
+      `,
+    )
+    .bind(blockId, MANUAL_CALENDAR_BLOCK_SOURCE)
+    .run();
+
+  return result?.meta?.changes ?? 0;
 }
 
 export async function insertSyncLog(env, log) {
@@ -1705,7 +1818,7 @@ export async function listCalendarHealthForAdmin(env) {
             SELECT COUNT(*)
             FROM calendar_blocks
             WHERE calendar_blocks.unit_id = external_calendar_sources.unit_id
-              AND calendar_blocks.source = external_calendar_sources.source_code
+              AND calendar_blocks.source = external_calendar_sources.source_code || '_' || external_calendar_sources.source_kind
               AND calendar_blocks.external_uid IS NOT NULL
               AND calendar_blocks.status IN ('active', 'confirmed')
               AND calendar_blocks.end_date >= date('now')
