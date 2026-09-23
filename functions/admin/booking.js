@@ -67,6 +67,34 @@ export function onRequestGet() {
       <div id="admin-operational-health" class="small">No data loaded yet.</div>
     </section>
     <section class="card stack" style="margin-top:18px">
+      <h2>Blocked periods (manual)</h2>
+      <p class="small">Block specific dates directly in the C&amp;C agenda — for example a period marked unavailable on Booking.com that is not present in its iCal feed. Manual blocks prevent direct bookings and are also included in the iCal export feed, so they close the same dates on the connected OTAs (Booking.com / Airbnb).</p>
+      <form id="calendar-block-form" class="stack">
+        <div class="field-row three">
+          <div class="field">
+            <label for="blockUnitId">Unit</label>
+            <select id="blockUnitId" name="unitId"></select>
+          </div>
+          <div class="field">
+            <label for="blockStartDate">Start date (first blocked night)</label>
+            <input id="blockStartDate" name="startDate" type="date" required>
+          </div>
+          <div class="field">
+            <label for="blockEndDate">End date (check-out, not blocked)</label>
+            <input id="blockEndDate" name="endDate" type="date" required>
+          </div>
+        </div>
+        <div class="field">
+          <label for="blockNote">Note (optional)</label>
+          <input id="blockNote" name="note" type="text" maxlength="200" placeholder="Fermeture Booking.com — octobre 2026">
+        </div>
+        <div class="actions">
+          <button class="btn-primary" type="submit">Block these dates</button>
+        </div>
+      </form>
+      <div id="admin-calendar-blocks" class="small">No data loaded yet.</div>
+    </section>
+    <section class="card stack" style="margin-top:18px">
       <h2>Special pricing period</h2>
       <form id="rate-period-form" class="stack">
         <div class="field-row three">
@@ -199,6 +227,9 @@ export function onRequestGet() {
         const resScope = document.getElementById('resScope');
         const resStatus = document.getElementById('resStatus');
         const resUnit = document.getElementById('resUnit');
+        const calendarBlockForm = document.getElementById('calendar-block-form');
+        const blockUnitSelect = document.getElementById('blockUnitId');
+        const manualBlocksWrap = document.getElementById('admin-calendar-blocks');
         const ratePeriodsWrap = document.getElementById('admin-rate-periods');
         const syncLogsWrap = document.getElementById('admin-sync-logs');
         const calendarHealthWrap = document.getElementById('admin-calendar-health');
@@ -484,6 +515,24 @@ export function onRequestGet() {
           }).join('');
         }
 
+        function renderManualBlocks(rows) {
+          if (!rows.length) {
+            return '<p class="small">No manual blocks yet.</p>';
+          }
+
+          const rowsHtml = rows.map((item) => (
+            '<tr>' +
+            '<td data-label="Unit">' + escapeHtml(item.unit_display_name || item.unit_code || '-') + '</td>' +
+            '<td data-label="Period">' + escapeHtml(formatAdminDate(item.start_date) + ' → ' + formatAdminDate(item.end_date)) + '</td>' +
+            '<td data-label="Note">' + escapeHtml(item.note || '-') + '</td>' +
+            '<td data-label="Created">' + escapeHtml(formatAdminDateTime(item.created_at)) + '</td>' +
+            '<td data-label=""><button type="button" class="admin-block-remove" data-id="' + escapeHtml(item.id) + '" style="padding:4px 12px;font-size:0.8rem">Remove</button></td>' +
+            '</tr>'
+          )).join('');
+
+          return '<div class="table-scroll"><table><thead><tr><th>Unit</th><th>Period</th><th>Note</th><th>Created</th><th></th></tr></thead><tbody>' + rowsHtml + '</tbody></table></div>';
+        }
+
         function getLongStayInputs() {
           return [1, 2, 3, 4].map((index) => ({
             nights: longStayForm.elements['longStayNights' + index],
@@ -538,11 +587,13 @@ export function onRequestGet() {
           try {
             const selectedRateUnitId = unitSelect.value;
             const selectedLongStayUnitId = longStayUnitSelect.value;
+            const selectedBlockUnitId = blockUnitSelect.value;
             const data = await apiFetch('GET');
             adminUnits = data.units || [];
             const unitOptions = adminUnits.map((unit) => '<option value="' + escapeHtml(unit.id) + '">' + escapeHtml(unit.display_name) + '</option>').join('');
             unitSelect.innerHTML = unitOptions;
             longStayUnitSelect.innerHTML = unitOptions;
+            blockUnitSelect.innerHTML = unitOptions;
             if (selectedRateUnitId && adminUnits.some((unit) => unit.id === selectedRateUnitId)) {
               unitSelect.value = selectedRateUnitId;
             }
@@ -550,6 +601,11 @@ export function onRequestGet() {
               longStayUnitSelect.value = selectedLongStayUnitId;
             } else if (adminUnits[0]) {
               longStayUnitSelect.value = adminUnits[0].id;
+            }
+            if (selectedBlockUnitId && adminUnits.some((unit) => unit.id === selectedBlockUnitId)) {
+              blockUnitSelect.value = selectedBlockUnitId;
+            } else if (adminUnits[0]) {
+              blockUnitSelect.value = adminUnits[0].id;
             }
             if (longStayUnitSelect.value) {
               fillLongStayForm(longStayUnitSelect.value);
@@ -576,6 +632,7 @@ export function onRequestGet() {
               ],
             );
             renderOperationalHealth(data.operationalHealth);
+            manualBlocksWrap.innerHTML = renderManualBlocks(data.manualBlocks || []);
             calendarHealthWrap.innerHTML = renderTable(
               data.calendarHealth.map((item) => ({
                 unit: item.unit_display_name,
@@ -711,6 +768,56 @@ export function onRequestGet() {
           } finally {
             longStaySubmitButton.disabled = false;
             longStaySubmitButton.textContent = 'Save long-stay discounts';
+          }
+        });
+
+        calendarBlockForm.addEventListener('submit', async (event) => {
+          event.preventDefault();
+          const submitButton = calendarBlockForm.querySelector('button[type="submit"]');
+          submitButton.disabled = true;
+          submitButton.textContent = 'Blocking…';
+          try {
+            await apiFetch('POST', {
+              action: 'create_calendar_block',
+              unitId: calendarBlockForm.elements.unitId.value,
+              startDate: calendarBlockForm.elements.startDate.value,
+              endDate: calendarBlockForm.elements.endDate.value,
+              note: calendarBlockForm.elements.note.value,
+            });
+            adminNotice.className = 'notice success';
+            adminNotice.textContent = 'Period blocked. Direct bookings are prevented and the iCal export feed now includes those dates.';
+            calendarBlockForm.reset();
+            await loadDashboard();
+          } catch (error) {
+            adminNotice.className = 'notice error';
+            adminNotice.textContent = error.message;
+          } finally {
+            submitButton.disabled = false;
+            submitButton.textContent = 'Block these dates';
+          }
+        });
+
+        manualBlocksWrap.addEventListener('click', async (event) => {
+          const removeButton = event.target.closest('.admin-block-remove');
+          if (!removeButton) {
+            return;
+          }
+          if (!window.confirm('Remove this manual block? The dates will become bookable again.')) {
+            return;
+          }
+          removeButton.disabled = true;
+          try {
+            await apiFetch('POST', {
+              action: 'delete_calendar_block',
+              blockId: removeButton.dataset.id,
+            });
+            adminNotice.className = 'notice success';
+            adminNotice.textContent = 'Manual block removed.';
+            await loadDashboard();
+          } catch (error) {
+            adminNotice.className = 'notice error';
+            adminNotice.textContent = error.message;
+            removeButton.disabled = false;
           }
         });
 

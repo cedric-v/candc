@@ -1,10 +1,13 @@
 import { hasValidAdminToken } from "../../_lib/auth.js";
 import {
+  createManualCalendarBlock,
+  deleteManualCalendarBlock,
   getReservationForEmail,
   getUnitByCode,
   insertSyncLog,
   listCalendarHealthForAdmin,
   listAdminReservations,
+  listManualCalendarBlocks,
   listOperationalJobHealth,
   listRatePeriods,
   listRecentSyncLogs,
@@ -35,7 +38,7 @@ export async function onRequestGet(context) {
       todayIso: getCurrentIsoDateInZone(getConfig(context.env).timeZone),
     };
 
-    const [units, reservations, ratePeriods, syncLogs, calendarHealth, operationalHealth] =
+    const [units, reservations, ratePeriods, syncLogs, calendarHealth, operationalHealth, manualBlocks] =
       await Promise.all([
       listUnitsForAdmin(context.env),
       listAdminReservations(context.env, reservationOptions),
@@ -43,6 +46,7 @@ export async function onRequestGet(context) {
       listRecentSyncLogs(context.env, 25),
       listCalendarHealthForAdmin(context.env),
       listOperationalJobHealth(context.env),
+      listManualCalendarBlocks(context.env),
     ]);
 
     return json({
@@ -52,6 +56,7 @@ export async function onRequestGet(context) {
       syncLogs,
       calendarHealth,
       operationalHealth,
+      manualBlocks,
     });
   } catch (error) {
     console.error("Failed to load admin dashboard:", error);
@@ -206,6 +211,69 @@ export async function onRequestPost(context) {
       }
 
       return json({ ok: true, action, wcConfirmed, refund });
+    }
+
+    if (action === "create_calendar_block") {
+      // Blocage manuel de dates depuis l'admin (ex. une période marquée
+      // indisponible sur Booking.com mais absente de son flux iCal).
+      const unitId = payload.unitId;
+
+      if (!unitId) {
+        return badRequest("unitId is required");
+      }
+
+      if (!isIsoDateString(payload.startDate) || !isIsoDateString(payload.endDate)) {
+        return badRequest("startDate and endDate must use YYYY-MM-DD");
+      }
+
+      if (payload.endDate <= payload.startDate) {
+        return badRequest("endDate must be after startDate");
+      }
+
+      const units = await listUnitsForAdmin(context.env);
+      if (!units.some((unit) => unit.id === unitId)) {
+        return badRequest("Unknown unit");
+      }
+
+      const note = typeof payload.note === "string" ? payload.note.trim().slice(0, 200) : "";
+      const blockId = await createManualCalendarBlock(context.env, {
+        unitId,
+        startDate: payload.startDate,
+        endDate: payload.endDate,
+        note,
+      });
+
+      await insertSyncLog(context.env, {
+        unitId,
+        syncType: "manual_calendar_block",
+        status: "info",
+        message: `Blocage manuel créé du ${payload.startDate} au ${payload.endDate}`,
+        payloadSummary: {
+          blockId,
+          unitId,
+          startDate: payload.startDate,
+          endDate: payload.endDate,
+          note: note || null,
+        },
+      });
+
+      return json({ ok: true, action, blockId });
+    }
+
+    if (action === "delete_calendar_block") {
+      const blockId = payload.blockId;
+
+      if (!blockId) {
+        return badRequest("blockId is required");
+      }
+
+      const changes = await deleteManualCalendarBlock(context.env, blockId);
+
+      if (!changes) {
+        return badRequest("Unknown manual calendar block");
+      }
+
+      return json({ ok: true, action, blockId });
     }
 
     if (action === "run_booking_sync") {

@@ -167,6 +167,12 @@ Si la base existe deja et doit maintenant mettre a jour l'URL iCal Booking.com d
 wrangler d1 execute candc-booking --file=./migrations/0011_update_parking_booking_ical_url.sql
 ```
 
+Si la base existe deja et doit supporter les blocages manuels de periodes depuis l'admin (colonne `note` sur `calendar_blocks`), executer aussi :
+
+```bash
+wrangler d1 execute candc-booking --file=./migrations/0015_add_manual_calendar_block_note.sql
+```
+
 ### Binding D1 obligatoire sur Cloudflare Pages
 
 Important :

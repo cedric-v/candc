@@ -75,7 +75,7 @@ Notes:
 
 - Booking.com ICS as the primary external availability source
 - Airbnb ICS also possible if an active source exists for the unit
-- ICS export of direct reservations
+- ICS export of direct reservations and active admin manual date blocks
 - SumUp for payment
 - Google Calendar optional, disabled by default
 - automatic SumUp refunds for eligible cases, with manual fallback if needed

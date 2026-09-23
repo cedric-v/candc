@@ -56,8 +56,14 @@ Important:
 Pending-payment behavior (important):
 
 - a direct booking holds its dates for `PENDING_PAYMENT_HOLD_MINUTES` (default 30) via a `pending_payment` calendar block; after expiry the reservation becomes `payment_expired` and the dates are released
-- the ICS export feed only contains confirmed stays (`confirmed`, `modified`, `refund_due`, `pending_refund`) — pending holds never block Booking.com/other OTAs
+- the ICS export feed contains confirmed stays (`confirmed`, `modified`, `refund_due`, `pending_refund`) plus active admin manual blocks — pending holds never block Booking.com/other OTAs
 - availability is re-checked before confirming any payment (SumUp webhook) and before resuming payment (`resume_payment`); a conflict leads to a refund and `conflict_refund_due` (initial) or a revert to `modified` (unpaid adjustment)
+
+Manual calendar blocks (admin):
+
+- the admin dashboard (`/admin/booking`) can block specific dates per unit (`source = 'manual'`, `status = 'active'`, `reservation_id IS NULL`) with an optional note; see `createManualCalendarBlock` / `deleteManualCalendarBlock` / `listManualCalendarBlocks` in `db.js` and the `create_calendar_block` / `delete_calendar_block` actions in `functions/api/admin/booking.js`
+- manual blocks block direct availability via `getAvailabilityConflicts` and are included in the ICS export feed (`functions/_lib/ics.js`, `functions/_lib/ics-feed.js`) so they also close the dates on Booking.com/Airbnb
+- `migrations/0015_add_manual_calendar_block_note.sql` adds the `note` column; the `db.js` helpers degrade gracefully (empty note) if it has not been applied yet
 
 WC/shower access confirmation (important):
 
@@ -106,6 +112,8 @@ When changing sync behavior, also check:
 - `functions/api/booking/sumup/webhook.js`
 - `functions/_lib/ntfy.js`
 - `functions/_lib/jobs.js`
+- `functions/_lib/ics-feed.js`
+- `functions/_lib/ics.js`
 
 ## Admin alerts and monitoring
 

@@ -1,6 +1,7 @@
 import { DEFAULT_UNITS } from "../functions/_lib/catalog.js";
 import { calculateQuoteFromResolvedUnit } from "../functions/_lib/pricing.js";
 import { buildAutomaticRefundPlan } from "../functions/_lib/refunds.js";
+import { buildReservationFeed } from "../functions/_lib/ics.js";
 import { validateBookingInput } from "../functions/_lib/validation.js";
 import { sendAdminAlert } from "../functions/_lib/alerts.js";
 import { normalizeTopicUrl } from "../functions/_lib/ntfy.js";
@@ -558,12 +559,55 @@ async function runAlertTests() {
   }
 }
 
+function runIcsFeedTests() {
+  const reservations = [
+    {
+      id: "res-1",
+      unit_code: "eco-studio",
+      check_in_date: "2026-11-10",
+      check_out_date: "2026-11-13",
+      status: "confirmed",
+    },
+  ];
+  const manualBlocks = [
+    {
+      id: "block-1",
+      unit_code: "parking-space",
+      start_date: "2026-10-12",
+      end_date: "2026-10-23",
+      note: "Fermeture Booking.com, octobre",
+    },
+  ];
+
+  const feed = buildReservationFeed(reservations, manualBlocks);
+
+  assert(feed.startsWith("BEGIN:VCALENDAR"), "ICS feed should start with VCALENDAR");
+  assert(feed.trimEnd().endsWith("END:VCALENDAR"), "ICS feed should end with END:VCALENDAR");
+  assert(feed.includes("UID:res-1@candc.ch"), "Feed should include the reservation UID");
+  assert(feed.includes("UID:manual-block-1@candc.ch"), "Feed should include the manual block UID");
+  assert(feed.includes("DTSTART;VALUE=DATE:20261110"), "Feed should include the reservation start date");
+  assert(feed.includes("DTSTART;VALUE=DATE:20261012"), "Feed should include the manual block start date");
+  assert(feed.includes("DTEND;VALUE=DATE:20261023"), "Feed should include the manual block end date");
+  assert(
+    feed.includes("DESCRIPTION:Manual calendar block: Fermeture Booking.com\\, octobre"),
+    "Manual block note should be escaped in the description",
+  );
+
+  // Sans blocages manuels, le flux doit rester valide et sans événement manuel.
+  const feedWithoutBlocks = buildReservationFeed(reservations);
+  assert(
+    !feedWithoutBlocks.includes("UID:manual-"),
+    "Feed without manual blocks should not contain manual events",
+  );
+}
+
 function main() {
   runValidationTests();
   runGuestContactValidationTests();
   runPricingTests();
   runRefundPlanTests();
   runAlertTests();
+  runIcsFeedTests();
   console.log("Booking logic tests passed.");
 }
 
