@@ -346,6 +346,7 @@ Une mini interface admin est requise.
 - voir le statut de paiement
 - modifier le statut d'une reservation si necessaire
 - creer un blocage manuel
+- supprimer un blocage manuel
 - gerer les periodes de tarification
 - relancer l'e-mail de confirmation
 - relancer l'e-mail d'arrivee
@@ -403,7 +404,7 @@ Un job planifie doit :
 
 ### Export ICS
 
-Le systeme doit exposer un flux ICS contenant les reservations directes confirmees et les blocages pertinents.
+Le systeme doit exposer un flux ICS contenant les reservations directes confirmees et les blocages manuels actifs crees depuis l'admin (par unite, avec note optionnelle). Les holds de paiement non payes en sont exclus.
 
 Exigences :
 
@@ -781,7 +782,8 @@ Le modele de donnees doit etre multi-unite.
 - `GET /api/admin/rate-periods`
 - `POST /api/admin/rate-periods`
 - `PUT /api/admin/rate-periods/:id`
-- `POST /api/admin/calendar-blocks`
+- `POST /api/admin/booking` (action `create_calendar_block`)
+- `POST /api/admin/booking` (action `delete_calendar_block`)
 - `GET /api/admin/sync-logs`
 - `POST /api/admin/emails/:reservationId/resend`
 
@@ -841,7 +843,7 @@ Frequence recommandee :
 A la creation d'une reservation directe, un bloc calendrier `pending_payment` est cree et tient les dates pendant une fenetre configurable (`PENDING_PAYMENT_HOLD_MINUTES`, defaut 30 minutes). Pendant cette fenetre :
 
 - le site bloque les memes dates pour les nouvelles reservations directes ;
-- le flux ICS sortant est limite aux reservations confirmees (les holds non payes ne bloquent PAS Booking.com / autres OTA : l'ICS n'exporte que `confirmed`, `modified`, `refund_due`, `pending_refund`) ;
+- le flux ICS sortant contient les reservations confirmees (`confirmed`, `modified`, `refund_due`, `pending_refund`) et les blocages manuels actifs crees depuis l'admin ; les holds non payes n'y figurent PAS et ne bloquent donc pas Booking.com / autres OTA ;
 - a expiration, le bloc est libere, la reservation passe en `payment_expired` et le client recoit un e-mail.
 
 ### Statuts lies au paiement

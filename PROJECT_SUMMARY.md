@@ -76,7 +76,7 @@ Important :
 - disponibilite par unite
 - tarification par unite et periodes tarifaires
 - creation de reservations `pending_payment`
-- flux ICS sortant par unite
+- flux ICS sortant par unite (reservations confirmees + blocages manuels admin)
 - integration SumUp active
 - import Booking.com ICS active
 - import Airbnb ICS egalement possible si une source active existe pour l'unite
@@ -93,6 +93,7 @@ Important :
 - remboursements automatiques SumUp pour les annulations flexibles et les diminutions de total, avec fallback manuel si la couverture transactionnelle est insuffisante
 - tableau de sante admin pour les sources calendaires et les jobs operationnels
 - validation OTA manuelle via l'admin pour verifier import et export ICS
+- blocages manuels de dates par unite depuis l'admin (creation/suppression avec note optionnelle), actifs immediatement pour la reservation directe et exportes dans le flux ICS sortant
 - couche agent-ready avec `llms.txt`, `site-context.json` et WebMCP sur les parcours publics de reservation parking et studio
 - logique d'e-mail d'arrivee adaptee aux reservations de derniere minute : si la reservation est confirmee le jour meme apres 8h locale, l'e-mail d'arrivee part immediatement au lieu d'attendre le cron du lendemain
 

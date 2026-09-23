@@ -276,10 +276,11 @@ Le scaffold couvre :
 - calcul des prix
 - remises long sejour unifiees par unite, avec jusqu'a `4` paliers configurables dans l'admin
 - gestion des periodes tarifaires par unite
+- blocages manuels de dates par unite depuis l'admin (crees/supprimes avec note optionnelle), bloquant la reservation directe et exportes dans le flux ICS sortant
 - creation d'une reservation `pending_payment`
 - blocage calendrier associe a une unite pendant la fenetre de hold (configurable via `PENDING_PAYMENT_HOLD_MINUTES`)
 - generation d'un token de gestion
-- export ICS de base par unite, limite aux reservations confirmees (les holds non payes ne bloquent pas les OTA)
+- export ICS par unite : reservations confirmees + blocages manuels admin actifs (les holds non payes ne bloquent pas les OTA)
 - creation d'un Hosted Checkout SumUp si les credentials sont configures
 - webhook SumUp pour confirmer ou liberer la reservation selon le statut de paiement, avec re-verification de la disponibilite avant confirmation (anti-double-reservation : si conflit, remboursement et statut `conflict_refund_due` ou revert d'ajustement)
 - reprise de paiement (`resume_payment`) avec re-verification de la disponibilite et renouvellement de la fenetre de hold
