@@ -1,5 +1,7 @@
+import { getConfig } from "./env.js";
 import { fetchIcsText, parseIcsEvents } from "./ics-import.js";
-import { externalBlockSourceTag, getImportCalendarSources } from "./db.js";
+import { externalBlockSourceTag, getImportCalendarSources, insertSyncLog } from "./db.js";
+import { sendAdminAlert } from "./alerts.js";
 
 // Vérification "juste-à-temps" des calendriers OTA (Booking.com, Airbnb, ...).
 //
@@ -22,6 +24,16 @@ import { externalBlockSourceTag, getImportCalendarSources } from "./db.js";
 // dernier recours.
 
 const DEFAULT_TIMEOUT_MS = 5000;
+
+// Fuseau des nuits (TIMEZONE, ex. Europe/Zurich). Résolu défensivement : la
+// relecture OTA ne doit JAMAIS échouer sur la configuration.
+function safeTimeZone(env) {
+  try {
+    return getConfig(env).timeZone;
+  } catch {
+    return undefined;
+  }
+}
 
 export function rangesOverlap(startA, endA, startB, endB) {
   return startA < endB && endA > startB;
@@ -61,7 +73,7 @@ export async function findLiveExternalConflicts(
 
       try {
         const body = await fetchIcsText(source.import_url, { timeoutMs });
-        const conflictsForSource = parseIcsEvents(body)
+        const conflictsForSource = parseIcsEvents(body, { timeZone: safeTimeZone(env) })
           .filter((event) => rangesOverlap(event.startDate, event.endDate, startDate, endDate))
           .map((event) => ({
             id: null,
@@ -92,4 +104,69 @@ export async function findLiveExternalConflicts(
   }
 
   return { conflicts, checkedSources, errors };
+}
+
+// Observabilité du contrôle juste-à-temps.
+//  - conflit détecté alors que la DB ne le voyait pas : c'est exactement la
+//    fenêtre de synchro qui cause les surbookings → l'hôte doit le savoir ;
+//  - mode dégradé (aucune source vérifiable) : on a vendu / confirmé sans
+//    pouvoir croiser les OTA → signalement (dédupliqué côté `sendAdminAlert`).
+// En mode sain, ne fait rien.
+export async function reportLiveOtaCheck(env, { unitCode, startDate, endDate, result }) {
+  const conflicts = result?.conflicts || [];
+  const errors = result?.errors || [];
+  const checkedSources = result?.checkedSources || 0;
+
+  try {
+    if (conflicts.length > 0) {
+      const lines = conflicts.map(
+        (item) => `- ${item.source} ${item.start_date} → ${item.end_date}`,
+      );
+      await insertSyncLog(env, {
+        unitId: conflicts[0]?.unit_id || null,
+        syncType: "ota_live_conflict",
+        status: "warning",
+        message: `Live OTA check blocked ${unitCode} ${startDate} → ${endDate} before the next ICS sync`,
+        payloadSummary: { unitCode, startDate, endDate, conflicts },
+      });
+      await sendAdminAlert(env, {
+        key: `ota_live_conflict:${unitCode}`,
+        subject: `⚠️ Surbooking évité sur ${unitCode}`,
+        message:
+          `Une réservation ${startDate} → ${endDate} a été refusée sur ${unitCode} ` +
+          `car une OTA venait de vendre ces dates (bloc pas encore importé par le cron).\n\n` +
+          `${lines.join("\n")}\n\n` +
+          "Le client n'a pas été facturé. Si le bloc OTA est un reflet obsolète " +
+          "d'une de vos réservations annulées, rouvrir les dates sur l'OTA concernée.",
+        tags: "warning",
+        priority: "high",
+      });
+      return { reported: "conflict" };
+    }
+
+    if (checkedSources === 0 && errors.length > 0) {
+      await insertSyncLog(env, {
+        unitId: null,
+        syncType: "ota_live_check_degraded",
+        status: "warning",
+        message: `Live OTA check could not verify any source for ${unitCode} ${startDate} → ${endDate}`,
+        payloadSummary: { unitCode, startDate, endDate, errors },
+      });
+      await sendAdminAlert(env, {
+        key: `ota_live_check_degraded:${unitCode}`,
+        subject: `⚠️ Contrôle OTA live indisponible (${unitCode})`,
+        message:
+          `Aucun flux OTA n'a pu être relu pour ${unitCode} (${startDate} → ${endDate}). ` +
+          `Le contrôle n'a reposé que sur la base locale, qui peut être à jour 20 min en retard.\n\n` +
+          `Erreurs : ${errors.map((item) => `${item.source || "sources"}: ${item.error}`).join(", ")}`,
+        tags: "warning",
+      });
+      return { reported: "degraded" };
+    }
+
+    return { reported: "none" };
+  } catch (error) {
+    // L'observabilité ne doit jamais faire échouer la réservation.
+    return { reported: "failed", error: error.message };
+  }
 }

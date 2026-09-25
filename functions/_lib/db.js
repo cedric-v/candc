@@ -646,6 +646,29 @@ export async function findExternalDirectOverlapsForUnit(env, unitId) {
   return results || [];
 }
 
+// Nombre de blocages OTA importés à venir pour une source donnée. Sert à
+// détecter un flux qui devient subitement vide alors qu'il bloquait des nuits
+// (feed tronqué ou réinitialisé côté OTA) : les dates ne doivent pas être
+// ré-ouvertes en silence.
+export async function countFutureExternalBlocks(env, unitId, sourceTag, todayIso) {
+  const db = requireDb(env);
+  const row = await db
+    .prepare(
+      `
+        SELECT COUNT(*) AS block_count
+        FROM calendar_blocks
+        WHERE unit_id IS ?
+          AND reservation_id IS NULL
+          AND source = ?
+          AND end_date > ?
+      `,
+    )
+    .bind(unitId, sourceTag, todayIso)
+    .first();
+
+  return Number(row?.block_count || 0);
+}
+
 export async function updateCalendarSourceSync(env, sourceId, syncStatus) {
   const db = requireDb(env);
   const nowIso = new Date().toISOString();

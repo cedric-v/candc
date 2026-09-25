@@ -1,6 +1,8 @@
 import {
   anonymizeExpiredGuestSensitiveData,
+  countFutureExternalBlocks,
   createManageToken,
+  externalBlockSourceTag,
   findExternalDirectOverlapsForUnit,
   getArrivalReservationsForDate,
   getDepartureReservationsForDate,
@@ -66,6 +68,8 @@ function buildValidationResultStatus(results) {
 }
 
 export async function runBookingIcsSync(env, unitCode = null) {
+  const config = getConfig(env);
+  const todayIso = getCurrentIsoDateInZone(config.timeZone);
   // Toutes les OTA actives (booking, airbnb, ...) : source-agnostique.
   const sources = await getImportCalendarSources(env, null, unitCode);
   const results = [];
@@ -96,10 +100,48 @@ export async function runBookingIcsSync(env, unitCode = null) {
     }
 
     try {
+      const futureBlocksBefore = await countFutureExternalBlocks(
+        env,
+        sourceRecord.unit_id,
+        externalBlockSourceTag(sourceRecord),
+        todayIso,
+      );
+
       const icsText = await fetchIcs(importUrl);
-      const events = parseIcsEvents(icsText);
+      const events = parseIcsEvents(icsText, { timeZone: config.timeZone });
 
       await replaceExternalCalendarBlocks(env, sourceRecord, events);
+
+      // Un flux qui devient vide alors qu'il bloquait des nuits est suspect
+      // (feed tronqué / réinitialisé côté OTA) : les dates viennent d'être
+      // ré-ouvertes à la vente, l'hôte doit le savoir immédiatement.
+      if (events.length === 0 && futureBlocksBefore > 0) {
+        await insertSyncLog(env, {
+          unitId: sourceRecord.unit_id,
+          syncType: "ota_feed_emptied",
+          status: "warning",
+          message: `${sourceRecord.source_code} feed for ${sourceRecord.unit_code} returned 0 events while ${futureBlocksBefore} future block(s) were stored`,
+          payloadSummary: {
+            unitCode: sourceRecord.unit_code,
+            sourceId: sourceRecord.id,
+            previousFutureBlocks: futureBlocksBefore,
+          },
+        });
+        try {
+          await sendAdminAlert(env, {
+            key: `ota_feed_emptied:${sourceRecord.unit_code}:${sourceRecord.source_code}`,
+            subject: `⚠️ Flux ${sourceRecord.source_code} (${sourceRecord.unit_code}) vide`,
+            message:
+              `Le flux ICS ${sourceRecord.source_code} de ${sourceRecord.unit_code} a renvoyé 0 événement ` +
+              `alors que ${futureBlocksBefore} blocage(s) à venir étaient stockés. ` +
+              `Les dates ont été ré-ouvertes à la vente : vérifier le calendrier OTA et re-bloquer si nécessaire.`,
+            tags: "warning",
+          });
+        } catch {
+          // L'alerte ne doit jamais faire échouer la synchronisation.
+        }
+      }
+
       await updateCalendarSourceSync(env, sourceRecord.id, {
         unitId: sourceRecord.unit_id,
         syncType,
@@ -359,7 +401,7 @@ export async function validateCalendarSources(env, unitCode = null) {
     if (sourceRecord.import_url) {
       try {
         const importIcs = await fetchIcs(sourceRecord.import_url);
-        result.importEventCount = parseIcsEvents(importIcs).length;
+        result.importEventCount = parseIcsEvents(importIcs, { timeZone: config.timeZone }).length;
         result.importStatus = "success";
       } catch (error) {
         result.importStatus = "failed";
@@ -377,7 +419,7 @@ export async function validateCalendarSources(env, unitCode = null) {
       result.exportUrl = `${config.publicBaseUrl}/api/booking/ics/${redactSecret(exportFeedToken)}`;
       try {
         const exportIcs = await fetchIcs(exportUrl);
-        result.exportEventCount = parseIcsEvents(exportIcs).length;
+        result.exportEventCount = parseIcsEvents(exportIcs, { timeZone: config.timeZone }).length;
         result.exportStatus = "success";
       } catch (error) {
         result.exportStatus = "failed";

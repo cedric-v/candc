@@ -68,7 +68,12 @@ Anti-surbooking (important):
 - after each ICS import, `findExternalDirectOverlapsForUnit` (db.js) detects an OTA block overlapping a confirmed direct stay and `runBookingIcsSync` sends a deduped `overbooking_detected:<unit>` admin alert (this "us -> OTA" direction cannot be prevented by iCal alone, only surfaced)
 - the SumUp webhook conflict path is idempotent (`refundAlreadyRecorded`): a redelivered webhook never refunds twice nor re-sends cancellation emails
 - the outbound ICS feed now includes `pending_adjustment_payment` stays (new dates already committed) so an unpaid date-change surcharge never reopens the dates on the OTAs; initial `pending_payment` holds stay excluded on purpose
-- known residual cases: cancel-then-rebook (the OTA may still mirror the released block until its next pull → temporary false unavailability) and datetime ICS values (`parseIcsDate` falls back on UTC date), both inherent to iCal
+- known residual case (inherent to iCal): cancel-then-rebook — the OTA may still mirror a released block until its next pull → temporary false unavailability (lost revenue, never overbooking)
+- `parseIcsDate` resolves `DATE-TIME` values to the **property-local** date (`localIsoDateFromInstant`, `TIMEZONE`), so a closure at 22:30Z cannot shift a whole block one night; `VALUE=DATE` is untouched
+- if an OTA feed returns 0 events while future blocks were stored, the dates are reopened **and** a `ota_feed_emptied` warning + admin alert is emitted (a truncated feed must not reopen the calendar silently)
+- `reportLiveOtaCheck` (ota-availability.js) surfaces the near-misses: `ota_live_conflict` when the live check blocks what the DB still allowed (the exact incident class), `ota_live_check_degraded` when no source could be verified at all (booking was sold on DB-only data)
+- `reservations.js` re-checks availability **after** inserting the pending hold (excluding its own block) and cancels the loser: closes the direct/direct TOCTOU race that no DB constraint prevents
+- deliberately NOT auto-allowing a live conflict that matches a recently released direct block: guessing "stale mirror" would re-open the overbooking hole; the 409 + `ota_live_conflict` alert let the host reopen manually on the OTA instead
 
 Manual calendar blocks (admin):
 

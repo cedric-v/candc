@@ -604,6 +604,32 @@ async function runOtaAvailabilityTests() {
     "A truncated feed (no END:VCALENDAR) must NOT be accepted",
   );
 
+  // Date-time ICS : la date retenue est la date LIEU (Europe/Zurich), pas la
+  // date UTC — sinon un bloc à 22:30Z glisse sur la veille et décale le bloc.
+  const dateTimeFeed = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "BEGIN:VEVENT",
+    "DTSTART:20260925T223000Z",
+    "DTEND:20260926T223000Z",
+    "UID:night-close@ota.example",
+    "SUMMARY:CLOSED - Not available",
+    "END:VEVENT",
+    "END:VCALENDAR",
+  ].join("\r\n");
+
+  const localEvents = parseIcsEvents(dateTimeFeed, { timeZone: "Europe/Zurich" });
+  assertEqual(localEvents[0].startDate, "2026-09-26", "Date-time values must resolve to the property-local date");
+  assertEqual(localEvents[0].endDate, "2026-09-27", "Date-time end must resolve to the property-local date");
+
+  const utcEvents = parseIcsEvents(dateTimeFeed);
+  assertEqual(utcEvents[0].startDate, "2026-09-25", "Without a timezone, the UTC date is kept");
+
+  const floatingEvents = parseIcsEvents(dateTimeFeed.replaceAll("T223000Z", "T223000"), {
+    timeZone: "Europe/Zurich",
+  });
+  assertEqual(floatingEvents[0].startDate, "2026-09-25", "Floating date-times keep their stated date");
+
   // Contrôle OTA en direct : source-agnostique (booking, airbnb, vrbo, ...) +
   // fail-open sur toutes les erreurs (réseau, corps invalide, base).
   const sources = [
@@ -637,7 +663,11 @@ async function runOtaAvailabilityTests() {
       return { ok: true, text: async () => vrboFeed };
     };
 
-    const env = { DB: makeImportSourcesMockDb(sources) };
+    const env = {
+      PUBLIC_BASE_URL: "https://candc.ch",
+      TIMEZONE: "Europe/Zurich",
+      DB: makeImportSourcesMockDb(sources),
+    };
     const live = await findLiveExternalConflicts(env, "unit-x", "2026-09-25", "2026-09-26");
     assertEqual(live.checkedSources, 3, "Every active ICS source must be checked (source-agnostic)");
     assertEqual(live.errors.length, 0, "Healthy sources must not report errors");

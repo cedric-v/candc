@@ -20,7 +20,7 @@ import { isGoogleCalendarConfigured } from "../../../_lib/google-calendar.js";
 import { badRequest, json, serverError, unauthorized } from "../../../_lib/http.js";
 import { getCheckout, mapCheckoutStatus, verifyWebhookSignature } from "../../../_lib/sumup.js";
 import { attemptAutomaticRefund } from "../../../_lib/refunds.js";
-import { findLiveExternalConflicts } from "../../../_lib/ota-availability.js";
+import { findLiveExternalConflicts, reportLiveOtaCheck } from "../../../_lib/ota-availability.js";
 import { getConfig } from "../../../_lib/env.js";
 import { sendAdminAlert } from "../../../_lib/alerts.js";
 
@@ -172,11 +172,12 @@ export async function onRequestPost(context) {
         // reflété par l'OTA — on le détecterait lui-même comme conflit (cas
         // aussi vrai pour les ajustements, dont le séjour est déjà confirmé).
         let liveConflicts = [];
+        let liveChecks = null;
         if (
           !isAdjustmentPayment &&
           !EXPORTED_RESERVATION_STATUSES.has(fullReservation.status)
         ) {
-          const liveChecks = await findLiveExternalConflicts(
+          liveChecks = await findLiveExternalConflicts(
             context.env,
             fullReservation.unit_code,
             fullReservation.check_in_date,
@@ -196,6 +197,17 @@ export async function onRequestPost(context) {
             conflicts.length > 0 ? conflicts : liveConflicts,
           );
           return new Response(null, { status: 204 });
+        }
+
+        // Aucun conflit : signalement si la relecture n'a pu vérifier aucune
+        // source (on vient de confirmer sans pouvoir croiser les OTA).
+        if (liveChecks) {
+          await reportLiveOtaCheck(context.env, {
+            unitCode: fullReservation.unit_code,
+            startDate: fullReservation.check_in_date,
+            endDate: fullReservation.check_out_date,
+            result: liveChecks,
+          });
         }
       }
     }

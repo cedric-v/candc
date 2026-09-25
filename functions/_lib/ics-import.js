@@ -1,4 +1,4 @@
-import { formatIsoDate } from "./date.js";
+import { localIsoDateFromInstant } from "./date.js";
 
 // Validation d'un corps ICS : on exige un vrai document VCALENDAR (début + fin)
 // et pas seulement la présence d'une sous-chaîne. Une page d'erreur HTML, un
@@ -87,28 +87,38 @@ function parseContentLine(line) {
   };
 }
 
-function parseIcsDate(rawValue) {
+function parseIcsDate(rawValue, timeZone) {
   if (!rawValue) {
     return null;
   }
 
+  // Date pure (VALUE=DATE) : déjà une date calendaire, sans fuseau.
   if (/^\d{8}$/.test(rawValue)) {
     return `${rawValue.slice(0, 4)}-${rawValue.slice(4, 6)}-${rawValue.slice(6, 8)}`;
   }
 
-  if (/^\d{8}T\d{6}Z$/.test(rawValue)) {
-    return rawValue.slice(0, 8).replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3");
+  // Date-time « flottante » (sans fuseau) : la date annoncée est la date locale.
+  if (/^\d{8}T\d{6}$/.test(rawValue)) {
+    return `${rawValue.slice(0, 4)}-${rawValue.slice(4, 6)}-${rawValue.slice(6, 8)}`;
   }
 
-  const date = new Date(rawValue);
-  if (!Number.isNaN(date.getTime())) {
-    return formatIsoDate(date);
+  const dateTime = /^\d{8}T\d{6}Z$/.test(rawValue)
+    ? new Date(
+        `${rawValue.slice(0, 4)}-${rawValue.slice(4, 6)}-${rawValue.slice(6, 8)}T${rawValue.slice(9, 11)}:${rawValue.slice(11, 13)}:${rawValue.slice(13, 15)}Z`,
+      )
+    : new Date(rawValue);
+
+  if (!Number.isNaN(dateTime.getTime())) {
+    // Date-time avec fuseau : on retient la date calendaire LIEU et non la
+    // date UTC, sinon une fermeture à 22:30Z glisse sur la veille et décale
+    // tout le bloc d'une nuit.
+    return localIsoDateFromInstant(dateTime, timeZone);
   }
 
   return null;
 }
 
-export function parseIcsEvents(icsText) {
+export function parseIcsEvents(icsText, { timeZone } = {}) {
   const lines = unfoldIcsLines(icsText);
   const events = [];
   let currentEvent = null;
@@ -151,9 +161,9 @@ export function parseIcsEvents(icsText) {
     } else if (content.name === "DESCRIPTION") {
       currentEvent.description = content.value;
     } else if (content.name === "DTSTART") {
-      currentEvent.startDate = parseIcsDate(content.value);
+      currentEvent.startDate = parseIcsDate(content.value, timeZone);
     } else if (content.name === "DTEND") {
-      currentEvent.endDate = parseIcsDate(content.value);
+      currentEvent.endDate = parseIcsDate(content.value, timeZone);
     }
   }
 
