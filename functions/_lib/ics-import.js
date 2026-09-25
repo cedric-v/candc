@@ -1,5 +1,53 @@
 import { formatIsoDate } from "./date.js";
 
+// Validation d'un corps ICS : on exige un vrai document VCALENDAR (début + fin)
+// et pas seulement la présence d'une sous-chaîne. Une page d'erreur HTML, un
+// portail captif ou une réponse tronquée ne doivent jamais être interprétés
+// comme « un calendrier vide », sinon les blocages OTA déjà importés seraient
+// supprimés et les dates rouvertes à la vente.
+export function isIcsCalendarDocument(body) {
+  if (typeof body !== "string" || !body.trim()) {
+    return false;
+  }
+
+  const head = body.replace(/^\uFEFF/, "").trimStart();
+  return head.startsWith("BEGIN:VCALENDAR") && head.includes("END:VCALENDAR");
+}
+
+// Téléchargement d'un flux ICS avec timeout : partagé par le cron d'import et
+// par la relecture « juste-à-temps » des OTA.
+export async function fetchIcsText(url, { timeoutMs = 5000, init = {} } = {}) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      cache: "no-store",
+      ...init,
+      headers: {
+        accept: "text/calendar,text/plain;q=0.9,*/*;q=0.8",
+        ...(init.headers || {}),
+      },
+      signal: controller.signal,
+    });
+
+    if (!response.ok) {
+      throw new Error(`ics_fetch_failed:${response.status}`);
+    }
+
+    const body = await response.text();
+
+    if (!isIcsCalendarDocument(body)) {
+      throw new Error("ics_invalid_body");
+    }
+
+    return body;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 function unfoldIcsLines(icsText) {
   const rawLines = icsText.replace(/\r\n/g, "\n").split("\n");
   const lines = [];

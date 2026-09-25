@@ -59,6 +59,17 @@ Pending-payment behavior (important):
 - the ICS export feed contains confirmed stays (`confirmed`, `modified`, `refund_due`, `pending_refund`) plus active admin manual blocks — pending holds never block Booking.com/other OTAs
 - availability is re-checked before confirming any payment (SumUp webhook) and before resuming payment (`resume_payment`); a conflict leads to a refund and `conflict_refund_due` (initial) or a revert to `modified` (unpaid adjustment)
 
+Anti-surbooking (important):
+
+- `functions/_lib/ota-availability.js` (`findLiveExternalConflicts`) re-reads the **live** OTA ICS feeds on reservation creation, before payment confirmation (initial **and** adjustment) and before resuming payment, because `calendar_blocks` can be up to 20 min stale (cron interval). Total fail-open: network/parse/DB errors land in `errors` and never block a booking nor 500 the SumUp webhook (that would strand a paid, unconfirmed reservation)
+- source-agnostic by design: every active `external_calendar_sources` row with `source_kind = 'ics'` is covered (booking, airbnb, vrbo, ...). `getImportCalendarSources(env, null, unitCode)` is the single list — never hardcode OTA names at call sites; a future non-ICS source (API) must provide its own conflict resolver
+- the live check is skipped for stays that are (or were) already confirmed: they are in the export feed and may be mirrored back by the OTA, which would look like a self-conflict. Date changes therefore stay DB-only (the adjustment payment re-check uses the DB)
+- ICS import validates the body with `isIcsCalendarDocument` (shared `fetchIcsText` in `ics-import.js`): no full `BEGIN:VCALENDAR`…`END:VCALENDAR` -> the sync fails WITHOUT deleting existing OTA blocks (an HTML/truncated response must never open dates)
+- after each ICS import, `findExternalDirectOverlapsForUnit` (db.js) detects an OTA block overlapping a confirmed direct stay and `runBookingIcsSync` sends a deduped `overbooking_detected:<unit>` admin alert (this "us -> OTA" direction cannot be prevented by iCal alone, only surfaced)
+- the SumUp webhook conflict path is idempotent (`refundAlreadyRecorded`): a redelivered webhook never refunds twice nor re-sends cancellation emails
+- the outbound ICS feed now includes `pending_adjustment_payment` stays (new dates already committed) so an unpaid date-change surcharge never reopens the dates on the OTAs; initial `pending_payment` holds stay excluded on purpose
+- known residual cases: cancel-then-rebook (the OTA may still mirror the released block until its next pull → temporary false unavailability) and datetime ICS values (`parseIcsDate` falls back on UTC date), both inherent to iCal
+
 Manual calendar blocks (admin):
 
 - the admin dashboard (`/admin/booking`) can block specific dates per unit (`source = 'manual'`, `status = 'active'`, `reservation_id IS NULL`) with an optional note; see `createManualCalendarBlock` / `deleteManualCalendarBlock` / `listManualCalendarBlocks` in `db.js` and the `create_calendar_block` / `delete_calendar_block` actions in `functions/api/admin/booking.js`

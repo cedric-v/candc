@@ -14,6 +14,7 @@ import { generateOpaqueToken, sha256Hex } from "../../_lib/security.js";
 import { sendReservationEmail, sendReservationNtfy, sendNewBookingAdminEmail } from "../../_lib/booking-ops.js";
 import { createHostedCheckout, isSumUpConfigured } from "../../_lib/sumup.js";
 import { normalizeBookingInput, validateBookingInput } from "../../_lib/validation.js";
+import { findLiveExternalConflicts } from "../../_lib/ota-availability.js";
 
 export async function onRequestPost(context) {
   try {
@@ -47,6 +48,20 @@ export async function onRequestPost(context) {
 
     if (conflicts.length > 0) {
       return conflict("Selected dates are no longer available", conflicts);
+    }
+
+    // Le contrôle ci-dessus ne voit que les blocs importés par le dernier cron
+    // (toutes les 20 min). On relit les flux OTA en direct pour fermer la
+    // fenêtre entre la vente sur Booking.com / Airbnb et son import.
+    const liveChecks = await findLiveExternalConflicts(
+      context.env,
+      unit.code,
+      payload.checkInDate,
+      payload.checkOutDate,
+    );
+
+    if (liveChecks.conflicts.length > 0) {
+      return conflict("Selected dates are no longer available", liveChecks.conflicts);
     }
 
     const config = getConfig(context.env);

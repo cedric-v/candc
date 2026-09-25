@@ -1,6 +1,7 @@
 import {
   anonymizeExpiredGuestSensitiveData,
   createManageToken,
+  findExternalDirectOverlapsForUnit,
   getArrivalReservationsForDate,
   getDepartureReservationsForDate,
   getImportCalendarSources,
@@ -13,7 +14,7 @@ import {
 import { getCurrentIsoDateInZone } from "./date.js";
 import { getConfig } from "./env.js";
 import { sendReservationEmail } from "./booking-ops.js";
-import { parseIcsEvents } from "./ics-import.js";
+import { fetchIcsText, parseIcsEvents } from "./ics-import.js";
 import { sendAdminAlert } from "./alerts.js";
 
 function redactSecret(value, visibleChars = 6) {
@@ -42,18 +43,8 @@ function sanitizeCalendarUrl(value) {
 }
 
 async function fetchIcs(importUrl) {
-  const response = await fetch(importUrl, {
-    method: "GET",
-    headers: {
-      accept: "text/calendar,text/plain;q=0.9,*/*;q=0.8",
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error(`ics_fetch_failed:${response.status}`);
-  }
-
-  return response.text();
+  // Timeout + validation stricte du corps : voir `fetchIcsText` (ics-import.js).
+  return fetchIcsText(importUrl, { timeoutMs: 15000 });
 }
 
 function buildValidationResultStatus(results) {
@@ -75,10 +66,10 @@ function buildValidationResultStatus(results) {
 }
 
 export async function runBookingIcsSync(env, unitCode = null) {
-  const bookingSources = await getImportCalendarSources(env, "booking", unitCode);
-  const airbnbSources = await getImportCalendarSources(env, "airbnb", unitCode);
-  const sources = [...bookingSources, ...airbnbSources];
+  // Toutes les OTA actives (booking, airbnb, ...) : source-agnostique.
+  const sources = await getImportCalendarSources(env, null, unitCode);
   const results = [];
+  const syncedUnitIds = new Map();
 
   for (const sourceRecord of sources) {
     const importUrl = sourceRecord.import_url || null;
@@ -126,6 +117,10 @@ export async function runBookingIcsSync(env, unitCode = null) {
         status: "success",
         importedEvents: events.length,
       });
+      syncedUnitIds.set(
+        sourceRecord.unit_id,
+        sourceRecord.unit_code || sourceRecord.unit_id,
+      );
     } catch (error) {
       await insertSyncLog(env, {
         unitId: sourceRecord.unit_id,
@@ -146,14 +141,53 @@ export async function runBookingIcsSync(env, unitCode = null) {
     }
   }
 
+  // Rapprochement après import : un bloc OTA fraîchement importé peut
+  // recouvrir une réservation directe déjà confirmée (l'OTA n'avait pas encore
+  // repris notre flux d'export). On alerte l'hôte immédiatement plutôt que de
+  // laisser le surbooking être découvert à l'arrivée du client.
+  const overbookings = [];
+  for (const [syncedUnitId, syncedUnitCode] of syncedUnitIds.entries()) {
+    try {
+      const overlaps = await findExternalDirectOverlapsForUnit(env, syncedUnitId);
+      if (overlaps.length > 0) {
+        overbookings.push({ unitCode: syncedUnitCode, overlaps });
+      }
+    } catch (error) {
+      console.error(`Overbooking reconciliation failed for ${syncedUnitCode}:`, error);
+    }
+  }
+
+  for (const { unitCode: conflictingUnitCode, overlaps } of overbookings) {
+    const lines = overlaps.map(
+      (item) =>
+        `- ${item.external_source} ${item.external_start_date} → ${item.external_end_date} ` +
+        `vs ${item.public_reference} ${item.check_in_date} → ${item.check_out_date} ` +
+        `(${item.guest_first_name} ${item.guest_last_name})`,
+    );
+    try {
+      await sendAdminAlert(env, {
+        key: `overbooking_detected:${conflictingUnitCode}`,
+        subject: `⚠️ Surbooking détecté sur ${conflictingUnitCode}`,
+        message: `Un calendrier OTA et une réservation directe se chevauchent sur l'unité "${conflictingUnitCode}".\n\n` +
+          `${lines.join("\n")}\n\n` +
+          "Vérifier le calendrier admin et contacter le voyageur concerné (relogement / annulation).",
+        tags: "warning",
+        priority: "urgent",
+      });
+    } catch (error) {
+      console.error("Failed to send overbooking alert:", error);
+    }
+  }
+
   await insertSyncLog(env, {
     unitId: null,
     syncType: "calendar_sync_job",
     status: buildValidationResultStatus(results),
-    message: `Processed ${results.length} active OTA calendar source(s)`,
+    message: `Processed ${results.length} active OTA calendar source(s)${overbookings.length > 0 ? ` — ${overbookings.length} overbooking(s) detected` : ""}`,
     payloadSummary: {
       unitCode: unitCode || null,
       results,
+      overbookings,
     },
   });
 
@@ -304,9 +338,7 @@ export async function runReviewRequestEmails(env, targetDate = null) {
 }
 
 export async function validateCalendarSources(env, unitCode = null) {
-  const bookingSources = await getImportCalendarSources(env, "booking", unitCode);
-  const airbnbSources = await getImportCalendarSources(env, "airbnb", unitCode);
-  const sources = [...bookingSources, ...airbnbSources];
+  const sources = await getImportCalendarSources(env, null, unitCode);
   const config = getConfig(env);
   const exportChecksSeen = new Set();
   const results = [];
