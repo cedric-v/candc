@@ -94,6 +94,7 @@ Important :
 - tableau de sante admin pour les sources calendaires et les jobs operationnels
 - validation OTA manuelle via l'admin pour verifier import et export ICS
 - blocages manuels de dates par unite depuis l'admin (creation/suppression avec note optionnelle), actifs immediatement pour la reservation directe et exportes dans le flux ICS sortant
+- protection anti-surbooking : relecture en direct de tous les flux OTA (Booking, Airbnb, ...) aux moments critiques — creation, confirmation de paiement initial ET d ajustement, reprise de paiement — controle post-insertion contre la course entre deux reservations directes, et alertes admin dedupliquees `overbooking_detected` (chevauchement apres import), `ota_live_conflict` (quasi-surbooking bloque hors synchro), `ota_live_check_degraded` (aucune OTA verifiable) et `ota_feed_emptied` (flux OTA vide alors que des blocages existaient)
 - couche agent-ready avec `llms.txt`, `site-context.json` et WebMCP sur les parcours publics de reservation parking et studio
 - logique d'e-mail d'arrivee adaptee aux reservations de derniere minute : si la reservation est confirmee le jour meme apres 8h locale, l'e-mail d'arrivee part immediatement au lieu d'attendre le cron du lendemain
 
@@ -149,7 +150,7 @@ Le back-office admin n'est pas expose comme surface WebMCP publique.
 ## Ce qui manque encore
 
 - reactivation eventuelle de Google Calendar avec credentials finalises
-- observation continue en production des flux OTA reels, en particulier si un fournisseur renvoie un ICS vide
+- observation des flux OTA reels en production : un flux vide est desormais signale (`ota_feed_emptied`), reste a alerter sur les comptages importes incoherents et sur les sources qui ne repondent plus pendant plusieurs cycles
 
 ## Fichiers de reference
 

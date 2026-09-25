@@ -283,6 +283,16 @@ Le scaffold couvre :
 - export ICS par unite : reservations confirmees + blocages manuels admin actifs (les holds non payes ne bloquent pas les OTA)
 - creation d'un Hosted Checkout SumUp si les credentials sont configures
 - webhook SumUp pour confirmer ou liberer la reservation selon le statut de paiement, avec re-verification de la disponibilite avant confirmation (anti-double-reservation : si conflit, remboursement et statut `conflict_refund_due` ou revert d'ajustement)
+- re-verification "juste-a-temps" des flux OTA (toutes les sources ICS actives : booking, airbnb, vrbo, ...) a la creation d'une reservation, a la confirmation du paiement (initial ET complement d'ajustement) et a la reprise de paiement, en plus de la table `calendar_blocks` : ferme la fenetre de 20 min entre la vente OTA et son import ICS. Fail-open total (reseau, corps invalide, base) : ces erreurs ne bloquent jamais une reservation ni ne font echouer le webhook SumUp. Les sejours deja confirmes sont exclus de la relecture live (deja dans le flux d'export, ils peuvent etre re-miroites par l'OTA : la modification de dates reste donc sur le controle DB seul)
+- sources de calendrier source-agnostiques : `getImportCalendarSources(env, null, unitCode)` liste toutes les sources ICS actives ; ne jamais coder en dur les noms d'OTA dans les appelants (une source future non-ICS devra fournir son propre resolveur de conflits)
+- validation du corps ICS (`isIcsCalendarDocument`, fetch partage `fetchIcsText`) : une reponse non-calendaire (page d'erreur HTML, flux tronque) ne supprime plus les blocages OTA existants
+- rapprochement apres import : alerte admin (e-mail + ntfy) si un bloc OTA chevauche une reservation directe confirmee ("us -> OTA" non preventable par iCal seul, seulement signale)
+- webhook SumUp idempotent sur les conflits (`refundAlreadyRecorded`) : une redelivrance ne rembourse pas deux fois
+- flux ICS sortant : les sejours en attente de paiement d'un AJUSTEMENT de dates (`pending_adjustment_payment`) sont inclus (nuits deja acquises) ; les holds de paiement initial restent exclus
+- alarme `ota_feed_emptied` (log warning + e-mail/ntfy) quand un flux OTA revient a 0 evenement alors que des blocages a venir etaient stockes : les dates restent republiees, mais plus jamais en silence
+- observabilite du controle live (`reportLiveOtaCheck`) : `ota_live_conflict` quand la relecture live bloque ce que la DB laissait passer (la classe exacte de l incident), `ota_live_check_degraded` quand aucune source n a pu etre verifiee (vente faite sur donnees DB seules)
+- controle post-insertion dans `reservations.js` : la disponibilite est revue APRES la creation du hold (en excluant son propre bloc) et la perdante est annulee — ferme la course entre deux reservations directes simultanees (aucune contrainte DB ne la couvre)
+- dates : les valeurs `DATE-TIME` d un flux ICS sont ramenees a la date locale du site (`TIMEZONE`) ; une fermeture a 22:30Z ne decale plus tout le bloc d une nuit
 - reprise de paiement (`resume_payment`) avec re-verification de la disponibilite et renouvellement de la fenetre de hold
 - expiration automatique des holds : statut `payment_expired`, e-mails de rappel et d'expiration, revert des ajustements non payes
 - import Booking.com ICS par endpoint interne authentifie

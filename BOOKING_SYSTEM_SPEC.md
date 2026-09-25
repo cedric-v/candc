@@ -59,15 +59,20 @@ Objectif :
 
 Source de verite externe :
 
-- Booking.com ICS
+- les flux ICS de toutes les sources OTA actives (Booking.com, Airbnb, ...)
+- source-agnostique : ajouter une OTA ne demande aucun changement de code,
+  seulement une source `external_calendar_sources` (`source_kind = 'ics'`)
 
 Regle de synchronisation :
 
-- Booking.com ICS est importe regulierement dans le systeme
+- chaque flux OTA est importe periodiquement dans le systeme (cron toutes les
+  20 minutes)
 - les reservations directes du site sont stockees en base
 - les reservations directes confirmees sont exportees dans un flux ICS du site
-- ce flux ICS est reintegre dans Booking.com
-- Airbnb continue de se synchroniser sur Booking.com et n'est donc pas traite comme source primaire
+- ce flux ICS est reintegre dans les OTA
+- en plus de cette synchro periodique, les flux OTA sont relus en direct aux
+  moments critiques (creation, confirmation de paiement, reprise de paiement)
+  pour couvrir la fenetre entre deux imports
 
 ### Disponibilite
 
@@ -85,9 +90,19 @@ Pour le MVP :
 Le moteur de disponibilite doit tenir compte de :
 
 - reservations directes confirmees
-- blocs importes depuis Booking.com ICS
+- blocs importes depuis toutes les sources OTA ICS actives (Booking.com,
+  Airbnb, ...)
 - blocages manuels admin
 - reservations en attente de paiement pendant la fenetre de hold (par defaut 30 minutes, configurable via `PENDING_PAYMENT_HOLD_MINUTES`)
+- une relecture en direct des flux OTA au moment critique (creation,
+  confirmation de paiement, reprise de paiement), qui couvre la fenetre entre
+  deux imports periodiques
+- un second controle apres l insertion du hold (excluant son propre bloc), qui
+  detecte deux reservations directes concurrentes
+
+Rappel : le sens « direct confirme -> OTA » depend du rythme auquel l OTA reprend
+notre flux d export (iCal = lecture cote OTA, pas d API d ecriture) : il est
+detecte et signale (`overbooking_detected`), pas empechable de bout en bout.
 
 ## Langues
 
@@ -392,25 +407,38 @@ Chaque reservation confirmee doit creer ou mettre a jour un evenement dans un Go
 
 ## Integration ICS
 
-### Import Booking.com
+### Import des flux OTA
 
-Un job planifie doit :
+Un job planifie (cron) doit, pour chaque source ICS active de chaque unite :
 
-- telecharger le flux Booking.com ICS
-- parser les evenements
-- dedoublonner sur UID externe
-- mettre a jour les blocs d'occupation
+- telecharger le flux ICS
+- valider le corps (document `BEGIN:VCALENDAR` ... `END:VCALENDAR` complet) avant
+  toute ecriture : une reponse non-calendaire (page d erreur, flux tronque)
+  fait echouer la synchro sans supprimer les blocages existants
+- parser les evenements (les valeurs `DATE-TIME` sont ramenees a la date locale
+  du site, pas la date UTC) et les dedoublonner sur UID externe
+- remplacer les blocs d occupation de cette source
+- signaler (`ota_feed_emptied`, log + alerte admin) si le flux revient vide alors
+  que des blocages a venir etaient stockes
 - journaliser le resultat de synchronisation
+
+Apres chaque import, un rapprochement detecte tout bloc OTA chevauchant une
+reservation directe confirmee et alerte l hote (`overbooking_detected`).
+
+Le meme flux est relu en direct, sans ecriture en base, au moment critique de
+la reservation (`functions/_lib/ota-availability.js`) : voir `AGENTS.md`,
+section « Anti-surbooking ».
 
 ### Export ICS
 
-Le systeme doit exposer un flux ICS contenant les reservations directes confirmees et les blocages manuels actifs crees depuis l'admin (par unite, avec note optionnelle). Les holds de paiement non payes en sont exclus.
+Le systeme doit exposer un flux ICS contenant les reservations directes confirmees et les blocages manuels actifs crees depuis l'admin (par unite, avec note optionnelle). Le flux inclut aussi les sejours en attente de paiement d'un AJUSTEMENT de dates (les nouvelles nuits sont deja acquises) ; seuls les holds de paiement initial non payes en sont exclus.
 
 Exigences :
 
 - URL difficile a deviner
 - lecture seule
-- format compatible Booking.com
+- format iCal standard, consomme par Booking.com, Airbnb et toute autre source
+  importee de la meme unite
 
 ## Paiement
 

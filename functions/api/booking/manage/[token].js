@@ -20,6 +20,7 @@ import { generateOpaqueToken, sha256Hex } from "../../../_lib/security.js";
 import { isSecureRequest, setManageTokenCookie } from "../../../_lib/cookies.js";
 import { createHostedCheckout, isSumUpConfigured } from "../../../_lib/sumup.js";
 import { normalizeBookingInput, validateBookingInput } from "../../../_lib/validation.js";
+import { findLiveExternalConflicts, reportLiveOtaCheck } from "../../../_lib/ota-availability.js";
 
 function toManageResponse(reservation, env) {
   const t = getManageText(reservation.locale);
@@ -255,6 +256,25 @@ export async function onRequestPost(context) {
         return conflict(t.datesNoLongerAvailable, conflicts);
       }
 
+      const liveChecks = await findLiveExternalConflicts(
+        context.env,
+        unit.code,
+        reservation.check_in_date,
+        reservation.check_out_date,
+      );
+
+      await reportLiveOtaCheck(context.env, {
+        unitCode: unit.code,
+        startDate: reservation.check_in_date,
+        endDate: reservation.check_out_date,
+        result: liveChecks,
+      });
+
+      if (liveChecks.conflicts.length > 0) {
+        const t = getManageText(reservation.locale);
+        return conflict(t.datesNoLongerAvailable, liveChecks.conflicts);
+      }
+
       if (!isSumUpConfigured(context.env)) {
         return json(
           {
@@ -337,6 +357,11 @@ export async function onRequestPost(context) {
       return badRequest("Invalid booking payload", errors);
     }
 
+    // Contrôle DB uniquement : une réservation confirmée est déjà exportée vers
+    // Booking.com, qui peut la refléter dans son propre flux. Une relecture OTA
+    // en direct risquerait donc de détecter la réservation elle-même comme un
+    // conflit. Les écarts OTA sont couverts à la création et au paiement, puis
+    // signalés par le rapprochement post-import.
     const conflicts = await getAvailabilityConflictsExcludingReservation(
       context.env,
       unit.id,

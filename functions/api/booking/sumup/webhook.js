@@ -20,12 +20,51 @@ import { isGoogleCalendarConfigured } from "../../../_lib/google-calendar.js";
 import { badRequest, json, serverError, unauthorized } from "../../../_lib/http.js";
 import { getCheckout, mapCheckoutStatus, verifyWebhookSignature } from "../../../_lib/sumup.js";
 import { attemptAutomaticRefund } from "../../../_lib/refunds.js";
+import { findLiveExternalConflicts, reportLiveOtaCheck } from "../../../_lib/ota-availability.js";
 import { getConfig } from "../../../_lib/env.js";
 import { sendAdminAlert } from "../../../_lib/alerts.js";
 
 function roundMoney(value) {
   return Math.round((Number(value || 0) + Number.EPSILON) * 100) / 100;
 }
+
+// Un webhook SumUp peut être redélivré (timeout / 5xx côté SumUp). Le
+// traitement d'un conflit doit être idempotent : un remboursement (auto ou
+// `manual_refund_due`) déjà enregistré pour ce checkout interdit d'en créer un
+// second.
+function refundAlreadyRecorded(payments, checkoutId) {
+  return (payments || []).some((payment) => {
+    if (payment.type !== "refund") {
+      return false;
+    }
+
+    if (payment.provider_checkout_id === checkoutId) {
+      return true;
+    }
+
+    let payload = null;
+    try {
+      payload = payment.raw_payload ? JSON.parse(payment.raw_payload) : null;
+    } catch {
+      payload = null;
+    }
+
+    return payload?.checkoutId === checkoutId;
+  });
+}
+
+// Statuts dont la réservation est déjà présente dans le flux ICS sortant.
+// Elle peut donc être reflétée par Booking.com/Airbnb : une relecture OTA en
+// direct la détecterait comme un conflit avec elle-même (notamment lors d'une
+// redélivrance du webhook). On ne relit les flux en direct que pour une
+// réservation pas encore exportée.
+const EXPORTED_RESERVATION_STATUSES = new Set([
+  "confirmed",
+  "modified",
+  "refund_due",
+  "pending_refund",
+]);
+
 function mapStatusForPaymentType(checkoutStatus, paymentType) {
   if (paymentType !== "adjustment") {
     return mapCheckoutStatus(checkoutStatus);
@@ -97,11 +136,22 @@ export async function onRequestPost(context) {
       rawPayload: checkout,
     });
 
-    // Confirmation uniquement si le paiement est effectivement payé ET que
-    // les dates sont toujours disponibles. La revérification est la garantie
+    // Confirmation uniquement si le paiement est effectivement payé ET que les
+    // dates sont toujours disponibles. La revérification est la garantie
     // anti-double-réservation : une réservation non payée a pu être libérée
     // (hold expiré) et les dates reprises par un autre client.
-    if (mappedStatus.reservationStatus === "confirmed") {
+    //
+    // Elle couvre aussi le paiement complémentaire d'une modification de dates
+    // (`payment_type = adjustment`) : `handlePaymentConflict` gère alors le cas
+    // ajustement (remboursement du complément, séjour conservé sur les
+    // nouvelles dates). Sans ce cas, la branche `isAdjustment` n'était jamais
+    // atteinte et les ajustements passaient sans contrôle.
+    const isAdjustmentPayment = reservation.payment_type === "adjustment";
+    const needsAvailabilityRecheck =
+      mappedStatus.paymentStatus === "paid" &&
+      (mappedStatus.reservationStatus === "confirmed" || isAdjustmentPayment);
+
+    if (needsAvailabilityRecheck) {
       const fullReservation = await getReservationForEmail(context.env, reservation.id);
 
       if (fullReservation) {
@@ -113,9 +163,51 @@ export async function onRequestPost(context) {
           fullReservation.id,
         );
 
-        if (conflicts.length > 0) {
-          await handlePaymentConflict(context, fullReservation, reservation, checkoutId, conflicts);
+        // Relecture des flux OTA en direct : le bloc OTA peut ne pas encore
+        // avoir été importé par le cron, auquel cas la vérification DB seule
+        // raterait le conflit et confirmerait un surbooking.
+        //
+        // Uniquement pour un premier paiement de séjour jamais exporté : un
+        // séjour déjà confirmé figure dans le flux ICS sortant et peut être
+        // reflété par l'OTA — on le détecterait lui-même comme conflit (cas
+        // aussi vrai pour les ajustements, dont le séjour est déjà confirmé).
+        let liveConflicts = [];
+        let liveChecks = null;
+        if (
+          !isAdjustmentPayment &&
+          !EXPORTED_RESERVATION_STATUSES.has(fullReservation.status)
+        ) {
+          liveChecks = await findLiveExternalConflicts(
+            context.env,
+            fullReservation.unit_code,
+            fullReservation.check_in_date,
+            fullReservation.check_out_date,
+            // Un webhook doit répondre vite : 3 s max par flux, en parallèle.
+            { timeoutMs: 3000 },
+          );
+          liveConflicts = liveChecks.conflicts;
+        }
+
+        if (conflicts.length > 0 || liveConflicts.length > 0) {
+          await handlePaymentConflict(
+            context,
+            fullReservation,
+            reservation,
+            checkoutId,
+            conflicts.length > 0 ? conflicts : liveConflicts,
+          );
           return new Response(null, { status: 204 });
+        }
+
+        // Aucun conflit : signalement si la relecture n'a pu vérifier aucune
+        // source (on vient de confirmer sans pouvoir croiser les OTA).
+        if (liveChecks) {
+          await reportLiveOtaCheck(context.env, {
+            unitCode: fullReservation.unit_code,
+            startDate: fullReservation.check_in_date,
+            endDate: fullReservation.check_out_date,
+            result: liveChecks,
+          });
         }
       }
     }
@@ -208,6 +300,20 @@ ${error?.stack || error?.message || String(error)}`,
 async function handlePaymentConflict(context, reservation, minimalReservation, checkoutId, conflicts) {
   const { env } = context;
   const payments = await getPaymentsForReservation(env, reservation.id);
+
+  // Idempotence : une redélivrance du webhook ne doit ni rembourser deux fois
+  // ni ré-envoyer les e-mails d'annulation.
+  if (refundAlreadyRecorded(payments, checkoutId)) {
+    await insertSyncLog(env, {
+      unitId: reservation.unit_id || null,
+      syncType: "payment_conflict",
+      status: "skipped",
+      message: `Conflict for ${checkoutId} (${reservation.public_reference}) already handled, skipping webhook redelivery`,
+      payloadSummary: { reservationId: reservation.id, checkoutId },
+    });
+    return;
+  }
+
   const checkoutPayment = payments.find((payment) => payment.provider_checkout_id === checkoutId);
   const isAdjustment = minimalReservation.payment_type === "adjustment";
   const refundAmount = isAdjustment

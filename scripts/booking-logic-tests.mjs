@@ -2,6 +2,8 @@ import { DEFAULT_UNITS } from "../functions/_lib/catalog.js";
 import { calculateQuoteFromResolvedUnit } from "../functions/_lib/pricing.js";
 import { buildAutomaticRefundPlan } from "../functions/_lib/refunds.js";
 import { buildReservationFeed } from "../functions/_lib/ics.js";
+import { isIcsCalendarDocument, parseIcsEvents } from "../functions/_lib/ics-import.js";
+import { findLiveExternalConflicts, rangesOverlap } from "../functions/_lib/ota-availability.js";
 import { validateBookingInput } from "../functions/_lib/validation.js";
 import { sendAdminAlert } from "../functions/_lib/alerts.js";
 import { normalizeTopicUrl } from "../functions/_lib/ntfy.js";
@@ -559,6 +561,174 @@ async function runAlertTests() {
   }
 }
 
+async function runOtaAvailabilityTests() {
+  // Détection de chevauchement sur intervalles semi-ouverts : une arrivée le
+  // jour du départ d'un autre séjour ne doit PAS être considérée en conflit.
+  assert(rangesOverlap("2026-09-25", "2026-09-26", "2026-09-25", "2026-09-26"), "Same-night ranges must overlap");
+  assert(rangesOverlap("2026-09-25", "2026-09-27", "2026-09-26", "2026-09-28"), "Partially overlapping ranges must overlap");
+  assert(!rangesOverlap("2026-09-24", "2026-09-25", "2026-09-25", "2026-09-26"), "Check-out/check-in on the same day must not overlap");
+  assert(!rangesOverlap("2026-09-20", "2026-09-22", "2026-09-25", "2026-09-26"), "Disjoint ranges must not overlap");
+
+  // Feed Booking.com type VALUE=DATE : l'événement 25→26 doit être détecté
+  // comme conflit par le contrôle OTA en direct.
+  const bookingFeed = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//admin.booking.com\\, b.v.//NONSGML v1.0//EN",
+    "BEGIN:VEVENT",
+    "DTSTART;VALUE=DATE:20260925",
+    "DTEND;VALUE=DATE:20260926",
+    "UID:cc66db93e025f44bc848dfb7a599feb5@booking.com",
+    "SUMMARY:CLOSED - Not available",
+    "END:VEVENT",
+    "END:VCALENDAR",
+  ].join("\r\n");
+
+  const events = parseIcsEvents(bookingFeed);
+  assertEqual(events.length, 1, "Booking feed should expose one event");
+  assertEqual(events[0].startDate, "2026-09-25", "Booking event start date should be parsed");
+  assertEqual(events[0].endDate, "2026-09-26", "Booking event end date should be parsed");
+  assert(
+    events.some((event) => rangesOverlap(event.startDate, event.endDate, "2026-09-25", "2026-09-26")),
+    "A direct stay on the same night must be flagged against the live Booking block",
+  );
+
+  // Validation stricte du corps ICS : jamais de « calendrier vide » par erreur.
+  assert(isIcsCalendarDocument(bookingFeed), "A real VCALENDAR document must be accepted");
+  assert(
+    !isIcsCalendarDocument("<html>503 Service Unavailable</html>"),
+    "An HTML error page must NOT be accepted as an empty calendar",
+  );
+  assert(
+    !isIcsCalendarDocument("BEGIN:VCALENDAR\r\nVERSION:2.0"),
+    "A truncated feed (no END:VCALENDAR) must NOT be accepted",
+  );
+
+  // Date-time ICS : la date retenue est la date LIEU (Europe/Zurich), pas la
+  // date UTC — sinon un bloc à 22:30Z glisse sur la veille et décale le bloc.
+  const dateTimeFeed = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "BEGIN:VEVENT",
+    "DTSTART:20260925T223000Z",
+    "DTEND:20260926T223000Z",
+    "UID:night-close@ota.example",
+    "SUMMARY:CLOSED - Not available",
+    "END:VEVENT",
+    "END:VCALENDAR",
+  ].join("\r\n");
+
+  const localEvents = parseIcsEvents(dateTimeFeed, { timeZone: "Europe/Zurich" });
+  assertEqual(localEvents[0].startDate, "2026-09-26", "Date-time values must resolve to the property-local date");
+  assertEqual(localEvents[0].endDate, "2026-09-27", "Date-time end must resolve to the property-local date");
+
+  const utcEvents = parseIcsEvents(dateTimeFeed);
+  assertEqual(utcEvents[0].startDate, "2026-09-25", "Without a timezone, the UTC date is kept");
+
+  const floatingEvents = parseIcsEvents(dateTimeFeed.replaceAll("T223000Z", "T223000"), {
+    timeZone: "Europe/Zurich",
+  });
+  assertEqual(floatingEvents[0].startDate, "2026-09-25", "Floating date-times keep their stated date");
+
+  // Contrôle OTA en direct : source-agnostique (booking, airbnb, vrbo, ...) +
+  // fail-open sur toutes les erreurs (réseau, corps invalide, base).
+  const sources = [
+    { id: "s-booking", unit_id: "unit_x", source_code: "booking", source_kind: "ics", import_url: "https://ical.booking.com/v1/export?t=b", unit_code: "unit-x" },
+    { id: "s-airbnb", unit_id: "unit_x", source_code: "airbnb", source_kind: "ics", import_url: "https://www.airbnb.example/cal.ics?t=a", unit_code: "unit-x" },
+    { id: "s-vrbo", unit_id: "unit_x", source_code: "vrbo", source_kind: "ics", import_url: "https://www.vrbo.example/cal.ics?t=v", unit_code: "unit-x" },
+  ];
+  const emptyFeed = "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nEND:VCALENDAR";
+  const vrboFeed = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "BEGIN:VEVENT",
+    "DTSTART;VALUE=DATE:20261010",
+    "DTEND;VALUE=DATE:20261012",
+    "UID:future-stay@vrbo.example",
+    "SUMMARY:Reserved",
+    "END:VEVENT",
+    "END:VCALENDAR",
+  ].join("\r\n");
+
+  const originalFetch = globalThis.fetch;
+  try {
+    globalThis.fetch = async (url) => {
+      const target = String(url);
+      if (target.includes("booking.com")) {
+        return { ok: true, text: async () => bookingFeed };
+      }
+      if (target.includes("airbnb")) {
+        return { ok: true, text: async () => emptyFeed };
+      }
+      return { ok: true, text: async () => vrboFeed };
+    };
+
+    const env = {
+      PUBLIC_BASE_URL: "https://candc.ch",
+      TIMEZONE: "Europe/Zurich",
+      DB: makeImportSourcesMockDb(sources),
+    };
+    const live = await findLiveExternalConflicts(env, "unit-x", "2026-09-25", "2026-09-26");
+    assertEqual(live.checkedSources, 3, "Every active ICS source must be checked (source-agnostic)");
+    assertEqual(live.errors.length, 0, "Healthy sources must not report errors");
+    assertEqual(live.conflicts.length, 1, "Only the overlapping source must raise a conflict");
+    assertEqual(live.conflicts[0].source, "booking_ics", "Conflicts must carry the <source_code>_<source_kind> tag");
+    assertEqual(live.conflicts[0].start_date, "2026-09-25", "Conflict must keep the block start date");
+
+    // Fail-open : erreur réseau.
+    globalThis.fetch = async () => {
+      throw new Error("network_down");
+    };
+    const networkFailure = await findLiveExternalConflicts(env, "unit-x", "2026-09-25", "2026-09-26");
+    assertEqual(networkFailure.conflicts.length, 0, "Network failures must not report conflicts");
+    assertEqual(networkFailure.checkedSources, 0, "Unreadable sources must not count as checked");
+    assertEqual(networkFailure.errors.length, 3, "Each failed source must be surfaced");
+
+    // Fail-open : corps non-calendaire.
+    globalThis.fetch = async () => ({ ok: true, text: async () => "<html>503 Service Unavailable</html>" });
+    const invalidBody = await findLiveExternalConflicts(env, "unit-x", "2026-09-25", "2026-09-26");
+    assertEqual(invalidBody.conflicts.length, 0, "A non-ICS body must not be treated as an empty calendar");
+    assert(
+      invalidBody.errors.every((item) => item.error === "ics_invalid_body"),
+      "A non-ICS body must be surfaced as ics_invalid_body",
+    );
+
+    // Fail-open : base indisponible. Ne doit JAMAIS lever d'erreur, sinon le
+    // webhook SumUp répond 500 après encaissement du paiement.
+    const dbFailure = await findLiveExternalConflicts(
+      { DB: makeImportSourcesMockDb([], { failWith: "d1_unavailable" }) },
+      "unit-x",
+      "2026-09-25",
+      "2026-09-26",
+    );
+    assertEqual(dbFailure.conflicts.length, 0, "A DB failure must not throw nor report conflicts");
+    assert(
+      dbFailure.errors.some((item) => item.error.startsWith("sources_lookup_failed")),
+      "A DB failure must be surfaced in errors",
+    );
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+}
+
+function makeImportSourcesMockDb(sources, { failWith = null } = {}) {
+  return {
+    prepare(sql) {
+      return {
+        bind() {
+          return this;
+        },
+        async all() {
+          if (failWith) {
+            throw new Error(failWith);
+          }
+          return { results: sql.includes("FROM external_calendar_sources") ? sources : [] };
+        },
+      };
+    },
+  };
+}
+
 function runIcsFeedTests() {
   const reservations = [
     {
@@ -601,14 +771,15 @@ function runIcsFeedTests() {
   );
 }
 
-function main() {
+async function main() {
   runValidationTests();
   runGuestContactValidationTests();
   runPricingTests();
   runRefundPlanTests();
-  runAlertTests();
+  await runAlertTests();
   runIcsFeedTests();
+  await runOtaAvailabilityTests();
   console.log("Booking logic tests passed.");
 }
 
-main();
+await main();

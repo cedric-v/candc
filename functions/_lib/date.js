@@ -27,6 +27,27 @@ export function formatIsoDate(date) {
   return date.toISOString().slice(0, 10);
 }
 
+// Date calendaire locale (YYYY-MM-DD) d'un instant dans un fuseau donné.
+// Les calendriers ferment des NUITS : la date pertinente est celle du lieu
+// (ex. Europe/Zurich), pas la date UTC du composant date-time ICS.
+export function localIsoDateFromInstant(date, timeZone) {
+  if (!timeZone) {
+    return formatIsoDate(date);
+  }
+
+  try {
+    return new Intl.DateTimeFormat("en-CA", {
+      timeZone,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).format(date);
+  } catch {
+    // Fuseau inconnu : on retombe sur la date UTC plutôt que d'échouer.
+    return formatIsoDate(date);
+  }
+}
+
 export function addDays(isoDate, days) {
   const date = parseIsoDate(isoDate);
   date.setUTCDate(date.getUTCDate() + days);

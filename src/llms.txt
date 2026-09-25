@@ -73,9 +73,8 @@ Notes:
 
 ## Planned integrations
 
-- Booking.com ICS as the primary external availability source
-- Airbnb ICS also possible if an active source exists for the unit
-- ICS export of direct reservations and active admin manual date blocks
+- OTA calendar import for every active source per unit (Booking.com, Airbnb, ...), synced on a 20-minute cron and re-read live just before each reservation creation or payment confirmation
+- ICS export of direct reservations (including unpaid date-change adjustments) and active admin manual date blocks
 - SumUp for payment
 - Google Calendar optional, disabled by default
 - automatic SumUp refunds for eligible cases, with manual fallback if needed

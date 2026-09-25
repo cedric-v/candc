@@ -119,31 +119,14 @@ export async function getUnitByFeedToken(env, feedToken) {
   return record ? normalizeUnitRecord(record, env) : null;
 }
 
-export async function getImportCalendarSources(env, sourceCode = "booking", unitCode = null) {
+// Sources ICS actives à importer. `sourceCode = null` couvre TOUTES les OTA
+// (booking, airbnb, vrbo, ...) : ajouter une source ne doit jamais imposer de
+// modifier les appelants (sync, validation, contrôle live).
+export async function getImportCalendarSources(env, sourceCode = null, unitCode = null) {
   const db = requireDb(env);
-  const sql = unitCode
-    ? `
-        SELECT
-          external_calendar_sources.id,
-          external_calendar_sources.unit_id,
-          external_calendar_sources.source_code,
-          external_calendar_sources.source_kind,
-          external_calendar_sources.import_url,
-          external_calendar_sources.export_feed_token,
-          external_calendar_sources.is_reference,
-          rentable_units.code AS unit_code,
-          rentable_units.display_name,
-          rentable_units.unit_type
-        FROM external_calendar_sources
-        INNER JOIN rentable_units ON rentable_units.id = external_calendar_sources.unit_id
-        WHERE external_calendar_sources.source_code = ?
-          AND external_calendar_sources.source_kind = 'ics'
-          AND external_calendar_sources.is_active = 1
-          AND rentable_units.is_active = 1
-          AND rentable_units.code = ?
-        ORDER BY external_calendar_sources.is_reference DESC, rentable_units.code ASC
+  const { results } = await db
+    .prepare(
       `
-    : `
         SELECT
           external_calendar_sources.id,
           external_calendar_sources.unit_id,
@@ -157,16 +140,17 @@ export async function getImportCalendarSources(env, sourceCode = "booking", unit
           rentable_units.unit_type
         FROM external_calendar_sources
         INNER JOIN rentable_units ON rentable_units.id = external_calendar_sources.unit_id
-        WHERE external_calendar_sources.source_code = ?
-          AND external_calendar_sources.source_kind = 'ics'
+        WHERE external_calendar_sources.source_kind = 'ics'
           AND external_calendar_sources.is_active = 1
           AND rentable_units.is_active = 1
+          AND (? IS NULL OR external_calendar_sources.source_code = ?)
+          AND (? IS NULL OR rentable_units.code = ?)
         ORDER BY external_calendar_sources.is_reference DESC, rentable_units.code ASC
-      `;
+      `,
+    )
+    .bind(sourceCode, sourceCode, unitCode, unitCode)
+    .all();
 
-  const stmt = db.prepare(sql);
-  const query = unitCode ? stmt.bind(sourceCode, unitCode) : stmt.bind(sourceCode);
-  const { results } = await query.all();
   return results || [];
 }
 
@@ -524,6 +508,13 @@ export async function createManageToken(env, reservationId, { rotate = false } =
   return manageToken;
 }
 
+// Réservations à publier dans le flux ICS sortant : séjours confirmés, y
+// compris les ajustements de dates en attente de paiement (`
+// pending_adjustment_payment` : les nouvelles dates sont déjà acquises, et le
+// séjour y reste même si le hold expire — voir `releaseExpiredPendingPayments`).
+// En revanche les holds de paiement INITIAL (`pending_payment`) en sont
+// volontairement exclus : un client n'ayant pas encore payé ne bloque pas les
+// OTA.
 export async function getReservationsForIcsFeed(env, unitId) {
   const db = requireDb(env);
   const { results } = await db
@@ -540,7 +531,10 @@ export async function getReservationsForIcsFeed(env, unitId) {
           status
         FROM reservations
         WHERE unit_id IS ?
-          AND status IN ('confirmed', 'modified', 'refund_due', 'pending_refund')
+          AND status IN (
+            'confirmed', 'modified', 'refund_due', 'pending_refund',
+            'pending_adjustment_payment'
+          )
         ORDER BY check_in_date ASC
       `,
     )
@@ -559,10 +553,17 @@ export async function getManualCalendarBlocksForUnit(env, unitId) {
   );
 }
 
+// Étiquette `calendar_blocks.source` d'un bloc importé depuis une OTA.
+// Convention unique (utilisée à l'import comme au rapprochement) : ne pas la
+// reconstruire "à la main" ailleurs.
+export function externalBlockSourceTag(sourceRecord) {
+  return `${sourceRecord.source_code}_${sourceRecord.source_kind}`;
+}
+
 export async function replaceExternalCalendarBlocks(env, sourceRecord, events) {
   const db = requireDb(env);
   const nowIso = new Date().toISOString();
-  const sourceTag = `${sourceRecord.source_code}_${sourceRecord.source_kind}`;
+  const sourceTag = externalBlockSourceTag(sourceRecord);
   const statements = [
     db
       .prepare(
@@ -602,6 +603,70 @@ export async function replaceExternalCalendarBlocks(env, sourceRecord, events) {
   }
 
   await db.batch(statements);
+}
+
+// Détecte les surbookings entre un bloc OTA importé (Booking / Airbnb) et une
+// réservation directe confirmée sur la même unité. Appelé après chaque import
+// ICS : l'OTA a pu vendre des dates que nous avions déjà confirmées en direct
+// (notre flux d'export n'a pas encore été repris par l'OTA, ou l'inverse).
+// On ne peut pas empêcher le chevauchement a posteriori, mais l'hôte doit être
+// alerté immédiatement pour arbitrer.
+export async function findExternalDirectOverlapsForUnit(env, unitId) {
+  const db = requireDb(env);
+  const { results } = await db
+    .prepare(
+      `
+        SELECT
+          calendar_blocks.source AS external_source,
+          calendar_blocks.start_date AS external_start_date,
+          calendar_blocks.end_date AS external_end_date,
+          reservations.id AS reservation_id,
+          reservations.public_reference,
+          reservations.unit_code,
+          reservations.check_in_date,
+          reservations.check_out_date,
+          reservations.guest_first_name,
+          reservations.guest_last_name,
+          reservations.status AS reservation_status
+        FROM calendar_blocks
+        INNER JOIN reservations ON reservations.unit_id = calendar_blocks.unit_id
+        WHERE calendar_blocks.unit_id IS ?
+          AND calendar_blocks.reservation_id IS NULL
+          AND calendar_blocks.external_uid IS NOT NULL
+          AND calendar_blocks.status IN ('active', 'confirmed')
+          AND reservations.status IN ('confirmed', 'modified', 'refund_due', 'pending_refund')
+          AND reservations.check_in_date < calendar_blocks.end_date
+          AND reservations.check_out_date > calendar_blocks.start_date
+        ORDER BY calendar_blocks.start_date ASC
+      `,
+    )
+    .bind(unitId)
+    .all();
+
+  return results || [];
+}
+
+// Nombre de blocages OTA importés à venir pour une source donnée. Sert à
+// détecter un flux qui devient subitement vide alors qu'il bloquait des nuits
+// (feed tronqué ou réinitialisé côté OTA) : les dates ne doivent pas être
+// ré-ouvertes en silence.
+export async function countFutureExternalBlocks(env, unitId, sourceTag, todayIso) {
+  const db = requireDb(env);
+  const row = await db
+    .prepare(
+      `
+        SELECT COUNT(*) AS block_count
+        FROM calendar_blocks
+        WHERE unit_id IS ?
+          AND reservation_id IS NULL
+          AND source = ?
+          AND end_date > ?
+      `,
+    )
+    .bind(unitId, sourceTag, todayIso)
+    .first();
+
+  return Number(row?.block_count || 0);
 }
 
 export async function updateCalendarSourceSync(env, sourceId, syncStatus) {

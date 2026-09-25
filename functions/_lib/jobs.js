@@ -1,6 +1,9 @@
 import {
   anonymizeExpiredGuestSensitiveData,
+  countFutureExternalBlocks,
   createManageToken,
+  externalBlockSourceTag,
+  findExternalDirectOverlapsForUnit,
   getArrivalReservationsForDate,
   getDepartureReservationsForDate,
   getImportCalendarSources,
@@ -13,7 +16,7 @@ import {
 import { getCurrentIsoDateInZone } from "./date.js";
 import { getConfig } from "./env.js";
 import { sendReservationEmail } from "./booking-ops.js";
-import { parseIcsEvents } from "./ics-import.js";
+import { fetchIcsText, parseIcsEvents } from "./ics-import.js";
 import { sendAdminAlert } from "./alerts.js";
 
 function redactSecret(value, visibleChars = 6) {
@@ -42,18 +45,8 @@ function sanitizeCalendarUrl(value) {
 }
 
 async function fetchIcs(importUrl) {
-  const response = await fetch(importUrl, {
-    method: "GET",
-    headers: {
-      accept: "text/calendar,text/plain;q=0.9,*/*;q=0.8",
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error(`ics_fetch_failed:${response.status}`);
-  }
-
-  return response.text();
+  // Timeout + validation stricte du corps : voir `fetchIcsText` (ics-import.js).
+  return fetchIcsText(importUrl, { timeoutMs: 15000 });
 }
 
 function buildValidationResultStatus(results) {
@@ -75,10 +68,12 @@ function buildValidationResultStatus(results) {
 }
 
 export async function runBookingIcsSync(env, unitCode = null) {
-  const bookingSources = await getImportCalendarSources(env, "booking", unitCode);
-  const airbnbSources = await getImportCalendarSources(env, "airbnb", unitCode);
-  const sources = [...bookingSources, ...airbnbSources];
+  const config = getConfig(env);
+  const todayIso = getCurrentIsoDateInZone(config.timeZone);
+  // Toutes les OTA actives (booking, airbnb, ...) : source-agnostique.
+  const sources = await getImportCalendarSources(env, null, unitCode);
   const results = [];
+  const syncedUnitIds = new Map();
 
   for (const sourceRecord of sources) {
     const importUrl = sourceRecord.import_url || null;
@@ -105,10 +100,48 @@ export async function runBookingIcsSync(env, unitCode = null) {
     }
 
     try {
+      const futureBlocksBefore = await countFutureExternalBlocks(
+        env,
+        sourceRecord.unit_id,
+        externalBlockSourceTag(sourceRecord),
+        todayIso,
+      );
+
       const icsText = await fetchIcs(importUrl);
-      const events = parseIcsEvents(icsText);
+      const events = parseIcsEvents(icsText, { timeZone: config.timeZone });
 
       await replaceExternalCalendarBlocks(env, sourceRecord, events);
+
+      // Un flux qui devient vide alors qu'il bloquait des nuits est suspect
+      // (feed tronqué / réinitialisé côté OTA) : les dates viennent d'être
+      // ré-ouvertes à la vente, l'hôte doit le savoir immédiatement.
+      if (events.length === 0 && futureBlocksBefore > 0) {
+        await insertSyncLog(env, {
+          unitId: sourceRecord.unit_id,
+          syncType: "ota_feed_emptied",
+          status: "warning",
+          message: `${sourceRecord.source_code} feed for ${sourceRecord.unit_code} returned 0 events while ${futureBlocksBefore} future block(s) were stored`,
+          payloadSummary: {
+            unitCode: sourceRecord.unit_code,
+            sourceId: sourceRecord.id,
+            previousFutureBlocks: futureBlocksBefore,
+          },
+        });
+        try {
+          await sendAdminAlert(env, {
+            key: `ota_feed_emptied:${sourceRecord.unit_code}:${sourceRecord.source_code}`,
+            subject: `⚠️ Flux ${sourceRecord.source_code} (${sourceRecord.unit_code}) vide`,
+            message:
+              `Le flux ICS ${sourceRecord.source_code} de ${sourceRecord.unit_code} a renvoyé 0 événement ` +
+              `alors que ${futureBlocksBefore} blocage(s) à venir étaient stockés. ` +
+              `Les dates ont été ré-ouvertes à la vente : vérifier le calendrier OTA et re-bloquer si nécessaire.`,
+            tags: "warning",
+          });
+        } catch {
+          // L'alerte ne doit jamais faire échouer la synchronisation.
+        }
+      }
+
       await updateCalendarSourceSync(env, sourceRecord.id, {
         unitId: sourceRecord.unit_id,
         syncType,
@@ -126,6 +159,10 @@ export async function runBookingIcsSync(env, unitCode = null) {
         status: "success",
         importedEvents: events.length,
       });
+      syncedUnitIds.set(
+        sourceRecord.unit_id,
+        sourceRecord.unit_code || sourceRecord.unit_id,
+      );
     } catch (error) {
       await insertSyncLog(env, {
         unitId: sourceRecord.unit_id,
@@ -146,14 +183,53 @@ export async function runBookingIcsSync(env, unitCode = null) {
     }
   }
 
+  // Rapprochement après import : un bloc OTA fraîchement importé peut
+  // recouvrir une réservation directe déjà confirmée (l'OTA n'avait pas encore
+  // repris notre flux d'export). On alerte l'hôte immédiatement plutôt que de
+  // laisser le surbooking être découvert à l'arrivée du client.
+  const overbookings = [];
+  for (const [syncedUnitId, syncedUnitCode] of syncedUnitIds.entries()) {
+    try {
+      const overlaps = await findExternalDirectOverlapsForUnit(env, syncedUnitId);
+      if (overlaps.length > 0) {
+        overbookings.push({ unitCode: syncedUnitCode, overlaps });
+      }
+    } catch (error) {
+      console.error(`Overbooking reconciliation failed for ${syncedUnitCode}:`, error);
+    }
+  }
+
+  for (const { unitCode: conflictingUnitCode, overlaps } of overbookings) {
+    const lines = overlaps.map(
+      (item) =>
+        `- ${item.external_source} ${item.external_start_date} → ${item.external_end_date} ` +
+        `vs ${item.public_reference} ${item.check_in_date} → ${item.check_out_date} ` +
+        `(${item.guest_first_name} ${item.guest_last_name})`,
+    );
+    try {
+      await sendAdminAlert(env, {
+        key: `overbooking_detected:${conflictingUnitCode}`,
+        subject: `⚠️ Surbooking détecté sur ${conflictingUnitCode}`,
+        message: `Un calendrier OTA et une réservation directe se chevauchent sur l'unité "${conflictingUnitCode}".\n\n` +
+          `${lines.join("\n")}\n\n` +
+          "Vérifier le calendrier admin et contacter le voyageur concerné (relogement / annulation).",
+        tags: "warning",
+        priority: "urgent",
+      });
+    } catch (error) {
+      console.error("Failed to send overbooking alert:", error);
+    }
+  }
+
   await insertSyncLog(env, {
     unitId: null,
     syncType: "calendar_sync_job",
     status: buildValidationResultStatus(results),
-    message: `Processed ${results.length} active OTA calendar source(s)`,
+    message: `Processed ${results.length} active OTA calendar source(s)${overbookings.length > 0 ? ` — ${overbookings.length} overbooking(s) detected` : ""}`,
     payloadSummary: {
       unitCode: unitCode || null,
       results,
+      overbookings,
     },
   });
 
@@ -304,9 +380,7 @@ export async function runReviewRequestEmails(env, targetDate = null) {
 }
 
 export async function validateCalendarSources(env, unitCode = null) {
-  const bookingSources = await getImportCalendarSources(env, "booking", unitCode);
-  const airbnbSources = await getImportCalendarSources(env, "airbnb", unitCode);
-  const sources = [...bookingSources, ...airbnbSources];
+  const sources = await getImportCalendarSources(env, null, unitCode);
   const config = getConfig(env);
   const exportChecksSeen = new Set();
   const results = [];
@@ -327,7 +401,7 @@ export async function validateCalendarSources(env, unitCode = null) {
     if (sourceRecord.import_url) {
       try {
         const importIcs = await fetchIcs(sourceRecord.import_url);
-        result.importEventCount = parseIcsEvents(importIcs).length;
+        result.importEventCount = parseIcsEvents(importIcs, { timeZone: config.timeZone }).length;
         result.importStatus = "success";
       } catch (error) {
         result.importStatus = "failed";
@@ -345,7 +419,7 @@ export async function validateCalendarSources(env, unitCode = null) {
       result.exportUrl = `${config.publicBaseUrl}/api/booking/ics/${redactSecret(exportFeedToken)}`;
       try {
         const exportIcs = await fetchIcs(exportUrl);
-        result.exportEventCount = parseIcsEvents(exportIcs).length;
+        result.exportEventCount = parseIcsEvents(exportIcs, { timeZone: config.timeZone }).length;
         result.exportStatus = "success";
       } catch (error) {
         result.exportStatus = "failed";

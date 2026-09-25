@@ -1,7 +1,9 @@
 import { getConfig } from "../../_lib/env.js";
 import { sendAdminAlert } from "../../_lib/alerts.js";
 import {
+  cancelReservation,
   getAvailabilityConflicts,
+  getAvailabilityConflictsExcludingReservation,
   getUnitByCode,
   insertPaymentRecord,
   insertPendingReservation,
@@ -14,6 +16,7 @@ import { generateOpaqueToken, sha256Hex } from "../../_lib/security.js";
 import { sendReservationEmail, sendReservationNtfy, sendNewBookingAdminEmail } from "../../_lib/booking-ops.js";
 import { createHostedCheckout, isSumUpConfigured } from "../../_lib/sumup.js";
 import { normalizeBookingInput, validateBookingInput } from "../../_lib/validation.js";
+import { findLiveExternalConflicts, reportLiveOtaCheck } from "../../_lib/ota-availability.js";
 
 export async function onRequestPost(context) {
   try {
@@ -49,6 +52,27 @@ export async function onRequestPost(context) {
       return conflict("Selected dates are no longer available", conflicts);
     }
 
+    // Le contrôle ci-dessus ne voit que les blocs importés par le dernier cron
+    // (toutes les 20 min). On relit les flux OTA en direct pour fermer la
+    // fenêtre entre la vente sur Booking.com / Airbnb et son import.
+    const liveChecks = await findLiveExternalConflicts(
+      context.env,
+      unit.code,
+      payload.checkInDate,
+      payload.checkOutDate,
+    );
+
+    await reportLiveOtaCheck(context.env, {
+      unitCode: unit.code,
+      startDate: payload.checkInDate,
+      endDate: payload.checkOutDate,
+      result: liveChecks,
+    });
+
+    if (liveChecks.conflicts.length > 0) {
+      return conflict("Selected dates are no longer available", liveChecks.conflicts);
+    }
+
     const config = getConfig(context.env);
     const pricing = await buildQuote(context.env, payload);
     const manageToken = generateOpaqueToken();
@@ -66,6 +90,24 @@ export async function onRequestPost(context) {
       pricing,
       manageTokenHash,
     );
+
+    // Contrôle post-écriture : deux requêtes concurrentes peuvent passer le
+    // contrôle DB avant insertion (aucune contrainte d'exclusivité sur les
+    // dates). Le bloc étant maintenant posé, ce second contrôle — qui exclut
+    // celui venant d'être créé — attrape la course direct-directe et libère
+    // immédiatement la réservation gagnante.
+    const lateConflicts = await getAvailabilityConflictsExcludingReservation(
+      context.env,
+      unit.id,
+      payload.checkInDate,
+      payload.checkOutDate,
+      reservationRecord.reservationId,
+    );
+
+    if (lateConflicts.length > 0) {
+      await cancelReservation(context.env, reservationRecord.reservationId);
+      return conflict("Selected dates are no longer available", lateConflicts);
+    }
 
     if (!isSumUpConfigured(context.env)) {
       try {

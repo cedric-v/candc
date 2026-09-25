@@ -56,8 +56,24 @@ Important:
 Pending-payment behavior (important):
 
 - a direct booking holds its dates for `PENDING_PAYMENT_HOLD_MINUTES` (default 30) via a `pending_payment` calendar block; after expiry the reservation becomes `payment_expired` and the dates are released
-- the ICS export feed contains confirmed stays (`confirmed`, `modified`, `refund_due`, `pending_refund`) plus active admin manual blocks — pending holds never block Booking.com/other OTAs
+- the ICS export feed contains confirmed stays (`confirmed`, `modified`, `refund_due`, `pending_refund`, plus `pending_adjustment_payment` whose new dates are already committed) plus active admin manual blocks — initial `pending_payment` holds never block Booking.com/other OTAs
 - availability is re-checked before confirming any payment (SumUp webhook) and before resuming payment (`resume_payment`); a conflict leads to a refund and `conflict_refund_due` (initial) or a revert to `modified` (unpaid adjustment)
+
+Anti-surbooking (important):
+
+- `functions/_lib/ota-availability.js` (`findLiveExternalConflicts`) re-reads the **live** OTA ICS feeds on reservation creation, before payment confirmation (initial **and** adjustment) and before resuming payment, because `calendar_blocks` can be up to 20 min stale (cron interval). Total fail-open: network/parse/DB errors land in `errors` and never block a booking nor 500 the SumUp webhook (that would strand a paid, unconfirmed reservation)
+- source-agnostic by design: every active `external_calendar_sources` row with `source_kind = 'ics'` is covered (booking, airbnb, vrbo, ...). `getImportCalendarSources(env, null, unitCode)` is the single list — never hardcode OTA names at call sites; a future non-ICS source (API) must provide its own conflict resolver
+- the live check is skipped for stays that are (or were) already confirmed: they are in the export feed and may be mirrored back by the OTA, which would look like a self-conflict. Date changes therefore stay DB-only (the adjustment payment re-check uses the DB)
+- ICS import validates the body with `isIcsCalendarDocument` (shared `fetchIcsText` in `ics-import.js`): no full `BEGIN:VCALENDAR`…`END:VCALENDAR` -> the sync fails WITHOUT deleting existing OTA blocks (an HTML/truncated response must never open dates)
+- after each ICS import, `findExternalDirectOverlapsForUnit` (db.js) detects an OTA block overlapping a confirmed direct stay and `runBookingIcsSync` sends a deduped `overbooking_detected:<unit>` admin alert (this "us -> OTA" direction cannot be prevented by iCal alone, only surfaced)
+- the SumUp webhook conflict path is idempotent (`refundAlreadyRecorded`): a redelivered webhook never refunds twice nor re-sends cancellation emails
+- the outbound ICS feed now includes `pending_adjustment_payment` stays (new dates already committed) so an unpaid date-change surcharge never reopens the dates on the OTAs; initial `pending_payment` holds stay excluded on purpose
+- known residual case (inherent to iCal): cancel-then-rebook — the OTA may still mirror a released block until its next pull → temporary false unavailability (lost revenue, never overbooking)
+- `parseIcsDate` resolves `DATE-TIME` values to the **property-local** date (`localIsoDateFromInstant`, `TIMEZONE`), so a closure at 22:30Z cannot shift a whole block one night; `VALUE=DATE` is untouched
+- if an OTA feed returns 0 events while future blocks were stored, the dates are reopened **and** a `ota_feed_emptied` warning + admin alert is emitted (a truncated feed must not reopen the calendar silently)
+- `reportLiveOtaCheck` (ota-availability.js) surfaces the near-misses: `ota_live_conflict` when the live check blocks what the DB still allowed (the exact incident class), `ota_live_check_degraded` when no source could be verified at all (booking was sold on DB-only data)
+- `reservations.js` re-checks availability **after** inserting the pending hold (excluding its own block) and cancels the loser: closes the direct/direct TOCTOU race that no DB constraint prevents
+- deliberately NOT auto-allowing a live conflict that matches a recently released direct block: guessing "stale mirror" would re-open the overbooking hole; the 409 + `ota_live_conflict` alert let the host reopen manually on the OTA instead
 
 Manual calendar blocks (admin):
 
