@@ -56,7 +56,7 @@ Important:
 Pending-payment behavior (important):
 
 - a direct booking holds its dates for `PENDING_PAYMENT_HOLD_MINUTES` (default 30) via a `pending_payment` calendar block; after expiry the reservation becomes `payment_expired` and the dates are released
-- the ICS export feed contains confirmed stays (`confirmed`, `modified`, `refund_due`, `pending_refund`) plus active admin manual blocks — pending holds never block Booking.com/other OTAs
+- the ICS export feed contains confirmed stays (`confirmed`, `modified`, `refund_due`, `pending_refund`, plus `pending_adjustment_payment` whose new dates are already committed) plus active admin manual blocks — initial `pending_payment` holds never block Booking.com/other OTAs
 - availability is re-checked before confirming any payment (SumUp webhook) and before resuming payment (`resume_payment`); a conflict leads to a refund and `conflict_refund_due` (initial) or a revert to `modified` (unpaid adjustment)
 
 Anti-surbooking (important):
