@@ -701,6 +701,33 @@ export function onRequestGet() {
           }
         }
 
+        // Résumé lisible du sync calendaire : combien d'événements ont été
+        // importés par source. Sans cela, le bouton n'affichait aucun résultat
+        // (loadDashboard écrase la notice) et un bloc OTA absent du flux iCal
+        // (Booking.com peut ne pas exporter immédiatement une fermeture) passait
+        // inaperçu.
+        function summarizeSyncResult(result) {
+          const results = Array.isArray(result?.results) ? result.results : [];
+          if (results.length === 0) {
+            return { ok: false, text: 'Calendar sync: no active OTA source found.' };
+          }
+          const imported = results
+            .filter((item) => item.status === 'success')
+            .map((item) => item.unitCode + '/' + item.sourceCode + ' (' + (item.importedEvents ?? 0) + ')');
+          const failed = results
+            .filter((item) => item.status === 'failed')
+            .map((item) => item.unitCode + '/' + item.sourceCode + ' (' + (item.error || 'error') + ')');
+          const parts = [];
+          if (imported.length > 0) {
+            parts.push('Imported blocks: ' + imported.join(', ') + '.');
+          }
+          if (failed.length > 0) {
+            parts.push('Failed: ' + failed.join(', ') + '.');
+          }
+          parts.push('A period you blocked on an OTA that is still shown as available is missing from its iCal feed — use "Blocked periods (manual)" below.');
+          return { ok: failed.length === 0, text: parts.join(' ') };
+        }
+
         authForm.addEventListener('submit', async (event) => {
           event.preventDefault();
           adminToken = document.getElementById('adminToken').value.trim();
@@ -825,8 +852,11 @@ export function onRequestGet() {
           try {
             adminNotice.className = 'notice info';
             adminNotice.textContent = 'Running calendar sync…';
-            await apiFetch('POST', { action: 'run_booking_sync' });
+            const result = await apiFetch('POST', { action: 'run_booking_sync' });
             await loadDashboard();
+            const summary = summarizeSyncResult(result);
+            adminNotice.className = 'notice ' + (summary.ok ? 'success' : 'error');
+            adminNotice.textContent = summary.text;
           } catch (error) {
             adminNotice.className = 'notice error';
             adminNotice.textContent = error.message;
