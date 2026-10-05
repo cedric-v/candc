@@ -76,7 +76,7 @@ export function onRequestGet() {
           <label for="otaStayFilter">Stay</label>
           <select id="otaStayFilter">
             <option value="">All dates</option>
-            <option value="30">Next 30 days</option>
+            <option value="30" selected>Next 30 days</option>
             <option value="90">Next 90 days</option>
             <option value="180">Next 6 months</option>
           </select>
@@ -576,7 +576,7 @@ export function onRequestGet() {
         const OTA_PAGE_SIZE = 10;
         let otaBlocks = [];
         let otaUnitFilterValue = '';
-        let otaStayFilterValue = '';
+        let otaStayFilterValue = '30';
         let otaSourceFilterValue = '';
         let otaPage = 1;
 
@@ -641,6 +641,7 @@ export function onRequestGet() {
               .join('');
           sourceSelect.value = codes.includes(currentSource) ? currentSource : '';
           otaSourceFilterValue = sourceSelect.value;
+          otaStayFilterValue = document.getElementById('otaStayFilter').value;
         }
 
         // Tableau des prochains blocs OTA (réservations importées) avec un lien
