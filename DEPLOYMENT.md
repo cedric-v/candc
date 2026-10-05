@@ -173,6 +173,12 @@ Si la base existe deja et doit supporter les blocages manuels de periodes depuis
 wrangler d1 execute candc-booking --file=./migrations/0015_add_manual_calendar_block_note.sql
 ```
 
+Si la base existe deja et doit importer le calendrier Nomady du parking, executer aussi :
+
+```bash
+wrangler d1 execute candc-booking --file=./migrations/0016_add_parking_nomady_calendar.sql
+```
+
 ### Binding D1 obligatoire sur Cloudflare Pages
 
 Important :
