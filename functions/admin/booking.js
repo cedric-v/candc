@@ -63,9 +63,17 @@ export function onRequestGet() {
       <div id="admin-reservations" class="small">No data loaded yet.</div>
     </section>
     <section class="card stack" style="margin-top:18px">
-      <h2>Upcoming OTA bookings</h2>
+      <div class="section-head">
+        <h2>Upcoming OTA bookings</h2>
+        <div class="field section-filter-field">
+          <label for="otaSourceFilter">Filter by source</label>
+          <select id="otaSourceFilter" class="section-filter">
+            <option value="">All sources</option>
+          </select>
+        </div>
+      </div>
       <p class="small">Upcoming stays imported from the connected OTA calendars (Booking.com, Airbnb, Nomady, Vrbo…). The guest details and messages live in the OTA extranet — open it from the source link. Direct C&amp;C bookings are listed in the Reservations table above.</p>
-      <div id="admin-external-blocks" class="small">No data loaded yet.</div>
+      <div id="admin-external-blocks" class="small ota-bookings">No data loaded yet.</div>
     </section>
     <section class="card stack" style="margin-top:18px">
       <h2>Operational health</h2>
@@ -549,38 +557,87 @@ export function onRequestGet() {
           vrbo: { label: 'Vrbo', url: 'https://accounts.expediagroup.com/partner/login' },
         };
 
+        // Pagination du tableau OTA : 10 lignes visibles, au-delà on page.
+        const OTA_PAGE_SIZE = 10;
+        let otaBlocks = [];
+        let otaSourceFilterValue = '';
+        let otaPage = 1;
+
         function otaSourceInfo(source) {
           const code = String(source || '').replace(/_(ics|api)$/i, '');
           const known = OTA_SOURCES[code];
           return {
             code,
-            label: known ? known.label : 'External',
+            label: known ? known.label : (code || 'External'),
             url: known ? known.url : null,
           };
         }
 
+        function populateOtaSourceFilter(rows) {
+          const select = document.getElementById('otaSourceFilter');
+          const current = select.value;
+          const codes = [...new Set(rows.map((item) => otaSourceInfo(item.source).code))].sort();
+          select.innerHTML =
+            '<option value="">All sources</option>' +
+            codes
+              .map((code) => {
+                const info = OTA_SOURCES[code];
+                return '<option value="' + escapeHtml(code) + '">' + escapeHtml(info ? info.label : code) + '</option>';
+              })
+              .join('');
+          select.value = codes.includes(current) ? current : '';
+          otaSourceFilterValue = select.value;
+        }
+
         // Tableau des prochains blocs OTA (réservations importées) avec un lien
-        // direct vers l'interface de login de chaque plateforme.
-        function renderExternalBlocks(rows) {
-          if (!rows.length) {
-            return '<p class="small">No upcoming OTA-sourced stays found in the imported calendars.</p>';
+        // direct vers l'interface de login de chaque plateforme. La colonne
+        // Source est à droite ; le tableau est paginé au-delà de 10 lignes.
+        function renderExternalBlocks() {
+          const filtered = otaSourceFilterValue
+            ? otaBlocks.filter((item) => otaSourceInfo(item.source).code === otaSourceFilterValue)
+            : otaBlocks;
+
+          const totalPages = Math.max(1, Math.ceil(filtered.length / OTA_PAGE_SIZE));
+          if (otaPage > totalPages) {
+            otaPage = totalPages;
+          }
+          if (otaPage < 1) {
+            otaPage = 1;
           }
 
-          const rowsHtml = rows.map((item) => {
-            const source = otaSourceInfo(item.source);
-            const sourceCell = source.url
-              ? '<a href="' + escapeHtml(source.url) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(source.label) + ' \u2197</a>'
-              : escapeHtml(source.label);
-            return (
-              '<tr>' +
-              '<td data-label="Source">' + sourceCell + '</td>' +
-              '<td data-label="Unit">' + escapeHtml(item.unit_display_name || item.unit_code || '-') + '</td>' +
-              '<td data-label="Stay">' + escapeHtml(formatAdminDate(item.start_date) + ' \u2192 ' + formatAdminDate(item.end_date)) + '</td>' +
-              '</tr>'
-            );
-          }).join('');
+          const pageRows = filtered.slice((otaPage - 1) * OTA_PAGE_SIZE, otaPage * OTA_PAGE_SIZE);
 
-          return '<div class="table-scroll"><table><thead><tr><th>Source</th><th>Unit</th><th>Stay</th></tr></thead><tbody>' + rowsHtml + '</tbody></table></div>';
+          let html = '';
+          if (!pageRows.length) {
+            html = '<p class="small">No upcoming OTA-sourced stays found' + (otaSourceFilterValue ? ' for this source' : '') + '.</p>';
+          } else {
+            const rowsHtml = pageRows.map((item) => {
+              const source = otaSourceInfo(item.source);
+              const sourceCell = source.url
+                ? '<a href="' + escapeHtml(source.url) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(source.label) + ' \u2197</a>'
+                : escapeHtml(source.label);
+              return (
+                '<tr class="admin-res-row ota-res-row">' +
+                '<td data-label="Unit">' + escapeHtml(item.unit_display_name || item.unit_code || '-') + '</td>' +
+                '<td data-label="Stay">' + escapeHtml(formatAdminDate(item.start_date) + ' \u2192 ' + formatAdminDate(item.end_date)) + '</td>' +
+                '<td data-label="Source">' + sourceCell + '</td>' +
+                '</tr>'
+              );
+            }).join('');
+
+            html = '<div class="table-scroll"><table class="admin-res-table ota-table"><thead><tr><th>Unit</th><th>Stay</th><th>Source</th></tr></thead><tbody>' + rowsHtml + '</tbody></table></div>';
+          }
+
+          if (filtered.length > OTA_PAGE_SIZE) {
+            html +=
+              '<div class="ota-pager">' +
+              '<button type="button" class="btn-secondary ota-page-prev"' + (otaPage <= 1 ? ' disabled' : '') + '>Previous</button>' +
+              '<span class="small">Page ' + otaPage + ' / ' + totalPages + ' · ' + filtered.length + ' stays</span>' +
+              '<button type="button" class="btn-secondary ota-page-next"' + (otaPage >= totalPages ? ' disabled' : '') + '>Next</button>' +
+              '</div>';
+          }
+
+          externalBlocksWrap.innerHTML = html;
         }
 
         function getLongStayInputs() {
@@ -683,7 +740,10 @@ export function onRequestGet() {
             );
             renderOperationalHealth(data.operationalHealth);
             manualBlocksWrap.innerHTML = renderManualBlocks(data.manualBlocks || []);
-            externalBlocksWrap.innerHTML = renderExternalBlocks(data.externalBlocks || []);
+            otaBlocks = data.externalBlocks || [];
+            otaPage = 1;
+            populateOtaSourceFilter(otaBlocks);
+            renderExternalBlocks();
             calendarHealthWrap.innerHTML = renderTable(
               data.calendarHealth.map((item) => ({
                 unit: item.unit_display_name,
@@ -789,6 +849,24 @@ export function onRequestGet() {
         resScope.addEventListener('change', loadReservations);
         resStatus.addEventListener('change', loadReservations);
         resUnit.addEventListener('change', loadReservations);
+
+        document.getElementById('otaSourceFilter').addEventListener('change', (event) => {
+          otaSourceFilterValue = event.target.value;
+          otaPage = 1;
+          renderExternalBlocks();
+        });
+
+        externalBlocksWrap.addEventListener('click', (event) => {
+          if (event.target.closest('.ota-page-prev') && otaPage > 1) {
+            otaPage -= 1;
+            renderExternalBlocks();
+            return;
+          }
+          if (event.target.closest('.ota-page-next')) {
+            otaPage += 1;
+            renderExternalBlocks();
+          }
+        });
 
         ratePeriodForm.addEventListener('submit', async (event) => {
           event.preventDefault();
