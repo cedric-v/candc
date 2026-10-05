@@ -199,16 +199,6 @@ export function htmlDocument({ title, body, lang = "fr" }) {
         font-weight: 700;
       }
       .small { font-size: 0.9rem; color: var(--muted); }
-      .section-head {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: flex-end;
-        justify-content: space-between;
-        gap: 12px;
-      }
-      .section-head h2 { margin: 0; }
-      .section-filter-field { margin: 0; min-width: 12rem; }
-      .section-filter { width: auto; }
       /* Le tableau OTA réutilise admin-res-table (empilement mobile).
          min-width:0 empêche le wrapper de forcer la carte à déborder. */
       .ota-bookings { min-width: 0; }
