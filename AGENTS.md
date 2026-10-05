@@ -62,7 +62,7 @@ Pending-payment behavior (important):
 Anti-surbooking (important):
 
 - `functions/_lib/ota-availability.js` (`findLiveExternalConflicts`) re-reads the **live** OTA ICS feeds on reservation creation, before payment confirmation (initial **and** adjustment) and before resuming payment, because `calendar_blocks` can be up to 20 min stale (cron interval). Total fail-open: network/parse/DB errors land in `errors` and never block a booking nor 500 the SumUp webhook (that would strand a paid, unconfirmed reservation)
-- source-agnostic by design: every active `external_calendar_sources` row with `source_kind = 'ics'` is covered (booking, airbnb, vrbo, ...). `getImportCalendarSources(env, null, unitCode)` is the single list — never hardcode OTA names at call sites; a future non-ICS source (API) must provide its own conflict resolver
+- source-agnostic by design: every active `external_calendar_sources` row with `source_kind = 'ics'` is covered (booking, airbnb, nomady, vrbo, ...). `getImportCalendarSources(env, null, unitCode)` is the single list — never hardcode OTA names at call sites; a future non-ICS source (API) must provide its own conflict resolver
 - the live check is skipped for stays that are (or were) already confirmed: they are in the export feed and may be mirrored back by the OTA, which would look like a self-conflict. Date changes therefore stay DB-only (the adjustment payment re-check uses the DB)
 - ICS import validates the body with `isIcsCalendarDocument` (shared `fetchIcsText` in `ics-import.js`): no full `BEGIN:VCALENDAR`…`END:VCALENDAR` -> the sync fails WITHOUT deleting existing OTA blocks (an HTML/truncated response must never open dates)
 - after each ICS import, `findExternalDirectOverlapsForUnit` (db.js) detects an OTA block overlapping a confirmed direct stay and `runBookingIcsSync` sends a deduped `overbooking_detected:<unit>` admin alert (this "us -> OTA" direction cannot be prevented by iCal alone, only surfaced)
@@ -80,6 +80,13 @@ Manual calendar blocks (admin):
 - the admin dashboard (`/admin/booking`) can block specific dates per unit (`source = 'manual'`, `status = 'active'`, `reservation_id IS NULL`) with an optional note; see `createManualCalendarBlock` / `deleteManualCalendarBlock` / `listManualCalendarBlocks` in `db.js` and the `create_calendar_block` / `delete_calendar_block` actions in `functions/api/admin/booking.js`
 - manual blocks block direct availability via `getAvailabilityConflicts` and are included in the ICS export feed (`functions/_lib/ics.js`, `functions/_lib/ics-feed.js`) so they also close the dates on Booking.com/Airbnb
 - `migrations/0015_add_manual_calendar_block_note.sql` adds the `note` column; the `db.js` helpers degrade gracefully (empty note) if it has not been applied yet
+
+OTA booking source links (admin):
+
+- the admin dashboard (`/admin/booking`) lists upcoming stays imported from external calendars in an "Upcoming OTA bookings" table, each with a link to the matching OTA extranet for the guest details; see `listUpcomingExternalCalendarBlocks` in `db.js`, the `externalBlocks` field in `functions/api/admin/booking.js`, and the `OTA_SOURCES` map in `functions/admin/booking.js`
+- the table has Unit / Stay / Source filters (Stay defaults to "Next 30 days") and paginates beyond 10 rows; it reuses the `admin-res-table` mobile stacking to avoid horizontal overflow
+- add the OTA login URL to `OTA_SOURCES` when connecting a new OTA; do not hardcode it elsewhere
+- `migrations/0016_add_parking_nomady_calendar.sql` adds the import-only Nomady iCal source for the parking space (`calendar_parking_nomady`, `source_code = 'nomady'`, `is_reference = 0`)
 
 WC/shower access confirmation (important):
 

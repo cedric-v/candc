@@ -213,7 +213,7 @@ Operational sync note:
 - the admin UI exposes `Run calendar sync`
 - the admin UI also exposes `Validate OTA feeds`
 - there is intentionally no separate `Run Airbnb sync` action in the admin UI
-- the sync job imports all active OTA calendar sources configured in the system, including `booking` and `airbnb` when present for a unit
+- the sync job imports all active OTA calendar sources configured in the system, including `booking`, `airbnb` and `nomady` when present for a unit
 
 Refund note:
 

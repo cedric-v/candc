@@ -225,6 +225,30 @@ Si la base D1 existe deja et doit maintenant pointer le calendrier Booking.com d
 wrangler d1 execute candc-booking --file=./migrations/0011_update_parking_booking_ical_url.sql
 ```
 
+Si la base D1 existe deja et doit maintenant pointer le calendrier Airbnb du studio vers la nouvelle URL iCal, executer aussi :
+
+```bash
+wrangler d1 execute candc-booking --file=./migrations/0013_update_studio_airbnb_ical_url.sql
+```
+
+Si la base D1 existe deja et doit maintenant mettre a jour les URLs iCal Booking.com (parking et studio), executer aussi :
+
+```bash
+wrangler d1 execute candc-booking --file=./migrations/0014_update_booking_ical_urls.sql
+```
+
+Si la base D1 existe deja et doit supporter les blocages manuels de periodes depuis l'admin (colonne `note` sur `calendar_blocks`), executer aussi :
+
+```bash
+wrangler d1 execute candc-booking --file=./migrations/0015_add_manual_calendar_block_note.sql
+```
+
+Si la base D1 existe deja et doit importer le calendrier Nomady du parking, executer aussi :
+
+```bash
+wrangler d1 execute candc-booking --file=./migrations/0016_add_parking_nomady_calendar.sql
+```
+
 Important :
 
 - les migrations de seed contiennent des placeholders deliberes pour les valeurs sensibles
@@ -283,7 +307,7 @@ Le scaffold couvre :
 - export ICS par unite : reservations confirmees + blocages manuels admin actifs (les holds non payes ne bloquent pas les OTA)
 - creation d'un Hosted Checkout SumUp si les credentials sont configures
 - webhook SumUp pour confirmer ou liberer la reservation selon le statut de paiement, avec re-verification de la disponibilite avant confirmation (anti-double-reservation : si conflit, remboursement et statut `conflict_refund_due` ou revert d'ajustement)
-- re-verification "juste-a-temps" des flux OTA (toutes les sources ICS actives : booking, airbnb, vrbo, ...) a la creation d'une reservation, a la confirmation du paiement (initial ET complement d'ajustement) et a la reprise de paiement, en plus de la table `calendar_blocks` : ferme la fenetre de 20 min entre la vente OTA et son import ICS. Fail-open total (reseau, corps invalide, base) : ces erreurs ne bloquent jamais une reservation ni ne font echouer le webhook SumUp. Les sejours deja confirmes sont exclus de la relecture live (deja dans le flux d'export, ils peuvent etre re-miroites par l'OTA : la modification de dates reste donc sur le controle DB seul)
+- re-verification "juste-a-temps" des flux OTA (toutes les sources ICS actives : booking, airbnb, nomady, vrbo, ...) a la creation d'une reservation, a la confirmation du paiement (initial ET complement d'ajustement) et a la reprise de paiement, en plus de la table `calendar_blocks` : ferme la fenetre de 20 min entre la vente OTA et son import ICS. Fail-open total (reseau, corps invalide, base) : ces erreurs ne bloquent jamais une reservation ni ne font echouer le webhook SumUp. Les sejours deja confirmes sont exclus de la relecture live (deja dans le flux d'export, ils peuvent etre re-miroites par l'OTA : la modification de dates reste donc sur le controle DB seul)
 - sources de calendrier source-agnostiques : `getImportCalendarSources(env, null, unitCode)` liste toutes les sources ICS actives ; ne jamais coder en dur les noms d'OTA dans les appelants (une source future non-ICS devra fournir son propre resolveur de conflits)
 - validation du corps ICS (`isIcsCalendarDocument`, fetch partage `fetchIcsText`) : une reponse non-calendaire (page d'erreur HTML, flux tronque) ne supprime plus les blocages OTA existants
 - rapprochement apres import : alerte admin (e-mail + ntfy) si un bloc OTA chevauche une reservation directe confirmee ("us -> OTA" non preventable par iCal seul, seulement signale)
@@ -459,6 +483,7 @@ Important :
 - le job importe toutes les sources ICS actives declarees en base pour l'unite
 - `booking` est la source principale attendue
 - `airbnb` peut aussi etre importe si une source active existe
+- `nomady` est importe pour le parking si une source active existe
 - l'interface admin presente donc un bouton generique de sync calendrier
 
 Authentification requise :
