@@ -26,7 +26,7 @@
   "description": "Multilingual Eleventy site and Cloudflare-based direct booking engine for a parking space and eco studio",
   "dependencies": {
     "cross-env": "^10.1.0",
-    "dotenv": "^17.4.2",
+    "dotenv": "^18.0.0",
     "eleventy-plugin-i18n": "^0.1.3",
     "eleventy-plugin-seo": "^0.5.2",
     "npm-run-all2": "^9.0.0"
