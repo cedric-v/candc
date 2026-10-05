@@ -1423,6 +1423,13 @@
         "author": "Alberto Melero",
         "rating": 5,
         "caption": "Séjour extrêmement agréable, hôtes d'une hospitalité remarquable"
+      },
+      {
+        "image": "assets/img/testimonials/parking/hans-parking-oct26.jpg",
+        "alt": "Bel endroit pour passer la nuit avec un excellent hôte. Nous avons eu un WC avec douche sans complication. Cédric est un hôte attentionné. Avec plaisir.",
+        "author": "Hans Ulrich",
+        "rating": 5,
+        "caption": "Bel endroit pour passer la nuit avec un excellent hôte"
       }
     ],
     "en": [
@@ -1558,6 +1565,13 @@
         "author": "Alberto Melero",
         "rating": 5,
         "caption": "Super pleasant stay, super hospitable hosts"
+      },
+      {
+        "image": "assets/img/testimonials/parking/hans-parking-oct26.jpg",
+        "alt": "Beautiful place to spend the night with a great host. We got a WC with shower without any hassle. Cédric is an attentive host. Would gladly come back.",
+        "author": "Hans Ulrich",
+        "rating": 5,
+        "caption": "Beautiful place to spend the night with a great host"
       }
     ],
     "de": [
@@ -1693,6 +1707,13 @@
         "author": "Alberto Melero",
         "rating": 5,
         "caption": "Super angenehmer Aufenthalt, super gastfreundliche Gastgeber"
+      },
+      {
+        "image": "assets/img/testimonials/parking/hans-parking-oct26.jpg",
+        "alt": "Schöner Platz zum Übernachten mit tollem Gastgeber. Unkompliziert bekamen ein WC mit Douche. Cédric ist ein aufmerksamer Gastgeber. Gerne wieder.",
+        "author": "Hans Ulrich",
+        "rating": 5,
+        "caption": "Schöner Platz zum Übernachten mit tollem Gastgeber"
       }
     ],
     "es": [
@@ -1828,6 +1849,13 @@
         "author": "Alberto Melero",
         "rating": 5,
         "caption": "Estancia súper agradable, anfitriones súper hospitalarios"
+      },
+      {
+        "image": "assets/img/testimonials/parking/hans-parking-oct26.jpg",
+        "alt": "Bonito lugar para pasar la noche con un excelente anfitrión. Conseguimos un WC con ducha sin complicaciones. Cédric es un anfitrión atento. Con gusto repetiría.",
+        "author": "Hans Ulrich",
+        "rating": 5,
+        "caption": "Bonito lugar para pasar la noche con un excelente anfitrión"
       }
     ],
     "pt": [
@@ -1963,6 +1991,13 @@
         "author": "Alberto Melero",
         "rating": 5,
         "caption": "Estadia super agradável, anfitriões super hospitalares"
+      },
+      {
+        "image": "assets/img/testimonials/parking/hans-parking-oct26.jpg",
+        "alt": "Belo lugar para pernoitar com um excelente anfitrião. Conseguimos uma WC com duche sem complicações. Cédric é um anfitrião atencioso. Voltaria com prazer.",
+        "author": "Hans Ulrich",
+        "rating": 5,
+        "caption": "Belo lugar para pernoitar com um excelente anfitrião"
       }
     ],
     "it": [
@@ -2098,6 +2133,13 @@
         "author": "Alberto Melero",
         "rating": 5,
         "caption": "Soggiorno super piacevole, host super ospitali"
+      },
+      {
+        "image": "assets/img/testimonials/parking/hans-parking-oct26.jpg",
+        "alt": "Bel posto dove passare la notte con un ottimo host. Abbiamo ottenuto un WC con doccia senza complicazioni. Cédric è un host attento. Volentieri di nuovo.",
+        "author": "Hans Ulrich",
+        "rating": 5,
+        "caption": "Bel posto dove passare la notte con un ottimo host"
       }
     ],
     "nl": [
@@ -2233,6 +2275,13 @@
         "author": "Alberto Melero",
         "rating": 5,
         "caption": "Super aangenaam verblijf, super gastvrije hosts"
+      },
+      {
+        "image": "assets/img/testimonials/parking/hans-parking-oct26.jpg",
+        "alt": "Mooie plek om te overnachten met een geweldige gastheer. We kregen zonder gedoe een WC met douche. Cédric is een attente gastheer. Graag weer.",
+        "author": "Hans Ulrich",
+        "rating": 5,
+        "caption": "Mooie plek om te overnachten met een geweldige gastheer"
       }
     ]
   }
