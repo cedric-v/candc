@@ -669,6 +669,41 @@ export async function countFutureExternalBlocks(env, unitId, sourceTag, todayIso
   return Number(row?.block_count || 0);
 }
 
+// Blocs OTA à venir (réservations importées depuis Booking.com, Airbnb,
+// Nomady, Vrbo…). Sert au tableau de bord admin : voir d'un coup d'œil quelles
+// réservations à venir viennent d'une OTA et ouvrir l'extranet correspondant
+// pour consulter les détails/voyageur. On ne renvoie que les blocs externes
+// (external_uid non nul, sans réservation directe liée).
+export async function listUpcomingExternalCalendarBlocks(env, todayIso, limit = 200) {
+  const db = requireDb(env);
+  const { results } = await db
+    .prepare(
+      `
+        SELECT
+          calendar_blocks.id,
+          calendar_blocks.unit_id,
+          calendar_blocks.source,
+          calendar_blocks.external_uid,
+          calendar_blocks.start_date,
+          calendar_blocks.end_date,
+          rentable_units.code AS unit_code,
+          rentable_units.display_name AS unit_display_name
+        FROM calendar_blocks
+        LEFT JOIN rentable_units ON rentable_units.id = calendar_blocks.unit_id
+        WHERE calendar_blocks.reservation_id IS NULL
+          AND calendar_blocks.external_uid IS NOT NULL
+          AND calendar_blocks.status IN ('active', 'confirmed')
+          AND calendar_blocks.end_date > ?
+        ORDER BY calendar_blocks.start_date ASC
+        LIMIT ?
+      `,
+    )
+    .bind(todayIso, limit)
+    .all();
+
+  return results || [];
+}
+
 export async function updateCalendarSourceSync(env, sourceId, syncStatus) {
   const db = requireDb(env);
   const nowIso = new Date().toISOString();

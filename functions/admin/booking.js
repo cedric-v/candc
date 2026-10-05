@@ -63,6 +63,11 @@ export function onRequestGet() {
       <div id="admin-reservations" class="small">No data loaded yet.</div>
     </section>
     <section class="card stack" style="margin-top:18px">
+      <h2>Upcoming OTA bookings</h2>
+      <p class="small">Upcoming stays imported from the connected OTA calendars (Booking.com, Airbnb, Nomady, Vrbo…). The guest details and messages live in the OTA extranet — open it from the source link. Direct C&amp;C bookings are listed in the Reservations table above.</p>
+      <div id="admin-external-blocks" class="small">No data loaded yet.</div>
+    </section>
+    <section class="card stack" style="margin-top:18px">
       <h2>Operational health</h2>
       <div id="admin-operational-health" class="small">No data loaded yet.</div>
     </section>
@@ -224,6 +229,7 @@ export function onRequestGet() {
         const unitSelect = document.getElementById('unitId');
         const longStayUnitSelect = document.getElementById('longStayUnitId');
         const reservationsWrap = document.getElementById('admin-reservations');
+        const externalBlocksWrap = document.getElementById('admin-external-blocks');
         const resScope = document.getElementById('resScope');
         const resStatus = document.getElementById('resStatus');
         const resUnit = document.getElementById('resUnit');
@@ -533,6 +539,50 @@ export function onRequestGet() {
           return '<div class="table-scroll"><table><thead><tr><th>Unit</th><th>Period</th><th>Note</th><th>Created</th><th></th></tr></thead><tbody>' + rowsHtml + '</tbody></table></div>';
         }
 
+        // Interfaces d'administration/login des OTA connectées : permet
+        // d'ouvrir l'extranet où se trouvent les détails et messages de la
+        // réservation importée (le flux iCal ne transporte que les dates).
+        const OTA_SOURCES = {
+          booking: { label: 'Booking.com', url: 'https://admin.booking.com/' },
+          nomady: { label: 'Nomady', url: 'https://nomady.camp/fr' },
+          airbnb: { label: 'Airbnb', url: 'https://www.airbnb.com/hosting' },
+          vrbo: { label: 'Vrbo', url: 'https://accounts.expediagroup.com/partner/login' },
+        };
+
+        function otaSourceInfo(source) {
+          const code = String(source || '').replace(/_(ics|api)$/i, '');
+          const known = OTA_SOURCES[code];
+          return {
+            code,
+            label: known ? known.label : 'External',
+            url: known ? known.url : null,
+          };
+        }
+
+        // Tableau des prochains blocs OTA (réservations importées) avec un lien
+        // direct vers l'interface de login de chaque plateforme.
+        function renderExternalBlocks(rows) {
+          if (!rows.length) {
+            return '<p class="small">No upcoming OTA-sourced stays found in the imported calendars.</p>';
+          }
+
+          const rowsHtml = rows.map((item) => {
+            const source = otaSourceInfo(item.source);
+            const sourceCell = source.url
+              ? '<a href="' + escapeHtml(source.url) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(source.label) + ' \u2197</a>'
+              : escapeHtml(source.label);
+            return (
+              '<tr>' +
+              '<td data-label="Source">' + sourceCell + '</td>' +
+              '<td data-label="Unit">' + escapeHtml(item.unit_display_name || item.unit_code || '-') + '</td>' +
+              '<td data-label="Stay">' + escapeHtml(formatAdminDate(item.start_date) + ' \u2192 ' + formatAdminDate(item.end_date)) + '</td>' +
+              '</tr>'
+            );
+          }).join('');
+
+          return '<div class="table-scroll"><table><thead><tr><th>Source</th><th>Unit</th><th>Stay</th></tr></thead><tbody>' + rowsHtml + '</tbody></table></div>';
+        }
+
         function getLongStayInputs() {
           return [1, 2, 3, 4].map((index) => ({
             nights: longStayForm.elements['longStayNights' + index],
@@ -633,6 +683,7 @@ export function onRequestGet() {
             );
             renderOperationalHealth(data.operationalHealth);
             manualBlocksWrap.innerHTML = renderManualBlocks(data.manualBlocks || []);
+            externalBlocksWrap.innerHTML = renderExternalBlocks(data.externalBlocks || []);
             calendarHealthWrap.innerHTML = renderTable(
               data.calendarHealth.map((item) => ({
                 unit: item.unit_display_name,

@@ -12,6 +12,7 @@ import {
   listRatePeriods,
   listRecentSyncLogs,
   listUnitsForAdmin,
+  listUpcomingExternalCalendarBlocks,
   setReservationWcConfirmation,
   updateUnitSettings,
   upsertRatePeriod,
@@ -30,16 +31,25 @@ export async function onRequestGet(context) {
     }
 
     const url = new URL(context.request.url);
+    const todayIso = getCurrentIsoDateInZone(getConfig(context.env).timeZone);
     const reservationOptions = {
       scope: url.searchParams.get("scope") || "upcoming",
       statusGroup: url.searchParams.get("status") || "active",
       unitCode: url.searchParams.get("unit") || null,
       limit: Number(url.searchParams.get("limit") || 100),
-      todayIso: getCurrentIsoDateInZone(getConfig(context.env).timeZone),
+      todayIso,
     };
 
-    const [units, reservations, ratePeriods, syncLogs, calendarHealth, operationalHealth, manualBlocks] =
-      await Promise.all([
+    const [
+      units,
+      reservations,
+      ratePeriods,
+      syncLogs,
+      calendarHealth,
+      operationalHealth,
+      manualBlocks,
+      externalBlocks,
+    ] = await Promise.all([
       listUnitsForAdmin(context.env),
       listAdminReservations(context.env, reservationOptions),
       listRatePeriods(context.env),
@@ -47,6 +57,7 @@ export async function onRequestGet(context) {
       listCalendarHealthForAdmin(context.env),
       listOperationalJobHealth(context.env),
       listManualCalendarBlocks(context.env),
+      listUpcomingExternalCalendarBlocks(context.env, todayIso),
     ]);
 
     return json({
@@ -57,6 +68,7 @@ export async function onRequestGet(context) {
       calendarHealth,
       operationalHealth,
       manualBlocks,
+      externalBlocks,
     });
   } catch (error) {
     console.error("Failed to load admin dashboard:", error);
