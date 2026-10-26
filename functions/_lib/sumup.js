@@ -35,6 +35,13 @@ export async function createHostedCheckout(env, payload) {
     throw new Error("sumup_not_configured");
   }
 
+  // `return_url` ramène le NAVIGATEUR du client dans la boutique (retour depuis
+  // la page de paiement). Il ne doit donc jamais pointer vers un endpoint
+  // d'API : /api/booking/sumup/webhook ne répond qu'en POST et renvoie une page
+  // 404 au navigateur. Par défaut, on réutilise la page de confirmation
+  // (`redirectUrl`), qui sait déjà afficher l'état du paiement.
+  const returnUrl = payload.returnUrl || payload.redirectUrl;
+
   const response = await fetch(`${config.sumUpApiBaseUrl}/v0.1/checkouts`, {
     method: "POST",
     headers: buildHeaders(config.sumUpApiKey),
@@ -45,7 +52,7 @@ export async function createHostedCheckout(env, payload) {
       description: payload.description,
       merchant_code: config.sumUpMerchantCode,
       redirect_url: payload.redirectUrl,
-      return_url: payload.returnUrl,
+      return_url: returnUrl,
       hosted_checkout: {
         enabled: true,
       },

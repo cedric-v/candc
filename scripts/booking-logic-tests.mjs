@@ -7,6 +7,9 @@ import { findLiveExternalConflicts, rangesOverlap } from "../functions/_lib/ota-
 import { validateBookingInput } from "../functions/_lib/validation.js";
 import { sendAdminAlert } from "../functions/_lib/alerts.js";
 import { normalizeTopicUrl } from "../functions/_lib/ntfy.js";
+import { readdirSync, readFileSync } from "node:fs";
+import { join, relative } from "node:path";
+import { fileURLToPath } from "node:url";
 
 function assert(condition, message) {
   if (!condition) {
@@ -771,6 +774,101 @@ function runIcsFeedTests() {
   );
 }
 
+// Politique des liens de gestion (« manage token »)
+// --------------------------------------------------------------------------
+// Incident du 26.10.2026 : les e-mails automatiques (`payment_expired`, puis
+// `arrival_instructions`) émettaient un token ROTATIF et révoquaient donc le
+// lien de l'e-mail de confirmation. Le client tombait sur « Unknown or expired
+// booking link » au lieu de pouvoir payer.
+//
+// Règle : un e-mail automatique AJOUTE un lien valide, il n'en révoque jamais.
+// La rotation est réservée aux actions explicites : bouton admin « régénérer le
+// lien » (rotate_manage_token) et annulation d'une réservation.
+const MANAGE_TOKEN_ROTATION_ALLOWLIST = new Set([
+  // Action admin explicite de régénération du lien (bouton du dashboard).
+  "functions/api/admin/booking.js",
+]);
+
+function listJsFiles(directory) {
+  return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
+    const fullPath = join(directory, entry.name);
+    if (entry.isDirectory()) {
+      return listJsFiles(fullPath);
+    }
+    return entry.isFile() && entry.name.endsWith(".js") ? [fullPath] : [];
+  });
+}
+
+function runManageTokenPolicyTests() {
+  const projectRoot = fileURLToPath(new URL("../", import.meta.url));
+  const functionsRoot = join(projectRoot, "functions");
+  const offenders = [];
+
+  for (const file of listJsFiles(functionsRoot)) {
+    if (!/rotate:\s*true/.test(readFileSync(file, "utf8"))) {
+      continue;
+    }
+
+    const relativePath = relative(projectRoot, file).split("\\").join("/");
+    if (!MANAGE_TOKEN_ROTATION_ALLOWLIST.has(relativePath)) {
+      offenders.push(relativePath);
+    }
+  }
+
+  assert(
+    offenders.length === 0,
+    `Automatic flows must not rotate manage tokens (use createManageToken without { rotate: true } so the customer's existing link keeps working). Offending file(s): ${offenders.join(", ") || "none"}`,
+  );
+}
+
+async function runManageTokenLifecycleTests() {
+  const { createManageToken } = await import("../functions/_lib/db.js");
+  const executed = [];
+  const env = {
+    PUBLIC_BASE_URL: "https://candc.ch",
+    DB: {
+      prepare(sql) {
+        const record = { sql: sql.replace(/\s+/g, " ").trim(), args: [] };
+        executed.push(record);
+        const statement = {
+          bind(...args) {
+            record.args = args;
+            return statement;
+          },
+          async run() {
+            return { success: true };
+          },
+        };
+        return statement;
+      },
+    },
+  };
+
+  const token = await createManageToken(env, "res-1");
+  assert(
+    typeof token === "string" && token.length >= 20,
+    "createManageToken should return an opaque token",
+  );
+  assert(
+    !executed.some((statement) => /UPDATE booking_tokens/i.test(statement.sql)),
+    "createManageToken without { rotate: true } must not revoke existing management links",
+  );
+  assert(
+    executed.some((statement) => /INSERT INTO booking_tokens/i.test(statement.sql)),
+    "createManageToken should insert the new token",
+  );
+
+  // La rotation reste disponible, mais uniquement sur demande explicite.
+  executed.length = 0;
+  await createManageToken(env, "res-1", { rotate: true });
+  assert(
+    executed.some(
+      (statement) => /UPDATE booking_tokens/i.test(statement.sql) && /revoked_at/i.test(statement.sql),
+    ),
+    "createManageToken({ rotate: true }) must revoke the previous management links",
+  );
+}
+
 async function main() {
   runValidationTests();
   runGuestContactValidationTests();
@@ -779,6 +877,8 @@ async function main() {
   await runAlertTests();
   runIcsFeedTests();
   await runOtaAvailabilityTests();
+  runManageTokenPolicyTests();
+  await runManageTokenLifecycleTests();
   console.log("Booking logic tests passed.");
 }
 

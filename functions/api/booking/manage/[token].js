@@ -306,7 +306,8 @@ export async function onRequestPost(context) {
         currency: reservation.currency,
         description: `${unit.displayName} ${reservation.public_reference}`,
         redirectUrl: `${getConfig(context.env).publicBaseUrl}/booking/confirmation/?reference=${encodeURIComponent(reservation.public_reference)}`,
-        returnUrl: `${getConfig(context.env).publicBaseUrl}/api/booking/sumup/webhook`,
+        // Pas de `returnUrl` : par défaut SumUp renvoie le client vers la page
+        // de confirmation (jamais vers l'endpoint webhook, qui répond 404).
       });
 
       await insertPaymentRecord(context.env, {
@@ -449,7 +450,8 @@ export async function onRequestPost(context) {
           currency: quote.currency,
           description: `${unit.displayName} adjustment ${reservation.public_reference}`,
           redirectUrl: `${getConfig(context.env).publicBaseUrl}/booking/manage/${context.params.token}`,
-          returnUrl: `${getConfig(context.env).publicBaseUrl}/api/booking/sumup/webhook`,
+          // Pas de `returnUrl` : par défaut SumUp renvoie le client vers la page
+          // de gestion (jamais vers l'endpoint webhook, qui répond 404).
         });
 
         await insertPaymentRecord(context.env, {

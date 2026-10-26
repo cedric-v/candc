@@ -296,6 +296,12 @@ export async function onRequestGet(context) {
         }
 
         async function resumePayment() {
+          // Verrouille le bouton le temps de la requête : un double clic créait
+          // deux checkouts SumUp (dont un orphelin resté 'pending').
+          if (payButton.disabled) {
+            return;
+          }
+          payButton.disabled = true;
           notice.className = 'notice info';
           notice.textContent = t.preparingPayment;
           try {
@@ -314,6 +320,9 @@ export async function onRequestGet(context) {
             notice.className = 'notice error';
             notice.textContent = error.message;
           }
+          // Le bouton reste verrouillé après un succès (redirection en cours) ;
+          // on ne le réactive qu'en cas d'échec pour permettre une nouvelle tentative.
+          payButton.disabled = false;
         }
 
         previewButton.addEventListener('click', previewQuote);

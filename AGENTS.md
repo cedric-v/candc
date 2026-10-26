@@ -88,6 +88,31 @@ OTA booking source links (admin):
 - add the OTA login URL to `OTA_SOURCES` when connecting a new OTA; do not hardcode it elsewhere
 - `migrations/0016_add_parking_nomady_calendar.sql` adds the import-only Nomady iCal source for the parking space (`calendar_parking_nomady`, `source_code = 'nomady'`, `is_reference = 0`)
 
+Management links (manage token) — policy:
+
+- `booking_tokens` stores only `sha256(token)`, so a link can never be re-sent:
+  an e-mail either mints an **additional** valid token or **rotates** (revokes
+  the existing ones).
+- **automatic flows never rotate**: `createManageToken(env, id)` without
+  `{ rotate: true }` for `payment_expired`, `payment_reminder` and
+  `arrival_instructions`. Rotating there silently killed the link from the
+  confirmation e-mail the customer still had (incident 26.10.2026: a client
+  facing a declined card could no longer reach the "pay now" page at all).
+  This is safe: `resume_payment` / `update` re-check availability, pricing and
+  permissions, so an older still-valid link cannot commit anything wrong.
+- **rotation is explicit only**: admin action `rotate_manage_token`
+  (`functions/api/admin/booking.js`, "New link" button in the reservation
+  details of `/admin/booking`) when the customer lost the link or it leaked —
+  it returns the fresh `manageUrl` and logs `manage_token_rotation` without ever
+  logging the token; and `cancelReservation` (`db.js`), which revokes on
+  cancellation.
+- never put the token in a URL that a third party logs (SumUp `redirect_url`,
+  Referer, access logs): prefer the `candc_manage_token` HttpOnly cookie
+  (`functions/_lib/cookies.js`) with a tokenless page.
+- `scripts/booking-logic-tests.mjs` enforces this: `{ rotate: true }` anywhere
+  in `functions/` outside the admin allowlist fails `npm test`, and
+  `createManageToken` without `rotate` must not emit the revoke `UPDATE`.
+
 WC/shower access confirmation (important):
 
 - a paid reservation with `wc_shower_requested = 1` is auto-confirmed (`wc_shower_confirmed = 1`) by the SumUp webhook on payment (including paid adjustment payments); see `functions/api/booking/sumup/webhook.js` and `setReservationWcConfirmation` in `db.js`

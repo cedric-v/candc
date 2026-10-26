@@ -459,11 +459,21 @@ export function onRequestGet() {
               (item.guest_id_document_number ? '<button type="button" class="admin-id-reveal" style="padding:4px 12px;font-size:0.8rem" data-action="reveal">Reveal</button>' : '') +
               '</div>';
 
+            // Régénération explicite du lien de gestion : seul cas où les liens
+            // précédents sont révoqués (utile si le client a perdu son e-mail ou
+            // si le lien a fuité). Les e-mails automatiques ne rotatent jamais.
+            const manageLinkRow = item.status === 'cancelled'
+              ? ''
+              : '<div class="meta-row"><span class="label">Manage link</span>' +
+                '<span class="value admin-manage-link">' +
+                '<button type="button" class="admin-manage-rotate" style="padding:4px 10px;font-size:0.78rem" data-id="' + escapeHtml(item.id) + '" title="Generate a new management link for this reservation (all previous links stop working)">New link</button>' +
+                '</span></div>';
+
             return (
               '<tr class="admin-res-row">' + cells +
               '<td class="admin-res-actions" data-label=""><button type="button" class="admin-res-toggle" data-target="' + escapeHtml(detailsId) + '" style="padding:6px 12px;font-size:0.82rem">Details ▾</button></td></tr>' +
               '<tr class="admin-res-details" id="' + escapeHtml(detailsId) + '" hidden><td colspan="8">' +
-              '<div class="meta">' + detailsRows + idRow + '</div>' +
+              '<div class="meta">' + detailsRows + idRow + manageLinkRow + '</div>' +
               '</td></tr>'
             );
           }).join('');
@@ -1137,6 +1147,36 @@ export function onRequestGet() {
                 reveal.dataset.action = 'reveal';
                 reveal.textContent = 'Reveal';
               }
+            }
+            return;
+          }
+
+          const rotateManageLink = event.target.closest('.admin-manage-rotate');
+          if (rotateManageLink) {
+            const reservationId = rotateManageLink.dataset.id;
+            if (!window.confirm('Generate a new management link? All previous links for this reservation will stop working.')) {
+              return;
+            }
+            rotateManageLink.disabled = true;
+            try {
+              const result = await apiFetch('POST', {
+                action: 'rotate_manage_token',
+                reservationId,
+              });
+              const valueEl = rotateManageLink.parentElement;
+              if (valueEl) {
+                valueEl.innerHTML =
+                  '<a href="' + escapeHtml(result.manageUrl) + '" target="_blank" rel="noopener">' +
+                  escapeHtml(result.manageUrl) +
+                  '</a>';
+              }
+              adminNotice.className = 'notice success';
+              adminNotice.textContent =
+                'New management link generated for ' + (result.publicReference || 'the reservation') + '. Previous links are now invalid.';
+            } catch (error) {
+              adminNotice.className = 'notice error';
+              adminNotice.textContent = error.message;
+              rotateManageLink.disabled = false;
             }
             return;
           }
