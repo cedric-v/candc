@@ -248,7 +248,10 @@ export async function runArrivalEmails(env, targetDate = null) {
   for (const reservation of reservations) {
     try {
       const response = await sendReservationEmail(env, reservation.id, "arrival_instructions", {
-        manageTokenFactory: () => createManageToken(env, reservation.id, { rotate: true }),
+        // Pas de rotation : l'e-mail d'arrivée ne doit pas invalider le lien de
+        // gestion déjà reçu (confirmation, relances). Voir AGENTS.md
+        // (« Management links »).
+        manageTokenFactory: () => createManageToken(env, reservation.id),
         dedupe: true,
         forDate: isoDate,
       });

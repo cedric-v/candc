@@ -158,7 +158,11 @@ export async function sendImmediateArrivalEmailIfNeeded(env, reservationId) {
   }
 
   const response = await sendReservationEmail(env, reservationId, "arrival_instructions", {
-    manageTokenFactory: () => createManageToken(env, reservationId, { rotate: true }),
+    // Pas de rotation : l'e-mail d'arrivée ne doit pas invalider le lien de
+    // gestion déjà reçu (confirmation, relances). Voir la politique dans
+    // AGENTS.md (« Management links ») : les e-mails automatiques ajoutent un
+    // lien, seule une action explicite (admin / annulation) le révoque.
+    manageTokenFactory: () => createManageToken(env, reservationId),
     dedupe: true,
     forDate: today,
   });
@@ -271,9 +275,13 @@ export async function sendPaymentExpiredEmail(env, reservationId) {
   }
 
   return sendReservationEmail(env, reservationId, "payment_expired", {
-    // L'expiration du hold invalide l'ancien lien : on émet un lien neuf
-    // (rotation) que l'e-mail va livrer.
-    manageTokenFactory: () => createManageToken(env, reservationId, { rotate: true }),
+    // PAS de rotation ici : l'expiration du hold ne doit pas invalider le lien
+    // déjà reçu par le client (e-mail de confirmation, souvent le seul qu'il
+    // retrouve dans sa boîte, et celui qu'il transmet au support). Un lien
+    // révoqué renvoyait « Unknown or expired booking link » au lieu de la page
+    // « payer maintenant ». L'ancien lien reste sûr : `resume_payment` et
+    // `update` revérifient la disponibilité avant toute action.
+    manageTokenFactory: () => createManageToken(env, reservationId),
     dedupe: true,
   });
 }
