@@ -233,6 +233,14 @@ npm run check:payment
 
 (exit 0 = SumUp secrets bound and a hosted-checkout link is generated; exit 1 = secrets missing, restore with `npm run secrets:push` and redeploy — see DEPLOYMENT.md "Processus recommande").
 
+The script books a real 2-night smoke stay (4 nights for the studio, its
+minimum stay) and cancels it immediately. A booked calendar must never turn
+this check red: when the API answers `409 conflict` (direct stay, OTA import or
+admin manual block) it walks forward — `OFFSET_DAYS` 45 then steps of
+`OFFSET_STEP_DAYS` 15, up to `MAX_DATE_ATTEMPTS` 8 windows — and only fails if
+no window is free (explicitly reported as a booking conflict, not a payment
+problem).
+
 A GitHub Action (`.github/workflows/deploy-check.yml`) runs this check
 automatically after every push to `main` once the Pages deployment is live.
 
