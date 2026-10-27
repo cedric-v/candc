@@ -350,6 +350,32 @@ Le lien doit reposer sur :
 - expiration configurable
 - possibilite de revocation
 
+### Cycle de vie du lien de gestion
+
+Seul le hash du token est stocke : un lien ne peut donc jamais etre reexpedie tel
+quel. Chaque e-mail porteur de lien (confirmation, rappel de paiement, paiement
+expire, instructions d'arrivee) **ajoute** un lien valide ; il ne revoque jamais
+les liens deja recus. Le client peut donc detenir plusieurs liens actifs vers la
+meme reservation, ce qui est voulu : un client qui a perdu son e-mail, ou qui
+transmet son lien au support, ne doit jamais se retrouver bloque.
+
+Seules deux operations revoquent les liens existants :
+
+- l'annulation de la reservation par le client (le lien n'a plus d'objet) ;
+- une regeneration explicite du lien par l'hote depuis l'admin.
+
+La securite ne repose pas sur la revocation automatique mais sur le controle a
+chaque action : `resume_payment` (relance du paiement) et `update` (changement
+de dates) reverifient la disponibilite, le tarif et les permissions avant tout
+effet. Un lien ancien mais valide ne peut donc pas faire payer un montant
+obsolete ni confirmer des dates devenues indisponibles.
+
+Cas d'usage de la regeneration par l'hote :
+
+- le client a perdu son e-mail ou ne trouve plus son lien ;
+- un lien a fuite (transmis a un mauvais destinataire, partage dans un canal) ;
+- le client a paye en especes et l'hote souhaite couper l'acces en ligne.
+
 ## Interface admin minimale
 
 Une mini interface admin est requise.
@@ -363,6 +389,7 @@ Une mini interface admin est requise.
 - creer un blocage manuel
 - supprimer un blocage manuel
 - gerer les periodes de tarification
+- regenerer le lien de gestion d'une reservation (revoque les liens precedents)
 - relancer l'e-mail de confirmation
 - relancer l'e-mail d'arrivee
 - voir l'URL du flux ICS sortant
@@ -812,6 +839,7 @@ Le modele de donnees doit etre multi-unite.
 - `PUT /api/admin/rate-periods/:id`
 - `POST /api/admin/booking` (action `create_calendar_block`)
 - `POST /api/admin/booking` (action `delete_calendar_block`)
+- `POST /api/admin/booking` (action `rotate_manage_token`)
 - `GET /api/admin/sync-logs`
 - `POST /api/admin/emails/:reservationId/resend`
 

@@ -106,6 +106,15 @@ Management links (manage token) — policy:
   it returns the fresh `manageUrl` and logs `manage_token_rotation` without ever
   logging the token; and `cancelReservation` (`db.js`), which revokes on
   cancellation.
+- **use cases of the "New link" button** (permanent feature, not a migration
+  aid): customer lost the e-mail / cannot find the link; link leaked (wrong
+  recipient, shared in a chat channel, screenshot); customer paid cash and the
+  host wants to cut online access. It revokes the previous links, so it is the
+  wrong tool to merely "re-send" a link — several valid links coexist per
+  reservation, so reuse the link already known instead.
+- full reference (emission table, implementation, guard rail):
+  `BOOKING_TECH_SETUP.md` → « Lien de gestion (manage token) — regles d'usage » ;
+  business rules: `BOOKING_SYSTEM_SPEC.md` → « Cycle de vie du lien de gestion ».
 - never put the token in a URL that a third party logs (SumUp `redirect_url`,
   Referer, access logs): prefer the `candc_manage_token` HttpOnly cookie
   (`functions/_lib/cookies.js`) with a tokenless page.

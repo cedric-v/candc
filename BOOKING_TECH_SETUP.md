@@ -38,7 +38,10 @@ tout en gardant :
 - `POST /api/internal/sync/google-calendar`
 - `POST /api/internal/jobs/run`
 - `GET /api/admin/booking`
-- `POST /api/admin/booking`
+- `POST /api/admin/booking` (actions `create_calendar_block`,
+  `delete_calendar_block`, `rotate_manage_token`, `update_wc_confirmation`,
+  `run_booking_sync`, `run_arrival_emails`, `validate_calendar_sources`,
+  `run_sensitive_data_retention`)
 
 ## Localisation des pages de gestion
 
@@ -592,6 +595,57 @@ Fonctions en place :
 - voir les logs de synchro recents
 - lancer manuellement le sync Booking.com
 - lancer manuellement les e-mails d'arrivee
+- regenerer le lien de gestion d'une reservation (bouton « New link »)
+
+### Lien de gestion (`manage token`) — regles d'usage
+
+La table `booking_tokens` ne stocke que le hash SHA-256 du token : un lien ne
+peut donc pas etre reenvoye tel quel. Toute emission de lien est donc soit
+**additive** (un nouveau token, les precedents restent valides), soit
+**rotative** (les precedents sont revoques).
+
+Regle en vigueur : les flux automatiques ne rotent jamais.
+
+| Emission | Effet sur les liens precedents |
+| --- | --- |
+| e-mail de confirmation (creation) | aucun (premier lien) |
+| e-mail de rappel de paiement | aucun — le lien du client reste bon |
+| e-mail de paiement expire | aucun — le lien du client reste bon |
+| e-mail d'instructions d'arrivee (J-0) | aucun — le lien du client reste bon |
+| action admin `rotate_manage_token` | **revocation** des liens precedents |
+| annulation de la reservation (`cancelReservation`) | revocation |
+
+Conséquence : une reservation peut avoir plusieurs liens valents en meme temps.
+C'est voulu (le client peut avoir perdu son e-mail ou transmettre son lien au
+support) et sans risque : `resume_payment` et `update` reverifient disponibilite,
+tarif et permissions avant toute action.
+
+Implementation :
+
+- `createManageToken(env, reservationId)` — emission additive
+  (`functions/_lib/db.js`) ;
+- `createManageToken(env, reservationId, { rotate: true })` — emission rotative,
+  reservee a l'action admin `rotate_manage_token`
+  (`functions/api/admin/booking.js`) et a l'annulation ;
+- action admin `rotate_manage_token` : regenere le lien d'une reservation non
+  annulee, renvoie `{ ok, publicReference, manageUrl }` et journalise
+  `manage_token_rotation` dans `sync_logs` **sans jamais logger le token** ;
+- bouton « New link » dans la ligne « Details » de `/admin/booking` : confirmation
+  explicite (« all previous links stop working ») puis affichage du nouveau lien
+  (cliquable) ;
+- garde-fou : `scripts/booking-logic-tests.mjs` echoue si `{ rotate: true }`
+  apparait dans `functions/` hors de l'allowlist admin, et verifie que
+  `createManageToken` sans `rotate` n'emet pas l'`UPDATE` de revocation.
+
+Cas d'usage du bouton « New link » :
+
+- le client a perdu son e-mail ou ne trouve plus son lien ;
+- un lien a fuite (mauvais destinataire, partage dans un canal, capture d'ecran) ;
+- le client a paye en especes et l'hote souhaite couper l'acces en ligne.
+
+Pour un simple besoin de « renvoyer le lien » sans casser le lien du client :
+utiliser le lien deja connu (e-mail, historique) — la regeneration revoque les
+liens precedents, c'est le seul point d'attention.
 
 ## Jobs internes
 
