@@ -91,10 +91,6 @@ export function onRequestGet() {
       <div id="admin-external-blocks" class="small ota-bookings">No data loaded yet.</div>
     </section>
     <section class="card stack" style="margin-top:18px">
-      <h2>Operational health</h2>
-      <div id="admin-operational-health" class="small">No data loaded yet.</div>
-    </section>
-    <section class="card stack" style="margin-top:18px">
       <h2>Blocked periods (manual)</h2>
       <p class="small">Block specific dates directly in the C&amp;C agenda — for example a period marked unavailable on Booking.com that is not present in its iCal feed. Manual blocks prevent direct bookings and are also included in the iCal export feed, so they close the same dates on the connected OTAs (Booking.com / Airbnb).</p>
       <form id="calendar-block-form" class="stack">
@@ -121,6 +117,10 @@ export function onRequestGet() {
         </div>
       </form>
       <div id="admin-calendar-blocks" class="small">No data loaded yet.</div>
+    </section>
+    <section class="card stack" style="margin-top:18px">
+      <h2>Operational health</h2>
+      <div id="admin-operational-health" class="small">No data loaded yet.</div>
     </section>
     <section class="card stack" style="margin-top:18px">
       <h2>Special pricing period</h2>
