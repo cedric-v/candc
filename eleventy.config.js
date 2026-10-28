@@ -509,6 +509,8 @@ module.exports = function (eleventyConfig) {
   // 10. Copie des assets statiques
   eleventyConfig.addPassthroughCopy({ "src/assets/img": "assets/img" });
   eleventyConfig.addPassthroughCopy({ "src/assets/css": "assets/css" });
+  // Polices auto-hébergées (cf. tools/selfhost-fonts.mjs)
+  eleventyConfig.addPassthroughCopy({ "src/assets/fonts": "assets/fonts" });
   eleventyConfig.addPassthroughCopy({ "src/assets/js": "assets/js" });
   eleventyConfig.addPassthroughCopy({ "src/robots.txt": "robots.txt" });
   eleventyConfig.addPassthroughCopy({ "src/_redirects": "_redirects" });
