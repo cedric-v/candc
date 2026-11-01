@@ -156,9 +156,82 @@ async function runPendingPaymentEmailTests() {
   }
 }
 
+// Une valeur saisie comme prénom qui est en fait une adresse e-mail ne doit
+// jamais apparaître dans la salutation (incident 01.11.2026 : l'e-mail
+// d'arrivée de PARK-20261101-B62F74EB commençait par
+// « Bonjour Chalalande19@gmail.com, »). On salue alors sans nom.
+async function runGreetingFallbackTests() {
+  const sent = [];
+  globalThis.fetch = async (url, options) => {
+    sent.push(JSON.parse(options.body));
+    return new Response(JSON.stringify({ id: "mock" }), { status: 200 });
+  };
+
+  const guestWithEmailAsFirstName = makeReservation({
+    locale: "fr",
+    guest_first_name: "chalalande19@gmail.com",
+    guest_last_name: "",
+    guest_email: "chalalande19@gmail.com",
+  });
+
+  const types = ["booking_confirmation", "arrival_instructions", "departure_instructions", "review_request"];
+
+  for (const emailType of types) {
+    const reservation =
+      emailType === "departure_instructions"
+        ? { ...guestWithEmailAsFirstName, unit_type: "studio", public_reference: "STUDIO-0003" }
+        : guestWithEmailAsFirstName;
+
+    await sendTransactionalEmail(EMAIL_ENV, emailType, reservation, { manageToken: "tok" });
+    const payload = sent[sent.length - 1];
+
+    assert(
+      !payload.text.includes("chalalande19@gmail.com\n") && !/Bonjour\s+chalalande19/i.test(payload.text),
+      `${emailType} must not greet the guest with their e-mail address`,
+    );
+    assert(
+      /^Bonjour,\n/.test(payload.text) || /^Bonjour / .test(payload.text),
+      `${emailType} must still open with a greeting`,
+    );
+  }
+
+  // Prénom connu : la salutation personnalisée est conservée.
+  await sendTransactionalEmail(EMAIL_ENV, "arrival_instructions", makeReservation({ locale: "fr" }), {
+    manageToken: "tok",
+  });
+  assert(
+    /^Bonjour Ada,\n/.test(sent[sent.length - 1].text),
+    "A real first name must still be used in the greeting",
+  );
+
+  // Studio : "Bonjour __FIRST_NAME__ __LAST_NAME__," -> "Bonjour," sans nom.
+  await sendTransactionalEmail(
+    EMAIL_ENV,
+    "arrival_instructions",
+    makeReservation({
+      locale: "fr",
+      unit_type: "studio",
+      public_reference: "STUDIO-0004",
+      guest_first_name: "guest@example.com",
+      guest_last_name: "",
+    }),
+    { manageToken: "tok" },
+  );
+  const studioPayload = sent[sent.length - 1];
+  assert(
+    /^Bonjour,\n/.test(studioPayload.text),
+    "Studio arrival email must fall back to a nameless greeting",
+  );
+  assert(
+    !studioPayload.text.includes("guest@example.com\n"),
+    "Studio arrival email must not greet with the e-mail address",
+  );
+}
+
 async function main() {
   await runReviewEmailTests();
   await runPendingPaymentEmailTests();
+  await runGreetingFallbackTests();
   console.log("Email tests passed.");
 }
 
