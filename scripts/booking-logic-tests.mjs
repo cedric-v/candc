@@ -869,6 +869,151 @@ async function runManageTokenLifecycleTests() {
   );
 }
 
+// Suivi de remise des e-mails (bounces Resend)
+// --------------------------------------------------------------------------
+// Incident du 01.11.2026 : l'e-mail d'arrivée de PARK-20261101-B62F74EB est
+// logué `sent` (Resend a accepté l'envoi) alors que la remise a échoué
+// (« smtp; 554 5.7.1 Command rejected »). Le client n'a rien reçu et l'hôte
+// n'en savait rien. `runEmailDeliveryCheck` comble ce trou : il enregistre
+// l'état réel de remise et alerte l'admin sur bounce / plainte.
+function makeDeliveryCheckDb(pendingRow) {
+  const statements = [];
+  return {
+    statements,
+    prepare(sql) {
+      const record = { sql: sql.replace(/\s+/g, " ").trim(), args: [] };
+      statements.push(record);
+      const stmt = {
+        bind(...args) {
+          record.args = args;
+          return stmt;
+        },
+        async all() {
+          if (/FROM email_logs/i.test(record.sql) && /delivery_status IS NULL/i.test(record.sql)) {
+            return { results: pendingRow ? [pendingRow] : [] };
+          }
+          return { results: [] };
+        },
+        async first() {
+          return null;
+        },
+        async run() {
+          return { meta: {} };
+        },
+      };
+      return stmt;
+    },
+  };
+}
+
+async function runEmailDeliveryCheckTests() {
+  const { runEmailDeliveryCheck } = await import("../functions/_lib/jobs.js");
+
+  const pendingRow = {
+    id: "log-1",
+    reservation_id: "res-1",
+    email_type: "arrival_instructions",
+    recipient: "guest@example.com",
+    provider_message_id: "msg-1",
+    created_at: new Date().toISOString(),
+  };
+
+  const db = makeDeliveryCheckDb(pendingRow);
+  const originalFetch = globalThis.fetch;
+  const fetchedUrls = [];
+
+  globalThis.fetch = async (url, init = {}) => {
+    fetchedUrls.push(String(url));
+    if (String(url).includes("api.resend.com/emails/msg-1")) {
+      return {
+        ok: true,
+        json: async () => ({
+          id: "msg-1",
+          last_event: "bounced",
+          bounce: { diagnosticCode: ["smtp; 554 5.7.1 Command rejected"] },
+        }),
+      };
+    }
+    if (String(url).startsWith("https://api.resend.com/emails") && init.method === "POST") {
+      return { ok: true, json: async () => ({ id: "alert-1" }) };
+    }
+    throw new Error(`unexpected fetch: ${url}`);
+  };
+
+  try {
+    const env = {
+      PUBLIC_BASE_URL: "https://candc.ch",
+      ADMIN_NOTIFICATION_EMAIL: "admin@candc.ch",
+      EMAIL_FROM: "C&C <reservations@candc.ch>",
+      RESEND_API_KEY: "test-key",
+      DB: db,
+    };
+
+    const result = await runEmailDeliveryCheck(env, { limit: 1 });
+
+    assertEqual(result.checked, 1, "One email delivery should be checked");
+    assertEqual(result.bounced.length, 1, "The bounce should be reported");
+    assertEqual(
+      result.bounced[0].emailType,
+      "arrival_instructions",
+      "The bounced email type should be reported",
+    );
+    assert(
+      fetchedUrls.some((url) => url.includes("api.resend.com/emails/msg-1")),
+      "The delivery check must query the Resend API for the stored message id",
+    );
+
+    const statusUpdate = db.statements.find((statement) =>
+      /UPDATE email_logs/i.test(statement.sql) && /delivery_status/i.test(statement.sql),
+    );
+    assert(Boolean(statusUpdate), "The delivery status must be stored in email_logs");
+    assertEqual(statusUpdate.args[0], "bounced", "email_logs.delivery_status must store the Resend event");
+
+    const alertLog = db.statements.find(
+      (statement) =>
+        /INSERT INTO email_logs/i.test(statement.sql) &&
+        String(statement.args[2] || "").includes("admin_alert:email_not_delivered:res-1"),
+    );
+    assert(
+      Boolean(alertLog),
+      "A bounce must raise a deduped admin alert (host has to know the guest was not reached)",
+    );
+
+    assert(!result.ok, "A bounced email should report ok:false");
+
+    // Resend injoignable / réponse inattendue : fail-open, aucun crash.
+    globalThis.fetch = async () => {
+      throw new Error("network down");
+    };
+    const degraded = await runEmailDeliveryCheck({ ...env, DB: makeDeliveryCheckDb(pendingRow) }, { limit: 1 });
+    assertEqual(degraded.checked, 0, "An unreachable Resend API must not mark anything as checked");
+    assert(degraded.errors > 0, "Network errors must be counted, not thrown");
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+}
+
+// Renvoi manuel depuis l'admin (`resend_email`) : il AJOUTE un lien de gestion
+// valide et ne doit jamais révoquer les liens déjà reçus par le client.
+function runAdminResendPolicyTests() {
+  const projectRoot = fileURLToPath(new URL("../", import.meta.url));
+  const source = readFileSync(join(projectRoot, "functions/api/admin/booking.js"), "utf8");
+  const start = source.indexOf('action === "resend_email"');
+  const end = source.indexOf('action === "run_booking_sync"');
+
+  assert(start > -1 && end > start, "The admin API must expose a resend_email action");
+
+  const resendBlock = source.slice(start, end);
+  assert(
+    !/rotate\s*:/.test(resendBlock),
+    "resend_email must not rotate manage tokens (previous links stay valid)",
+  );
+  assert(
+    /RESENDABLE_EMAIL_TYPES/.test(resendBlock),
+    "resend_email must restrict the email types an admin can replay",
+  );
+}
+
 async function main() {
   runValidationTests();
   runGuestContactValidationTests();
@@ -879,6 +1024,8 @@ async function main() {
   await runOtaAvailabilityTests();
   runManageTokenPolicyTests();
   await runManageTokenLifecycleTests();
+  await runEmailDeliveryCheckTests();
+  runAdminResendPolicyTests();
   console.log("Booking logic tests passed.");
 }
 

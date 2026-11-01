@@ -10,7 +10,9 @@ import {
   getReviewRequestReservationsForDate,
   getUnitByCode,
   insertSyncLog,
+  listEmailLogsPendingDeliveryCheck,
   replaceExternalCalendarBlocks,
+  setEmailDeliveryStatus,
   updateCalendarSourceSync,
 } from "./db.js";
 import { getCurrentIsoDateInZone } from "./date.js";
@@ -622,4 +624,125 @@ ${JSON.stringify(results, null, 2)}`,
   }
 
   return results;
+}
+
+// Vérification de la remise réelle des e-mails transactionnels.
+//
+// `email_logs.status = 'sent'` ne veut dire que « Resend a accepté l'envoi ».
+// Un bounce (« 554 5.7.1 Command rejected » côté fournisseur du destinataire,
+// incident du 01.11.2026 sur l'e-mail d'arrivée de PARK-20261101-B62F74EB)
+// survenait après coup et restait invisible : l'hôte croyait le client
+// informé. Ce job interroge l'API Resend pour les e-mails envoyés dont la
+// remise est encore inconnue, stocke `delivery_status` (lisible dans l'admin)
+// et alerte l'admin sur bounce / plainte spam.
+//
+// Totalement fail-open : une erreur Resend ou D1 n'empêche jamais les autres
+// jobs du cron et ne fait jamais échouer le worker.
+export async function runEmailDeliveryCheck(env, options = {}) {
+  const config = getConfig(env);
+  const results = { checked: 0, bounced: [], failed: [], skipped: false, errors: 0 };
+
+  if (!config.resendApiKey) {
+    await insertSyncLog(env, {
+      unitId: null,
+      syncType: "email_delivery_check",
+      status: "skipped",
+      message: "resend_not_configured — delivery check skipped",
+      payloadSummary: { reason: "resend_not_configured" },
+    });
+    return { ok: true, ...results, skipped: true, reason: "resend_not_configured" };
+  }
+
+  const limit = Number(options.limit || 20);
+  const rows = await listEmailLogsPendingDeliveryCheck(env, {
+    lookbackHours: Number(options.lookbackHours || 72),
+    limit,
+  });
+
+  for (const row of rows) {
+    const messageId = String(row.provider_message_id || "");
+    // Les logs d'échec de configuration stockent un motif à la place d'un id.
+    if (!messageId || messageId.startsWith("email_not_")) {
+      continue;
+    }
+
+    try {
+      const response = await fetchWithTimeout(
+        `https://api.resend.com/emails/${encodeURIComponent(messageId)}`,
+        { headers: { authorization: `Bearer ${config.resendApiKey}` } },
+        8000,
+      );
+
+      const deliveryStatus = response.body?.last_event;
+      if (!response.ok || !deliveryStatus) {
+        // Transitoire : on laisse `delivery_status` à NULL pour un prochain passage.
+        results.errors += 1;
+        continue;
+      }
+
+      await setEmailDeliveryStatus(env, row.id, String(deliveryStatus));
+      results.checked += 1;
+
+      if (["bounced", "complained", "failed"].includes(deliveryStatus)) {
+        const entry = {
+          reservationId: row.reservation_id,
+          emailType: row.email_type,
+          recipient: row.recipient,
+          deliveryStatus,
+          diagnostic: response.body?.bounce?.diagnosticCode || response.body?.bounce?.message || null,
+        };
+        if (deliveryStatus === "bounced") {
+          results.bounced.push(entry);
+        } else {
+          results.failed.push(entry);
+        }
+      }
+    } catch (error) {
+      results.errors += 1;
+      console.error(`Email delivery check failed for ${row.id}:`, error);
+    }
+
+    // Resend limite à 2 requêtes/seconde : on étale les appels (~1,8 req/s).
+    await new Promise((resolve) => setTimeout(resolve, 550));
+  }
+
+  const problems = [...results.bounced, ...results.failed];
+
+  await insertSyncLog(env, {
+    unitId: null,
+    syncType: "email_delivery_check",
+    status: problems.length > 0 ? "warning" : "success",
+    message:
+      problems.length > 0
+        ? `Checked ${results.checked} email(s) — ${problems.length} undelivered (admin alerted)`
+        : `Checked ${results.checked} email(s) — all delivered`,
+    payloadSummary: results,
+  });
+
+  for (const problem of problems) {
+    try {
+      await sendAdminAlert(env, {
+        key: `email_not_delivered:${problem.reservationId}:${problem.emailType}`,
+        subject:
+          problem.deliveryStatus === "bounced"
+            ? `⚠️ E-mail rejeté (bounce) : ${problem.emailType} — ${problem.recipient}`
+            : `⚠️ E-mail non remis (${problem.deliveryStatus}) : ${problem.emailType} — ${problem.recipient}`,
+        message:
+          `Resend signale que l'e-mail "${problem.emailType}" n'a pas été remis.\n\n` +
+          `Destinataire : ${problem.recipient}\n` +
+          `Réservation : ${problem.reservationId}\n` +
+          `État : ${problem.deliveryStatus}\n` +
+          (problem.diagnostic ? `Diagnostic : ${problem.diagnostic}\n` : "") +
+          "\nLe Journal (email_logs) affiche « sent » : Resend a accepté l'envoi, la remise a échoué après coup.\n" +
+          "Renvoyer l'e-mail depuis /admin/booking (bouton « Resend » dans le détail de la réservation) " +
+          "et contacter le voyageur si le rejet se répète (WhatsApp / téléphone).",
+        tags: "warning",
+        priority: "high",
+      });
+    } catch (error) {
+      console.error("Failed to send email delivery alert:", error);
+    }
+  }
+
+  return { ok: problems.length === 0, ...results };
 }

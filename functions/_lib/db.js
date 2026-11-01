@@ -1643,6 +1643,110 @@ export async function hasSuccessfulEmailLogForDate(env, reservationId, emailType
   return Boolean(record);
 }
 
+// E-mails transactionnels dont la remise réelle n'est pas encore connue.
+// `status = 'sent'` ne garantit que l'acceptation par Resend : le bounce ou la
+// plainte arrive après coup (voir la migration 0017). Le job
+// `runEmailDeliveryCheck` interroge l'API Resend pour ces lignes puis renseigne
+// `delivery_status`.
+// Dégrade proprement (liste vide) tant que la migration 0017 n'est pas
+// appliquée, pour ne jamais casser l'admin ni le cron.
+export async function listEmailLogsPendingDeliveryCheck(env, { lookbackHours = 72, limit = 25 } = {}) {
+  const db = requireDb(env);
+
+  try {
+    const cutoff = new Date(Date.now() - lookbackHours * 3600 * 1000).toISOString();
+    const { results } = await db
+      .prepare(
+        `
+          SELECT id, reservation_id, email_type, recipient, provider_message_id, created_at
+          FROM email_logs
+          WHERE status = 'sent'
+            AND delivery_status IS NULL
+            AND provider_message_id IS NOT NULL
+            AND provider_message_id <> ''
+            AND created_at >= ?
+          ORDER BY created_at DESC
+          LIMIT ?
+        `,
+      )
+      .bind(cutoff, limit)
+      .all();
+
+    return results || [];
+  } catch (error) {
+    console.error("Failed to list email logs pending delivery check:", error);
+    return [];
+  }
+}
+
+export async function setEmailDeliveryStatus(env, emailLogId, deliveryStatus) {
+  const db = requireDb(env);
+
+  try {
+    await db
+      .prepare(
+        `
+          UPDATE email_logs
+          SET delivery_status = ?, delivery_checked_at = ?
+          WHERE id = ?
+        `,
+      )
+      .bind(deliveryStatus, new Date().toISOString(), emailLogId)
+      .run();
+
+    return true;
+  } catch (error) {
+    console.error("Failed to store email delivery status:", error);
+    return false;
+  }
+}
+
+// Derniers e-mails envoyés, pour l'onglet réservations de l'admin : l'hôte doit
+// voir d'un coup d'œil si l'e-mail d'arrivée a été remis, rejeté ou plaint.
+export async function listRecentEmailLogs(env, limit = 60) {
+  const db = requireDb(env);
+
+  const run = async (selectDelivery) => {
+    const { results } = await db
+      .prepare(
+        `
+          SELECT
+            email_logs.id,
+            email_logs.reservation_id,
+            email_logs.email_type,
+            email_logs.recipient,
+            email_logs.status,${selectDelivery ? "\n            email_logs.delivery_status," : ""}
+            email_logs.provider_message_id,
+            email_logs.created_at,
+            reservations.public_reference
+          FROM email_logs
+          LEFT JOIN reservations ON reservations.id = email_logs.reservation_id
+          WHERE email_logs.reservation_id IS NOT NULL
+          ORDER BY email_logs.created_at DESC
+          LIMIT ?
+        `,
+      )
+      .bind(limit)
+      .all();
+
+    return results || [];
+  };
+
+  try {
+    return await run(true);
+  } catch (error) {
+    // Migration 0017 pas encore appliquée : on renvoie l'historique sans l'état
+    // de remise plutôt que de casser l'admin.
+    console.error("Failed to list recent email logs (falling back):", error);
+    try {
+      return await run(false);
+    } catch (fallbackError) {
+      console.error("Failed to list recent email logs:", fallbackError);
+      return [];
+    }
+  }
+}
+
 export async function getArrivalReservationsForDate(env, isoDate) {
   const db = requireDb(env);
   const { results } = await db
