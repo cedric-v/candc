@@ -296,6 +296,21 @@ export function onRequestGet() {
           motorhome_over_6_5m: 'Motorhome over 6.5 m',
         };
 
+        // Derniers e-mails par réservation (chargés avec la liste) : l'hôte
+        // doit voir si l'e-mail d'arrivée a été REMIS (delivery_status Resend)
+        // et pouvoir le renvoyer en un clic. Un statut 'sent' ne signifie que
+        // « accepté par Resend » : un bounce arrive après coup.
+        let emailLogsByReservation = new Map();
+
+        // Types rejouables depuis l'admin (doit rester aligné sur
+        // RESENDABLE_EMAIL_TYPES dans functions/api/admin/booking.js).
+        const RESEND_EMAIL_OPTIONS = [
+          ['arrival_instructions', 'Arrival instructions'],
+          ['booking_confirmation', 'Booking confirmation'],
+          ['departure_instructions', 'Departure instructions'],
+          ['review_request', 'Review request'],
+        ];
+
         if (adminToken) {
           document.getElementById('adminToken').value = adminToken;
           loadDashboard();
@@ -459,6 +474,8 @@ export function onRequestGet() {
               (item.guest_id_document_number ? '<button type="button" class="admin-id-reveal" style="padding:4px 12px;font-size:0.8rem" data-action="reveal">Reveal</button>' : '') +
               '</div>';
 
+            const emailRow = renderEmailHistoryRow(item);
+
             // Régénération explicite du lien de gestion : seul cas où les liens
             // précédents sont révoqués (utile si le client a perdu son e-mail ou
             // si le lien a fuité). Les e-mails automatiques ne rotatent jamais.
@@ -473,12 +490,58 @@ export function onRequestGet() {
               '<tr class="admin-res-row">' + cells +
               '<td class="admin-res-actions" data-label=""><button type="button" class="admin-res-toggle" data-target="' + escapeHtml(detailsId) + '" style="padding:6px 12px;font-size:0.82rem">Details ▾</button></td></tr>' +
               '<tr class="admin-res-details" id="' + escapeHtml(detailsId) + '" hidden><td colspan="8">' +
-              '<div class="meta">' + detailsRows + idRow + manageLinkRow + '</div>' +
+              '<div class="meta">' + detailsRows + idRow + manageLinkRow + emailRow + '</div>' +
               '</td></tr>'
             );
           }).join('');
 
           return '<div class="table-scroll"><table class="admin-res-table"><thead><tr>' + headers.map((header) => '<th>' + escapeHtml(header.label) + '</th>').join('') + '<th></th></tr></thead><tbody>' + rowsHtml + '</tbody></table></div>';
+        }
+
+        // Historique des e-mails d'une réservation + bouton de renvoi manuel.
+        // L'état affiché est celui de Resend : 'sent' = accepté par Resend,
+        // 'bounced' = rejeté par le fournisseur du destinataire (le client n'a
+        // rien reçu), 'delivered' = remis. Le job 'email_delivery_check'
+        // renseigne l'état toutes les heures.
+        function renderEmailHistoryRow(item) {
+          const logs = emailLogsByReservation.get(item.id) || [];
+          const lines = logs.map((log) => {
+            const delivery = log.delivery_status || (log.status === 'sent' ? 'pending' : log.status);
+            const stateLabel = delivery === 'delivered'
+              ? 'delivered'
+              : delivery === 'bounced'
+                ? 'BOUNCED (not received)'
+                : delivery === 'complained'
+                  ? 'spam complaint'
+                  : delivery;
+            return (
+              escapeHtml(formatAdminDateTime(log.created_at)) +
+              ' — ' + escapeHtml(log.email_type) +
+              ' — <strong>' + escapeHtml(stateLabel) + '</strong>' +
+              (log.recipient ? ' — ' + escapeHtml(log.recipient) : '')
+            );
+          });
+
+          const history = lines.length > 0
+            ? lines.join('<br>')
+            : 'No email logged for this reservation yet';
+
+          const options = RESEND_EMAIL_OPTIONS.map(
+            ([value, label]) => '<option value="' + escapeHtml(value) + '">' + escapeHtml(label) + '</option>',
+          ).join('');
+
+          const controls = item.status === 'cancelled'
+            ? ''
+            : '<div style="margin-top:6px">' +
+              '<select class="admin-resend-type" data-id="' + escapeHtml(item.id) + '" style="padding:4px 8px;font-size:0.78rem">' + options + '</select> ' +
+              '<button type="button" class="admin-resend-email" style="padding:4px 10px;font-size:0.78rem" data-id="' + escapeHtml(item.id) +
+              '" title="Send this email again to the guest (a new management link is added, previous links stay valid)">Resend</button>' +
+              '</div>';
+
+          return (
+            '<div class="meta-row"><span class="label">Emails</span>' +
+            '<span class="value admin-email-history">' + history + controls + '</span></div>'
+          );
         }
 
         function isIsoDateOnly(value) {
@@ -880,6 +943,16 @@ export function onRequestGet() {
               status: item.status + ' / ' + (item.payment_status || '-'),
               total: item.total_amount + ' ' + item.currency,
             }));
+            // Historique e-mail indexé par réservation (affiché dans le détail).
+            emailLogsByReservation = new Map();
+            for (const log of data.emailLogs || []) {
+              if (!log.reservation_id) {
+                continue;
+              }
+              const list = emailLogsByReservation.get(log.reservation_id) || [];
+              list.push(log);
+              emailLogsByReservation.set(log.reservation_id, list);
+            }
             reservationsWrap.innerHTML = renderReservations(rows);
           } catch (error) {
             reservationsWrap.innerHTML = '<p class="small">Failed to load reservations: ' + escapeHtml(error.message) + '</p>';
@@ -1177,6 +1250,37 @@ export function onRequestGet() {
               adminNotice.className = 'notice error';
               adminNotice.textContent = error.message;
               rotateManageLink.disabled = false;
+            }
+            return;
+          }
+
+          const resendEmail = event.target.closest('.admin-resend-email');
+          if (resendEmail) {
+            const reservationId = resendEmail.dataset.id;
+            const row = resendEmail.closest('.admin-email-history');
+            const select = row ? row.querySelector('.admin-resend-type') : null;
+            const emailType = select ? select.value : 'arrival_instructions';
+            if (!window.confirm('Send "' + emailType + '" again to the guest?')) {
+              return;
+            }
+            resendEmail.disabled = true;
+            try {
+              const result = await apiFetch('POST', {
+                action: 'resend_email',
+                reservationId,
+                emailType,
+              });
+              adminNotice.className = 'notice ' + (result.skipped ? 'info' : 'success');
+              adminNotice.textContent = result.skipped
+                ? 'Email not sent (' + (result.reason || 'skipped') + ').'
+                : 'Email "' + emailType + '" sent again to ' + (result.recipient || 'the guest') +
+                  ' for ' + (result.publicReference || 'the reservation') +
+                  '. Delivery status appears after the next hourly check.';
+              await loadReservations();
+            } catch (error) {
+              adminNotice.className = 'notice error';
+              adminNotice.textContent = error.message;
+              resendEmail.disabled = false;
             }
             return;
           }

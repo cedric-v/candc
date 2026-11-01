@@ -193,6 +193,25 @@ When changing sync behavior, also check:
   `SENSITIVE_DATA_RETENTION_MONTHS` (default 12) ago; booking/billing data
   stays (10-year accounting records). See the privacy policy
   (`src/fr/legal.njk`, section "Durée de conservation des données").
+- `runEmailDeliveryCheck` (jobs.js, action `email_delivery_check`, hourly
+  at :20 via the sync worker) — fills the gap left by `email_logs.status =
+  'sent'` (which only means Resend accepted the send): it queries the Resend
+  API for recent sends, stores the real delivery event in
+  `email_logs.delivery_status` (`migrations/0017_add_email_delivery_status.sql`)
+  and sends a deduped `email_not_delivered:<reservation>:<type>` admin alert
+  on `bounced` / `complained` / `failed`. Triggered by the 01.11.2026 incident:
+  the `arrival_instructions` email of `PARK-20261101-B62F74EB` was logged
+  `sent` while Resend reported `554 5.7.1 Command rejected` — the guest was
+  never reached and the host never knew. Fail-open: a Resend or D1 error is
+  counted (`errors`) and never breaks the cron.
+- Admin action `resend_email` (`functions/api/admin/booking.js`, "Resend"
+  select+button in the reservation details of `/admin/booking`) — explicit,
+  human-triggered replay of `booking_confirmation`, `booking_modification`,
+  `arrival_instructions`, `departure_instructions` or `review_request`
+  (`RESENDABLE_EMAIL_TYPES`). Deliberately **not** deduped (a human asked),
+  and it mints an **additional** manage token (never `{ rotate: true }`, see
+  "Management links"). The reservation details panel shows the per-email
+  delivery state from `email_logs.delivery_status`.
 - Contact form: public `POST /api/contact/` (`functions/api/contact.js`) sends
   via Resend to `ADMIN_NOTIFICATION_EMAIL` (default bonjour@candc.ch); spam
   protection = honeypot + time-trap + Turnstile (active in production: site

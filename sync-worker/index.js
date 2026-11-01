@@ -113,7 +113,16 @@ export default {
         console.log(`Funnel health check complete: status ${res.status}, response: ${res.body}`);
       }
 
-      // Anonymisation quotidienne (fenêtre 04:20–04:39 heure locale) des
+      // Vérification de la remise réelle des e-mails (bounces Resend) : cadence
+  // horaire (minute 20), l'API Resend est interrogée séquentiellement pour les
+  // envois récents dont la remise est encore inconnue (rate limit 2 req/s).
+  // Un bounce déclenche une alerte admin (voir runEmailDeliveryCheck).
+  if (currentLocalMinutes(env) === 20) {
+    const res = await runJob(env, "email_delivery_check");
+    console.log(`Email delivery check complete: status ${res.status}, response: ${res.body}`);
+  }
+
+  // Anonymisation quotidienne (fenêtre 04:20–04:39 heure locale) des
       // données sensibles des voyageurs au-delà de la période de
       // conservation (LPD / RGPD) ; idempotent et sans effet si rien n'est
       // à purger.

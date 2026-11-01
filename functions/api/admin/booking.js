@@ -11,6 +11,7 @@ import {
   listManualCalendarBlocks,
   listOperationalJobHealth,
   listRatePeriods,
+  listRecentEmailLogs,
   listRecentSyncLogs,
   listUnitsForAdmin,
   listUpcomingExternalCalendarBlocks,
@@ -22,8 +23,20 @@ import { getConfig } from "../../_lib/env.js";
 import { getCurrentIsoDateInZone, isIsoDateString, diffNights } from "../../_lib/date.js";
 import { runArrivalEmails, runBookingIcsSync, runSensitiveDataRetention, validateCalendarSources } from "../../_lib/jobs.js";
 import { attemptAutomaticRefund } from "../../_lib/refunds.js";
-import { syncReservationToGoogleCalendar } from "../../_lib/booking-ops.js";
+import { sendReservationEmail, syncReservationToGoogleCalendar } from "../../_lib/booking-ops.js";
 import { badRequest, json, serverError, unauthorized } from "../../_lib/http.js";
+
+// Types d'e-mail qu'un renvoi manuel peut rejouer depuis l'admin. Volontairement
+// limité aux e-mails d'information client : `admin_new_booking` (alerte interne)
+// et les e-mails de paiement automatiques (relance / expiration, liés à un hold)
+// n'ont pas de sens hors de leur cycle de vie.
+const RESENDABLE_EMAIL_TYPES = [
+  "booking_confirmation",
+  "booking_modification",
+  "arrival_instructions",
+  "departure_instructions",
+  "review_request",
+];
 
 export async function onRequestGet(context) {
   try {
@@ -50,6 +63,7 @@ export async function onRequestGet(context) {
       operationalHealth,
       manualBlocks,
       externalBlocks,
+      emailLogs,
     ] = await Promise.all([
       listUnitsForAdmin(context.env),
       listAdminReservations(context.env, reservationOptions),
@@ -59,6 +73,7 @@ export async function onRequestGet(context) {
       listOperationalJobHealth(context.env),
       listManualCalendarBlocks(context.env),
       listUpcomingExternalCalendarBlocks(context.env, todayIso),
+      listRecentEmailLogs(context.env, 80),
     ]);
 
     return json({
@@ -70,6 +85,7 @@ export async function onRequestGet(context) {
       operationalHealth,
       manualBlocks,
       externalBlocks,
+      emailLogs,
     });
   } catch (error) {
     console.error("Failed to load admin dashboard:", error);
@@ -328,6 +344,66 @@ export async function onRequestPost(context) {
         action,
         publicReference: reservation.public_reference,
         manageUrl,
+      });
+    }
+
+    if (action === "resend_email") {
+      // Renvoi EXPLICITE d'un e-mail déjà envoyé (client qui affirme ne rien
+      // avoir reçu, bounce côté Resend — voir le job `runEmailDeliveryCheck`).
+      // Volontairement sans déduplication : c'est une action humaine. Le lien
+      // de gestion est réémis sans rotation (les liens déjà reçus restent
+      // valides), conformément à AGENTS.md (« Management links »).
+      const reservationId = payload.reservationId;
+      const emailType = payload.emailType;
+
+      if (!reservationId) {
+        return badRequest("reservationId is required");
+      }
+
+      if (!RESENDABLE_EMAIL_TYPES.includes(emailType)) {
+        return badRequest(`emailType must be one of: ${RESENDABLE_EMAIL_TYPES.join(", ")}`);
+      }
+
+      const reservation = await getReservationForEmail(context.env, reservationId);
+
+      if (!reservation) {
+        return badRequest("Unknown reservation");
+      }
+
+      if (reservation.status === "cancelled") {
+        return badRequest("A cancelled reservation cannot receive customer emails");
+      }
+
+      const response = await sendReservationEmail(context.env, reservationId, emailType, {
+        manageTokenFactory: () => createManageToken(context.env, reservationId),
+      });
+
+      if (!response.ok) {
+        return serverError(
+          response.reason === "email_not_configured"
+            ? "Email is not configured on this deployment"
+            : "Failed to send the email",
+        );
+      }
+
+      await insertSyncLog(context.env, {
+        unitId: reservation.unit_id || null,
+        syncType: "email_resend",
+        status: response.skipped ? "skipped" : "success",
+        message: response.skipped
+          ? `Email ${emailType} resend skipped for ${reservation.public_reference} (${response.reason || "skipped"})`
+          : `Email ${emailType} resent by admin for ${reservation.public_reference}`,
+        payloadSummary: { reservationId, emailType, reason: response.reason || null },
+      });
+
+      return json({
+        ok: true,
+        action,
+        emailType,
+        publicReference: reservation.public_reference,
+        recipient: response.skipped ? null : reservation.guest_email,
+        skipped: Boolean(response.skipped),
+        reason: response.reason || null,
       });
     }
 
