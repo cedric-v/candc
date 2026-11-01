@@ -100,7 +100,7 @@ Nous vous souhaitons un agréable séjour.
 
 Bien cordialement,
 Céline et Cédric`,
-    greeting: (name) => `Bonjour ${name},`,
+    greeting: (name) => (name ? `Bonjour ${name},` : "Bonjour,"),
     confirmationCreated: (label) => `Merci. Votre réservation ${label} a bien été créée.`,
     referenceLabel: "Référence",
     arrivalLabel: "Arrivée",
@@ -267,7 +267,7 @@ During your arrival and throughout your stay, we will remain available through t
 We wish you a pleasant stay.
 
 Kind Regards,
-Celine and Cedric`,    greeting: (name) => `Dear ${name},`,
+Celine and Cedric`,    greeting: (name) => (name ? `Dear ${name},` : "Hello,"),
     confirmationCreated: (label) => `Thank you. Your ${label} reservation has been created.`,
     referenceLabel: "Reference",
     arrivalLabel: "Arrival",
@@ -434,7 +434,7 @@ Während Ihrer Anreise und Ihres gesamten Aufenthalts bleiben wir über dieses N
 Wir wünschen Ihnen einen angenehmen Aufenthalt.
 
 Freundliche Grüsse,
-Céline und Cédric`,    greeting: (name) => `Hallo ${name},`,
+Céline und Cédric`,    greeting: (name) => (name ? `Hallo ${name},` : "Guten Tag,"),
     confirmationCreated: (label) => `Vielen Dank. Ihre Reservierung für den ${label} wurde erstellt.`,
     referenceLabel: "Referenz",
     arrivalLabel: "Anreise",
@@ -531,7 +531,7 @@ Deja una reseña → __REVIEW_LINK__
 
 Que tengas un buen viaje,
 Céline y Cédric`,
-    greeting: (name) => `Hola ${name},`,
+    greeting: (name) => (name ? `Hola ${name},` : "Hola,"),
     confirmationCreated: (label) => `Gracias. Tu reserva de ${label} ha sido creada.`,
     referenceLabel: "Referencia",
     arrivalLabel: "Llegada",
@@ -628,7 +628,7 @@ Deixe uma avaliação → __REVIEW_LINK__
 
 Boa viagem,
 Céline e Cédric`,
-    greeting: (name) => `Olá ${name},`,
+    greeting: (name) => (name ? `Olá ${name},` : "Olá,"),
     confirmationCreated: (label) => `Obrigado. A sua reserva de ${label} foi criada.`,
     referenceLabel: "Referência",
     arrivalLabel: "Chegada",
@@ -725,7 +725,7 @@ Lascia una recensione → __REVIEW_LINK__
 
 Buon viaggio,
 Céline e Cédric`,
-    greeting: (name) => `Ciao ${name},`,
+    greeting: (name) => (name ? `Ciao ${name},` : "Ciao,"),
     confirmationCreated: (label) => `Grazie. La tua prenotazione per il ${label} è stata creata.`,
     referenceLabel: "Riferimento",
     arrivalLabel: "Arrivo",
@@ -822,7 +822,7 @@ Laat een recensie achter → __REVIEW_LINK__
 
 Een goede reis gewenst,
 Céline en Cédric`,
-    greeting: (name) => `Hallo ${name},`,
+    greeting: (name) => (name ? `Hallo ${name},` : "Hallo,"),
     confirmationCreated: (label) => `Bedankt. Je reservering voor het ${label} is aangemaakt.`,
     referenceLabel: "Referentie",
     arrivalLabel: "Aankomst",
@@ -928,6 +928,55 @@ function bookingLabel(reservation, text) {
   return reservation.unit_type === "studio" ? text.bookingLabelStudio : text.bookingLabelParking;
 }
 
+// Salutation : la valeur saisie comme prénom peut être... une adresse e-mail
+// (cas PARK-20261101-B62F74EB, 01.11.2026 : l'e-mail d'arrivée commençait par
+// « Bonjour Chalalande19@gmail.com, »). Une valeur contenant « @ » n'est jamais
+// un prénom : on l'ignore et on salue sans nom.
+function resolveGreetingFirstName(reservation) {
+  const raw = String(reservation?.guest_first_name || "").trim();
+  return raw.includes("@") ? "" : raw;
+}
+
+function resolveGreetingLastName(reservation) {
+  const raw = String(reservation?.guest_last_name || "").trim();
+  return raw.includes("@") ? "" : raw;
+}
+
+function greetGuest(reservation, text) {
+  return text.greeting(resolveGreetingFirstName(reservation));
+}
+
+// Remplace __FIRST_NAME__ / __LAST_NAME__ dans les corps de template.
+// `__FIRST_NAME__ __LAST_NAME__` est traité en premier pour que la ligne de
+// salutation devienne « Bonjour, » (et non « Bonjour  , ») quand aucun nom
+// exploitable n'est disponible.
+function applyGreetingName(template, reservation, text) {
+  const firstName = resolveGreetingFirstName(reservation);
+  const lastName = resolveGreetingLastName(reservation);
+  const fullName = [firstName, lastName].filter(Boolean).join(" ");
+
+  const filled = template
+    .replaceAll("__FIRST_NAME__ __LAST_NAME__", fullName)
+    .replaceAll("__FIRST_NAME__", firstName)
+    .replaceAll("__LAST_NAME__", lastName);
+
+  if (fullName) {
+    return filled;
+  }
+
+  // Aucun nom exploitable : la ligne de salutation devient la formule sans nom
+  // de la langue de la réservation (« Bonjour, », « Hello, », « Guten Tag, »…)
+  // plutôt que « Bonjour , ».
+  const greetingWord = /^(Bonjour|Hello|Dear|Hallo|Guten Tag|Hola|Olá|Ciao|Beste)\b/i;
+  const [firstLine, ...rest] = filled.split("\n");
+
+  if (greetingWord.test(firstLine) && rest.length > 0) {
+    return [text.greeting(""), ...rest].join("\n");
+  }
+
+  return filled;
+}
+
 function buildConfirmationText(reservation, token, includeWcUpsell) {
   const text = getEmailText(reservation.locale);
 
@@ -935,14 +984,12 @@ function buildConfirmationText(reservation, token, includeWcUpsell) {
     const template = text.studioConfirmationBody || getEmailText("en").studioConfirmationBody || "";
     const manageLine = `${text.manageReservation}: ${token}`;
 
-    return template
-      .replaceAll("__FIRST_NAME__", reservation.guest_first_name)
-      .replaceAll("__LAST_NAME__", reservation.guest_last_name || "")
+    return applyGreetingName(template, reservation, text)
       .replaceAll("__MANAGE_LINK__", manageLine);
   }
 
   const lines = [
-    text.greeting(reservation.guest_first_name),
+    greetGuest(reservation, text),
     "",
     text.confirmationCreated(bookingLabel(reservation, text)),
     "",
@@ -987,14 +1034,12 @@ function buildArrivalText(reservation, config = {}, manageToken = null) {
   if (reservation.unit_type !== "parking") {
     const template = text.studioArrivalBody || getEmailText("en").studioArrivalBody || "";
 
-    return template
-      .replaceAll("__FIRST_NAME__", reservation.guest_first_name)
-      .replaceAll("__LAST_NAME__", reservation.guest_last_name || "")
+    return applyGreetingName(template, reservation, text)
       .replaceAll("__MANAGE_LINK__", manageLine);
   }
 
   const lines = [
-    text.greeting(reservation.guest_first_name),
+    greetGuest(reservation, text),
     "",
     text.parkingArrivalIntro,
     "",
@@ -1040,7 +1085,7 @@ function buildModificationText(reservation, deltaAmount, manageLink) {
       : text.noChangeAmount;
 
   return [
-    text.greeting(reservation.guest_first_name),
+    greetGuest(reservation, text),
     "",
     text.updatedReservation,
     "",
@@ -1061,7 +1106,7 @@ function buildCancellationText(reservation) {
   const text = getEmailText(reservation.locale);
 
   return [
-    text.greeting(reservation.guest_first_name),
+    greetGuest(reservation, text),
     "",
     text.cancelledReservation,
     "",
@@ -1156,7 +1201,7 @@ function buildPaymentReminderText(reservation, manageLink) {
   const text = getEmailText(reservation.locale);
 
   return [
-    text.greeting(reservation.guest_first_name),
+    greetGuest(reservation, text),
     "",
     text.paymentReminderIntro.replace("{dates}", formatStayDates(reservation)),
     "",
@@ -1175,7 +1220,7 @@ function buildPaymentExpiredText(reservation, manageLink) {
   const text = getEmailText(reservation.locale);
 
   return [
-    text.greeting(reservation.guest_first_name),
+    greetGuest(reservation, text),
     "",
     text.paymentExpiredIntro
       .replace("{reference}", reservation.public_reference)
@@ -1200,8 +1245,7 @@ function buildDepartureText(reservation) {
   const text = getEmailText(reservation.locale);
   const template = text.departureBody || getEmailText("en").departureBody || "";
 
-  return template
-    .replaceAll("__FIRST_NAME__", reservation.guest_first_name)
+  return applyGreetingName(template, reservation, text)
     .replaceAll("__CHECKOUT_CLOSE_TIME__", reservation.check_out_time ? reservation.check_out_time.slice(0, 5) : "10:00");
 }
 
@@ -1209,8 +1253,7 @@ function buildReviewRequestText(reservation) {
   const text = getEmailText(reservation.locale);
   const template = text.reviewBody || getEmailText("en").reviewBody || "";
 
-  return template
-    .replaceAll("__FIRST_NAME__", reservation.guest_first_name);
+  return applyGreetingName(template, reservation, text);
 }
 
 function isUnsetValue(value) {
