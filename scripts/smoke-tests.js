@@ -8,6 +8,11 @@ const fs = require('fs');
 const path = require('path');
 
 const languages = ['fr', 'en', 'de', 'es', 'pt', 'it', 'nl'];
+
+// Adresse e-mail publique : encodée en base64 dans le HTML (atob), jamais en
+// clair, et jamais en concaténation JS (le minifier la replierait en littéral).
+const EMAIL_BASE64 = 'Ym9uam91ckBjYW5kYy5jaA==';
+const EMAIL_PLAINTEXT = 'bonjour@candc.ch';
 const pages = ['', 'eco-studio', 'parking', 'contact'];
 const bookingPages = ['parking/booking', 'eco-studio/booking'];
 const baseDir = path.join(__dirname, '..', '_site');
@@ -102,10 +107,16 @@ for (const lang of languages) {
         }
       }
 
-      // Vérifier Email obfuscation
+      // Vérifier Email obfuscation : l'adresse doit être encodée en base64
+      // (atob), jamais présente en clair — le minifier replie sinon les
+      // concaténations JS en littéral récoltable (cf. AGENTS.md).
       if (page === 'contact' || page === '') {
-        if (!content.includes('emailParts') && !content.includes('bonjour@candc.ch')) {
+        if (!content.includes(EMAIL_BASE64)) {
           warnings.push(`${pagePath}: Missing email obfuscation`);
+        }
+
+        if (content.includes(EMAIL_PLAINTEXT)) {
+          errors.push(`${pagePath}: Plain-text email address leaked in HTML`);
         }
       }
     }
