@@ -501,6 +501,9 @@ module.exports = function (eleventyConfig) {
         collapseWhitespace: true,
         minifyCSS: true,
         minifyJS: true,
+        // v9 n'minifie plus le JSON (ld+json, importmap, ...) par défaut :
+        // sans cette option les blocs JSON-LD repartent indentés.
+        minifyJSON: true,
       });
     }
     return content;
