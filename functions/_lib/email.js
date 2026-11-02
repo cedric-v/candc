@@ -84,8 +84,6 @@ Juste devant l'entrée, vous trouverez également un petit récipient vert desti
 Sous le four, vous trouverez des planches à découper et des maniques.
 
 Merci d'aérer le logement régulièrement, au moins deux fois par jour pendant 10 minutes.
-Vous pouvez le faire en ouvrant la fenêtre et en allumant la lumière des toilettes en même temps (cela active le ventilateur de la douche).
-Lorsque vous utilisez le sèche-linge, veuillez laisser la lumière des toilettes allumée pour que le ventilateur continue de fonctionner.
 
 Un déshumidificateur est également disponible dans la salle de bain, à utiliser après une douche, pendant l'utilisation du sèche-linge ou lorsque le taux d'humidité devient trop élevé (> 60 %). Lorsque l'indicateur affiche "bac plein", ouvrez le bac et videz l'eau dans la douche.
 
@@ -252,8 +250,6 @@ Just in front of the entry, you will also find a small green recipient which is 
 Under the oven, you will find some cutting boards and oven mitts.
 
 Please air the flat regularly, at least twice a day for 10 minutes.
-You can do this by opening the window and turning on the toilet light at the same time (this will turn on the shower fan).
-When using the tumble dryer, please leave the toilet light on so that it keeps the fan running.
 
 A dehumidifier is also available in the bathroom, for use after a shower, when using the tumble dryer, or when humidity levels rise too high (> 60%). When the indicator shows "tray full", open the tray and empty the water into the shower.
 
@@ -419,8 +415,6 @@ Direkt vor dem Eingang finden Sie auch einen kleinen grünen Behälter für Esse
 Unter dem Ofen finden Sie Schneidebretter und Ofenhandschuhe.
 
 Bitte lüften Sie das Studio regelmäßig, mindestens zweimal täglich für 10 Minuten.
-Sie können dies tun, indem Sie das Fenster öffnen und gleichzeitig das Toilettenlicht einschalten (dies aktiviert den Duschventilator).
-Lassen Sie beim Betrieb des Wäschetrockners bitte das Toilettenlicht eingeschaltet, damit der Ventilator weiterläuft.
 
 Ein Luftentfeuchter steht Ihnen ebenfalls im Badezimmer zur Verfügung, zur Nutzung nach dem Duschen, beim Betrieb des Wäschetrockners oder wenn die Luftfeuchtigkeit zu hoch steigt (> 60 %). Wenn die Anzeige "Behälter voll" anzeigt, öffnen Sie den Behälter und leeren Sie das Wasser in die Dusche.
 
