@@ -139,45 +139,47 @@ Puis :
 
 1. creer ou lier la base D1
 2. remplacer `database_id`
-3. executer la migration SQL
+3. appliquer les migrations SQL
 4. configurer les variables d'environnement et secrets Cloudflare
 
 Exemple :
 
 ```bash
 wrangler d1 create candc-booking
-wrangler d1 execute candc-booking --file=./migrations/0001_booking_schema.sql
+wrangler d1 migrations apply candc-booking --remote
 ```
 
-Si la base existe deja et doit recevoir la fusion des anciennes remises `7+ nuits` dans les paliers `Long-stay discount`, executer aussi :
+### Appliquer les migrations D1 : `migrations apply`, pas `d1 execute --file`
+
+Toujours passer par `wrangler d1 migrations apply`, qui enregistre chaque
+migration appliquee dans la table `d1_migrations` :
 
 ```bash
-wrangler d1 execute candc-booking --file=./migrations/0008_merge_weekly_discount_into_long_stay_tiers.sql
+# verifier ce qui reste a appliquer (lecture seule)
+wrangler d1 migrations list candc-booking --remote
+
+# appliquer
+wrangler d1 migrations apply candc-booking --remote
 ```
 
-Si la base existe deja et doit ensuite relever cette remise `7+ nuits` de `5 %` a `10 %`, executer aussi :
+Ne jamais passer une migration a la main avec
+`wrangler d1 execute --file=./migrations/...` : le SQL s'execute mais rien
+n'est enregistre dans `d1_migrations`. Le suivi diverge alors de la realite et
+un `migrations apply` ulterieur tente de rejouer des `ALTER TABLE ADD COLUMN`
+qui echouent en `duplicate column`, ou pire, rejoue des `UPDATE` de tarifs.
 
-```bash
-wrangler d1 execute candc-booking --file=./migrations/0009_raise_7_night_long_stay_discount.sql
-```
+Etat constate le 02.11.2026 : les migrations `0007_long_stay_discount_tiers` a
+`0017` avaient ete appliquees a la main et n'etaient pas enregistrees.
+`d1_migrations` a ete complete par un `INSERT OR IGNORE` des 11 noms concernes
+(apres verification en base de chaque effet : colonnes invite, `note`,
+`delivery_status`, source Nomady, paliers long-stay, URLs iCal) ;
+`migrations list` renvoie desormais `No migrations to apply!`.
 
-Si la base existe deja et doit maintenant mettre a jour l'URL iCal Booking.com du parking, executer aussi :
-
-```bash
-wrangler d1 execute candc-booking --file=./migrations/0011_update_parking_booking_ical_url.sql
-```
-
-Si la base existe deja et doit supporter les blocages manuels de periodes depuis l'admin (colonne `note` sur `calendar_blocks`), executer aussi :
-
-```bash
-wrangler d1 execute candc-booking --file=./migrations/0015_add_manual_calendar_block_note.sql
-```
-
-Si la base existe deja et doit importer le calendrier Nomady du parking, executer aussi :
-
-```bash
-wrangler d1 execute candc-booking --file=./migrations/0016_add_parking_nomady_calendar.sql
-```
+Detail a connaitre : deux fichiers portent le prefixe `0007`
+(`0007_add_parking_may_2026_rate.sql` et `0007_long_stay_discount_tiers.sql`).
+Wrangler suit les migrations par **nom de fichier** : les deux sont enregistrees,
+ne pas renommer l'une des deux sans mettre a jour `d1_migrations` en meme temps.
+La prochaine migration libre est `0018`.
 
 ### Binding D1 obligatoire sur Cloudflare Pages
 

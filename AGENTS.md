@@ -242,6 +242,19 @@ When changing sync behavior, also check:
   `CF_API_TOKEN` repo secret (Pages read + account read) to wait for the
   exact deployment instead of a fixed delay.
 
+## Migrations D1
+
+- appliquer les migrations **uniquement** avec
+  `wrangler d1 migrations apply candc-booking --remote`, jamais avec
+  `wrangler d1 execute --file=./migrations/...` : le SQL s'exécute mais rien
+  n'est enregistré dans `d1_migrations`, et le suivi diverge de la base (un
+  `apply` ultérieur rejoue alors des `ALTER TABLE ADD COLUMN` déjà passés).
+  Détail et historique du backfill : `DEPLOYMENT.md` → « Appliquer les
+  migrations D1 ».
+- deux fichiers portent le préfixe `0007` (`0007_add_parking_may_2026_rate.sql`,
+  `0007_long_stay_discount_tiers.sql`) ; wrangler suit les migrations par nom
+  de fichier, les deux sont enregistrées — prochaine migration libre : `0018`.
+
 ## Verification
 
 Run after meaningful changes:
