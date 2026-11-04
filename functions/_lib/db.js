@@ -2156,6 +2156,21 @@ export async function upsertRatePeriod(env, ratePeriod) {
   return id;
 }
 
+export async function deleteRatePeriod(env, ratePeriodId) {
+  const db = requireDb(env);
+  const result = await db
+    .prepare(
+      `
+        DELETE FROM rate_periods
+        WHERE id = ?
+      `,
+    )
+    .bind(ratePeriodId)
+    .run();
+
+  return result?.meta?.changes ?? 0;
+}
+
 export async function updateUnitSettings(env, unitId, settings) {
   const db = requireDb(env);
   const nowIso = new Date().toISOString();

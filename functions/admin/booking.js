@@ -123,42 +123,6 @@ export function onRequestGet() {
       <div id="admin-operational-health" class="small">No data loaded yet.</div>
     </section>
     <section class="card stack" style="margin-top:18px">
-      <h2>Special pricing period</h2>
-      <form id="rate-period-form" class="stack">
-        <div class="field-row three">
-          <div class="field">
-            <label for="unitId">Unit</label>
-            <select id="unitId" name="unitId"></select>
-          </div>
-          <div class="field">
-            <label for="startDate">Start date</label>
-            <input id="startDate" name="startDate" type="date" required>
-          </div>
-          <div class="field">
-            <label for="endDate">End date</label>
-            <input id="endDate" name="endDate" type="date" required>
-          </div>
-        </div>
-        <div class="field-row three">
-          <div class="field">
-            <label for="nightlyBaseRate">Nightly base rate (CHF)</label>
-            <input id="nightlyBaseRate" name="nightlyBaseRate" type="number" min="0" step="0.01" required>
-          </div>
-          <div class="field">
-            <label for="label">Label</label>
-            <input id="label" name="label" type="text" placeholder="2026 Hockey Worlds">
-          </div>
-          <div class="field">
-            <label for="priority">Priority</label>
-            <input id="priority" name="priority" type="number" min="1" step="1" value="100">
-          </div>
-        </div>
-        <div class="actions">
-          <button class="btn-primary" type="submit">Save pricing period</button>
-        </div>
-      </form>
-    </section>
-    <section class="card stack" style="margin-top:18px">
       <h2>Long-stay discounts</h2>
       <p class="small">Configure up to four long-stay discount tiers per unit. The highest eligible tier is applied automatically and still appears as a single “Long-stay discount” line in the customer quote.</p>
       <form id="long-stay-form" class="stack">
@@ -226,6 +190,42 @@ export function onRequestGet() {
           <button class="btn-primary" type="submit">Save long-stay discounts</button>
         </div>
         <div id="long-stay-notice" class="notice info" hidden>Update the tiers for a unit, then save them here.</div>
+      </form>
+    </section>
+    <section class="card stack" style="margin-top:18px">
+      <h2>Special pricing period</h2>
+      <form id="rate-period-form" class="stack">
+        <div class="field-row three">
+          <div class="field">
+            <label for="unitId">Unit</label>
+            <select id="unitId" name="unitId"></select>
+          </div>
+          <div class="field">
+            <label for="startDate">Start date</label>
+            <input id="startDate" name="startDate" type="date" required>
+          </div>
+          <div class="field">
+            <label for="endDate">End date</label>
+            <input id="endDate" name="endDate" type="date" required>
+          </div>
+        </div>
+        <div class="field-row three">
+          <div class="field">
+            <label for="nightlyBaseRate">Nightly base rate (CHF)</label>
+            <input id="nightlyBaseRate" name="nightlyBaseRate" type="number" min="0" step="0.01" required>
+          </div>
+          <div class="field">
+            <label for="label">Label</label>
+            <input id="label" name="label" type="text" placeholder="2026 Hockey Worlds">
+          </div>
+          <div class="field">
+            <label for="priority">Priority</label>
+            <input id="priority" name="priority" type="number" min="1" step="1" value="100">
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn-primary" type="submit">Save pricing period</button>
+        </div>
       </form>
     </section>
     <section class="card stack" style="margin-top:18px">
@@ -635,6 +635,25 @@ export function onRequestGet() {
           return '<div class="table-scroll"><table><thead><tr><th>Unit</th><th>Period</th><th>Note</th><th>Created</th><th></th></tr></thead><tbody>' + rowsHtml + '</tbody></table></div>';
         }
 
+        function renderRatePeriods(rows) {
+          if (!rows.length) {
+            return '<p class="small">No pricing periods configured yet.</p>';
+          }
+
+          const rowsHtml = rows.map((item) => (
+            '<tr>' +
+            '<td data-label="Unit">' + escapeHtml(item.unit_display_name || item.unit_code || '-') + '</td>' +
+            '<td data-label="Period">' + escapeHtml(formatAdminDate(item.start_date) + ' → ' + formatAdminDate(item.end_date)) + '</td>' +
+            '<td data-label="Nightly rate">' + escapeHtml(item.nightly_base_rate + ' CHF') + '</td>' +
+            '<td data-label="Label">' + escapeHtml(item.label || '-') + '</td>' +
+            '<td data-label="Priority">' + escapeHtml(item.priority) + '</td>' +
+            '<td data-label="Actions"><button type="button" class="admin-rate-period-delete" data-id="' + escapeHtml(item.id) + '" style="padding:4px 12px;font-size:0.8rem">Delete</button></td>' +
+            '</tr>'
+          )).join('');
+
+          return '<div class="table-scroll"><table><thead><tr><th>Unit</th><th>Period</th><th>Nightly rate</th><th>Label</th><th>Priority</th><th>Actions</th></tr></thead><tbody>' + rowsHtml + '</tbody></table></div>';
+        }
+
         // Interfaces d'administration/login des OTA connectées : permet
         // d'ouvrir l'extranet où se trouvent les détails et messages de la
         // réservation importée (le flux iCal ne transporte que les dates).
@@ -859,22 +878,7 @@ export function onRequestGet() {
             if (selectedResUnit && adminUnits.some((unit) => unit.code === selectedResUnit)) {
               resUnit.value = selectedResUnit;
             }
-            ratePeriodsWrap.innerHTML = renderTable(
-              data.ratePeriods.map((item) => ({
-                unit: item.unit_display_name,
-                period: formatAdminDate(item.start_date) + ' → ' + formatAdminDate(item.end_date),
-                rate: item.nightly_base_rate + ' CHF',
-                label: item.label || '-',
-                priority: item.priority,
-              })),
-              [
-                { key: 'unit', label: 'Unit' },
-                { key: 'period', label: 'Period' },
-                { key: 'rate', label: 'Nightly rate' },
-                { key: 'label', label: 'Label' },
-                { key: 'priority', label: 'Priority' },
-              ],
-            );
+            ratePeriodsWrap.innerHTML = renderRatePeriods(data.ratePeriods || []);
             renderOperationalHealth(data.operationalHealth);
             manualBlocksWrap.innerHTML = renderManualBlocks(data.manualBlocks || []);
             otaBlocks = data.externalBlocks || [];
@@ -1048,6 +1052,32 @@ export function onRequestGet() {
           } catch (error) {
             adminNotice.className = 'notice error';
             adminNotice.textContent = error.message;
+          }
+        });
+
+        ratePeriodsWrap.addEventListener('click', async (event) => {
+          const deleteButton = event.target.closest('.admin-rate-period-delete');
+          if (!deleteButton) {
+            return;
+          }
+
+          if (!window.confirm('Delete this pricing period? It will no longer be applied to quotes.')) {
+            return;
+          }
+
+          deleteButton.disabled = true;
+          try {
+            await apiFetch('POST', {
+              action: 'delete_rate_period',
+              ratePeriodId: deleteButton.dataset.id,
+            });
+            await loadDashboard();
+            adminNotice.className = 'notice success';
+            adminNotice.textContent = 'Pricing period deleted.';
+          } catch (error) {
+            adminNotice.className = 'notice error';
+            adminNotice.textContent = error.message;
+            deleteButton.disabled = false;
           }
         });
 

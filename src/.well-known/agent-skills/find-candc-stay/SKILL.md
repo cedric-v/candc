@@ -10,7 +10,7 @@ C&C offers two rentable units at the same location (La Sonnaz, Fribourg, Switzer
 ## Parking space (`parking-space`)
 
 - Individual, equipped pitch for vans, caravans, and motorhomes (categories: standard_car, car_roof_tent, van, caravan, motorhome_upto_6_5m, motorhome_over_6_5m).
-- 20 CHF / night + 3 CHF city tax per adult / night.
+- 22 CHF / night + 3 CHF city tax per adult / night.
 - Electricity, Wi-Fi, water, optional indoor shower/WC on request (10 CHF / week, 7 h–21 h).
 - EV charging (slow): 15 CHF (10 h) or 30 CHF (full day/night), Type 2 connector on a 220 V / 10 A socket.
 - Booking page: https://candc.ch/fr/parking/booking/

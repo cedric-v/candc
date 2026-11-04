@@ -7,7 +7,7 @@ export const DEFAULT_UNITS = [
     publicReferencePrefix: "PARK",
     displayName: "C&C Parking Space",
     currency: "CHF",
-    defaultBaseRateChf: 20,
+    defaultBaseRateChf: 22,
     checkInStartTime: "15:00:00",
     checkInEndTime: "21:00:00",
     checkOutTime: "10:00:00",
