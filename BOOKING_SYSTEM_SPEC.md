@@ -196,6 +196,25 @@ Champs obligatoires :
 
 - tarif de base standard : 22 CHF par nuitee
 
+#### Periodes tarifaires particulieres
+
+- mecanisme : table `rate_periods` (intervalle de dates + `priority`) ; une periode
+  active prime sur `rentable_units.default_base_rate` pour chaque nuit couverte, le
+  reste du sejour reste au tarif de base
+- gestion : `/admin/booking`, formulaire « Special pricing period » (creation et
+  suppression d'une periode)
+- motifs typiques : forte demande, evenements locaux, hiver
+- **hiver** : la hausse liee au chauffage est integree dans un tarif saisonnier
+  `rate_periods` tout compris. Il n'existe volontairement **aucune option
+  « electricite »** dans le tunnel de reservation : l'electricite reste incluse dans
+  le tarif de base (prise type J / T11, 10 A) et le surcroit hivernal est porte par le
+  tarif de la periode
+- coherence documentaire : la note tarifaire publique du parking
+  (`translations.json` → `parking.ratesNote`, 7 langues) et les CGV
+  (`src/fr/legal.njk` §2) rappellent que les periodes particulieres s'appliquent aux
+  nouvelles reservations et que le prix applicable est celui du recapitulatif affiche
+  avant paiement
+
 #### Prestations incluses dans le tarif de base
 
 - place de stationnement

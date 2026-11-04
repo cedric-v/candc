@@ -310,6 +310,15 @@ CI / deployment pipeline (see DEPLOYMENT.md "CI avant deploiement"):
 - the quote UI now shows a single `Long-stay discount` line only
 - the old separate `7+ nights` discount line has been merged into those tiers
 - the admin UI supports up to `4` tiers per unit
+- special pricing periods live in `rate_periods` (admin « Special pricing period »,
+  priority + date range) and override `rentable_units.default_base_rate` per night
+- winter electricity: the extra heating load is folded into a seasonal
+  `rate_periods` rate. There is deliberately **no separate « electricity » option**
+  in the booking funnel — electricity stays included in the base rate (type J / T11,
+  10 A outlet), and the surcharge is carried by the period rate
+- keep the public rate note (`translations.json` → `parking.ratesNote`, 7 languages)
+  aligned with the CGV (`src/fr/legal.njk` §2): special periods apply to new bookings
+  and the price shown in the pre-payment summary prevails
 
 ## Contributor note
 
