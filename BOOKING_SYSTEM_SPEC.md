@@ -194,7 +194,7 @@ Champs obligatoires :
 
 #### Tarif standard
 
-- tarif de base standard : 20 CHF par nuitee
+- tarif de base standard : 22 CHF par nuitee
 
 #### Prestations incluses dans le tarif de base
 

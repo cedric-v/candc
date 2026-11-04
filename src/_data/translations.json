@@ -86,7 +86,7 @@
       "evCable": "Câble compatible Type 13 (220V, 10A) avec connecteur Type 2",
       "noChemicalToilet": "Nous n'avons pas l'infrastructure pour vidanger les toilettes chimiques",
       "ratesTitle": "Tarif",
-      "ratesMain": "20 CHF / nuitée + 3 CHF de taxe de séjour par adulte / nuitée (*)",
+      "ratesMain": "22 CHF / nuitée + 3 CHF de taxe de séjour par adulte / nuitée (*)",
       "ratesNote": "* : le tarif peut être plus élevé en cas de forte demande ou d'événements proches"
     },
     "cancellationPolicy": {
@@ -271,7 +271,7 @@
       "evCable": "Type 13 compatible cable (220V, 10A) with Type 2 connector",
       "noChemicalToilet": "We do not have the infrastructure to empty chemical toilets from motorhomes / RV",
       "ratesTitle": "Rates",
-      "ratesMain": "20 CHF / night + 3 CHF tourist tax per adult / night (*)",
+      "ratesMain": "22 CHF / night + 3 CHF tourist tax per adult / night (*)",
       "ratesNote": "* : rate may be higher during high demand or nearby events"
     },
     "cancellationPolicy": {
@@ -456,7 +456,7 @@
       "evCable": "Typ 13 kompatibles Kabel (220V, 10A) mit Typ 2 Stecker",
       "noChemicalToilet": "Wir haben keine Infrastruktur zum Entleeren von Chemietoiletten von Motorhomes",
       "ratesTitle": "Tarife",
-      "ratesMain": "20 CHF / Nacht + 3 CHF Kurtaxe pro Erwachsener / Nacht (*)",
+      "ratesMain": "22 CHF / Nacht + 3 CHF Kurtaxe pro Erwachsener / Nacht (*)",
       "ratesNote": "* : Der Preis kann bei hoher Nachfrage oder Veranstaltungen in der Nähe höher sein"
     },
     "cancellationPolicy": {
@@ -641,7 +641,7 @@
       "evCable": "Cable compatible con Tipo 13 (220V, 10A) con conector Tipo 2",
       "noChemicalToilet": "No tenemos la infraestructura para vaciar las toilettes químicas de las autocaravanas",
       "ratesTitle": "Tarifas",
-      "ratesMain": "20 CHF / noche + 3 CHF de tasa turística por adulto / noche (*)",
+      "ratesMain": "22 CHF / noche + 3 CHF de tasa turística por adulto / noche (*)",
       "ratesNote": "* : la tarifa puede ser superior en caso de alta demanda o eventos cercanos"
     },
     "cancellationPolicy": {
@@ -826,7 +826,7 @@
       "evCable": "Cabo compatível com Tipo 13 (220V, 10A) com conector Tipo 2",
       "noChemicalToilet": "Não temos a infraestrutura para esvaziar as sanitas químicas das autocaravanas",
       "ratesTitle": "Tarifas",
-      "ratesMain": "20 CHF / noite + 3 CHF de taxa turística por adulto / noite (*)",
+      "ratesMain": "22 CHF / noite + 3 CHF de taxa turística por adulto / noite (*)",
       "ratesNote": "* : a tarifa pode ser superior em caso de forte procura ou eventos próximos"
     },
     "cancellationPolicy": {
@@ -1011,7 +1011,7 @@
       "evCable": "Cavo compatibile Tipo 13 (220V, 10A) con connettore Tipo 2",
       "noChemicalToilet": "Non abbiamo l'infrastruttura per svuotare i bagni chimici dei camper",
       "ratesTitle": "Tariffe",
-      "ratesMain": "20 CHF / notte + 3 CHF di tassa di soggiorno per adulto / notte (*)",
+      "ratesMain": "22 CHF / notte + 3 CHF di tassa di soggiorno per adulto / notte (*)",
       "ratesNote": "* : la tariffa può essere più alta in caso di forte richiesta o eventi vicini"
     },
     "cancellationPolicy": {
@@ -1196,7 +1196,7 @@
       "evCable": "Type 13 compatibele kabel (220V, 10A) met Type 2 connector",
       "noChemicalToilet": "We hebben niet de infrastructuur om chemische toiletten van campers te legen",
       "ratesTitle": "Tarieven",
-      "ratesMain": "20 CHF / nacht + 3 CHF toeristenbelasting per volwassene / nacht (*)",
+      "ratesMain": "22 CHF / nacht + 3 CHF toeristenbelasting per volwassene / nacht (*)",
       "ratesNote": "* : het tarief kan hoger zijn in geval van grote vraag of evenementen in de buurt"
     },
     "cancellationPolicy": {

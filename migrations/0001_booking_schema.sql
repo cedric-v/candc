@@ -205,7 +205,7 @@ INSERT OR IGNORE INTO rentable_units (
     'PARK',
     'C&C Parking Space',
     'CHF',
-    20,
+    22,
     'REPLACE_WITH_PARKING_GOOGLE_CALENDAR_ID',
     '15:00:00',
     '21:00:00',

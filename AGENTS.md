@@ -253,7 +253,8 @@ When changing sync behavior, also check:
   migrations D1 ».
 - deux fichiers portent le préfixe `0007` (`0007_add_parking_may_2026_rate.sql`,
   `0007_long_stay_discount_tiers.sql`) ; wrangler suit les migrations par nom
-  de fichier, les deux sont enregistrées — prochaine migration libre : `0018`.
+  de fichier, les deux sont enregistrées — prochaine migration libre : `0019`
+  (`0018` est utilisée pour l'augmentation du tarif de base du parking à 22 CHF).
 
 ## Verification
 

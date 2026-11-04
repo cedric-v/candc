@@ -28,7 +28,7 @@ Content-Type: application/json
 
 ## Pricing reference
 
-- Parking: 20 CHF / night + 3 CHF city tax per adult / night. Optional extras: indoor shower/WC 10 CHF / week, EV charging 15 CHF (10 h) or 30 CHF (full night).
+- Parking: 22 CHF / night + 3 CHF city tax per adult / night. Optional extras: indoor shower/WC 10 CHF / week, EV charging 15 CHF (10 h) or 30 CHF (full night).
 - Studio: seasonal nightly rate (roughly 120–160 CHF), minimum 4 nights.
 - Long-stay discounts apply automatically per unit (10 % from 7 nights, 20 % from 16, 25 % from 30, 30 % from 60). The quote exposes a single "Long-stay discount" line.
 
