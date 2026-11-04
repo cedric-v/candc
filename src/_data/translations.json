@@ -87,7 +87,7 @@
       "noChemicalToilet": "Nous n'avons pas l'infrastructure pour vidanger les toilettes chimiques",
       "ratesTitle": "Tarif",
       "ratesMain": "22 CHF / nuitée + 3 CHF de taxe de séjour par adulte / nuitée (*)",
-      "ratesNote": "* : le tarif peut être plus élevé en cas de forte demande ou d'événements proches"
+      "ratesNote": "* : le tarif peut être ajusté en cas de forte demande, d'événements locaux ou de besoins électriques importants"
     },
     "cancellationPolicy": {
       "title": "Annulation flexible :",
@@ -272,7 +272,7 @@
       "noChemicalToilet": "We do not have the infrastructure to empty chemical toilets from motorhomes / RV",
       "ratesTitle": "Rates",
       "ratesMain": "22 CHF / night + 3 CHF tourist tax per adult / night (*)",
-      "ratesNote": "* : rate may be higher during high demand or nearby events"
+      "ratesNote": "* : rate may be adjusted in case of high demand, local events or high electricity needs"
     },
     "cancellationPolicy": {
       "title": "Flexible cancellation:",
@@ -457,7 +457,7 @@
       "noChemicalToilet": "Wir haben keine Infrastruktur zum Entleeren von Chemietoiletten von Motorhomes",
       "ratesTitle": "Tarife",
       "ratesMain": "22 CHF / Nacht + 3 CHF Kurtaxe pro Erwachsener / Nacht (*)",
-      "ratesNote": "* : Der Preis kann bei hoher Nachfrage oder Veranstaltungen in der Nähe höher sein"
+      "ratesNote": "* : Der Preis kann bei hoher Nachfrage, lokalen Veranstaltungen oder hohem Strombedarf angepasst werden"
     },
     "cancellationPolicy": {
       "title": "Flexible Stornierung:",
@@ -642,7 +642,7 @@
       "noChemicalToilet": "No tenemos la infraestructura para vaciar las toilettes químicas de las autocaravanas",
       "ratesTitle": "Tarifas",
       "ratesMain": "22 CHF / noche + 3 CHF de tasa turística por adulto / noche (*)",
-      "ratesNote": "* : la tarifa puede ser superior en caso de alta demanda o eventos cercanos"
+      "ratesNote": "* : la tarifa puede ajustarse en caso de alta demanda, eventos locales o necesidades eléctricas elevadas"
     },
     "cancellationPolicy": {
       "title": "Cancelación flexible:",
@@ -827,7 +827,7 @@
       "noChemicalToilet": "Não temos a infraestrutura para esvaziar as sanitas químicas das autocaravanas",
       "ratesTitle": "Tarifas",
       "ratesMain": "22 CHF / noite + 3 CHF de taxa turística por adulto / noite (*)",
-      "ratesNote": "* : a tarifa pode ser superior em caso de forte procura ou eventos próximos"
+      "ratesNote": "* : a tarifa pode ser ajustada em caso de forte procura, eventos locais ou necessidades elétricas elevadas"
     },
     "cancellationPolicy": {
       "title": "Cancelamento flexível:",
@@ -1012,7 +1012,7 @@
       "noChemicalToilet": "Non abbiamo l'infrastruttura per svuotare i bagni chimici dei camper",
       "ratesTitle": "Tariffe",
       "ratesMain": "22 CHF / notte + 3 CHF di tassa di soggiorno per adulto / notte (*)",
-      "ratesNote": "* : la tariffa può essere più alta in caso di forte richiesta o eventi vicini"
+      "ratesNote": "* : la tariffa può essere adeguata in caso di forte richiesta, eventi locali o elevati fabbisogni elettrici"
     },
     "cancellationPolicy": {
       "title": "Cancellazione flessibile:",
@@ -1197,7 +1197,7 @@
       "noChemicalToilet": "We hebben niet de infrastructuur om chemische toiletten van campers te legen",
       "ratesTitle": "Tarieven",
       "ratesMain": "22 CHF / nacht + 3 CHF toeristenbelasting per volwassene / nacht (*)",
-      "ratesNote": "* : het tarief kan hoger zijn in geval van grote vraag of evenementen in de buurt"
+      "ratesNote": "* : het tarief kan worden aangepast bij grote vraag, lokale evenementen of een hoog elektriciteitsverbruik"
     },
     "cancellationPolicy": {
       "title": "Flexibele annulering:",
