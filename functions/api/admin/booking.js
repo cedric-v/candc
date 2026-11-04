@@ -3,6 +3,7 @@ import {
   createManageToken,
   createManualCalendarBlock,
   deleteManualCalendarBlock,
+  deleteRatePeriod,
   getReservationForEmail,
   getUnitByCode,
   insertSyncLog,
@@ -101,6 +102,22 @@ export async function onRequestPost(context) {
 
     const payload = await context.request.json();
     const action = payload?.action;
+
+    if (action === "delete_rate_period") {
+      const ratePeriodId = payload.ratePeriodId;
+
+      if (!ratePeriodId) {
+        return badRequest("ratePeriodId is required");
+      }
+
+      const changes = await deleteRatePeriod(context.env, ratePeriodId);
+
+      if (!changes) {
+        return badRequest("Unknown pricing period");
+      }
+
+      return json({ ok: true, action, ratePeriodId });
+    }
 
     if (action === "create_rate_period") {
       if (!payload.unitId) {
