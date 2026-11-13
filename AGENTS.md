@@ -338,3 +338,35 @@ that are NOT yours at any moment.
   you touched (explicit `git add <file>...`), never `git add -A`
 - never commit or revert files modified by the parallel session
 - if you need a full snapshot, prefer `git stash -u` or commit your own files only
+
+## Commit messages (Conventional Commits, always in English)
+
+Every commit message in this repository follows
+[Conventional Commits](https://www.conventionalcommits.org/) and is **always
+written in English**:
+
+```text
+<type>(<scope>): <description>
+```
+
+- `type`: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`,
+  `ci`, `chore`, `revert`
+- `scope`: optional — the module or area concerned (`booking`, `admin`, `seo`,
+  `ota`…)
+- `description`: imperative mood, English, no trailing period, ≤ 72 characters
+
+Examples:
+
+```text
+feat(booking): add manage link rotation action
+fix(ota): keep the ICS export free of expired holds
+docs: document the D1 migration procedure
+chore(deps): update dependencies
+```
+
+A French commit message (`feat(booking): ajouter la rotation du lien`) is **not**
+compliant — rewrite it in English. The `type` and `scope` keywords are technical
+standards, so keeping them in English avoids any ambiguity.
+
+Workflow: never push directly to `main` (branch + pull request), one commit =
+one coherent change, and run `npm run build` + `npm test` before pushing.
