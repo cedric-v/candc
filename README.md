@@ -180,6 +180,28 @@ Business logic tests now also verify:
 - merged long-stay tiers, including the 7-night threshold
 - automatic refund allocation logic
 
+## Git convention
+
+Commit messages follow [Conventional Commits](https://www.conventionalcommits.org/)
+and are **always written in English**:
+
+```text
+<type>(<scope>): <description>
+```
+
+- `type`: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`
+- `scope`: optional — the module or area concerned (`booking`, `admin`, `seo`, `ota`…)
+- `description`: imperative mood, English, no trailing period, ≤ 72 characters
+
+```text
+feat(booking): add manage link rotation action
+fix(ota): keep the ICS export free of expired holds
+chore(deps): update dependencies
+```
+
+A French commit message is not compliant — rewrite it in English. See
+`AGENTS.md` for the full contributor guidance.
+
 ## Project structure
 
 - `src/` site pages, templates, assets, translations
