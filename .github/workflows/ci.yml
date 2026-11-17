@@ -43,7 +43,12 @@ jobs:
         run: npm ci
 
       - name: Audit dependencies
-        run: npm audit --omit=dev
+        # Même exigence qu'avant (aucune vulnérabilité high/critical tolérée),
+        # mais les exceptions doivent être datées et justifiées dans
+        # scripts/audit-allowlist.json, et une exception expirée casse le job.
+        # Sans cela, un avis sans correctif amont (cas picomatch / CVE-2026-112366)
+        # bloque toutes les PR, y compris celles qui n'ont aucun rapport.
+        run: node scripts/audit-gate.mjs --omit=dev
 
       - name: Build
         run: npm run build
