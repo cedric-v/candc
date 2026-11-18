@@ -1352,11 +1352,11 @@ export function onRequestGet() {
             }
             const refundUnusedNights = wrap.querySelector('.admin-early-refund').checked;
             const sendEmail = wrap.querySelector('.admin-early-email').checked;
-            const confirmMessage = 'Shorten this reservation: new departure ' + newCheckOutDate + '?\n' +
+            const confirmMessage = 'Shorten this reservation: new departure ' + newCheckOutDate + '?\\n' +
               (refundUnusedNights
                 ? 'The unused nights will be refunded to the guest.'
                 : 'No refund: the guest keeps paying the original total.') +
-              (sendEmail ? '\nThe guest will be notified by email.' : '\nNo email will be sent to the guest.');
+              (sendEmail ? '\\nThe guest will be notified by email.' : '\\nNo email will be sent to the guest.');
             if (!window.confirm(confirmMessage)) {
               return;
             }
