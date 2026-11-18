@@ -629,11 +629,42 @@ les OTA rouvrent aussi les dates).
   commence), pas de controle de sejour minimum, pas de relecture OTA live (la
   reservation est deja confirmee et exportee — regle DB-only du spec).
 - journalisation : `sync_logs` type `early_departure` (statut `warning` si
-  remboursement partiel/manuel a suivre).
+  remboursement partiel/manuel a suivre), avec `payload_summary` contenant
+  `previousCheckOutDate` / `newCheckOutDate` / `previousTotal` / `nextTotal` /
+  `refund`. L'ancienne date de depart n'est conservee **que** la (la table
+  `reservations` ne garde que l'etat courant) : c'est ce payload qui alimente
+  le panneau « History » des details de reservation (cf. « Historique des
+  reservations »).
 - implementation : action `early_departure` dans
   `functions/api/admin/booking.js` + ligne « Early departure » dans le panneau
   de details de `/admin/booking` (date, case « Refund unused nights », case
   « Email guest », bouton « Apply » avec confirmation).
+
+### Historique des reservations
+
+Une modification de sejour ne doit pas effacer l'historique : `reservations` ne
+conserve que l'etat courant, donc tout changement de dates doit laisser une
+trace dans `sync_logs`.
+
+- `sync_logs.reservation_id` (migration `0019`, indexee
+  `(reservation_id, created_at DESC)`) : le lien vers la reservation etait
+  jusqu'ici uniquement dans `payload_summary` JSON (ni filtrable ni joignable) ;
+- `insertSyncLog` / `listRecentSyncLogs` / `listRecentEmailLogs`
+  (`functions/_lib/db.js`) **retombent sur une requete sans la colonne** si la
+  migration n'est pas encore appliquee : un deploiement de code precedent la
+  migration ne doit jamais casser le journal ;
+- types journalises avec `reservationId` : `early_departure`,
+  `reservation_updated` (modification client), `reservation_cancelled`
+  (annulation client), `payment_resumed` (relance apres echec de carte),
+  `wc_confirmation`, `manage_token_rotation`, `email_resend`, `payment_conflict` ;
+- UI : `/admin/booking` → « Details ▾ » d'une reservation → ligne « History »,
+  chargee a la demande via `GET /api/admin/booking?history=<id>` (timeline
+  sync logs + e-mails, avant/apres des dates et montants). Le panneau « Recent
+  sync logs » reste la vue globale (25 dernieres entrees, tous types) ;
+- un flux client qui change les dates sans journaliser est un bug : toute
+  nouvelle action touchant `check_in_date` / `check_out_date` / les montants
+  doit ecrire un `sync_logs` avec au minimum `previousCheckOutDate` et
+  `newCheckOutDate`.
 
 ### Lien de gestion (`manage token`) — regles d'usage
 

@@ -833,26 +833,47 @@ export async function deleteManualCalendarBlock(env, blockId) {
   return result?.meta?.changes ?? 0;
 }
 
+// La colonne `reservation_id` vient de la migration 0019 : sans elle, le lien
+// vers la réservation n'existait que dans `payload_summary` JSON (ni indexable
+// ni joignable). Comme `createManualCalendarBlock` avec `note`, les helpers
+// retombent sur une requête sans la colonne tant que la migration n'est pas
+// appliquée : un déploiement de code ne doit jamais casser le journal.
 export async function insertSyncLog(env, log) {
   const db = requireDb(env);
-  await db
-    .prepare(
-      `
-        INSERT INTO sync_logs (
-          id, unit_id, sync_type, status, message, payload_summary, created_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?)
-      `,
-    )
-    .bind(
-      crypto.randomUUID(),
-      log.unitId || null,
-      log.syncType,
-      log.status,
-      log.message || null,
-      log.payloadSummary ? JSON.stringify(log.payloadSummary) : null,
-      new Date().toISOString(),
-    )
-    .run();
+  // La plupart des appelants passent déjà `reservationId` dans le payload ; on
+  // l'en extrait pour que la colonne soit peuplée sans toucher 30 appels.
+  const reservationId = log.reservationId || log.payloadSummary?.reservationId || null;
+
+  const insert = (withReservationId) =>
+    db
+      .prepare(
+        `
+          INSERT INTO sync_logs (
+            id, unit_id, sync_type, status, message, payload_summary${withReservationId ? ", reservation_id" : ""}, created_at
+          ) VALUES (?, ?, ?, ?, ?, ?${withReservationId ? ", ?" : ""}, ?)
+        `,
+      )
+      .bind(
+        crypto.randomUUID(),
+        log.unitId || null,
+        log.syncType,
+        log.status,
+        log.message || null,
+        log.payloadSummary ? JSON.stringify(log.payloadSummary) : null,
+        ...(withReservationId ? [reservationId] : []),
+        new Date().toISOString(),
+      )
+      .run();
+
+  try {
+    await insert(true);
+  } catch (error) {
+    if (!/reservation_id/i.test(error?.message || "")) {
+      throw error;
+    }
+
+    await insert(false);
+  }
 }
 
 export async function insertPaymentRecord(env, payment) {
@@ -1703,8 +1724,11 @@ export async function setEmailDeliveryStatus(env, emailLogId, deliveryStatus) {
 
 // Derniers e-mails envoyés, pour l'onglet réservations de l'admin : l'hôte doit
 // voir d'un coup d'œil si l'e-mail d'arrivée a été remis, rejeté ou plaint.
-export async function listRecentEmailLogs(env, limit = 60) {
+// `options.reservationId` restreint la liste à une réservation (panneau
+// « History » des détails de réservation).
+export async function listRecentEmailLogs(env, limit = 60, options = {}) {
   const db = requireDb(env);
+  const reservationId = options.reservationId ? String(options.reservationId) : null;
 
   const run = async (selectDelivery) => {
     const { results } = await db
@@ -1722,11 +1746,12 @@ export async function listRecentEmailLogs(env, limit = 60) {
           FROM email_logs
           LEFT JOIN reservations ON reservations.id = email_logs.reservation_id
           WHERE email_logs.reservation_id IS NOT NULL
+            ${reservationId ? "AND email_logs.reservation_id = ?" : ""}
           ORDER BY email_logs.created_at DESC
           LIMIT ?
         `,
       )
-      .bind(limit)
+      .bind(...(reservationId ? [reservationId] : []), limit)
       .all();
 
     return results || [];
@@ -2188,34 +2213,66 @@ export async function updateUnitSettings(env, unitId, settings) {
     .run();
 }
 
-export async function listRecentSyncLogs(env, limit = 20) {
+export async function listRecentSyncLogs(env, limit = 20, options = {}) {
   const db = requireDb(env);
-  const { results } = await db
-    .prepare(
-      `
-        SELECT
-          sync_logs.id,
-          sync_logs.sync_type,
-          sync_logs.status,
-          sync_logs.message,
-          sync_logs.payload_summary,
-          sync_logs.created_at,
-          rentable_units.code AS unit_code,
-          rentable_units.display_name AS unit_display_name
-        FROM sync_logs
-        LEFT JOIN rentable_units ON rentable_units.id = sync_logs.unit_id
-        ORDER BY sync_logs.created_at DESC
-        LIMIT ?
-      `,
-    )
-    .bind(limit)
-    .all();
+  const reservationId = options.reservationId ? String(options.reservationId) : null;
+
+  const run = (withReservationId) => {
+    const filters = [];
+    const bindings = [];
+
+    if (reservationId) {
+      // Repli pré-migration : l'id n'est alors présent que dans le payload JSON.
+      // `json_valid` évite qu'un payload illisible ne fasse échouer la requête.
+      filters.push(
+        withReservationId
+          ? "sync_logs.reservation_id = ?"
+          : "CASE WHEN json_valid(sync_logs.payload_summary) THEN json_extract(sync_logs.payload_summary, '$.reservationId') END = ?",
+      );
+      bindings.push(reservationId);
+    }
+
+    return db
+      .prepare(
+        `
+          SELECT
+            sync_logs.id,${withReservationId ? "\n            sync_logs.reservation_id," : ""}
+            sync_logs.sync_type,
+            sync_logs.status,
+            sync_logs.message,
+            sync_logs.payload_summary,
+            sync_logs.created_at,
+            rentable_units.code AS unit_code,
+            rentable_units.display_name AS unit_display_name
+          FROM sync_logs
+          LEFT JOIN rentable_units ON rentable_units.id = sync_logs.unit_id
+          ${filters.length > 0 ? `WHERE ${filters.join(" AND ")}` : ""}
+          ORDER BY sync_logs.created_at DESC
+          LIMIT ?
+        `,
+      )
+      .bind(...bindings, limit)
+      .all();
+  };
+
+  let results;
+  try {
+    ({ results } = await run(true));
+  } catch (error) {
+    if (!/reservation_id/i.test(error?.message || "")) {
+      throw error;
+    }
+
+    ({ results } = await run(false));
+  }
 
   return (results || []).map((row) => ({
     id: row.id,
+    reservation_id: row.reservation_id || reservationId || null,
     sync_type: row.sync_type,
     status: row.status,
     message: row.message,
+    payload_summary: row.payload_summary || null,
     created_at: row.created_at,
     unit_code: row.unit_code,
     unit_display_name: row.unit_display_name,

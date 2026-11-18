@@ -41,6 +41,22 @@ function jsonNoStore(data, init = {}) {
   });
 }
 
+// `payload_summary` est stocké en JSON texte : l'historique admin le renvoie
+// déjà désérialisé (avant/après des dates, montants, remboursement). Toute
+// valeur illisible est ignorée plutôt que de casser le panneau.
+function parsePayloadSummary(raw) {
+  if (!raw) {
+    return null;
+  }
+
+  try {
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === "object" ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
 // Types d'e-mail qu'un renvoi manuel peut rejouer depuis l'admin. Volontairement
 // limité aux e-mails d'information client : `admin_new_booking` (alerte interne)
 // et les e-mails de paiement automatiques (relance / expiration, liés à un hold)
@@ -60,6 +76,39 @@ export async function onRequestGet(context) {
     }
 
     const url = new URL(context.request.url);
+
+    // Historique d'une réservation, chargé à la demande depuis « Details ▾ »
+    // (le dashboard charge sinon 25 entrées globales, tous types confondus :
+    // un changement de dates disparaît de la vue en quelques heures).
+    const historyReservationId = url.searchParams.get("history");
+
+    if (historyReservationId) {
+      const [historyLogs, historyEmails] = await Promise.all([
+        listRecentSyncLogs(context.env, 50, { reservationId: historyReservationId }),
+        listRecentEmailLogs(context.env, 50, { reservationId: historyReservationId }),
+      ]);
+
+      return jsonNoStore({
+        reservationId: historyReservationId,
+        history: historyLogs.map((log) => ({
+          id: log.id,
+          when: log.created_at,
+          type: log.sync_type,
+          status: log.status,
+          message: log.message || null,
+          payload: parsePayloadSummary(log.payload_summary),
+        })),
+        emails: historyEmails.map((email) => ({
+          id: email.id,
+          when: email.created_at,
+          type: email.email_type,
+          recipient: email.recipient,
+          status: email.status,
+          deliveryStatus: email.delivery_status || null,
+        })),
+      });
+    }
+
     const todayIso = getCurrentIsoDateInZone(getConfig(context.env).timeZone);
     const reservationOptions = {
       scope: url.searchParams.get("scope") || "upcoming",
