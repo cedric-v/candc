@@ -128,6 +128,13 @@ WC/shower access confirmation (important):
 - the admin panel can manually confirm or revoke WC access (admin action `update_wc_confirmation` in `functions/api/admin/booking.js`); revoking refunds the WC fee portion (unit-level `wcShowerCleaningFeeChf` or env default) via the existing refund machinery and logs a `wc_confirmation` sync log
 - the flag is only ever set for reservations with `wc_shower_requested = 1` (unit-level `allowsWcShowerOption` gates the option itself); the Google Calendar export reflects the confirmed state
 
+Early departure (admin):
+
+- admin action `early_departure` (`functions/api/admin/booking.js`, "Early departure" row in the reservation details of `/admin/booking`) shortens a confirmed/modified stay (guests leaving earlier than planned, Booking.com/Airbnb "Modify booking" standard): the remaining nights are freed immediately on the calendar (direct + ICS export feed) without cancelling; see `BOOKING_TECH_SETUP.md` → « Départ anticipé (early departure) »
+- refunding the unused nights is the host's choice (default checked only for flexible rate plans; non-refundable rates are not refunded — Booking.com standard); without refund the amounts stay untouched (paid = reservation total); the `booking_modification` guest email is optional (`sendEmail`)
+- deliberate deviations from the customer manage flow: check-in in the past allowed, no minimum-stay check, no live OTA re-check (already-confirmed stay is DB-only per spec), original `refundable_policy_type` preserved
+- implementation gotcha: in the admin dashboard, `renderReservations` receives a composed display `status` ("confirmed / paid") — eligibility checks must use `rawStatus`
+
 When changing booking behavior, check all of:
 
 - `functions/_lib/validation.js`
