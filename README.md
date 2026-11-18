@@ -135,6 +135,7 @@ API routes already scaffolded:
 - `POST /api/internal/sync/google-calendar`
 - `POST /api/internal/jobs/run`
 - `GET /api/admin/booking`
+- `GET /api/admin/booking?history=<reservationId>`
 - `POST /api/admin/booking`
 
 ## Installation

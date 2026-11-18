@@ -328,6 +328,19 @@ CI / deployment pipeline (see DEPLOYMENT.md "CI avant deploiement"):
 - production credential wiring
 - Google Calendar remains optional and disabled by default in production until credentials are finalized
 - automatic refunds now exist, but fallback to manual follow-up if SumUp transaction coverage is incomplete or a refund API call fails
+- **reservation audit trail (not planned yet)**: the per-reservation history lives
+  in `sync_logs` (migration `0019`), which is an *operational* journal (ICS
+  imports, jobs, alerts) — not an immutable record. If dispute-grade proof ever
+  becomes necessary (customer claim, OTA audit, 10-year accounting), add an
+  append-only `reservation_events` table (`reservation_id`, `event_type`,
+  `actor`, `before_json`, `after_json`, `created_at`, no application `UPDATE` /
+  `DELETE`) and have the "History" panel read both. See `PROJECT_SUMMARY.md` →
+  « Ameliorations envisagees ».
+- **no admin alert on `ntfy` quota**: a refused push (`429 limit reached: daily
+  message quota reached`, ntfy.sh free plan) is only stored as a `failed`
+  `sync_logs` row. On 26.10.2026 two booking notifications were silently lost.
+  Planned improvement: `sendAdminAlert` with a deduplicated key on the first 429
+  of the day (`functions/_lib/ntfy.js`).
 
 ## Current pricing note
 

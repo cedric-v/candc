@@ -179,8 +179,10 @@ Detail a connaitre : deux fichiers portent le prefixe `0007`
 (`0007_add_parking_may_2026_rate.sql` et `0007_long_stay_discount_tiers.sql`).
 Wrangler suit les migrations par **nom de fichier** : les deux sont enregistrees,
 ne pas renommer l'une des deux sans mettre a jour `d1_migrations` en meme temps.
-La prochaine migration libre est `0019` (`0018_raise_parking_base_rate_to_22.sql`
-est reservee a l'augmentation du tarif de base du parking a 22 CHF / nuit).
+La prochaine migration libre est `0020` (`0019_add_sync_log_reservation_id.sql`
+ajoute `sync_logs.reservation_id`, appliquee le 18.11.2026 et enregistree par
+`migrations apply` ; `0018_raise_parking_base_rate_to_22.sql` est reservee a
+l'augmentation du tarif de base du parking a 22 CHF / nuit).
 
 ### Binding D1 obligatoire sur Cloudflare Pages
 
