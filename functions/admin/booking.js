@@ -13,7 +13,10 @@ export function onRequestGet() {
         <form id="admin-auth-form">
           <div class="field">
             <label for="adminToken">Admin token</label>
-            <input id="adminToken" name="adminToken" type="password" autocomplete="off" placeholder="Paste the admin token here">
+            <!-- Pas d'attribut name : un submit natif du formulaire (par ex.
+                 si le JS inline est casse) ne doit JAMAIS serialiser le token
+                 dans l'URL en GET. La lecture se fait via getElementById. -->
+            <input id="adminToken" type="password" autocomplete="off" placeholder="Paste the admin token here">
           </div>
           <div class="actions">
             <button class="btn-primary" type="submit">Load dashboard</button>
@@ -310,6 +313,18 @@ export function onRequestGet() {
           ['departure_instructions', 'Departure instructions'],
           ['review_request', 'Review request'],
         ];
+
+        // Ceinture et bretelles : si le token se retrouve un jour dans l'URL
+        // (ex. submit natif du formulaire pendant que le JS inline est casse),
+        // on le retire de la barre d'adresse / de l'entree d'historique.
+        // Sans attribut name sur l'input, un submit natif ne peut plus rien
+        // serialiser, mais on nettoie par principe toute visite ayant traire.
+        if (window.location.search.indexOf('adminToken=') !== -1) {
+          const params = new URLSearchParams(window.location.search);
+          params.delete('adminToken');
+          const cleanedQuery = params.toString();
+          window.history.replaceState({}, '', window.location.pathname + (cleanedQuery ? '?' + cleanedQuery : ''));
+        }
 
         if (adminToken) {
           document.getElementById('adminToken').value = adminToken;
@@ -1352,11 +1367,11 @@ export function onRequestGet() {
             }
             const refundUnusedNights = wrap.querySelector('.admin-early-refund').checked;
             const sendEmail = wrap.querySelector('.admin-early-email').checked;
-            const confirmMessage = 'Shorten this reservation: new departure ' + newCheckOutDate + '?\n' +
+            const confirmMessage = 'Shorten this reservation: new departure ' + newCheckOutDate + '?\\n' +
               (refundUnusedNights
                 ? 'The unused nights will be refunded to the guest.'
                 : 'No refund: the guest keeps paying the original total.') +
-              (sendEmail ? '\nThe guest will be notified by email.' : '\nNo email will be sent to the guest.');
+              (sendEmail ? '\\nThe guest will be notified by email.' : '\\nNo email will be sent to the guest.');
             if (!window.confirm(confirmMessage)) {
               return;
             }
@@ -1413,11 +1428,21 @@ export function onRequestGet() {
     </script>
   `;
 
+  // Page d'administration : jamais cachee (contient le formulaire token et,
+  // apres chargement, des donnees personnelles), et jamais exposee via le
+  // header Referer (le token ne doit jamais fuiter vers un tiers, meme si un
+  // jour une URL de la page atterrit dans un navigateur qui navigue ailleurs).
   return html(
     htmlDocument({
       title: "Booking admin",
       body,
       lang: "en",
     }),
+    {
+      headers: {
+        "cache-control": "no-store",
+        "referrer-policy": "no-referrer",
+      },
+    },
   );
 }
