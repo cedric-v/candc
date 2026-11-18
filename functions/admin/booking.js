@@ -486,11 +486,27 @@ export function onRequestGet() {
                 '<button type="button" class="admin-manage-rotate" style="padding:4px 10px;font-size:0.78rem" data-id="' + escapeHtml(item.id) + '" title="Generate a new management link for this reservation (all previous links stop working)">New link</button>' +
                 '</span></div>';
 
+            // Départ anticipé (standard Booking.com / Airbnb « Modify booking ») :
+            // raccourcit le séjour et libère les nuits restantes sans annuler.
+            // Remboursement proposé par défaut sur les tarifs flexibles (les
+            // tarifs non remboursables ne le sont pas, cf. extranet Booking.com) ;
+            // e-mail client proposé par défaut, désactivable.
+            const earlyDepartureEligible = item.status === 'confirmed' || item.status === 'modified';
+            const earlyDepartureRow = earlyDepartureEligible
+              ? '<div class="meta-row"><span class="label">Early departure</span>' +
+                '<span class="value admin-early-departure" data-id="' + escapeHtml(item.id) + '">' +
+                '<input type="date" class="admin-early-date" min="' + escapeHtml(addDaysIso(item.check_in_date, 1)) + '" max="' + escapeHtml(addDaysIso(item.check_out_date, -1)) + '" style="padding:4px 8px;font-size:0.78rem"> ' +
+                '<label style="font-size:0.78rem"><input type="checkbox" class="admin-early-refund"' + (item.refundable_policy_type === 'non_refundable' ? '' : ' checked') + '> Refund unused nights</label> ' +
+                '<label style="font-size:0.78rem"><input type="checkbox" class="admin-early-email" checked> Email guest</label> ' +
+                '<button type="button" class="admin-early-apply" style="padding:4px 10px;font-size:0.78rem" title="Shorten the stay: the remaining nights are freed on the calendar (direct + OTA feed)">Apply</button>' +
+                '</span></div>'
+              : '';
+
             return (
               '<tr class="admin-res-row">' + cells +
               '<td class="admin-res-actions" data-label=""><button type="button" class="admin-res-toggle" data-target="' + escapeHtml(detailsId) + '" style="padding:6px 12px;font-size:0.82rem">Details ▾</button></td></tr>' +
               '<tr class="admin-res-details" id="' + escapeHtml(detailsId) + '" hidden><td colspan="8">' +
-              '<div class="meta">' + detailsRows + idRow + manageLinkRow + emailRow + '</div>' +
+              '<div class="meta">' + detailsRows + idRow + manageLinkRow + earlyDepartureRow + emailRow + '</div>' +
               '</td></tr>'
             );
           }).join('');
@@ -546,6 +562,15 @@ export function onRequestGet() {
 
         function isIsoDateOnly(value) {
           return typeof value === 'string' && /^\\d{4}-\\d{2}-\\d{2}$/.test(value);
+        }
+
+        function addDaysIso(isoDate, days) {
+          if (!isIsoDateOnly(isoDate)) {
+            return '';
+          }
+          const parts = isoDate.split('-').map(Number);
+          const shifted = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2] + days));
+          return shifted.toISOString().slice(0, 10);
         }
 
         function formatAdminDate(value) {
@@ -1311,6 +1336,49 @@ export function onRequestGet() {
               adminNotice.className = 'notice error';
               adminNotice.textContent = error.message;
               resendEmail.disabled = false;
+            }
+            return;
+          }
+
+          const earlyApply = event.target.closest('.admin-early-apply');
+          if (earlyApply) {
+            const wrap = earlyApply.closest('.admin-early-departure');
+            const reservationId = wrap ? wrap.dataset.id : null;
+            const newCheckOutDate = wrap ? wrap.querySelector('.admin-early-date').value : '';
+            if (!reservationId || !newCheckOutDate) {
+              adminNotice.className = 'notice error';
+              adminNotice.textContent = 'Pick the new departure date first.';
+              return;
+            }
+            const refundUnusedNights = wrap.querySelector('.admin-early-refund').checked;
+            const sendEmail = wrap.querySelector('.admin-early-email').checked;
+            const confirmMessage = 'Shorten this reservation: new departure ' + newCheckOutDate + '?\n' +
+              (refundUnusedNights
+                ? 'The unused nights will be refunded to the guest.'
+                : 'No refund: the guest keeps paying the original total.') +
+              (sendEmail ? '\nThe guest will be notified by email.' : '\nNo email will be sent to the guest.');
+            if (!window.confirm(confirmMessage)) {
+              return;
+            }
+            earlyApply.disabled = true;
+            try {
+              const result = await apiFetch('POST', {
+                action: 'early_departure',
+                reservationId,
+                newCheckOutDate,
+                refundUnusedNights,
+                sendEmail,
+              });
+              adminNotice.className = 'notice success';
+              adminNotice.textContent = 'Early departure recorded for ' + (result.publicReference || 'the reservation') +
+                ': departure ' + result.previousCheckOutDate + ' → ' + result.newCheckOutDate + '. Remaining nights are freed on the calendar.' +
+                (result.refund ? ' Refund ' + result.refund.amount + ' ' + (result.refund.mode || '') + '.' : ' No refund applied.') +
+                (result.refund && !result.refund.fullyRefunded ? ' Partial refund: manual follow-up required.' : '');
+              await loadReservations();
+            } catch (error) {
+              adminNotice.className = 'notice error';
+              adminNotice.textContent = error.message;
+              earlyApply.disabled = false;
             }
             return;
           }
