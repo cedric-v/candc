@@ -31,6 +31,16 @@ import { normalizeBookingInput } from "../../_lib/validation.js";
 import { sendReservationEmail, syncReservationToGoogleCalendar } from "../../_lib/booking-ops.js";
 import { badRequest, json, serverError, unauthorized } from "../../_lib/http.js";
 
+// Les réponses admin contiennent des données personnelles (dashboard) et
+// parfois un lien de gestion frais (rotate_manage_token) : jamais de cache
+// navigateur/intermédiaire.
+function jsonNoStore(data, init = {}) {
+  return json(data, {
+    ...init,
+    headers: { ...(init.headers || {}), "cache-control": "no-store" },
+  });
+}
+
 // Types d'e-mail qu'un renvoi manuel peut rejouer depuis l'admin. Volontairement
 // limité aux e-mails d'information client : `admin_new_booking` (alerte interne)
 // et les e-mails de paiement automatiques (relance / expiration, liés à un hold)
@@ -81,7 +91,7 @@ export async function onRequestGet(context) {
       listRecentEmailLogs(context.env, 80),
     ]);
 
-    return json({
+    return jsonNoStore({
       units,
       reservations,
       ratePeriods,
@@ -120,7 +130,7 @@ export async function onRequestPost(context) {
         return badRequest("Unknown pricing period");
       }
 
-      return json({ ok: true, action, ratePeriodId });
+      return jsonNoStore({ ok: true, action, ratePeriodId });
     }
 
     if (action === "create_rate_period") {
@@ -146,7 +156,7 @@ export async function onRequestPost(context) {
         isActive: payload.isActive !== false,
       });
 
-      return json({
+      return jsonNoStore({
         ok: true,
         action,
         ratePeriodId,
@@ -191,7 +201,7 @@ export async function onRequestPost(context) {
 
       await updateUnitSettings(context.env, payload.unitId, nextSettings);
 
-      return json({
+      return jsonNoStore({
         ok: true,
         action,
         unitId: payload.unitId,
@@ -221,7 +231,7 @@ export async function onRequestPost(context) {
       }
 
       if (Boolean(reservation.wc_shower_confirmed) === wcConfirmed) {
-        return json({ ok: true, action, wcConfirmed, noop: true });
+        return jsonNoStore({ ok: true, action, wcConfirmed, noop: true });
       }
 
       await setReservationWcConfirmation(context.env, reservationId, wcConfirmed);
@@ -260,7 +270,7 @@ export async function onRequestPost(context) {
         // Les erreurs de sync calendrier ne doivent pas bloquer l'action admin.
       }
 
-      return json({ ok: true, action, wcConfirmed, refund });
+      return jsonNoStore({ ok: true, action, wcConfirmed, refund });
     }
 
     if (action === "create_calendar_block") {
@@ -307,7 +317,7 @@ export async function onRequestPost(context) {
         },
       });
 
-      return json({ ok: true, action, blockId });
+      return jsonNoStore({ ok: true, action, blockId });
     }
 
     if (action === "delete_calendar_block") {
@@ -323,7 +333,7 @@ export async function onRequestPost(context) {
         return badRequest("Unknown manual calendar block");
       }
 
-      return json({ ok: true, action, blockId });
+      return jsonNoStore({ ok: true, action, blockId });
     }
 
     if (action === "rotate_manage_token") {
@@ -360,7 +370,7 @@ export async function onRequestPost(context) {
         payloadSummary: { reservationId },
       });
 
-      return json({
+      return jsonNoStore({
         ok: true,
         action,
         publicReference: reservation.public_reference,
@@ -417,7 +427,7 @@ export async function onRequestPost(context) {
         payloadSummary: { reservationId, emailType, reason: response.reason || null },
       });
 
-      return json({
+      return jsonNoStore({
         ok: true,
         action,
         emailType,
@@ -675,7 +685,7 @@ export async function onRequestPost(context) {
         },
       });
 
-      return json({
+      return jsonNoStore({
         ok: true,
         action,
         publicReference: reservation.public_reference,
@@ -692,19 +702,19 @@ export async function onRequestPost(context) {
     }
 
     if (action === "run_booking_sync") {
-      return json(await runBookingIcsSync(context.env, payload.unitCode || null));
+      return jsonNoStore(await runBookingIcsSync(context.env, payload.unitCode || null));
     }
 
     if (action === "run_arrival_emails") {
-      return json(await runArrivalEmails(context.env, payload.targetDate || null));
+      return jsonNoStore(await runArrivalEmails(context.env, payload.targetDate || null));
     }
 
     if (action === "validate_calendar_sources") {
-      return json(await validateCalendarSources(context.env, payload.unitCode || null));
+      return jsonNoStore(await validateCalendarSources(context.env, payload.unitCode || null));
     }
 
     if (action === "run_sensitive_data_retention") {
-      return json(await runSensitiveDataRetention(context.env));
+      return jsonNoStore(await runSensitiveDataRetention(context.env));
     }
 
     return badRequest("Unsupported admin action");
