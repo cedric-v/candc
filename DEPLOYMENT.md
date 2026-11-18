@@ -392,6 +392,24 @@ Le workflow `.github/workflows/deploy-check.yml` se declenche a chaque push sur
 
 Tout echec fait echouer le workflow (visible dans l'onglet Actions de GitHub).
 
+Comportements de l'attente (`scripts/wait-for-pages-deploy.mjs`) et pourquoi :
+
+- build encore en cours (`queued` / `initialize` / `build`) : on attend jusqu'a
+  `TIMEOUT_MS` (25 min par defaut), soit plus que la limite de build Cloudflare
+  (20 min) : un build bloque doit etre vu echouer, pas expire avant ;
+- build en echec (ex. `build exceeded the time limit`) : le workflow echoue
+  immediatement — c'est le signal utile ;
+- deployment **`skipped`** : Cloudflare n'a jamais construit ce commit, un push
+  plus recent l'a supplante. Attendre ce deployment echouerait a coup sur, donc
+  le script verifie le deployment **canonique** (celui qui sert `candc.ch`) et
+  l'accepte s'il contient le commit (`git merge-base --is-ancestor`, d'ou le
+  `fetch-depth: 0` du checkout) ; sinon il continue d'attendre.
+
+Historique : avant ce correctif (18.11.2026), un deployment `skipped`
+(`42560570`) et un deployment reste `queued` derriere un build bloque
+(`f084c491`) faisaient echouer deploy-check sur un simple timeout d'attente de
+600 s — trois runs rouges d'affilee et plus aucun `check:payment` execute.
+
 Pour que le workflow attende **exactement** le deployment du commit (au lieu
 d'un delai fixe de 4 min), ajouter un secret de depot `CF_API_TOKEN` :
 
