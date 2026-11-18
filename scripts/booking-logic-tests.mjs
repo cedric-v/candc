@@ -1014,6 +1014,172 @@ function runAdminResendPolicyTests() {
   );
 }
 
+// Historique des réservations (migration 0019)
+// --------------------------------------------------------------------------
+// `sync_logs` porte désormais `reservation_id`, ce qui alimente le panneau
+// « History » de /admin/booking. Deux exigences :
+//   1. l'id de réservation est déduit de `payloadSummary` sans toucher les
+//      ~30 appels existants ;
+//   2. le journal ne casse jamais tant que la migration n'est pas appliquée
+//      (déploiement de code avant migration = cas normal chez cet hôte).
+function makeSyncLogMockDb({ missingColumn = false, rows = [] } = {}) {
+  const statements = [];
+  return {
+    statements,
+    prepare(sql) {
+      const record = { sql: sql.replace(/\s+/g, " ").trim(), args: [] };
+      statements.push(record);
+      const stmt = {
+        bind(...args) {
+          record.args = args;
+          return stmt;
+        },
+        async run() {
+          if (missingColumn && /reservation_id/i.test(record.sql)) {
+            throw new Error("D1_ERROR: table sync_logs has no column named reservation_id");
+          }
+          return { meta: {} };
+        },
+        async all() {
+          if (missingColumn && /sync_logs\.reservation_id/i.test(record.sql)) {
+            throw new Error("D1_ERROR: no such column: sync_logs.reservation_id");
+          }
+          return { results: rows };
+        },
+      };
+      return stmt;
+    },
+  };
+}
+
+async function runReservationHistoryTests() {
+  const { insertSyncLog, listRecentSyncLogs } = await import("../functions/_lib/db.js");
+
+  // 1. L'id de réservation est déduit de payloadSummary (aucun appel à changer).
+  const db = makeSyncLogMockDb();
+  await insertSyncLog({ DB: db }, {
+    unitId: "unit-1",
+    syncType: "early_departure",
+    status: "success",
+    message: "departure moved 2026-11-05 → 2026-11-03",
+    payloadSummary: { reservationId: "res-42", previousCheckOutDate: "2026-11-05" },
+  });
+
+  const insertStatement = db.statements.find((statement) => /INSERT INTO sync_logs/i.test(statement.sql));
+  assert(insertStatement, "insertSyncLog must insert into sync_logs");
+  assert(
+    /reservation_id/i.test(insertStatement.sql),
+    "insertSyncLog must populate the reservation_id column (migration 0019)",
+  );
+  assertEqual(
+    insertStatement.args[6],
+    "res-42",
+    "insertSyncLog must derive reservation_id from payloadSummary.reservationId",
+  );
+
+  // 2. Un id explicite est prioritaire (flux client : payload volontairement
+  //    construit sans clé `reservationId`).
+  const explicitDb = makeSyncLogMockDb();
+  await insertSyncLog({ DB: explicitDb }, {
+    reservationId: "res-7",
+    unitId: "unit-1",
+    syncType: "reservation_cancelled",
+    status: "success",
+    message: "cancelled by the customer",
+  });
+  const explicitStatement = explicitDb.statements.find((statement) =>
+    /INSERT INTO sync_logs/i.test(statement.sql),
+  );
+  assertEqual(
+    explicitStatement.args[6],
+    "res-7",
+    "insertSyncLog must use log.reservationId when payloadSummary has none",
+  );
+
+  // 3. Migration non appliquée : repli sans la colonne, jamais d'exception.
+  const legacyDb = makeSyncLogMockDb({ missingColumn: true });
+  await insertSyncLog({ DB: legacyDb }, {
+    unitId: "unit-1",
+    syncType: "early_departure",
+    status: "success",
+    message: "departure moved",
+    payloadSummary: { reservationId: "res-42" },
+  });
+  assertEqual(
+    legacyDb.statements.length,
+    2,
+    "insertSyncLog must retry without reservation_id when the migration is not applied",
+  );
+  assert(
+    !/reservation_id/i.test(legacyDb.statements[1].sql),
+    "The fallback insert must not reference reservation_id",
+  );
+
+  // 4. Une autre erreur D1 n'est jamais avalée.
+  const brokenDb = {
+    prepare() {
+      return {
+        bind() {
+          return this;
+        },
+        async run() {
+          throw new Error("D1_ERROR: no such table: sync_logs");
+        },
+      };
+    },
+  };
+  let thrown = null;
+  try {
+    await insertSyncLog({ DB: brokenDb }, { syncType: "x", status: "success" });
+  } catch (error) {
+    thrown = error;
+  }
+  assert(thrown, "insertSyncLog must rethrow errors unrelated to reservation_id");
+
+  // 5. L'historique est filtré par réservation et renvoie l'avant/après.
+  const historyRows = [
+    {
+      id: "log-1",
+      reservation_id: "res-42",
+      sync_type: "early_departure",
+      status: "success",
+      message: "departure moved 2026-11-05 → 2026-11-03",
+      payload_summary: JSON.stringify({ previousCheckOutDate: "2026-11-05" }),
+      created_at: "2026-11-18T12:00:00.000Z",
+      unit_code: "parking-space",
+      unit_display_name: "Parking space",
+    },
+  ];
+  const listDb = makeSyncLogMockDb({ rows: historyRows });
+  const history = await listRecentSyncLogs({ DB: listDb }, 50, { reservationId: "res-42" });
+  const listStatement = listDb.statements[0];
+  assert(
+    /sync_logs\.reservation_id = \?/i.test(listStatement.sql),
+    "listRecentSyncLogs must filter on the indexed reservation_id column",
+  );
+  assertEqual(listStatement.args[0], "res-42", "The reservation filter must be bound first");
+  assertEqual(listStatement.args[1], 50, "The limit is bound after the filter");
+  assertEqual(history.length, 1, "The history must return the matching log");
+  assertEqual(history[0].sync_type, "early_departure", "The history keeps the event type");
+  assert(
+    history[0].payload_summary.includes("previousCheckOutDate"),
+    "The history must expose the before/after payload so the admin can see the original dates",
+  );
+
+  // 6. Pre-migration : repli sur l'id présent dans le payload JSON.
+  const legacyListDb = makeSyncLogMockDb({ missingColumn: true, rows: historyRows });
+  const legacyHistory = await listRecentSyncLogs({ DB: legacyListDb }, 50, { reservationId: "res-42" });
+  assert(
+    /json_extract\(sync_logs\.payload_summary/i.test(legacyListDb.statements.at(-1).sql),
+    "Without migration 0019 the filter must fall back to payload_summary JSON",
+  );
+  assertEqual(
+    legacyHistory[0].reservation_id,
+    "res-42",
+    "The fallback must still attribute the log to the reservation",
+  );
+}
+
 async function main() {
   runValidationTests();
   runGuestContactValidationTests();
@@ -1026,6 +1192,7 @@ async function main() {
   await runManageTokenLifecycleTests();
   await runEmailDeliveryCheckTests();
   runAdminResendPolicyTests();
+  await runReservationHistoryTests();
   console.log("Booking logic tests passed.");
 }
 

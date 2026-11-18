@@ -75,6 +75,24 @@ Anti-surbooking (important):
 - `reservations.js` re-checks availability **after** inserting the pending hold (excluding its own block) and cancels the loser: closes the direct/direct TOCTOU race that no DB constraint prevents
 - deliberately NOT auto-allowing a live conflict that matches a recently released direct block: guessing "stale mirror" would re-open the overbooking hole; the 409 + `ota_live_conflict` alert let the host reopen manually on the OTA instead
 
+Reservation history (admin):
+
+- `reservations` ne conserve que l'état courant : tout changement de dates laisse
+  une trace dans `sync_logs` (`reservation_id`, migration `0019`). Le panneau
+  « History » des détails de réservation (`/admin/booking`, chargé via
+  `GET /api/admin/booking?history=<id>`) affiche la timeline : modification
+  client (`reservation_updated`), départ anticipé (`early_departure`),
+  annulation client (`reservation_cancelled`), relance de paiement
+  (`payment_resumed`), rotation de lien, renvois d'e-mail, plus les e-mails et
+  leur état de remise. Les payloads portent l'avant/après
+  (`previousCheckOutDate` / `newCheckOutDate`, `previousTotal` / `nextTotal`).
+- `insertSyncLog` / `listRecentSyncLogs` / `listRecentEmailLogs` dégradent
+  proprement si la migration `0019` n'est pas appliquée (repli sans la colonne) :
+  déployer le code avant la migration ne casse jamais le journal.
+- toute nouvelle action qui touche `check_in_date` / `check_out_date` ou les
+  montants doit écrire un `sync_logs` avec `reservationId` et l'avant/après —
+  sinon l'information est perdue à jamais.
+
 Manual calendar blocks (admin):
 
 - the admin dashboard (`/admin/booking`) can block specific dates per unit (`source = 'manual'`, `status = 'active'`, `reservation_id IS NULL`) with an optional note; see `createManualCalendarBlock` / `deleteManualCalendarBlock` / `listManualCalendarBlocks` in `db.js` and the `create_calendar_block` / `delete_calendar_block` actions in `functions/api/admin/booking.js`
@@ -260,8 +278,8 @@ When changing sync behavior, also check:
   migrations D1 ».
 - deux fichiers portent le préfixe `0007` (`0007_add_parking_may_2026_rate.sql`,
   `0007_long_stay_discount_tiers.sql`) ; wrangler suit les migrations par nom
-  de fichier, les deux sont enregistrées — prochaine migration libre : `0019`
-  (`0018` est utilisée pour l'augmentation du tarif de base du parking à 22 CHF).
+  de fichier, les deux sont enregistrées — prochaine migration libre : `0020`
+  (`0018` = tarif de base du parking à 22 CHF, `0019` = `sync_logs.reservation_id`).
 
 ## Verification
 

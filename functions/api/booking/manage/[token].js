@@ -7,6 +7,7 @@ import {
   getReservationForManageToken,
   getUnitByCode,
   insertPaymentRecord,
+  insertSyncLog,
   renewPendingPaymentHold,
   updateReservationAndCalendarStatus,
   updateReservationBookingDetails,
@@ -182,6 +183,8 @@ export async function onRequestPost(context) {
         }
       }
 
+      let cancellationRefund = null;
+
       if (reservation.status !== "pending_payment") {
         const payments = await getPaymentsForReservation(context.env, reservation.id);
         const hasPaidCharges = payments.some(
@@ -190,16 +193,44 @@ export async function onRequestPost(context) {
         );
 
         if (hasPaidCharges) {
-        await attemptAutomaticRefund(
-          context.env,
-          reservation,
-          Number(reservation.total_amount || 0),
-          "customer_self_service_cancellation",
-        );
+          cancellationRefund = await attemptAutomaticRefund(
+            context.env,
+            reservation,
+            Number(reservation.total_amount || 0),
+            "customer_self_service_cancellation",
+          );
         }
       }
 
       await cancelReservation(context.env, reservation.id);
+
+      // Le journal est la seule trace durable d'une annulation cliente : sans
+      // lui il ne reste que `reservations.status` (l'e-mail peut avoir échoué).
+      try {
+        await insertSyncLog(context.env, {
+          unitId: reservation.unit_id || null,
+          syncType: "reservation_cancelled",
+          status:
+            cancellationRefund && !cancellationRefund.fullyRefunded ? "warning" : "success",
+          message:
+            `Reservation ${reservation.public_reference} cancelled by the customer ` +
+            `(${reservation.check_in_date} → ${reservation.check_out_date})` +
+            (cancellationRefund
+              ? `, refund ${cancellationRefund.mode} (${cancellationRefund.amount} ${reservation.currency})`
+              : ", no charge to refund"),
+          payloadSummary: {
+            reservationId: reservation.id,
+            actor: "customer",
+            previousStatus: reservation.status,
+            previousCheckInDate: reservation.check_in_date,
+            previousCheckOutDate: reservation.check_out_date,
+            previousTotal: Number(reservation.total_amount || 0),
+            refund: cancellationRefund,
+          },
+        });
+      } catch (error) {
+        console.error("Cancellation history log failed:", error);
+      }
       try {
         await sendReservationEmail(context.env, reservation.id, "booking_cancellation");
       } catch {
@@ -321,6 +352,29 @@ export async function onRequestPost(context) {
         currency: reservation.currency,
         rawPayload: checkout,
       });
+
+      // Trace de la relance : indispensable après un échec de carte (incident
+      // 26.10.2026 — impossible de savoir si le client avait retenté).
+      try {
+        await insertSyncLog(context.env, {
+          unitId: reservation.unit_id || null,
+          syncType: "payment_resumed",
+          status: "success",
+          message:
+            `${reservation.public_reference}: customer resumed payment ` +
+            `("${reservation.status}" → pending_payment, ${reservation.total_amount} ${reservation.currency}, checkout ${checkout.id})`,
+          payloadSummary: {
+            reservationId: reservation.id,
+            actor: "customer",
+            previousStatus: reservation.status,
+            amount: Number(reservation.total_amount),
+            currency: reservation.currency,
+            checkoutId: checkout.id,
+          },
+        });
+      } catch (error) {
+        console.error("Resume payment history log failed:", error);
+      }
 
       const response = json({
         ok: true,
@@ -521,6 +575,39 @@ export async function onRequestPost(context) {
       await syncReservationToGoogleCalendar(context.env, reservation.id);
     } catch {
       // Calendar sync failures should not block customer updates.
+    }
+
+    // Changement de dates / d'options demandé par le client : sans cette
+    // entrée, l'ancienne date de départ n'existe plus nulle part (la table
+    // reservations ne conserve que l'état courant).
+    try {
+      await insertSyncLog(context.env, {
+        unitId: reservation.unit_id || null,
+        syncType: "reservation_updated",
+        status: reservationStatus === "pending_refund" ? "warning" : "success",
+        message:
+          `Reservation ${reservation.public_reference} modified by the customer: ` +
+          `stay ${reservation.check_in_date} → ${reservation.check_out_date} becomes ` +
+          `${payload.checkInDate} → ${payload.checkOutDate}, ` +
+          `total ${currentTotal} → ${nextTotal} ${quote.currency} (${deltaAmount >= 0 ? "+" : ""}${deltaAmount})`,
+        payloadSummary: {
+          reservationId: reservation.id,
+          actor: "customer",
+          previousCheckInDate: reservation.check_in_date,
+          previousCheckOutDate: reservation.check_out_date,
+          newCheckInDate: payload.checkInDate,
+          newCheckOutDate: payload.checkOutDate,
+          previousTotal: currentTotal,
+          nextTotal,
+          deltaAmount,
+          previousStatus: reservation.status,
+          newStatus: reservationStatus,
+          refund,
+          payment: payment ? { provider: payment.provider, status: payment.status } : null,
+        },
+      });
+    } catch (error) {
+      console.error("Modification history log failed:", error);
     }
 
     return json({

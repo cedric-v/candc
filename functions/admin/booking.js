@@ -520,16 +520,117 @@ export function onRequestGet() {
                 '</span></div>'
               : '';
 
+            // Timeline complète de la réservation (dates, statuts, remboursements,
+            // liens régénérés, relances) + e-mails : chargée à l'ouverture des
+            // détails. C'est le seul endroit où l'on retrouve la date de départ
+            // d'origine après un départ anticipé ou une modification client.
+            const historyRow =
+              '<div class="meta-row"><span class="label">History</span>' +
+              '<span class="value admin-res-history" data-id="' + escapeHtml(item.id) + '" data-loaded="0">' +
+              '<span class="small">Opening the details loads the history.</span>' +
+              '</span></div>';
+
             return (
               '<tr class="admin-res-row">' + cells +
               '<td class="admin-res-actions" data-label=""><button type="button" class="admin-res-toggle" data-target="' + escapeHtml(detailsId) + '" style="padding:6px 12px;font-size:0.82rem">Details ▾</button></td></tr>' +
               '<tr class="admin-res-details" id="' + escapeHtml(detailsId) + '" hidden><td colspan="8">' +
-              '<div class="meta">' + detailsRows + idRow + manageLinkRow + earlyDepartureRow + emailRow + '</div>' +
+              '<div class="meta">' + detailsRows + idRow + manageLinkRow + earlyDepartureRow + historyRow + emailRow + '</div>' +
               '</td></tr>'
             );
           }).join('');
 
           return '<div class="table-scroll"><table class="admin-res-table"><thead><tr>' + headers.map((header) => '<th>' + escapeHtml(header.label) + '</th>').join('') + '<th></th></tr></thead><tbody>' + rowsHtml + '</tbody></table></div>';
+        }
+
+        // Historique d'une réservation : chargé à la demande. Le dashboard ne
+        // renvoie que 25 entrées globales, donc un changement de dates
+        // disparaissait de « Recent sync logs » en quelques heures.
+        function describeHistoryPayload(payload) {
+          if (!payload || typeof payload !== 'object') {
+            return '';
+          }
+
+          const parts = [];
+          const dateMove = (label, before, after) => {
+            if (before && after && before !== after) {
+              parts.push(label + ' ' + before + ' → ' + after);
+            }
+          };
+
+          // Résumé lisible du avant/après stocké dans payload_summary.
+          dateMove('check-in', payload.previousCheckInDate, payload.newCheckInDate);
+          dateMove('departure', payload.previousCheckOutDate, payload.newCheckOutDate);
+
+          if (
+            typeof payload.previousTotal === 'number' &&
+            typeof payload.nextTotal === 'number' &&
+            payload.previousTotal !== payload.nextTotal
+          ) {
+            parts.push('total ' + payload.previousTotal + ' → ' + payload.nextTotal + ' CHF');
+          }
+
+          if (payload.refund && typeof payload.refund.amount === 'number' && payload.refund.mode) {
+            parts.push('refund ' + payload.refund.mode + ' ' + payload.refund.amount + ' CHF');
+          }
+
+          return parts.join(', ');
+        }
+
+        function renderReservationHistory(data) {
+          const events = [];
+
+          for (const log of data.history || []) {
+            events.push({
+              when: log.when,
+              type: log.type,
+              status: log.status,
+              text: describeHistoryPayload(log.payload) || log.message || '',
+            });
+          }
+
+          for (const email of data.emails || []) {
+            const delivery = email.deliveryStatus || (email.status === 'sent' ? 'pending' : email.status);
+            events.push({
+              when: email.when,
+              type: 'email: ' + email.type,
+              status: delivery === 'bounced' ? 'BOUNCED (not received)' : delivery,
+              text: email.recipient ? 'to ' + email.recipient : '',
+            });
+          }
+
+          events.sort((a, b) => String(b.when).localeCompare(String(a.when)));
+
+          if (!events.length) {
+            return '<span class="small">No history recorded yet for this reservation.</span>';
+          }
+
+          const lines = events.map((event) =>
+            escapeHtml(formatAdminDateTime(event.when)) +
+            ' — ' + escapeHtml(event.type) +
+            (event.status ? ' <strong>[' + escapeHtml(event.status) + ']</strong>' : '') +
+            (event.text ? ' — ' + escapeHtml(event.text) : ''),
+          );
+
+          return '<span class="small">' + lines.join('<br>') + '</span>';
+        }
+
+        async function loadReservationHistory(detailsEl) {
+          const target = detailsEl.querySelector('.admin-res-history');
+
+          if (!target || target.dataset.loaded === '1') {
+            return;
+          }
+
+          target.dataset.loaded = '1';
+          target.innerHTML = '<span class="small">Loading history…</span>';
+
+          try {
+            const data = await apiFetch('GET', null, { history: target.dataset.id });
+            target.innerHTML = renderReservationHistory(data);
+          } catch (error) {
+            target.dataset.loaded = '0';
+            target.innerHTML = '<span class="small">Could not load the history: ' + escapeHtml(error.message) + '</span>';
+          }
         }
 
         // Historique des e-mails d'une réservation + bouton de renvoi manuel.
@@ -1279,6 +1380,9 @@ export function onRequestGet() {
               const hidden = details.hidden;
               details.hidden = !hidden;
               toggle.textContent = hidden ? 'Details ▴' : 'Details ▾';
+              if (hidden) {
+                loadReservationHistory(details);
+              }
             }
             return;
           }
