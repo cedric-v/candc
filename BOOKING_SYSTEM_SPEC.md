@@ -329,6 +329,16 @@ Le systeme doit gerer :
 - encaissement d'un complement si le total augmente
 - remboursement partiel si le total baisse
 
+Cote admin, l'hote peut egalement enregistrer un **depart anticipe** (clients
+qui partent plus tot que prevu — standard Booking.com / Airbnb « Modify
+booking ») : le sejour est raccourci (nouvelle date de depart), les nuits
+restantes sont liberees immediatement sur le calendrier (direct + OTA via le
+feed ICS export), sans annuler la reservation. Le remboursement des nuits non
+utilisees est a la discretion de l'hote (standard Booking.com : pas de
+remboursement sur un tarif non remboursable, remboursement sur un tarif
+flexible) ; l'e-mail client de modification est optionnel. Voir
+`BOOKING_TECH_SETUP.md` → « Depart anticipe (early departure) ».
+
 ### Informations de reservation a collecter
 
 - prenom

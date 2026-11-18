@@ -596,6 +596,44 @@ Fonctions en place :
 - lancer manuellement le sync Booking.com
 - lancer manuellement les e-mails d'arrivee
 - regenerer le lien de gestion d'une reservation (bouton « New link »)
+- enregistrer un depart anticipe (action `early_departure`, voir ci-dessous)
+
+### Depart anticipe (early departure) — action admin
+
+Standard Booking.com / Airbnb (« Modify booking » / « Change reservation ») :
+lorsque des clients partent plus tot que prevu, l'hote **raccourcit la
+reservation** au lieu d'annuler + recréer. Les nuits restantes sont liberees
+immediatement sur le calendrier (disponibilite directe + feed ICS export, donc
+les OTA rouvrent aussi les dates).
+
+- action : `POST /api/admin/booking` `{ action: 'early_departure', reservationId,
+  newCheckOutDate, refundUnusedNights, sendEmail }`
+- pre-conditions : statut `confirmed` ou `modified` (non annulee, pas de
+  paiement en attente) ; `check_in_date < newCheckOutDate < check_out_date`
+- remboursement des nuits restantes : **a la discretion de l'hote**. Standard
+  Booking.com : un tarif non remboursable n'est pas rembourse (case
+  decochee par defaut dans l'UI), un tarif flexible l'est (case cochee).
+  - `refundUnusedNights: true` → devis recalcule sur le sejour raccourci
+    (meme machinerie que le flux client : `buildQuote` +
+    `updateReservationBookingDetails`), delta negatif rembourse via
+    `attemptAutomaticRefund` ; statut `modified`, ou `pending_refund` si le
+    remboursement automatique n'a pu couvrir la totalite (relance manuelle).
+  - `refundUnusedNights: false` → **aucun montant ne change** (coherence
+    comptable : paye = total de la reservation) ; seules la date de depart et
+    le bloc calendrier bougent. Statut inchange.
+- e-mail client `booking_modification` : envoye seulement si
+  `sendEmail: true` (sans lien de gestion — la page de gestion reste accessible
+  via le lien deja detenu par le client) ; l'absence d'envoi est journalisee.
+- ecarts volontaires vs le flux client (page de gestion) : le check-in peut
+  etre dans le passe (un depart anticipe concerne par definition un sejour
+  commence), pas de controle de sejour minimum, pas de relecture OTA live (la
+  reservation est deja confirmee et exportee — regle DB-only du spec).
+- journalisation : `sync_logs` type `early_departure` (statut `warning` si
+  remboursement partiel/manuel a suivre).
+- implementation : action `early_departure` dans
+  `functions/api/admin/booking.js` + ligne « Early departure » dans le panneau
+  de details de `/admin/booking` (date, case « Refund unused nights », case
+  « Email guest », bouton « Apply » avec confirmation).
 
 ### Lien de gestion (`manage token`) — regles d'usage
 
