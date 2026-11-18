@@ -87,6 +87,7 @@ Important :
 - mini interface admin par token
 - alerte e-mail dediee `admin_new_booking` a la creation (coordonnees completes, numero de piece d'identite masque)
 - coordonnees client completes consultables dans l'admin (ligne "Details" par reservation, numero de piece d'identite masque par defaut avec revelation sur demande)
+- historique d'une reservation consultable dans l'admin ("Details" → "History") : changements de dates (depart anticipe, modification client), annulations, remboursements, relances de paiement, liens regeneres, renvois d'e-mail, avec l'avant/apres des dates et des montants ; repose sur `sync_logs.reservation_id` (migration `0019`) et `GET /api/admin/booking?history=<id>`
 - liste des reservations admin filtrable : a venir par defaut (sejours en cours et prochaines arrivees, la plus proche de la date actuelle en premier), filtres periode / statut (actives payees, attention requise, fermees) / unite
 - anonymisation quotidienne des donnees sensibles (nationalite, date de naissance, numero de piece) 12 mois apres la fin du sejour (LPD/RGPD, job `retention`)
 - endpoint interne pour jobs de sync et d'e-mails, y compris le mail d'arrivee localise et le mail de depart studio
@@ -151,6 +152,25 @@ Le back-office admin n'est pas expose comme surface WebMCP publique.
 
 - reactivation eventuelle de Google Calendar avec credentials finalises
 - observation des flux OTA reels en production : un flux vide est desormais signale (`ota_feed_emptied`), reste a alerter sur les comptages importes incoherents et sur les sources qui ne repondent plus pendant plusieurs cycles
+
+### Ameliorations envisagees (non planifiees)
+
+- **Table d'audit `reservation_events`** (append-only) : `reservation_id`,
+  `event_type`, `actor` (`customer` | `admin` | `system`), `before_json`,
+  `after_json`, `created_at`, sans `UPDATE` ni `DELETE` applicatif. Aujourd'hui
+  l'historique vit dans `sync_logs`, qui est un journal **operationnel**
+  (imports ICS, jobs, alertes) : il n'est ni immuable ni concu pour produire une
+  preuve en cas de litige client, de controle OTA ou de verification comptable
+  (conservation 10 ans). A faire si le besoin de preuve opposable se concretise ;
+  l'UI "History" pourrait alors lire les deux sources.
+- **Alerte admin sur quota `ntfy` atteint** : un envoi push refuse
+  (`429 limit reached: daily message quota reached`, plan gratuit ntfy.sh) est
+  seulement journalise `sync_logs` en `failed`. Le 26.10.2026, deux notifications
+  de reservation ont ete perdues sans que l'hote le sache. Prevoir une alerte
+  deduitee (`sendAdminAlert`, cle dedupliquee) au premier `429` de la journee.
+- **Paiements dans la timeline** : "History" affiche les evenements et les
+  e-mails ; les lignes `payments` (initial / ajustement / remboursement, statut
+  SumUp) restent visibles uniquement via les montants cites dans les messages.
 
 ## Fichiers de reference
 

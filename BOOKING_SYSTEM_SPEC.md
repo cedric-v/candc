@@ -829,11 +829,26 @@ Le modele de donnees doit etre multi-unite.
 
 - `id`
 - `unit_id`
+- `reservation_id` (migration `0019` ; nullable — les imports ICS et les jobs
+  globaux n'ont pas de reservation associee)
 - `sync_type`
 - `status`
 - `message`
 - `payload_summary`
 - `created_at`
+
+Deux usages : journal **operationnel** (imports ICS, jobs, validations de
+sources) et journal **d'une reservation** (filtre par `reservation_id`,
+index `(reservation_id, created_at DESC)`). Types rattaches a une reservation :
+`early_departure`, `reservation_updated` (modification client),
+`reservation_cancelled` (annulation client), `payment_resumed`,
+`wc_confirmation`, `manage_token_rotation`, `email_resend`,
+`payment_conflict`. Le `payload_summary` porte l'avant/apres (dates, montants,
+remboursement, acteur).
+
+`sync_logs` n'est **pas** un journal d'audit opposable : aucun trigger ne
+protege les entrees et rien n'empeche une purge. Voir `PROJECT_SUMMARY.md` →
+« Ce qui manque encore » pour la piste `reservation_events`.
 
 ### Table `email_logs`
 
@@ -866,6 +881,8 @@ Le modele de donnees doit etre multi-unite.
 - `GET /api/admin/rate-periods`
 - `POST /api/admin/rate-periods`
 - `PUT /api/admin/rate-periods/:id`
+- `GET /api/admin/booking` (dashboard, ou `?history=<reservationId>` pour
+  l'historique d'une reservation)
 - `POST /api/admin/booking` (action `create_calendar_block`)
 - `POST /api/admin/booking` (action `delete_calendar_block`)
 - `POST /api/admin/booking` (action `rotate_manage_token`)
