@@ -506,7 +506,10 @@ export function onRequestGet() {
             // Remboursement proposé par défaut sur les tarifs flexibles (les
             // tarifs non remboursables ne le sont pas, cf. extranet Booking.com) ;
             // e-mail client proposé par défaut, désactivable.
-            const earlyDepartureEligible = item.status === 'confirmed' || item.status === 'modified';
+            // « status » est la chaîne d'affichage composée (ex. "confirmed /
+            // paid") : l'éligibilité se teste sur le statut brut.
+            const rawStatus = item.rawStatus || item.status;
+            const earlyDepartureEligible = rawStatus === 'confirmed' || rawStatus === 'modified';
             const earlyDepartureRow = earlyDepartureEligible
               ? '<div class="meta-row"><span class="label">Early departure</span>' +
                 '<span class="value admin-early-departure" data-id="' + escapeHtml(item.id) + '">' +
@@ -984,6 +987,10 @@ export function onRequestGet() {
               unit: item.unit_display_name || item.unit_code,
               stay: formatAdminDate(item.check_in_date) + ' → ' + formatAdminDate(item.check_out_date),
               guest: item.guest_first_name + ' ' + item.guest_last_name,
+              // Statut BRUT conservé : « status » ci-dessous est une chaîne
+              // d'affichage composée (ex. "confirmed / paid") et ne doit pas
+              // servir aux tests d'éligibilité (early departure, etc.).
+              rawStatus: item.status,
               status: item.status + ' / ' + (item.payment_status || '-'),
               total: item.total_amount + ' ' + item.currency,
             }));
