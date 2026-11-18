@@ -288,6 +288,35 @@ npx wrangler pages secret list --project-name candc-ch
 
 > Attention : `secret list` ne montre que les noms des cles, PAS si une valeur est reellement stockee. Le seul moyen fiable de verifier que les valeurs sont bien injectees dans le deployment actif est `npm run check:payment`.
 
+### Rotation d'un secret (ex. `ADMIN_ACCESS_TOKEN`)
+
+Ne JAMAIS modifier un secret via le dashboard (voir le piège ci-dessous : la
+carte complete est reecrite et les autres secrets partent avec une valeur
+vide). Procedure en 3 etapes :
+
+1. mettre a jour la valeur dans `secrets.local.json` (gitignored ; garder les
+   autres cles intactes) ;
+2. `npm run secrets:push` — restaure TOUS les secrets via la CLI (y compris
+   ceux que l'edition d'une autre cle aurait ecrases) ;
+3. deployer (merge d'une PR sur `main` — le projet est git-connected, l'API
+   Cloudflare ne peut pas relancer un build) puis verifier :
+
+```bash
+# nouveau token -> 200 attendu ; ancien token -> 401 attendu
+curl -s -o /dev/null -w "%{http_code}\n" \
+  -H "x-admin-token: <NOUVEAU_TOKEN>" \
+  https://candc.ch/api/admin/booking
+npm run check:payment
+```
+
+Si l'ancien token a fuite (ex. passe en query string d'une URL), le traiter
+comme compromis : le faire tourner + purger l'entree de l'historique du
+navigateur. Cas particulier : `TURNSTILE_SECRET_KEY` n'est PAS dans
+`secrets.local.json` — s'il a ete vide par une edition dashboard, le
+generer depuis le widget Turnstile puis le poser a la main :
+`npx wrangler pages secret put TURNSTILE_SECRET_KEY --project-name candc-ch`
+(la CLI, elle, ne vide rien).
+
 ### Processus recommande (ne plus jamais toucher le dashboard pour les env vars)
 
 > **Cause racine des pannes repetees** : toute modification des variables d'environnement dans le dashboard Cloudflare reecrit la carte complete des env vars et enregistre les secrets avec une valeur VIDE — les valeurs des secrets sont silencieusement perdues (le bug « Reservation creee, mais le paiement n'est pas encore configure »). Les deployments eux-memes ne perdent jamais les secrets : seules les edits dashboard/API de la carte complete en sont la cause (confirme le 3 aout 2026 : l'ajout de `REVIEW_LINK_PARKING`/`REVIEW_LINK_STUDIO` a vide les 9 secrets).
