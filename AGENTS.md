@@ -84,8 +84,13 @@ Reservation history (admin):
   client (`reservation_updated`), départ anticipé (`early_departure`),
   annulation client (`reservation_cancelled`), relance de paiement
   (`payment_resumed`), rotation de lien, renvois d'e-mail, plus les e-mails et
-  leur état de remise. Les payloads portent l'avant/après
-  (`previousCheckOutDate` / `newCheckOutDate`, `previousTotal` / `nextTotal`).
+  leur état de remise et les **paiements SumUp** (initial / ajustement /
+  remboursement : montant, statut, référence de transaction). Les payloads
+  portent l'avant/après (`previousCheckOutDate` / `newCheckOutDate`,
+  `previousTotal` / `nextTotal`). Le tri et les libellés sont dans
+  `functions/_lib/reservation-history.js` (`buildReservationTimeline`), testés
+  par `scripts/booking-logic-tests.mjs` — ne pas les dupliquer dans le script
+  inline du dashboard.
 - `insertSyncLog` / `listRecentSyncLogs` / `listRecentEmailLogs` dégradent
   proprement si la migration `0019` n'est pas appliquée (repli sans la colonne) :
   déployer le code avant la migration ne casse jamais le journal.

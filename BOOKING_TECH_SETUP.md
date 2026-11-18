@@ -658,9 +658,16 @@ trace dans `sync_logs`.
   (annulation client), `payment_resumed` (relance apres echec de carte),
   `wc_confirmation`, `manage_token_rotation`, `email_resend`, `payment_conflict` ;
 - UI : `/admin/booking` → « Details ▾ » d'une reservation → ligne « History »,
-  chargee a la demande via `GET /api/admin/booking?history=<id>` (timeline
-  sync logs + e-mails, avant/apres des dates et montants). Le panneau « Recent
-  sync logs » reste la vue globale (25 dernieres entrees, tous types) ;
+  chargee a la demande via `GET /api/admin/booking?history=<id>`. Une seule
+  timeline triee, construite par `functions/_lib/reservation-history.js`
+  (`buildReservationTimeline`, testee dans `scripts/booking-logic-tests.mjs`),
+  qui fusionne trois sources :
+  - `sync_logs` (evenements, avant/apres des dates et montants) ;
+  - `email_logs` (e-mails + etat de remise Resend, `BOUNCED` explicite) ;
+  - `payments` (initial / ajustement / remboursement : montant, devise, statut
+    SumUp, reference de transaction).
+  Le panneau « Recent sync logs » reste la vue globale (25 dernieres entrees,
+  tous types) ;
 - un flux client qui change les dates sans journaliser est un bug : toute
   nouvelle action touchant `check_in_date` / `check_out_date` / les montants
   doit ecrire un `sync_logs` avec au minimum `previousCheckOutDate` et

@@ -87,7 +87,7 @@ Important :
 - mini interface admin par token
 - alerte e-mail dediee `admin_new_booking` a la creation (coordonnees completes, numero de piece d'identite masque)
 - coordonnees client completes consultables dans l'admin (ligne "Details" par reservation, numero de piece d'identite masque par defaut avec revelation sur demande)
-- historique d'une reservation consultable dans l'admin ("Details" → "History") : changements de dates (depart anticipe, modification client), annulations, remboursements, relances de paiement, liens regeneres, renvois d'e-mail, avec l'avant/apres des dates et des montants ; repose sur `sync_logs.reservation_id` (migration `0019`) et `GET /api/admin/booking?history=<id>`
+- historique d'une reservation consultable dans l'admin ("Details" → "History") : une seule timeline triee fusionnant les evenements (`sync_logs`), les e-mails et leur etat de remise, et les paiements SumUp (initial / ajustement / remboursement avec montant, statut et reference de transaction) ; changements de dates (depart anticipe, modification client), annulations, remboursements, relances de paiement, liens regeneres, avec l'avant/apres des dates et des montants ; repose sur `sync_logs.reservation_id` (migration `0019`) et `GET /api/admin/booking?history=<id>`
 - liste des reservations admin filtrable : a venir par defaut (sejours en cours et prochaines arrivees, la plus proche de la date actuelle en premier), filtres periode / statut (actives payees, attention requise, fermees) / unite
 - anonymisation quotidienne des donnees sensibles (nationalite, date de naissance, numero de piece) 12 mois apres la fin du sejour (LPD/RGPD, job `retention`)
 - endpoint interne pour jobs de sync et d'e-mails, y compris le mail d'arrivee localise et le mail de depart studio
@@ -168,9 +168,6 @@ Le back-office admin n'est pas expose comme surface WebMCP publique.
   seulement journalise `sync_logs` en `failed`. Le 26.10.2026, deux notifications
   de reservation ont ete perdues sans que l'hote le sache. Prevoir une alerte
   deduitee (`sendAdminAlert`, cle dedupliquee) au premier `429` de la journee.
-- **Paiements dans la timeline** : "History" affiche les evenements et les
-  e-mails ; les lignes `payments` (initial / ajustement / remboursement, statut
-  SumUp) restent visibles uniquement via les montants cites dans les messages.
 
 ## Fichiers de reference
 
