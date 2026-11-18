@@ -545,66 +545,17 @@ export function onRequestGet() {
         // Historique d'une réservation : chargé à la demande. Le dashboard ne
         // renvoie que 25 entrées globales, donc un changement de dates
         // disparaissait de « Recent sync logs » en quelques heures.
-        function describeHistoryPayload(payload) {
-          if (!payload || typeof payload !== 'object') {
-            return '';
-          }
-
-          const parts = [];
-          const dateMove = (label, before, after) => {
-            if (before && after && before !== after) {
-              parts.push(label + ' ' + before + ' → ' + after);
-            }
-          };
-
-          // Résumé lisible du avant/après stocké dans payload_summary.
-          dateMove('check-in', payload.previousCheckInDate, payload.newCheckInDate);
-          dateMove('departure', payload.previousCheckOutDate, payload.newCheckOutDate);
-
-          if (
-            typeof payload.previousTotal === 'number' &&
-            typeof payload.nextTotal === 'number' &&
-            payload.previousTotal !== payload.nextTotal
-          ) {
-            parts.push('total ' + payload.previousTotal + ' → ' + payload.nextTotal + ' CHF');
-          }
-
-          if (payload.refund && typeof payload.refund.amount === 'number' && payload.refund.mode) {
-            parts.push('refund ' + payload.refund.mode + ' ' + payload.refund.amount + ' CHF');
-          }
-
-          return parts.join(', ');
-        }
-
+        // Le tri et les libellés viennent du serveur
+        // (functions/_lib/reservation-history.js) : ici, on n'affiche que du
+        // texte déjà mis en forme et échappé.
         function renderReservationHistory(data) {
-          const events = [];
+          const timeline = data.timeline || [];
 
-          for (const log of data.history || []) {
-            events.push({
-              when: log.when,
-              type: log.type,
-              status: log.status,
-              text: describeHistoryPayload(log.payload) || log.message || '',
-            });
-          }
-
-          for (const email of data.emails || []) {
-            const delivery = email.deliveryStatus || (email.status === 'sent' ? 'pending' : email.status);
-            events.push({
-              when: email.when,
-              type: 'email: ' + email.type,
-              status: delivery === 'bounced' ? 'BOUNCED (not received)' : delivery,
-              text: email.recipient ? 'to ' + email.recipient : '',
-            });
-          }
-
-          events.sort((a, b) => String(b.when).localeCompare(String(a.when)));
-
-          if (!events.length) {
+          if (!timeline.length) {
             return '<span class="small">No history recorded yet for this reservation.</span>';
           }
 
-          const lines = events.map((event) =>
+          const lines = timeline.map((event) =>
             escapeHtml(formatAdminDateTime(event.when)) +
             ' — ' + escapeHtml(event.type) +
             (event.status ? ' <strong>[' + escapeHtml(event.status) + ']</strong>' : '') +

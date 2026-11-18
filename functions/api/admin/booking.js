@@ -5,6 +5,7 @@ import {
   deleteManualCalendarBlock,
   deleteRatePeriod,
   getReservationForEmail,
+  getPaymentsForReservation,
   getUnitByCode,
   insertSyncLog,
   listCalendarHealthForAdmin,
@@ -24,6 +25,7 @@ import {
 } from "../../_lib/db.js";
 import { getConfig } from "../../_lib/env.js";
 import { getCurrentIsoDateInZone, isIsoDateString, diffNights } from "../../_lib/date.js";
+import { buildReservationTimeline } from "../../_lib/reservation-history.js";
 import { runArrivalEmails, runBookingIcsSync, runSensitiveDataRetention, validateCalendarSources } from "../../_lib/jobs.js";
 import { attemptAutomaticRefund } from "../../_lib/refunds.js";
 import { buildQuote } from "../../_lib/pricing.js";
@@ -83,29 +85,40 @@ export async function onRequestGet(context) {
     const historyReservationId = url.searchParams.get("history");
 
     if (historyReservationId) {
-      const [historyLogs, historyEmails] = await Promise.all([
+      const [historyLogs, historyEmails, historyPayments] = await Promise.all([
         listRecentSyncLogs(context.env, 50, { reservationId: historyReservationId }),
         listRecentEmailLogs(context.env, 50, { reservationId: historyReservationId }),
+        getPaymentsForReservation(context.env, historyReservationId),
       ]);
 
+      // Tri et libellés dans `_lib/reservation-history.js` (testé hors requête).
       return jsonNoStore({
         reservationId: historyReservationId,
-        history: historyLogs.map((log) => ({
-          id: log.id,
-          when: log.created_at,
-          type: log.sync_type,
-          status: log.status,
-          message: log.message || null,
-          payload: parsePayloadSummary(log.payload_summary),
-        })),
-        emails: historyEmails.map((email) => ({
-          id: email.id,
-          when: email.created_at,
-          type: email.email_type,
-          recipient: email.recipient,
-          status: email.status,
-          deliveryStatus: email.delivery_status || null,
-        })),
+        timeline: buildReservationTimeline({
+          history: historyLogs.map((log) => ({
+            when: log.created_at,
+            type: log.sync_type,
+            status: log.status,
+            message: log.message || null,
+            payload: parsePayloadSummary(log.payload_summary),
+          })),
+          emails: historyEmails.map((email) => ({
+            when: email.created_at,
+            type: email.email_type,
+            recipient: email.recipient,
+            status: email.status,
+            deliveryStatus: email.delivery_status || null,
+          })),
+          payments: historyPayments.map((payment) => ({
+            when: payment.created_at,
+            type: payment.type,
+            status: payment.status,
+            amount: payment.amount,
+            currency: payment.currency,
+            provider: payment.provider,
+            provider_payment_reference: payment.provider_payment_reference,
+          })),
+        }),
       });
     }
 

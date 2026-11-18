@@ -1180,6 +1180,125 @@ async function runReservationHistoryTests() {
   );
 }
 
+// Timeline d'une réservation (panneau « History » de /admin/booking)
+// --------------------------------------------------------------------------
+// Trois sources fusionnées et triées côté serveur : journal (`sync_logs`),
+// e-mails (`email_logs`) et paiements (`payments`). Le test verrouille le tri,
+// les libellés (avant/après, état de remise, montant) et le départage stable.
+async function runReservationTimelineTests() {
+  const { buildReservationTimeline, describeHistoryPayload } = await import(
+    "../functions/_lib/reservation-history.js"
+  );
+
+  // 1. Le payload fournit le résumé lisible (avant/après des dates et montants).
+  assertEqual(
+    describeHistoryPayload({
+      previousCheckOutDate: "2026-11-22",
+      newCheckOutDate: "2026-11-18",
+      previousTotal: 469.86,
+      nextTotal: 469.86,
+    }),
+    "departure 2026-11-22 → 2026-11-18",
+    "A total that does not change must not be repeated in the summary",
+  );
+  assertEqual(
+    describeHistoryPayload({
+      previousCheckInDate: "2026-11-01",
+      newCheckInDate: "2026-11-03",
+      previousTotal: "250",
+      nextTotal: "212.5",
+      refund: { mode: "automatic", amount: 37.5 },
+    }),
+    "check-in 2026-11-01 → 2026-11-03, total 250.00 → 212.50 CHF, refund automatic 37.50 CHF",
+    "The summary must expose dates, totals and the refund",
+  );
+  assertEqual(describeHistoryPayload(null), "", "A missing payload yields no summary");
+
+  // 2. Fusion des trois sources, tri du plus récent au plus ancien.
+  const timeline = buildReservationTimeline({
+    history: [
+      {
+        when: "2026-11-18T17:01:43.164Z",
+        type: "early_departure",
+        status: "success",
+        message: "departure moved 2026-11-22 → 2026-11-18",
+        payload: { previousCheckOutDate: "2026-11-22", newCheckOutDate: "2026-11-18" },
+      },
+      {
+        when: "2026-10-26T11:48:13.435Z",
+        type: "ntfy_notification",
+        status: "failed",
+        message: "ntfy_send_failed:429",
+      },
+    ],
+    emails: [
+      {
+        when: "2026-10-26T11:48:12.907Z",
+        type: "booking_confirmation",
+        recipient: "guest@example.com",
+        status: "sent",
+        deliveryStatus: "bounced",
+      },
+    ],
+    payments: [
+      {
+        when: "2026-10-26T11:49:00.000Z",
+        type: "initial",
+        status: "paid",
+        amount: 469.86,
+        currency: "CHF",
+        provider: "sumup",
+        provider_payment_reference: "txn-1",
+      },
+    ],
+  });
+
+  assertEqual(timeline.length, 4, "The timeline must merge history, emails and payments");
+  assertEqual(timeline[0].type, "early_departure", "Newest event first");
+  assertEqual(
+    timeline[0].text,
+    "departure 2026-11-22 → 2026-11-18",
+    "The history event is summarised from its payload",
+  );
+
+  const paymentEvent = timeline.find((event) => event.kind === "payment");
+  assert(paymentEvent, "Payments must appear in the timeline");
+  assertEqual(paymentEvent.type, "payment: initial", "Payment events are labelled by type");
+  assertEqual(paymentEvent.status, "paid", "Payment events carry the SumUp status");
+  assertEqual(
+    paymentEvent.text,
+    "469.86 CHF · via sumup · ref txn-1",
+    "Payment events show the amount, the provider and the transaction reference",
+  );
+
+  const emailEvent = timeline.find((event) => event.kind === "email");
+  assertEqual(emailEvent.type, "email: booking_confirmation", "Emails are labelled by type");
+  assertEqual(
+    emailEvent.status,
+    "BOUNCED (not received)",
+    "A bounced email must be explicit, not just 'sent'",
+  );
+  assertEqual(emailEvent.text, "to guest@example.com", "Emails keep the recipient");
+
+  const failedEvent = timeline.find((event) => event.type === "ntfy_notification");
+  assertEqual(failedEvent.text, "ntfy_send_failed:429", "Without a payload, the raw message is used");
+
+  // 3. Départage à la seconde identique : paiement, événement, e-mail.
+  const sameInstant = buildReservationTimeline({
+    history: [{ when: "2026-11-01T10:00:00.000Z", type: "wc_confirmation", status: "success" }],
+    emails: [{ when: "2026-11-01T10:00:00.000Z", type: "booking_confirmation", status: "sent" }],
+    payments: [{ when: "2026-11-01T10:00:00.000Z", type: "initial", status: "paid", amount: 10 }],
+  });
+  assertEqual(
+    sameInstant.map((event) => event.kind).join(","),
+    "payment,history,email",
+    "Identical timestamps must be tie-broken deterministically",
+  );
+
+  // 4. Aucune source : liste vide (pas d'entrée fantôme).
+  assertEqual(buildReservationTimeline({}).length, 0, "An empty reservation yields an empty timeline");
+}
+
 async function main() {
   runValidationTests();
   runGuestContactValidationTests();
@@ -1193,6 +1312,7 @@ async function main() {
   await runEmailDeliveryCheckTests();
   runAdminResendPolicyTests();
   await runReservationHistoryTests();
+  await runReservationTimelineTests();
   console.log("Booking logic tests passed.");
 }
 

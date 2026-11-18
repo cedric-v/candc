@@ -423,6 +423,12 @@ Une mini interface admin est requise.
 - relancer l'e-mail d'arrivee
 - voir l'URL du flux ICS sortant
 - consulter un journal simple des synchronisations et erreurs
+- consulter l'**historique d'une reservation** : une seule timeline par
+  reservation (changements de dates et l'avant/apres, remboursements,
+  annulations, relances de paiement, liens regeneres, e-mails et etat de remise,
+  paiements SumUp) via `GET /api/admin/booking?history=<reservationId>`, affichee
+  dans les details de la reservation. La liste globale des journaux ne suffit
+  pas : elle est limitee aux dernieres entrees, tous types confondus.
 
 ### Fonctionnalite prioritaire de l'admin
 
@@ -849,6 +855,11 @@ remboursement, acteur).
 `sync_logs` n'est **pas** un journal d'audit opposable : aucun trigger ne
 protege les entrees et rien n'empeche une purge. Voir `PROJECT_SUMMARY.md` →
 « Ce qui manque encore » pour la piste `reservation_events`.
+
+La timeline admin ajoute deux autres sources : `email_logs` (e-mails + etat de
+remise) et `payments` (initial / ajustement / remboursement : montant, devise,
+statut SumUp, reference de transaction). Le tri et les libelles sont centralises
+dans `functions/_lib/reservation-history.js`.
 
 ### Table `email_logs`
 
