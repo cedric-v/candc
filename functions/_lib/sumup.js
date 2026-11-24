@@ -1,5 +1,6 @@
 import { getConfig } from "./env.js";
 import { constantTimeEqual } from "./security.js";
+import { sendAdminAlert } from "./alerts.js";
 
 function buildHeaders(apiKey) {
   return {
@@ -73,7 +74,29 @@ export async function createHostedCheckout(env, payload) {
     throw new Error(`sumup_checkout_create_failed:${response.status}:${JSON.stringify(details)}`);
   }
 
-  return response.json();
+  const checkout = await response.json();
+
+  // Contrôle en production (et pas seulement dans les tests) : le return_url
+  // que SumUp a réellement enregistré doit être le webhook. Un écart (valeur
+  // réécrite côté SumUp, publicBaseUrl mal configurée…) couperait toutes les
+  // confirmations par webhook. Le checkout reste utilisable (la
+  // réconciliation rattrape le paiement), mais l'hôte est alerté
+  // immédiatement — y compris par le smoke test `npm run check:payment`, qui
+  // crée un vrai checkout après chaque déploiement.
+  if (checkout?.return_url && checkout.return_url !== returnUrl) {
+    try {
+      await sendAdminAlert(env, {
+        key: "sumup_return_url_mismatch",
+        subject: "🚨 SumUp: return_url du checkout ≠ webhook",
+        message: `SumUp a enregistré return_url = ${checkout.return_url} pour le checkout ${checkout.id || "?"} (attendu : ${returnUrl}). Les webhooks de paiement n'arriveront pas : vérifier PUBLIC_BASE_URL et createHostedCheckout.`,
+        tags: "rotating_light",
+      });
+    } catch {
+      // L'alerte ne doit jamais bloquer la création du paiement.
+    }
+  }
+
+  return checkout;
 }
 
 export async function getCheckout(env, checkoutId) {

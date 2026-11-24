@@ -87,9 +87,9 @@ SumUp payments — `return_url` is the WEBHOOK, never the browser return:
   caller, and keep the assertion in `scripts/booking-logic-tests.mjs`.
 - the webhook is the nominal path but never the only one:
   `reconcileSumupPayments` (`functions/_lib/payment-reconciliation.js`) re-reads
-  `GET /v0.1/checkouts/{id}` for SumUp payments still `pending` in D1 whose
-  reservation is `pending_payment`, `pending_adjustment_payment` or
-  `payment_expired`. It runs before the hold release in
+  `GET /v0.1/checkouts/{id}` for SumUp payments still `pending`/`unknown`/`failed`
+  in D1, whatever the reservation status (a stale checkout of a confirmed or
+  cancelled stay can reveal a double payment). It runs before the hold release in
   `runPendingPaymentHoldMaintenance`, on the manage page, before
   `resume_payment` and from the admin/internal `reconcile_payments` action —
   so an unconfirmed payment can never be expired, and a customer who already
@@ -106,6 +106,29 @@ SumUp payments — `return_url` is the WEBHOOK, never the browser return:
 - when SumUp cannot be reached during the hold maintenance, the release of that
   specific hold is deferred one cycle (`skipReservationIds`) instead of being
   done blind.
+- state guards in `applySumupCheckoutStatus` (never remove them): a non-`PAID`
+  checkout status (PENDING/FAILED/EXPIRED/CANCELLED) only updates its own
+  `payments` row and **never** touches the reservation or its calendar blocks
+  (a late FAILED webhook on a stale checkout used to downgrade a paid stay to
+  `pending_payment`, which the hold maintenance then expired); a `paid` row is
+  never downgraded; `PAID` is applied only while the reservation awaits it
+  (initial: `pending_payment` / `payment_expired` / `payment_setup_failed`;
+  adjustment: `pending_adjustment_payment` / `modified`). A redelivery of an
+  already-paid checkout is a no-op; any other `PAID` (double payment, payment
+  after cancellation) is recorded as paid, logged `payment_unexpected` and
+  raises the `sumup_unexpected_payment:<checkout>` admin alert — the
+  reservation is never resurrected, the host decides on the refund.
+- silent-webhook detection: the webhook logs every reception
+  (`sumup_webhook_received`, with `reservationId`); `checkSumupWebhookDelivery`
+  (run by the hold maintenance) alerts `sumup_webhook_missing` once per payment
+  that turned `paid` more than 15 min ago with no webhook received since its
+  checkout was created. The reconciliation hides a broken webhook from guests,
+  this check makes sure the host still learns about it.
+- `createHostedCheckout` compares the `return_url` SumUp actually stored with
+  `sumupWebhookUrl` and raises `sumup_return_url_mismatch` on any difference
+  (runtime guard; `npm run check:payment` exercises it after each deploy). A
+  webhook rejected by `SUMUP_WEBHOOK_SECRET` raises `sumup_webhook_rejected`
+  (the secret is not set in production; the signature header is unverified).
 
 Reservation history (admin):
 

@@ -1,4 +1,4 @@
-import { getReservationByCheckoutId } from "../../../_lib/db.js";
+import { getReservationByCheckoutId, insertSyncLog } from "../../../_lib/db.js";
 import { badRequest, json, serverError, unauthorized } from "../../../_lib/http.js";
 import { getCheckout, verifyWebhookSignature } from "../../../_lib/sumup.js";
 import { applySumupCheckoutStatus } from "../../../_lib/payment-confirmation.js";
@@ -23,6 +23,21 @@ export async function onRequestPost(context) {
 
       if (!isValid) {
         console.error("Rejected SumUp webhook with missing or invalid signature");
+        // Un rejet ne doit jamais être silencieux : si SumUp ne signe pas (ou
+        // pas avec cet en-tête), TOUS les paiements cesseraient d'être
+        // confirmés par webhook (même classe de panne que l'incident du
+        // 24.11.2026). La réconciliation rattrape les paiements, l'hôte doit
+        // corriger la configuration.
+        try {
+          await sendAdminAlert(context.env, {
+            key: "sumup_webhook_rejected",
+            subject: "⚠️ SumUp webhook: signature refusée",
+            message: "Un webhook SumUp a été refusé (signature absente ou invalide, en-tête x-sumup-webhook-signature). Si SumUp ne signe pas ses webhooks de checkout, retirer SUMUP_WEBHOOK_SECRET : sinon aucun paiement n'est plus confirmé par webhook (la réconciliation rattrape avec jusqu'à 20 min de retard).",
+            tags: "warning",
+          });
+        } catch {
+          // Alerting must never mask the original response.
+        }
         return unauthorized("Invalid webhook signature");
       }
     }
@@ -44,6 +59,25 @@ export async function onRequestPost(context) {
 
     if (!reservation) {
       return json({}, { status: 202 });
+    }
+
+    // Trace de réception : c'est ce que `checkSumupWebhookDelivery` vérifie
+    // pour détecter un webhook qui n'arrive plus (paiements confirmés par la
+    // seule réconciliation). Ne doit jamais bloquer la confirmation.
+    try {
+      await insertSyncLog(context.env, {
+        unitId: reservation.unit_id || null,
+        syncType: "sumup_webhook_received",
+        status: "success",
+        message: `SumUp webhook received for checkout ${checkoutId} (${reservation.public_reference}): ${checkout?.status || "unknown"}`,
+        payloadSummary: {
+          reservationId: reservation.id,
+          checkoutId,
+          checkoutStatus: checkout?.status || null,
+        },
+      });
+    } catch (error) {
+      console.error("Failed to log the SumUp webhook reception:", error);
     }
 
     await applySumupCheckoutStatus(context.env, {
