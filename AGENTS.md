@@ -75,6 +75,38 @@ Anti-surbooking (important):
 - `reservations.js` re-checks availability **after** inserting the pending hold (excluding its own block) and cancels the loser: closes the direct/direct TOCTOU race that no DB constraint prevents
 - deliberately NOT auto-allowing a live conflict that matches a recently released direct block: guessing "stale mirror" would re-open the overbooking hole; the 409 + `ota_live_conflict` alert let the host reopen manually on the OTA instead
 
+SumUp payments — `return_url` is the WEBHOOK, never the browser return:
+
+- in the SumUp Checkouts API, `return_url` is the *backend callback URL*
+  (SumUp POSTs `{"event_type":"CHECKOUT_STATUS_CHANGED","id":"<checkout id>"}`),
+  and `redirect_url` is the page the customer's browser comes back to. Swapping
+  them silently kills every payment confirmation (incident 26.10 → 24.11.2026:
+  `return_url` was set to the confirmation page, so `PARK-20270127-19C5ABBA`
+  was paid on SumUp and still expired 32 min later). `createHostedCheckout`
+  now imposes `return_url = sumupWebhookUrl(config)`; never pass it from a
+  caller, and keep the assertion in `scripts/booking-logic-tests.mjs`.
+- the webhook is the nominal path but never the only one:
+  `reconcileSumupPayments` (`functions/_lib/payment-reconciliation.js`) re-reads
+  `GET /v0.1/checkouts/{id}` for SumUp payments still `pending` in D1 whose
+  reservation is `pending_payment`, `pending_adjustment_payment` or
+  `payment_expired`. It runs before the hold release in
+  `runPendingPaymentHoldMaintenance`, on the manage page, before
+  `resume_payment` and from the admin/internal `reconcile_payments` action —
+  so an unconfirmed payment can never be expired, and a customer who already
+  paid is never offered a second checkout.
+- the confirmation logic itself lives in one place only:
+  `applySumupCheckoutStatus` (`functions/_lib/payment-confirmation.js`). The
+  webhook and the reconciliation must never diverge (availability re-check,
+  refund on conflict, e-mails, ntfy, Google Calendar).
+- a payment recovered after the hold was released (`payment_expired` →
+  `confirmed`) sends the `payment_received` e-mail (7 languages), which tells
+  the guest to ignore the expiry e-mail; without it they pay twice via their
+  manage link. It also sends the deduped `sumup_payment_reconciled` admin alert
+  (a lost webhook means the SumUp dashboard subscription must be checked).
+- when SumUp cannot be reached during the hold maintenance, the release of that
+  specific hold is deferred one cycle (`skipReservationIds`) instead of being
+  done blind.
+
 Reservation history (admin):
 
 - `reservations` ne conserve que l'état courant : tout changement de dates laisse

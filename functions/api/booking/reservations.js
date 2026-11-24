@@ -164,8 +164,7 @@ export async function onRequestPost(context) {
         currency: pricing.currency,
         description: `${unit.displayName} ${reservationRecord.publicReference}`,
         redirectUrl: `${config.publicBaseUrl}/booking/confirmation/?reference=${encodeURIComponent(reservationRecord.publicReference)}`,
-        // Pas de `returnUrl` : par défaut SumUp renvoie le client vers la page
-        // de confirmation (jamais vers l'endpoint webhook, qui répond 404).
+        // `return_url` (webhook) est imposé par createHostedCheckout.
       });
     } catch (error) {
       await markReservationPaymentSetupFailed(

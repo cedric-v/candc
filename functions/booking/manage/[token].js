@@ -314,6 +314,12 @@ export async function onRequestGet(context) {
               window.location.assign(data.payment.hostedCheckoutUrl);
               return;
             }
+            // Paiement déjà encaissé (webhook perdu) : la réconciliation vient
+            // de confirmer la réservation, on recharge l'état réel.
+            if (data.settled) {
+              window.location.reload();
+              return;
+            }
             notice.className = 'notice error';
             notice.textContent = t.paymentUnavailable;
           } catch (error) {

@@ -28,6 +28,10 @@ export function isSumUpConfigured(env) {
   return Boolean(config.sumUpApiKey && config.sumUpMerchantCode);
 }
 
+export function sumupWebhookUrl(config) {
+  return `${String(config.publicBaseUrl).replace(/\/+$/, "")}/api/booking/sumup/webhook`;
+}
+
 export async function createHostedCheckout(env, payload) {
   const config = getConfig(env);
 
@@ -35,12 +39,17 @@ export async function createHostedCheckout(env, payload) {
     throw new Error("sumup_not_configured");
   }
 
-  // `return_url` ramène le NAVIGATEUR du client dans la boutique (retour depuis
-  // la page de paiement). Il ne doit donc jamais pointer vers un endpoint
-  // d'API : /api/booking/sumup/webhook ne répond qu'en POST et renvoie une page
-  // 404 au navigateur. Par défaut, on réutilise la page de confirmation
-  // (`redirectUrl`), qui sait déjà afficher l'état du paiement.
-  const returnUrl = payload.returnUrl || payload.redirectUrl;
+  // ATTENTION — sémantique SumUp (API Checkouts) :
+  //   - `return_url`   = URL du WEBHOOK : SumUp y POSTe (serveur à serveur)
+  //                      chaque changement de statut du checkout ;
+  //   - `redirect_url` = page où le NAVIGATEUR du client est renvoyé après le
+  //                      paiement (3-D Secure / hosted checkout).
+  // Le 26.10.2026, `return_url` a été pointé par erreur vers la page de
+  // confirmation : plus aucun webhook n'arrivait, et le 24.11.2026
+  // PARK-20270127-19C5ABBA, payé, a été déclaré « expiré ». La valeur est donc
+  // imposée ici, jamais par l'appelant, et vérifiée par
+  // scripts/booking-logic-tests.mjs.
+  const returnUrl = sumupWebhookUrl(config);
 
   const response = await fetch(`${config.sumUpApiBaseUrl}/v0.1/checkouts`, {
     method: "POST",

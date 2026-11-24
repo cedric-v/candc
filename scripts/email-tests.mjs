@@ -42,6 +42,16 @@ const PAYMENT_EXPIRED_SUBJECTS = {
   nl: "C&C Parking reservering verlopen - PARK-0001",
 };
 
+const PAYMENT_RECEIVED_SUBJECTS = {
+  fr: "C&C Parking paiement reçu - PARK-0001",
+  en: "C&C Parking payment received - PARK-0001",
+  de: "C&C Parking Zahlung erhalten - PARK-0001",
+  es: "C&C Parking pago recibido - PARK-0001",
+  pt: "C&C Parking pagamento recebido - PARK-0001",
+  it: "C&C Parking pagamento ricevuto - PARK-0001",
+  nl: "C&C Parking betaling ontvangen - PARK-0001",
+};
+
 function assert(condition, message) {
   if (!condition) {
     throw new Error(message);
@@ -156,6 +166,45 @@ async function runPendingPaymentEmailTests() {
   }
 }
 
+// Paiement encaissé après la libération du hold (webhook perdu) : le client a
+// reçu « réservation expirée » et son lien propose de payer à nouveau. Cet
+// e-mail est la seule chose qui l'empêche de payer deux fois (incident
+// 24.11.2026) : il doit être localisé et dire explicitement d'ignorer l'e-mail
+// d'expiration.
+async function runPaymentReceivedEmailTests() {
+  const sent = [];
+  globalThis.fetch = async (url, options) => {
+    sent.push(JSON.parse(options.body));
+    return new Response(JSON.stringify({ id: "mock" }), { status: 200 });
+  };
+
+  for (const [locale, expectedSubject] of Object.entries(PAYMENT_RECEIVED_SUBJECTS)) {
+    await sendTransactionalEmail(EMAIL_ENV, "payment_received", makeReservation({ locale }), {
+      manageToken: "tok",
+    });
+    const payload = sent[sent.length - 1];
+    assertEqual(payload.subject, expectedSubject, `Payment received subject should be localized for ${locale}`);
+    assert(
+      payload.text.includes("PARK-0001"),
+      `Payment received email for ${locale} should mention the reservation reference`,
+    );
+    assert(
+      payload.text.includes("https://candc.ch/booking/manage/tok"),
+      `Payment received email for ${locale} should contain the management link`,
+    );
+    assert(
+      payload.text.includes("2027") || payload.text.includes("01.06") || payload.text.includes("06."),
+      `Payment received email for ${locale} should mention the stay dates`,
+    );
+  }
+
+  const french = sent.find((payload) => payload.subject === PAYMENT_RECEIVED_SUBJECTS.fr);
+  assert(
+    /ignorer/i.test(french.text),
+    "The French recovery email must tell the guest to ignore the expiry email",
+  );
+}
+
 // Une valeur saisie comme prénom qui est en fait une adresse e-mail ne doit
 // jamais apparaître dans la salutation (incident 01.11.2026 : l'e-mail
 // d'arrivée de PARK-20261101-B62F74EB commençait par
@@ -231,6 +280,7 @@ async function runGreetingFallbackTests() {
 async function main() {
   await runReviewEmailTests();
   await runPendingPaymentEmailTests();
+  await runPaymentReceivedEmailTests();
   await runGreetingFallbackTests();
   console.log("Email tests passed.");
 }

@@ -30,6 +30,7 @@ import { runArrivalEmails, runBookingIcsSync, runSensitiveDataRetention, validat
 import { attemptAutomaticRefund } from "../../_lib/refunds.js";
 import { buildQuote } from "../../_lib/pricing.js";
 import { normalizeBookingInput } from "../../_lib/validation.js";
+import { reconcileSumupPayments } from "../../_lib/payment-reconciliation.js";
 import { sendReservationEmail, syncReservationToGoogleCalendar } from "../../_lib/booking-ops.js";
 import { badRequest, json, serverError, unauthorized } from "../../_lib/http.js";
 
@@ -777,6 +778,21 @@ export async function onRequestPost(context) {
 
     if (action === "run_sensitive_data_retention") {
       return jsonNoStore(await runSensitiveDataRetention(context.env));
+    }
+
+    // Réparation manuelle d'un paiement payé chez SumUp mais resté « en
+    // attente » en base (webhook perdu) : relit le statut réel du/des checkout
+    // SumUp et applique le même traitement que le webhook. Sans
+    // `reservationId`, ne traite que la fenêtre de réconciliation ; avec, force
+    // la relance sur cette réservation quelle que soit son ancienneté
+    // (incident du 24.11.2026 : réservation annoncée expirée alors que le
+    // client avait payé).
+    if (action === "reconcile_payments") {
+      return jsonNoStore(
+        await reconcileSumupPayments(context.env, {
+          reservationId: payload.reservationId || null,
+        }),
+      );
     }
 
     return badRequest("Unsupported admin action");

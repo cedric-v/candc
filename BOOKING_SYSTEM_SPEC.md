@@ -962,7 +962,7 @@ A la creation d'une reservation directe, un bloc calendrier `pending_payment` es
 ### Statuts lies au paiement
 
 - `pending_payment` : en attente du paiement initial, dates tenues pendant le hold.
-- `payment_expired` : hold expire, dates liberees. Le client peut reprendre le paiement depuis son lien de gestion, mais la disponibilite est re-verifiee avant de relancer un checkout.
+- `payment_expired` : hold expire, dates liberees. Le client peut reprendre le paiement depuis son lien de gestion, mais la disponibilite est re-verifiee avant de relancer un checkout. Si le client avait EN FAIT paye (webhook SumUp perdu), la reconciliation relit le statut du checkout chez SumUp et remet la reservation en `confirmed` (apres re-verification des dates) ; le client recoit alors l'e-mail `payment_received` qui lui demande d'ignorer l'e-mail d'expiration.
 - `payment_setup_failed` : le checkout SumUp n'a pas pu etre cree (erreur de configuration/fournisseur).
 - `conflict_refund_due` : le paiement est arrive alors que les dates avaient ete reprises ; la reservation n'est pas confirmee, un remboursement est declenche.
 - `pending_adjustment_payment` : modification demandee avec paiement complementaire en attente ; si le hold expire sans paiement, la reservation reste confirmee sur les nouvelles dates (`modified`) et l'hote est notifie pour suivi.
@@ -978,6 +978,10 @@ Au moment de la confirmation du paiement (webhook SumUp) :
 
 - revérifier la disponibilite une deuxieme fois avant de confirmer
 - si conflit critique, ne pas confirmer : remboursement (integral pour un paiement initial, du montant de l'ajustement pour un complement), passage en `conflict_refund_due` (initial) ou revert en `modified` (ajustement), bloc libere, hote et client notifies
+
+### Reconciliation des paiements (webhook perdu)
+
+Le webhook SumUp est la voie nominale, jamais la seule : toutes les ~20 minutes, la maintenance des holds relit chez SumUp (`GET /v0.1/checkouts/{id}`) le statut des checkouts restes en attente en base, AVANT de liberer les holds expires. Un paiement encaisse est donc toujours confirme, y compris apres liberation du hold ; il n'est jamais demande au client de payer une seconde fois (reprise de paiement et page de gestion relisent aussi le statut reel).
 
 ### Rappel avant expiration
 
