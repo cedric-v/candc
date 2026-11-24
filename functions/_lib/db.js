@@ -1017,7 +1017,9 @@ export async function markReservationPaymentSetupFailed(env, reservationId, reas
 //   - les holds encore actifs (`pending_payment`),
 //   - les compléments de modification (`pending_adjustment_payment`),
 //   - les réservations déjà libérées (`payment_expired`) qu'un paiement tardif
-//     doit pouvoir ressusciter — toujours avec revérification des dates.
+//     doit pouvoir ressusciter — toujours avec revérification des dates ;
+//   - les checkouts abandonnés d'une réservation déjà confirmée ou annulée,
+//     pour détecter un paiement inattendu (double paiement).
 // `reservationId` cible une seule réservation (réparation manuelle en admin) et
 // ignore alors la fenêtre de temps.
 export async function listSumupPaymentsAwaitingConfirmation(env, options = {}) {
@@ -1033,7 +1035,11 @@ export async function listSumupPaymentsAwaitingConfirmation(env, options = {}) {
     // `cancelled`/`expired`, eux, sont définitifs et ne sont plus relus.
     "payments.status IN ('pending', 'unknown', 'failed')",
     "payments.type IN ('initial', 'adjustment')",
-    "reservations.status IN ('pending_payment', 'pending_adjustment_payment', 'payment_expired')",
+    // Pas de filtre sur le statut de la réservation : un checkout resté
+    // « en attente » sur une réservation déjà confirmée ou annulée peut lui
+    // aussi avoir été payé (double paiement depuis un second onglet, paiement
+    // après annulation). `applySumupCheckoutStatus` ne l'applique alors pas à
+    // la réservation mais l'enregistre et alerte l'hôte.
   ];
   const binds = [];
 
@@ -1070,6 +1076,58 @@ export async function listSumupPaymentsAwaitingConfirmation(env, options = {}) {
       `,
     )
     .bind(...binds, limit)
+    .all();
+
+  return results || [];
+}
+
+// Paiements SumUp passés `paid` sans qu'AUCUN webhook n'ait été reçu pour la
+// réservation depuis la création du checkout : c'est le signal d'un webhook
+// cassé (incident 26.10 → 24.11.2026, un mois sans aucune confirmation par
+// webhook, sans la moindre alerte). La réconciliation masque la panne côté
+// client (confirmation en ≤ 20 min, ou immédiate sur la page de
+// confirmation) : sans cette détection, l'hôte ne le saurait jamais.
+//
+// `graceMinutes` laisse au webhook le temps d'arriver (il arrive normalement
+// en quelques secondes) ; les paiements déjà signalés
+// (`sumup_webhook_missing`) sont exclus pour n'alerter qu'une fois.
+export async function listSumupPaymentsMissingWebhook(env, options = {}) {
+  const db = requireDb(env);
+  const graceMinutes = Math.max(1, Number(options.graceMinutes || 15));
+  const windowHours = Math.max(1, Number(options.windowHours || 24));
+  const now = Date.now();
+  const since = new Date(now - windowHours * 60 * 60 * 1000).toISOString();
+  const until = new Date(now - graceMinutes * 60 * 1000).toISOString();
+
+  const { results } = await db
+    .prepare(
+      `
+        SELECT
+          payments.provider_checkout_id,
+          payments.type AS payment_type,
+          payments.created_at AS payment_created_at,
+          payments.updated_at AS payment_updated_at,
+          reservations.id AS reservation_id,
+          reservations.public_reference
+        FROM payments
+        INNER JOIN reservations ON reservations.id = payments.reservation_id
+        WHERE payments.provider = 'sumup'
+          AND payments.provider_checkout_id IS NOT NULL
+          AND payments.type IN ('initial', 'adjustment')
+          AND payments.status = 'paid'
+          AND payments.updated_at >= ?
+          AND payments.updated_at <= ?
+          AND NOT EXISTS (
+            SELECT 1 FROM sync_logs
+            WHERE sync_logs.reservation_id = payments.reservation_id
+              AND sync_logs.sync_type IN ('sumup_webhook_received', 'sumup_webhook_missing')
+              AND sync_logs.created_at >= payments.created_at
+          )
+        ORDER BY payments.updated_at DESC
+        LIMIT 20
+      `,
+    )
+    .bind(since, until)
     .all();
 
   return results || [];

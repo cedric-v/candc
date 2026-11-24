@@ -1,5 +1,6 @@
 import {
   getCheckout,
+  sumupWebhookUrl,
   isSumUpConfigured,
 } from "./sumup.js";
 import { applySumupCheckoutStatus } from "./payment-confirmation.js";
@@ -7,6 +8,7 @@ import {
   getReservationByCheckoutId,
   insertSyncLog,
   listSumupPaymentsAwaitingConfirmation,
+  listSumupPaymentsMissingWebhook,
 } from "./db.js";
 import { sendAdminAlert } from "./alerts.js";
 import { getConfig } from "./env.js";
@@ -46,6 +48,7 @@ export async function reconcileSumupPayments(env, options = {}) {
     confirmed: 0,
     recovered: [],
     conflicts: [],
+    unexpected: [],
     unpaid: 0,
     deferredReservationIds: [],
     errors: [],
@@ -121,9 +124,21 @@ export async function reconcileSumupPayments(env, options = {}) {
         status: applied.reservationStatus,
       };
 
+      if (applied.unexpectedPayment) {
+        // Paiement encaissé sur une réservation qui ne l'attendait plus :
+        // déjà journalisé et signalé à l'hôte par applySumupCheckoutStatus.
+        results.unexpected.push(entry);
+        continue;
+      }
+
+      if (applied.noop) {
+        // Checkout déjà enregistré comme payé : rien n'a changé.
+        continue;
+      }
+
       if (applied.conflict) {
         results.conflicts.push(entry);
-      } else if (applied.reservationStatus === "confirmed") {
+      } else if (["confirmed", "modified"].includes(applied.reservationStatus)) {
         results.confirmed += 1;
         if (applied.recoveredExpiredPayment) {
           results.recovered.push(entry);
@@ -184,6 +199,81 @@ export async function reconcileSumupPayments(env, options = {}) {
       });
     } catch {
       // L'alerte ne doit jamais faire échouer la réconciliation.
+    }
+  }
+
+  return results;
+}
+
+// Détection d'un webhook SumUp cassé. La réconciliation rattrape les paiements
+// côté client, mais elle MASQUE la panne : du 26.10 au 24.11.2026, aucun
+// webhook n'est arrivé et personne ne l'a su. Ici, tout paiement passé `paid`
+// sans qu'aucun webhook n'ait été reçu pour la réservation (journal
+// `sumup_webhook_received`, écrit par le webhook) au-delà du délai de grâce
+// déclenche une alerte admin — une seule fois par paiement (marqueur
+// `sumup_webhook_missing`). Fail-open : une erreur D1 est comptée, jamais
+// propagée.
+export async function checkSumupWebhookDelivery(env, options = {}) {
+  const results = { missing: [], errors: [] };
+
+  if (!isSumUpConfigured(env)) {
+    results.skipped = "sumup_not_configured";
+    return results;
+  }
+
+  let rows;
+  try {
+    rows = await listSumupPaymentsMissingWebhook(env, options);
+  } catch (error) {
+    results.errors.push({ stage: "list", error: error.message });
+    return results;
+  }
+
+  for (const row of rows) {
+    results.missing.push({
+      reservationId: row.reservation_id,
+      publicReference: row.public_reference,
+      checkoutId: row.provider_checkout_id,
+    });
+
+    try {
+      await insertSyncLog(env, {
+        unitId: null,
+        syncType: "sumup_webhook_missing",
+        status: "warning",
+        message: `No SumUp webhook received for paid checkout ${row.provider_checkout_id} (${row.public_reference}); confirmed by reconciliation only`,
+        payloadSummary: {
+          reservationId: row.reservation_id,
+          checkoutId: row.provider_checkout_id,
+          paymentType: row.payment_type,
+          paymentCreatedAt: row.payment_created_at,
+          paidAt: row.payment_updated_at,
+        },
+      });
+    } catch (error) {
+      results.errors.push({ reservationId: row.reservation_id, error: error.message });
+    }
+  }
+
+  if (results.missing.length > 0) {
+    try {
+      await sendAdminAlert(env, {
+        key: "sumup_webhook_missing",
+        subject: "🚨 SumUp: le webhook de paiement n'arrive plus",
+        message: [
+          "Des paiements SumUp ont été confirmés par la réconciliation, sans qu'aucun webhook SumUp ne soit reçu :",
+          "",
+          ...results.missing.map(
+            (entry) => `- ${entry.publicReference} (checkout ${entry.checkoutId})`,
+          ),
+          "",
+          "Les clients sont confirmés (avec jusqu'à 20 min de retard), mais le webhook est probablement cassé.",
+          `À vérifier : le return_url des checkouts (doit être ${sumupWebhookUrl(getConfig(env))}), l'abonnement webhook côté SumUp, les erreurs 401/5xx de /api/booking/sumup/webhook.`,
+        ].join("\n"),
+        tags: "rotating_light",
+      });
+    } catch {
+      // L'alerte ne doit jamais faire échouer la maintenance.
     }
   }
 

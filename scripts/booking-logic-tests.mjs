@@ -1305,7 +1305,14 @@ async function runReservationTimelineTests() {
 // relire le statut réel chez SumUp AVANT de libérer les dates (incident
 // 24.11.2026 : PARK-20270127-19C5ABBA payé à 18:08, « réservation expirée »
 // envoyée à 18:40).
-function makeReconciliationDb({ candidateRow, reservation, fullReservation, conflicts = [] }) {
+function makeReconciliationDb({
+  candidateRow,
+  reservation,
+  fullReservation,
+  conflicts = [],
+  payments = [],
+  missingWebhookRows = [],
+}) {
   const statements = [];
 
   return {
@@ -1319,8 +1326,14 @@ function makeReconciliationDb({ candidateRow, reservation, fullReservation, conf
           return statement;
         },
         async all() {
+          if (/NOT EXISTS/i.test(record.sql) && /sumup_webhook_received/i.test(record.sql)) {
+            return { results: missingWebhookRows };
+          }
           if (/FROM payments INNER JOIN reservations/i.test(record.sql)) {
             return { results: candidateRow ? [candidateRow] : [] };
+          }
+          if (/FROM payments WHERE reservation_id = \?/i.test(record.sql)) {
+            return { results: payments };
           }
           if (/FROM calendar_blocks/i.test(record.sql)) {
             return { results: conflicts };
@@ -1611,6 +1624,265 @@ async function runReleaseSkipTests() {
   );
 }
 
+// ── Garde-fous de confirmation SumUp ────────────────────────────────────────
+// Un webhook (ou une relecture) sur un checkout qui n'est PAS payé ne doit
+// jamais modifier la réservation : sinon un webhook tardif sur un ancien
+// checkout (carte refusée, paiement réussi sur un second) repassait une
+// réservation payée en `pending_payment`, puis la maintenance la déclarait
+// « expirée » — le symptôme de PARK-20270127-19C5ABBA par un autre chemin.
+async function runPaymentStateGuardTests() {
+  const { applySumupCheckoutStatus } = await import("../functions/_lib/payment-confirmation.js");
+  const { checkSumupWebhookDelivery } = await import("../functions/_lib/payment-reconciliation.js");
+
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async (url, init = {}) => {
+    const target = String(url);
+    if (target.startsWith("https://api.resend.com/emails") && init.method === "POST") {
+      return { ok: true, json: async () => ({ id: "email-1" }) };
+    }
+    throw new Error(`unexpected fetch: ${target}`);
+  };
+
+  const touchesReservation = (db) =>
+    db.statements.some((statement) => /UPDATE reservations SET status/i.test(statement.sql)) ||
+    db.statements.some((statement) => /UPDATE calendar_blocks SET status/i.test(statement.sql));
+  const paymentUpdates = (db) =>
+    db.statements.filter((statement) => /UPDATE payments SET/i.test(statement.sql));
+
+  try {
+    // 1. FAILED / EXPIRED tardif sur un ancien checkout d'une réservation
+    //    confirmée : la réservation n'est pas touchée.
+    for (const status of ["FAILED", "EXPIRED", "PENDING", "CANCELLED"]) {
+      const fixtures = makeReconciliationFixtures("confirmed");
+      const db = makeReconciliationDb({
+        ...fixtures,
+        payments: [
+          { provider_checkout_id: "co-1", type: "initial", status: "pending", amount: 57.4 },
+          { provider_checkout_id: "co-2", type: "initial", status: "paid", amount: 57.4 },
+        ],
+      });
+      const applied = await applySumupCheckoutStatus(reconciliationEnv(db), {
+        checkoutId: "co-1",
+        checkout: { id: "co-1", status },
+        reservation: fixtures.reservation,
+      });
+      assert(!touchesReservation(db), `A ${status} checkout must never change a confirmed reservation`);
+      assertEqual(applied.reservationStatus, "confirmed", `${status}: the reservation stays confirmed`);
+      assertEqual(paymentUpdates(db).length, 1, `${status}: the stale checkout row is still updated`);
+    }
+
+    // 2. Non payé sur une réservation expirée ou annulée : les dates libérées
+    //    ne sont pas re-bloquées.
+    for (const reservationStatus of ["payment_expired", "cancelled", "pending_payment"]) {
+      const fixtures = makeReconciliationFixtures(reservationStatus);
+      const db = makeReconciliationDb(fixtures);
+      await applySumupCheckoutStatus(reconciliationEnv(db), {
+        checkoutId: "co-1",
+        checkout: { id: "co-1", status: "FAILED" },
+        reservation: fixtures.reservation,
+      });
+      assert(
+        !touchesReservation(db),
+        `A FAILED checkout must not touch a ${reservationStatus} reservation or its blocks`,
+      );
+    }
+
+    // 3. Une ligne déjà `paid` n'est jamais rétrogradée.
+    {
+      const fixtures = makeReconciliationFixtures("confirmed");
+      const db = makeReconciliationDb({
+        ...fixtures,
+        payments: [{ provider_checkout_id: "co-1", type: "initial", status: "paid", amount: 57.4 }],
+      });
+      await applySumupCheckoutStatus(reconciliationEnv(db), {
+        checkoutId: "co-1",
+        checkout: { id: "co-1", status: "FAILED" },
+        reservation: fixtures.reservation,
+      });
+      assertEqual(paymentUpdates(db).length, 0, "A paid payment row must never be downgraded");
+    }
+
+    // 4. Redélivrance PAID d'un checkout déjà payé sur un séjour `modified` :
+    //    aucune écriture (avant : retour en `confirmed`).
+    {
+      const fixtures = makeReconciliationFixtures("modified");
+      const db = makeReconciliationDb({
+        ...fixtures,
+        payments: [{ provider_checkout_id: "co-1", type: "initial", status: "paid", amount: 57.4 }],
+      });
+      const applied = await applySumupCheckoutStatus(reconciliationEnv(db), {
+        checkoutId: "co-1",
+        checkout: { id: "co-1", status: "PAID", transaction_id: "txn-1" },
+        reservation: fixtures.reservation,
+      });
+      assert(applied.noop, "A redelivered PAID webhook is a no-op");
+      assert(!touchesReservation(db), "A redelivered PAID webhook must not reset a modified stay");
+    }
+
+    // 5. Second checkout payé alors que la réservation est déjà confirmée
+    //    (double paiement) : argent enregistré, réservation intacte, hôte
+    //    alerté pour rembourser.
+    {
+      const fixtures = makeReconciliationFixtures("confirmed");
+      const db = makeReconciliationDb({
+        ...fixtures,
+        payments: [
+          { provider_checkout_id: "co-1", type: "initial", status: "pending", amount: 57.4, currency: "CHF" },
+          { provider_checkout_id: "co-2", type: "initial", status: "paid", amount: 57.4, currency: "CHF" },
+        ],
+      });
+      const applied = await applySumupCheckoutStatus(reconciliationEnv(db), {
+        checkoutId: "co-1",
+        checkout: { id: "co-1", status: "PAID", transaction_id: "txn-dup" },
+        reservation: fixtures.reservation,
+      });
+      assert(applied.unexpectedPayment, "A second paid checkout is reported as unexpected");
+      assert(!touchesReservation(db), "An unexpected payment must not change the reservation");
+      assert(
+        String(paymentUpdates(db)[0]?.args[1]).includes("paid"),
+        "The unexpected payment must still be recorded as paid",
+      );
+      assert(
+        db.statements.some(
+          (statement) =>
+            /INSERT INTO sync_logs/i.test(statement.sql) && statement.args[2] === "payment_unexpected",
+        ),
+        "The unexpected payment must be logged in the reservation history",
+      );
+      assert(
+        db.statements.some(
+          (statement) =>
+            /INSERT INTO email_logs/i.test(statement.sql) &&
+            statement.args[2] === "admin_alert:sumup_unexpected_payment:co-1",
+        ),
+        "The host must be alerted to refund an unexpected payment",
+      );
+    }
+
+    // 6. Paiement payé après annulation : jamais de résurrection.
+    {
+      const fixtures = makeReconciliationFixtures("cancelled");
+      const db = makeReconciliationDb(fixtures);
+      const applied = await applySumupCheckoutStatus(reconciliationEnv(db), {
+        checkoutId: "co-1",
+        checkout: { id: "co-1", status: "PAID", transaction_id: "txn-late" },
+        reservation: fixtures.reservation,
+      });
+      assert(applied.unexpectedPayment, "A payment on a cancelled reservation is unexpected");
+      assert(!touchesReservation(db), "A cancelled reservation must never be resurrected by a payment");
+    }
+
+    // 7. Webhook muet : un paiement confirmé sans aucun webhook reçu alerte
+    //    l'hôte une fois (marqueur sumup_webhook_missing).
+    {
+      const db = makeReconciliationDb({
+        missingWebhookRows: [
+          {
+            provider_checkout_id: "co-1",
+            payment_type: "initial",
+            payment_created_at: "2026-11-24T18:08:07.670Z",
+            payment_updated_at: "2026-11-24T19:00:15.476Z",
+            reservation_id: "res-1",
+            public_reference: "PARK-20270127-19C5ABBA",
+          },
+        ],
+      });
+      const result = await checkSumupWebhookDelivery(reconciliationEnv(db));
+      assertEqual(result.missing.length, 1, "A paid checkout without webhook must be detected");
+      const query = db.statements.find((statement) => /NOT EXISTS/i.test(statement.sql));
+      assert(
+        /sumup_webhook_missing/.test(query.sql),
+        "Already reported payments must be excluded (alert once per payment)",
+      );
+      assert(
+        db.statements.some(
+          (statement) =>
+            /INSERT INTO sync_logs/i.test(statement.sql) && statement.args[2] === "sumup_webhook_missing",
+        ),
+        "The missing webhook must be recorded so it is reported only once",
+      );
+      assert(
+        db.statements.some(
+          (statement) =>
+            /INSERT INTO email_logs/i.test(statement.sql) &&
+            statement.args[2] === "admin_alert:sumup_webhook_missing",
+        ),
+        "A silent webhook must alert the admin",
+      );
+
+      const quietDb = makeReconciliationDb({});
+      const quiet = await checkSumupWebhookDelivery(reconciliationEnv(quietDb));
+      assertEqual(quiet.missing.length, 0, "No alert when every payment received its webhook");
+      assert(
+        !quietDb.statements.some((statement) => /INSERT INTO email_logs/i.test(statement.sql)),
+        "No alert e-mail when webhooks are delivered",
+      );
+    }
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+}
+
+// Le webhook journalise chaque réception (base de la détection du webhook
+// muet) et un rejet de signature alerte l'hôte au lieu d'échouer en silence.
+async function runSumupWebhookHandlerTests() {
+  const { onRequestPost } = await import("../functions/api/booking/sumup/webhook.js");
+
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async (url, init = {}) => {
+    const target = String(url);
+    if (target.includes("/v0.1/checkouts/co-1")) {
+      return { ok: true, json: async () => ({ id: "co-1", status: "FAILED" }) };
+    }
+    if (target.startsWith("https://api.resend.com/emails") && init.method === "POST") {
+      return { ok: true, json: async () => ({ id: "email-1" }) };
+    }
+    throw new Error(`unexpected fetch: ${target}`);
+  };
+
+  try {
+    const fixtures = makeReconciliationFixtures("confirmed");
+    const db = makeReconciliationDb(fixtures);
+    const request = new Request("https://candc.ch/api/booking/sumup/webhook", {
+      method: "POST",
+      body: JSON.stringify({ event_type: "CHECKOUT_STATUS_CHANGED", id: "co-1" }),
+    });
+    const response = await onRequestPost({ env: reconciliationEnv(db), request });
+    assertEqual(response.status, 204, "The webhook acknowledges a known checkout");
+    assert(
+      db.statements.some(
+        (statement) =>
+          /INSERT INTO sync_logs/i.test(statement.sql) && statement.args[2] === "sumup_webhook_received",
+      ),
+      "Every webhook reception must be logged",
+    );
+    assert(
+      !db.statements.some((statement) => /UPDATE reservations SET status/i.test(statement.sql)),
+      "A FAILED webhook must not touch a confirmed reservation",
+    );
+
+    const rejectedDb = makeReconciliationDb({});
+    const rejected = await onRequestPost({
+      env: { ...reconciliationEnv(rejectedDb), SUMUP_WEBHOOK_SECRET: "secret" },
+      request: new Request("https://candc.ch/api/booking/sumup/webhook", {
+        method: "POST",
+        body: JSON.stringify({ id: "co-1" }),
+      }),
+    });
+    assertEqual(rejected.status, 401, "An unsigned webhook is still rejected when a secret is set");
+    assert(
+      rejectedDb.statements.some(
+        (statement) =>
+          /INSERT INTO email_logs/i.test(statement.sql) &&
+          statement.args[2] === "admin_alert:sumup_webhook_rejected",
+      ),
+      "A rejected webhook must alert the admin",
+    );
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+}
+
 // Le `return_url` d'un checkout SumUp est l'URL du WEBHOOK (SumUp y POSTe les
 // changements de statut), pas la page de retour du navigateur (`redirect_url`).
 // Le 26.10.2026 il a été pointé vers la page de confirmation : plus aucun
@@ -1660,6 +1932,70 @@ async function runSumupCheckoutRequestTests() {
       "https://candc.ch/booking/confirmation/?reference=PARK-0001",
       "redirect_url keeps returning the customer's browser to the shop",
     );
+
+    // SumUp renvoie un return_url différent du webhook : alerte immédiate
+    // (contrôle en production, pas seulement dans ce test).
+    const alertStatements = [];
+    const alertDb = {
+      prepare(sql) {
+        const record = { sql: sql.replace(/\s+/g, " ").trim(), args: [] };
+        alertStatements.push(record);
+        const statement = {
+          bind(...args) {
+            record.args = args;
+            return statement;
+          },
+          async all() {
+            return { results: [] };
+          },
+          async run() {
+            return { meta: {} };
+          },
+        };
+        return statement;
+      },
+    };
+    globalThis.fetch = async (url, init = {}) => {
+      if (String(url).endsWith("/v0.1/checkouts") && init.method === "POST") {
+        return {
+          ok: true,
+          json: async () => ({
+            id: "co-2",
+            status: "PENDING",
+            return_url: "https://candc.ch/booking/confirmation/?reference=PARK-0002",
+          }),
+        };
+      }
+      if (String(url).startsWith("https://api.resend.com/emails")) {
+        return { ok: true, json: async () => ({ id: "email-1" }) };
+      }
+      throw new Error(`unexpected fetch: ${url}`);
+    };
+    const mismatched = await createHostedCheckout(
+      {
+        ...env,
+        DB: alertDb,
+        ADMIN_NOTIFICATION_EMAIL: "admin@candc.ch",
+        EMAIL_FROM: "C&C <reservations@candc.ch>",
+        RESEND_API_KEY: "test-key",
+      },
+      {
+        amount: 57.4,
+        checkoutReference: "PARK-0002",
+        currency: "CHF",
+        description: "C&C Parking PARK-0002",
+        redirectUrl: "https://candc.ch/booking/confirmation/?reference=PARK-0002",
+      },
+    );
+    assertEqual(mismatched.id, "co-2", "A mismatched return_url must not block the checkout");
+    assert(
+      alertStatements.some(
+        (statement) =>
+          /INSERT INTO email_logs/i.test(statement.sql) &&
+          statement.args[2] === "admin_alert:sumup_return_url_mismatch",
+      ),
+      "A return_url that is not the webhook must alert the admin",
+    );
   } finally {
     globalThis.fetch = originalFetch;
   }
@@ -1682,6 +2018,8 @@ async function main() {
   await runPaymentReconciliationTests();
   await runSumupCheckoutRequestTests();
   await runReleaseSkipTests();
+  await runPaymentStateGuardTests();
+  await runSumupWebhookHandlerTests();
   console.log("Booking logic tests passed.");
 }
 

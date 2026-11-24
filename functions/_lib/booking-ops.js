@@ -15,7 +15,7 @@ import { getConfig } from "./env.js";
 import { isEmailConfigured, sendTransactionalEmail } from "./email.js";
 import { isGoogleCalendarConfigured, upsertReservationEvent } from "./google-calendar.js";
 import { isNtfyConfigured, sendNtfyNotification } from "./ntfy.js";
-import { reconcileSumupPayments } from "./payment-reconciliation.js";
+import { checkSumupWebhookDelivery, reconcileSumupPayments } from "./payment-reconciliation.js";
 
 // Réservations créées par les vérifications automatiques (npm run
 // check:payment, funnel_check) : marquées par la remarque [smoke-test].
@@ -304,6 +304,7 @@ export async function runPendingPaymentHoldMaintenance(env) {
     expired: [],
     reverted: [],
     reconciliation: null,
+    webhookDelivery: null,
   };
 
   // Étape 0 (avant tout le reste) : si le webhook SumUp n'a jamais été
@@ -320,6 +321,14 @@ export async function runPendingPaymentHoldMaintenance(env) {
       status: "failed",
       message: `Reconciliation step failed: ${error.message}`,
     });
+  }
+
+  // Un paiement confirmé sans aucun webhook reçu = webhook cassé : alerte
+  // l'hôte (la réconciliation, elle, masque la panne côté client).
+  try {
+    results.webhookDelivery = await checkSumupWebhookDelivery(env);
+  } catch (error) {
+    results.webhookDelivery = { error: error.message };
   }
 
   try {

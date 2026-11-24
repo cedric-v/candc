@@ -752,8 +752,9 @@ Garde-fous en place :
 
 - **reconciliation** (`reconcileSumupPayments`, `_lib/payment-reconciliation.js`) :
   relit `GET /v0.1/checkouts/{id}` pour les paiements SumUp restes
-  `pending`/`unknown` dont la reservation est `pending_payment`,
-  `pending_adjustment_payment` ou `payment_expired` (fenetre
+  `pending`/`unknown`/`failed`, quel que soit le statut de la reservation
+  (un checkout abandonne d'un sejour confirme ou annule peut reveler un double
+  paiement) (fenetre
   `PAYMENT_RECONCILE_WINDOW_HOURS`, defaut 72 h). Le traitement applique est
   exactement celui du webhook (`applySumupCheckoutStatus`,
   `_lib/payment-confirmation.js`) : re-verification de la disponibilite, remboursement
@@ -775,6 +776,34 @@ Garde-fous en place :
 - action admin `reconcile_payments` (`/admin/booking` / `POST /api/admin/booking`)
   et action interne `reconcile_payments` pour une reparation manuelle, avec
   `reservationId` pour ignorer la fenetre de temps.
+- **garde-fous d'etat** (`applySumupCheckoutStatus`) : un statut de checkout
+  non paye (PENDING/FAILED/EXPIRED/CANCELLED) ne met a jour que sa ligne
+  `payments` et ne touche **jamais** la reservation ni ses blocs (avant : un
+  webhook FAILED tardif sur un ancien checkout repassait un sejour paye en
+  `pending_payment`, puis la maintenance l'expirait) ; une ligne `paid` n'est
+  jamais retrogradee ; `PAID` n'est applique que si la reservation l'attend
+  (initial : `pending_payment` / `payment_expired` / `payment_setup_failed` ;
+  ajustement : `pending_adjustment_payment` / `modified`). Une redelivrance d'un
+  checkout deja paye ne fait rien ; tout autre `PAID` (double paiement,
+  paiement apres annulation) est enregistre, journalise `payment_unexpected`
+  et declenche l'alerte `sumup_unexpected_payment:<checkout>` — la reservation
+  n'est jamais ressuscitee, l'hote decide du remboursement.
+- **detection du webhook muet** : le webhook journalise chaque reception
+  (`sumup_webhook_received`). `checkSumupWebhookDelivery` (maintenance des
+  holds) alerte `sumup_webhook_missing`, une fois par paiement, pour tout
+  paiement passe `paid` depuis plus de 15 min sans aucun webhook recu depuis la
+  creation du checkout. La reconciliation masque la panne aux clients ; ce
+  controle garantit que l'hote, lui, la voit (l'incident a dure un mois sans
+  alerte).
+- **controle du `return_url` en production** : `createHostedCheckout` compare le
+  `return_url` enregistre par SumUp a `sumupWebhookUrl` et alerte
+  `sumup_return_url_mismatch` en cas d'ecart (le smoke test
+  `npm run check:payment` cree un vrai checkout apres chaque deploiement).
+- **signature** : `SUMUP_WEBHOOK_SECRET` n'est pas defini en production (le nom
+  de l'en-tete de signature n'a jamais ete verifie aupres de SumUp). S'il l'est
+  un jour, chaque rejet declenche l'alerte `sumup_webhook_rejected` au lieu
+  d'echouer en silence. Le webhook ne fait de toute facon confiance qu'a
+  `GET /v0.1/checkouts/{id}`, jamais au corps recu.
 
 ## Jobs internes
 

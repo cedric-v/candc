@@ -19,6 +19,7 @@ import { isGoogleCalendarConfigured } from "./google-calendar.js";
 import { mapCheckoutStatus } from "./sumup.js";
 import { attemptAutomaticRefund } from "./refunds.js";
 import { findLiveExternalConflicts, reportLiveOtaCheck } from "./ota-availability.js";
+import { sendAdminAlert } from "./alerts.js";
 
 // Traitement « un statut de checkout SumUp est connu » : c'est le cœur de la
 // confirmation de paiement, partagé par deux appelants :
@@ -71,6 +72,70 @@ const EXPORTED_RESERVATION_STATUSES = new Set([
   "pending_refund",
 ]);
 
+// Statuts de réservation qui ATTENDENT encore le paiement de ce checkout.
+// Un checkout payé sur une réservation hors de ces statuts est un paiement
+// inattendu (doublon, paiement après annulation…) : enregistré et signalé à
+// l'hôte, jamais appliqué à la réservation.
+//  - initial : hold actif, hold libéré (rattrapable, avec revérification des
+//    dates) ou création du checkout échouée puis relancée ;
+//  - ajustement : complément en attente, ou hold du complément expiré (la
+//    réservation est revenue en `modified` sur les nouvelles dates).
+const PAYABLE_INITIAL_STATUSES = new Set([
+  "pending_payment",
+  "payment_expired",
+  "payment_setup_failed",
+]);
+const PAYABLE_ADJUSTMENT_STATUSES = new Set([
+  "pending_adjustment_payment",
+  "modified",
+]);
+
+async function reportUnexpectedPayment(env, { reservation, checkoutId, checkout, amount, currency, source }) {
+  const amountLabel = amount !== undefined && amount !== null
+    ? `${Number(amount).toFixed(2)} ${currency || ""}`.trim()
+    : "montant inconnu";
+
+  try {
+    await insertSyncLog(env, {
+      unitId: reservation.unit_id || null,
+      syncType: "payment_unexpected",
+      status: "warning",
+      message: `SumUp checkout ${checkoutId} paid for ${reservation.public_reference} while the reservation is ${reservation.status}: not applied, host must decide on a refund`,
+      payloadSummary: {
+        reservationId: reservation.id,
+        checkoutId,
+        transactionId: checkout?.transaction_id || null,
+        reservationStatus: reservation.status,
+        paymentType: reservation.payment_type,
+        amount: amount !== undefined && amount !== null ? Number(amount) : null,
+        currency: currency || null,
+        source,
+      },
+    });
+  } catch {
+    // Le journal ne doit jamais bloquer le traitement du paiement.
+  }
+
+  try {
+    await sendAdminAlert(env, {
+      key: `sumup_unexpected_payment:${checkoutId}`,
+      subject: `⚠️ SumUp: paiement inattendu sur ${reservation.public_reference}`,
+      message: [
+        `Un paiement SumUp (${amountLabel}) a été encaissé sur ${reservation.public_reference}, dont le statut est « ${reservation.status} » : la réservation n'attendait plus ce paiement.`,
+        "Cas typiques : double paiement (deux onglets de paiement ouverts) ou paiement après annulation.",
+        "",
+        `Checkout : ${checkoutId}`,
+        `Transaction : ${checkout?.transaction_id || "inconnue"}`,
+        "",
+        "La réservation n'a PAS été modifiée. Vérifier dans /admin/booking et rembourser ce paiement si nécessaire.",
+      ].join("\n"),
+      tags: "warning",
+    });
+  } catch {
+    // L'alerte ne doit jamais bloquer le traitement du paiement.
+  }
+}
+
 function mapStatusForPaymentType(checkoutStatus, paymentType) {
   if (paymentType !== "adjustment") {
     return mapCheckoutStatus(checkoutStatus);
@@ -91,7 +156,7 @@ function mapStatusForPaymentType(checkoutStatus, paymentType) {
       };
     default:
       return {
-        paymentStatus: checkoutStatus.toLowerCase(),
+        paymentStatus: String(checkoutStatus || "unknown").toLowerCase(),
         reservationStatus: "pending_adjustment_payment",
         calendarBlockStatus: "pending_payment",
       };
@@ -110,6 +175,73 @@ export async function applySumupCheckoutStatus(
 ) {
   const previousReservationStatus = reservation.status;
   const mappedStatus = mapStatusForPaymentType(checkout.status, reservation.payment_type);
+  const payments = await getPaymentsForReservation(env, reservation.id);
+  const checkoutPayment = (payments || []).find(
+    (payment) => payment.provider_checkout_id === checkoutId,
+  );
+  const wasAlreadyPaid = checkoutPayment?.status === "paid";
+  const unchanged = {
+    ok: true,
+    source,
+    previousReservationStatus,
+    paymentStatus: mappedStatus.paymentStatus,
+    reservationStatus: previousReservationStatus,
+    conflict: false,
+    recoveredExpiredPayment: false,
+  };
+
+  // Un statut NON payé (PENDING, FAILED, EXPIRED, CANCELLED…) ne modifie
+  // JAMAIS la réservation : il ne fait que mettre à jour la ligne de paiement.
+  // Sans cette garde, un webhook tardif sur un ancien checkout (carte refusée,
+  // puis paiement réussi sur un second checkout) repassait une réservation
+  // confirmée en `pending_payment`, et la maintenance suivante la déclarait
+  // « expirée » alors que le client avait payé — le symptôme exact de
+  // PARK-20270127-19C5ABBA par un autre chemin. Une ligne déjà `paid` n'est
+  // jamais rétrogradée.
+  if (mappedStatus.paymentStatus !== "paid") {
+    if (!wasAlreadyPaid) {
+      await updatePaymentByCheckoutId(env, checkoutId, {
+        providerPaymentReference: checkout.transaction_id || null,
+        status: mappedStatus.paymentStatus,
+        rawPayload: checkout,
+      });
+    }
+    return { ...unchanged, noop: true };
+  }
+
+  const payableStatuses =
+    reservation.payment_type === "adjustment"
+      ? PAYABLE_ADJUSTMENT_STATUSES
+      : PAYABLE_INITIAL_STATUSES;
+
+  if (!payableStatuses.has(previousReservationStatus)) {
+    // Redélivrance d'un checkout déjà enregistré comme payé : rien à faire
+    // (sans cette garde, une redélivrance repassait un séjour `modified` en
+    // `confirmed`, ou ressuscitait une réservation annulée).
+    if (wasAlreadyPaid) {
+      return { ...unchanged, noop: true };
+    }
+
+    // Paiement encaissé sur une réservation qui n'attend plus de paiement
+    // (second checkout payé alors que la réservation est déjà confirmée,
+    // paiement après annulation ou remboursement…). On enregistre l'argent
+    // reçu, on ne touche pas à la réservation, et l'hôte décide du
+    // remboursement.
+    await updatePaymentByCheckoutId(env, checkoutId, {
+      providerPaymentReference: checkout.transaction_id || null,
+      status: "paid",
+      rawPayload: checkout,
+    });
+    await reportUnexpectedPayment(env, {
+      reservation,
+      checkoutId,
+      checkout,
+      amount: checkoutPayment?.amount,
+      currency: checkoutPayment?.currency,
+      source,
+    });
+    return { ...unchanged, unexpectedPayment: true };
+  }
 
   await updatePaymentByCheckoutId(env, checkoutId, {
     providerPaymentReference: checkout.transaction_id || null,
