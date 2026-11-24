@@ -15,6 +15,7 @@ import { getConfig } from "./env.js";
 import { isEmailConfigured, sendTransactionalEmail } from "./email.js";
 import { isGoogleCalendarConfigured, upsertReservationEvent } from "./google-calendar.js";
 import { isNtfyConfigured, sendNtfyNotification } from "./ntfy.js";
+import { reconcileSumupPayments } from "./payment-reconciliation.js";
 
 // Réservations créées par les vérifications automatiques (npm run
 // check:payment, funnel_check) : marquées par la remarque [smoke-test].
@@ -287,7 +288,9 @@ export async function sendPaymentExpiredEmail(env, reservationId) {
 }
 
 // Maintenance des holds de paiement en attente, exécutée avant chaque
-// synchronisation Booking ICS (le cron horaire) :
+// synchronisation Booking ICS (le cron toutes les 20 min) :
+//   0. réconcilie les paiements SumUp restés « en attente » en base (webhook
+//      perdu) — un client qui a payé ne doit jamais être expiré ;
 //   1. envoie un rappel aux clients dont le hold expire bientôt ;
 //   2. libère les holds expirés (réservations -> payment_expired, ou
 //      revert des ajustements non payés) ;
@@ -300,7 +303,24 @@ export async function runPendingPaymentHoldMaintenance(env) {
     reminders: [],
     expired: [],
     reverted: [],
+    reconciliation: null,
   };
+
+  // Étape 0 (avant tout le reste) : si le webhook SumUp n'a jamais été
+  // délivré, le statut du checkout est relu chez SumUp. Une réservation payée
+  // est confirmée ici AVANT que la libération des holds ne la déclare expirée
+  // (incident 24.11.2026).
+  try {
+    results.reconciliation = await reconcileSumupPayments(env);
+  } catch (error) {
+    results.reconciliation = { error: error.message };
+    await insertSyncLog(env, {
+      unitId: null,
+      syncType: "pending_payment_hold_maintenance",
+      status: "failed",
+      message: `Reconciliation step failed: ${error.message}`,
+    });
+  }
 
   try {
     const expiring = await getExpiringPendingPaymentReservations(env, reminderWindow);
@@ -324,7 +344,12 @@ export async function runPendingPaymentHoldMaintenance(env) {
 
   let releaseResult;
   try {
-    releaseResult = await releaseExpiredPendingPayments(env);
+    releaseResult = await releaseExpiredPendingPayments(env, {
+      // Hold dont le statut SumUp n'a pas pu être vérifié : on repousse la
+      // libération d'un cycle plutôt que de risquer de libérer des dates
+      // peut-être déjà payées.
+      skipReservationIds: results.reconciliation?.deferredReservationIds || [],
+    });
   } catch (error) {
     await insertSyncLog(env, {
       unitId: null,

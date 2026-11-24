@@ -22,6 +22,10 @@ import { isSecureRequest, setManageTokenCookie } from "../../../_lib/cookies.js"
 import { createHostedCheckout, isSumUpConfigured } from "../../../_lib/sumup.js";
 import { normalizeBookingInput, validateBookingInput } from "../../../_lib/validation.js";
 import { findLiveExternalConflicts, reportLiveOtaCheck } from "../../../_lib/ota-availability.js";
+import {
+  reconcileSumupPayments,
+  reservationMayAwaitSumupConfirmation,
+} from "../../../_lib/payment-reconciliation.js";
 
 function toManageResponse(reservation, env) {
   const t = getManageText(reservation.locale);
@@ -107,6 +111,29 @@ async function resolveReservation(env, token) {
   return getReservationForManageToken(env, tokenHash);
 }
 
+// Relit le statut réel du checkout chez SumUp quand le webhook n'a pas mis la
+// réservation à jour. Sans cela le client dont le paiement est encaissé voit
+// « paiement en attente » (ou « réservation expirée ») et peut payer une
+// seconde fois via « payer maintenant » (incident 24.11.2026).
+// Best-effort : une erreur SumUp/D1 ne doit jamais casser la page.
+async function refreshPaymentStateIfNeeded(env, token, reservation) {
+  if (!reservationMayAwaitSumupConfirmation(reservation)) {
+    return reservation;
+  }
+
+  try {
+    const reconciled = await reconcileSumupPayments(env, { reservationId: reservation.id });
+
+    if (reconciled.confirmed > 0 || reconciled.conflicts.length > 0) {
+      return (await resolveReservation(env, token)) || reservation;
+    }
+  } catch (error) {
+    console.error("Payment reconciliation for the manage page failed:", error);
+  }
+
+  return reservation;
+}
+
 function buildEditablePayload(reservation, rawBody) {
   const normalized = normalizeBookingInput({
     unitCode: reservation.unit_code,
@@ -134,11 +161,17 @@ function buildEditablePayload(reservation, rawBody) {
 
 export async function onRequestGet(context) {
   try {
-    const reservation = await resolveReservation(context.env, context.params.token);
+    const initialReservation = await resolveReservation(context.env, context.params.token);
 
-    if (!reservation) {
+    if (!initialReservation) {
       return notFound("Unknown or expired booking link");
     }
+
+    const reservation = await refreshPaymentStateIfNeeded(
+      context.env,
+      context.params.token,
+      initialReservation,
+    );
 
     return json(toManageResponse(reservation, context.env));
   } catch (error) {
@@ -255,6 +288,29 @@ export async function onRequestPost(context) {
     }
 
     if (action === "resume_payment") {
+      // Le statut réel est relu chez SumUp AVANT de créer un nouveau checkout :
+      // un client déjà encaissé (webhook perdu) ne doit jamais payer deux fois.
+      const settledReservation = await refreshPaymentStateIfNeeded(
+        context.env,
+        context.params.token,
+        reservation,
+      );
+
+      if (settledReservation.status !== reservation.status) {
+        return json({
+          ok: true,
+          action: "resume_payment",
+          // `settled` : le front recharge la page au lieu de demander un
+          // paiement qui n'a plus lieu d'être.
+          settled: true,
+          status: settledReservation.status,
+          payment: {
+            provider: "sumup",
+            status: settledReservation.payment_status || "paid",
+          },
+        });
+      }
+
       const canResumePayment =
         reservation.status === "pending_payment" ||
         reservation.status === "payment_setup_failed" ||
@@ -337,8 +393,7 @@ export async function onRequestPost(context) {
         currency: reservation.currency,
         description: `${unit.displayName} ${reservation.public_reference}`,
         redirectUrl: `${getConfig(context.env).publicBaseUrl}/booking/confirmation/?reference=${encodeURIComponent(reservation.public_reference)}`,
-        // Pas de `returnUrl` : par défaut SumUp renvoie le client vers la page
-        // de confirmation (jamais vers l'endpoint webhook, qui répond 404).
+        // `return_url` (webhook) est imposé par createHostedCheckout.
       });
 
       await insertPaymentRecord(context.env, {
@@ -504,8 +559,7 @@ export async function onRequestPost(context) {
           currency: quote.currency,
           description: `${unit.displayName} adjustment ${reservation.public_reference}`,
           redirectUrl: `${getConfig(context.env).publicBaseUrl}/booking/manage/${context.params.token}`,
-          // Pas de `returnUrl` : par défaut SumUp renvoie le client vers la page
-          // de gestion (jamais vers l'endpoint webhook, qui répond 404).
+          // `return_url` (webhook) est imposé par createHostedCheckout.
         });
 
         await insertPaymentRecord(context.env, {

@@ -1299,6 +1299,372 @@ async function runReservationTimelineTests() {
   assertEqual(buildReservationTimeline({}).length, 0, "An empty reservation yields an empty timeline");
 }
 
+// ── Réconciliation des paiements SumUp ──────────────────────────────────────
+// Le webhook est la voie nominale. Quand il n'arrive pas, un client peut avoir
+// payé sans que la réservation soit confirmée : la maintenance des holds doit
+// relire le statut réel chez SumUp AVANT de libérer les dates (incident
+// 24.11.2026 : PARK-20270127-19C5ABBA payé à 18:08, « réservation expirée »
+// envoyée à 18:40).
+function makeReconciliationDb({ candidateRow, reservation, fullReservation, conflicts = [] }) {
+  const statements = [];
+
+  return {
+    statements,
+    prepare(sql) {
+      const record = { sql: sql.replace(/\s+/g, " ").trim(), args: [] };
+      statements.push(record);
+      const statement = {
+        bind(...args) {
+          record.args = args;
+          return statement;
+        },
+        async all() {
+          if (/FROM payments INNER JOIN reservations/i.test(record.sql)) {
+            return { results: candidateRow ? [candidateRow] : [] };
+          }
+          if (/FROM calendar_blocks/i.test(record.sql)) {
+            return { results: conflicts };
+          }
+          return { results: [] };
+        },
+        async first() {
+          if (/FROM reservations INNER JOIN payments/i.test(record.sql)) {
+            return reservation;
+          }
+          if (/FROM reservations LEFT JOIN rentable_units/i.test(record.sql)) {
+            return fullReservation;
+          }
+          return null;
+        },
+        async run() {
+          return { meta: {} };
+        },
+      };
+      return statement;
+    },
+    async batch(list) {
+      return list.map(() => ({ meta: {} }));
+    },
+  };
+}
+
+function makeReconciliationFixtures(reservationStatus) {
+  return {
+    candidateRow: {
+      payment_id: "pay-1",
+      provider_checkout_id: "co-1",
+      payment_type: "initial",
+      payment_status: "pending",
+      amount: 57.4,
+      currency: "CHF",
+      payment_created_at: new Date().toISOString(),
+      reservation_id: "res-1",
+      public_reference: "PARK-20270127-19C5ABBA",
+      reservation_status: reservationStatus,
+      unit_id: "unit_parking",
+      unit_code: "parking-space",
+      guest_email: "guest@example.com",
+    },
+    reservation: {
+      id: "res-1",
+      unit_id: "unit_parking",
+      unit_code: "parking-space",
+      public_reference: "PARK-20270127-19C5ABBA",
+      status: reservationStatus,
+      guest_email: "guest@example.com",
+      provider_checkout_id: "co-1",
+      payment_type: "initial",
+    },
+    fullReservation: {
+      id: "res-1",
+      unit_id: "unit_parking",
+      unit_code: "parking-space",
+      unit_type: "parking",
+      public_reference: "PARK-20270127-19C5ABBA",
+      status: reservationStatus,
+      locale: "fr",
+      guest_first_name: "Vincent",
+      guest_last_name: "Bujard",
+      guest_email: "guest@example.com",
+      check_in_date: "2027-01-27",
+      check_out_date: "2027-01-29",
+      check_in_start_time: "15:00:00",
+      check_in_end_time: "21:00:00",
+      check_out_time: "10:00:00",
+      adults: 1,
+      children: 0,
+      infants: 0,
+      total_amount: 57.4,
+      currency: "CHF",
+      wc_shower_requested: 0,
+      refundable_policy_type: "flexible_48h",
+      payment_status: "pending",
+      remarks: "",
+    },
+  };
+}
+
+function reconciliationEnv(db) {
+  return {
+    PUBLIC_BASE_URL: "https://candc.ch",
+    ADMIN_NOTIFICATION_EMAIL: "admin@candc.ch",
+    EMAIL_FROM: "C&C <reservations@candc.ch>",
+    RESEND_API_KEY: "test-key",
+    SUMUP_API_KEY: "sumup-key",
+    SUMUP_MERCHANT_CODE: "MERCHANT",
+    DB: db,
+  };
+}
+
+async function runPaymentReconciliationTests() {
+  const { reconcileSumupPayments, reservationMayAwaitSumupConfirmation } = await import(
+    "../functions/_lib/payment-reconciliation.js"
+  );
+
+  const originalFetch = globalThis.fetch;
+  const emailBodies = [];
+
+  globalThis.fetch = async (url, init = {}) => {
+    const target = String(url);
+
+    if (target.includes("/v0.1/checkouts/co-1")) {
+      if (globalThis.__checkoutBehaviour === "unreachable") {
+        throw new Error("network down");
+      }
+      return { ok: true, json: async () => ({ id: "co-1", ...globalThis.__checkoutPayload }) };
+    }
+    if (target.startsWith("https://api.resend.com/emails") && init.method === "POST") {
+      emailBodies.push(JSON.parse(init.body));
+      return { ok: true, json: async () => ({ id: "email-1" }) };
+    }
+    throw new Error(`unexpected fetch: ${target}`);
+  };
+
+  try {
+    // 1. Hold libéré (`payment_expired`) mais checkout payé : la réconciliation
+    //    doit confirmer la réservation, prévenir le client (payment_received) et
+    //    alerter l'hôte sur le webhook perdu.
+    globalThis.__checkoutBehaviour = "paid";
+    globalThis.__checkoutPayload = { status: "PAID", transaction_id: "txn-1" };
+    const fixtures = makeReconciliationFixtures("payment_expired");
+    const db = makeReconciliationDb(fixtures);
+
+    const recovered = await reconcileSumupPayments(reconciliationEnv(db), { reservationId: "res-1" });
+
+    assertEqual(recovered.checked, 1, "The candidate checkout must be checked");
+    assertEqual(recovered.confirmed, 1, "A paid checkout must confirm the reservation");
+    assertEqual(recovered.recovered.length, 1, "A paid hold that had expired must be reported as recovered");
+
+    const reservationUpdate = db.statements.find(
+      (statement) => /UPDATE reservations SET status = \?/i.test(statement.sql),
+    );
+    assert(Boolean(reservationUpdate), "The reservation status must be updated");
+    assertEqual(reservationUpdate.args[0], "confirmed", "A paid checkout confirms the reservation");
+
+    const blockUpdate = db.statements.find(
+      (statement) => /UPDATE calendar_blocks SET status = \?/i.test(statement.sql),
+    );
+    assertEqual(blockUpdate.args[0], "confirmed", "The released block must be re-confirmed");
+
+    const paymentUpdate = db.statements.find(
+      (statement) => /UPDATE payments SET/i.test(statement.sql),
+    );
+    assert(
+      String(paymentUpdate.args[1]).includes("paid"),
+      "The SumUp payment must be stored as paid",
+    );
+
+    const reconciledLog = db.statements.find(
+      (statement) =>
+        /INSERT INTO sync_logs/i.test(statement.sql) && statement.args[2] === "payment_reconciled",
+    );
+    assert(Boolean(reconciledLog), "The reconciliation must be logged for the reservation history");
+
+    const recoveryEmail = db.statements.find(
+      (statement) =>
+        /INSERT INTO email_logs/i.test(statement.sql) && statement.args[2] === "payment_received",
+    );
+    assert(Boolean(recoveryEmail), "The guest must be told the payment was received");
+    assert(
+      emailBodies.some((body) => /paiement reçu/i.test(body.subject)),
+      "The recovery e-mail must explain that the payment went through",
+    );
+
+    const adminAlert = db.statements.find(
+      (statement) =>
+        /INSERT INTO email_logs/i.test(statement.sql) &&
+        String(statement.args[2] || "") === "admin_alert:sumup_payment_reconciled",
+    );
+    assert(Boolean(adminAlert), "A lost webhook must alert the admin");
+
+    // 2. Toujours en attente (`pending_payment`) et payé : confirmation, sans
+    //    e-mail de récupération (le client a déjà sa confirmation).
+    emailBodies.length = 0;
+    const pendingFixtures = makeReconciliationFixtures("pending_payment");
+    const pendingDb = makeReconciliationDb(pendingFixtures);
+    const pendingResult = await reconcileSumupPayments(reconciliationEnv(pendingDb), {
+      reservationId: "res-1",
+    });
+
+    assertEqual(pendingResult.confirmed, 1, "A paid pending hold must be confirmed");
+    assertEqual(pendingResult.recovered.length, 0, "Nothing was recovered from an expired state");
+    assertEqual(
+      pendingDb.statements.filter(
+        (statement) =>
+          /INSERT INTO email_logs/i.test(statement.sql) && statement.args[2] === "payment_received",
+      ).length,
+      0,
+      "No recovery e-mail when the hold was still active",
+    );
+
+    // 3. SumUp injoignable : fail-open, hold reporté (jamais libéré à l'aveugle).
+    globalThis.__checkoutBehaviour = "unreachable";
+    const unreachableDb = makeReconciliationDb(makeReconciliationFixtures("pending_payment"));
+    const unreachable = await reconcileSumupPayments(reconciliationEnv(unreachableDb), {});
+    assertEqual(unreachable.confirmed, 0, "An unreachable SumUp API must not confirm anything");
+    assertEqual(unreachable.errors.length, 1, "The SumUp error must be reported");
+    assert(
+      unreachable.deferredReservationIds.includes("res-1"),
+      "A hold whose payment cannot be verified must not be released",
+    );
+    assert(
+      !unreachableDb.statements.some((statement) => /UPDATE reservations SET status/i.test(statement.sql)),
+      "An unreachable SumUp API must never touch the reservation",
+    );
+
+    // 4. Checkout non payé : rien à faire, aucune écriture.
+    globalThis.__checkoutBehaviour = "paid";
+    globalThis.__checkoutPayload = { status: "PENDING" };
+    const unpaidDb = makeReconciliationDb(makeReconciliationFixtures("pending_payment"));
+    const unpaid = await reconcileSumupPayments(reconciliationEnv(unpaidDb), {});
+    assertEqual(unpaid.unpaid, 1, "A still pending checkout must be counted as unpaid");
+    assert(
+      !unpaidDb.statements.some((statement) => /UPDATE reservations SET status/i.test(statement.sql)),
+      "An unpaid checkout must not change the reservation",
+    );
+
+    // 5. SumUp non configuré : sortie immédiate (aucun appel réseau).
+    const skipped = await reconcileSumupPayments(
+      { PUBLIC_BASE_URL: "https://candc.ch", DB: makeReconciliationDb({}) },
+      {},
+    );
+    assertEqual(skipped.skipped, "sumup_not_configured", "Without SumUp credentials nothing is checked");
+
+    // 6. Statuts concernés par la réconciliation.
+    assert(reservationMayAwaitSumupConfirmation({ status: "pending_payment" }), "pending_payment is reconcilable");
+    assert(reservationMayAwaitSumupConfirmation({ status: "payment_expired" }), "payment_expired is reconcilable");
+    assert(
+      !reservationMayAwaitSumupConfirmation({ status: "confirmed" }),
+      "A confirmed reservation is never reconciled",
+    );
+  } finally {
+    globalThis.fetch = originalFetch;
+    delete globalThis.__checkoutBehaviour;
+    delete globalThis.__checkoutPayload;
+  }
+}
+
+// Une libération de hold ne doit jamais toucher une réservation dont le statut
+// de paiement n'a pas pu être vérifié chez SumUp.
+async function runReleaseSkipTests() {
+  const { releaseExpiredPendingPayments } = await import("../functions/_lib/db.js");
+
+  const statements = [];
+  const rows = [
+    { reservation_id: "res-skip", reservation_status: "pending_payment", block_id: "block-1" },
+    { reservation_id: "res-free", reservation_status: "pending_payment", block_id: "block-2" },
+  ];
+  const db = {
+    prepare(sql) {
+      const record = { sql: sql.replace(/\s+/g, " ").trim(), args: [] };
+      statements.push(record);
+      const statement = {
+        bind(...args) {
+          record.args = args;
+          return statement;
+        },
+        async all() {
+          return { results: rows };
+        },
+      };
+      return statement;
+    },
+    async batch(list) {
+      return list.map(() => ({ meta: {} }));
+    },
+  };
+
+  const result = await releaseExpiredPendingPayments(
+    { PUBLIC_BASE_URL: "https://candc.ch", PENDING_PAYMENT_HOLD_MINUTES: "30", DB: db },
+    { skipReservationIds: ["res-skip"] },
+  );
+
+  assertEqual(result.expiredInitial.length, 1, "Only the verifiable hold may be released");
+  assertEqual(result.expiredInitial[0], "res-free", "The deferred reservation must keep its hold");
+
+  const reservationUpdate = statements.find(
+    (statement) => /UPDATE reservations SET status = 'payment_expired'/i.test(statement.sql),
+  );
+  assert(
+    reservationUpdate.args.every((arg) => arg !== "res-skip"),
+    "A reservation whose payment could not be verified must not expire",
+  );
+}
+
+// Le `return_url` d'un checkout SumUp est l'URL du WEBHOOK (SumUp y POSTe les
+// changements de statut), pas la page de retour du navigateur (`redirect_url`).
+// Le 26.10.2026 il a été pointé vers la page de confirmation : plus aucun
+// webhook n'arrivait, et le 24.11.2026 une réservation payée
+// (PARK-20270127-19C5ABBA) a été déclarée expirée. Ce test verrouille la
+// sémantique : un retour en arrière casserait toute confirmation de paiement.
+async function runSumupCheckoutRequestTests() {
+  const { createHostedCheckout } = await import("../functions/_lib/sumup.js");
+
+  const originalFetch = globalThis.fetch;
+  let requestBody = null;
+
+  globalThis.fetch = async (url, init = {}) => {
+    if (String(url).endsWith("/v0.1/checkouts") && init.method === "POST") {
+      requestBody = JSON.parse(init.body);
+      return {
+        ok: true,
+        json: async () => ({ id: "co-1", status: "PENDING", hosted_checkout_url: "https://pay" }),
+      };
+    }
+    throw new Error(`unexpected fetch: ${url}`);
+  };
+
+  try {
+    const env = {
+      PUBLIC_BASE_URL: "https://candc.ch/",
+      SUMUP_API_KEY: "sumup-key",
+      SUMUP_MERCHANT_CODE: "MERCHANT",
+    };
+
+    await createHostedCheckout(env, {
+      amount: 57.4,
+      checkoutReference: "PARK-0001",
+      currency: "CHF",
+      description: "C&C Parking PARK-0001",
+      redirectUrl: "https://candc.ch/booking/confirmation/?reference=PARK-0001",
+    });
+
+    assert(Boolean(requestBody), "The SumUp checkout request must be sent");
+    assertEqual(
+      requestBody.return_url,
+      "https://candc.ch/api/booking/sumup/webhook",
+      "return_url must be the webhook endpoint (SumUp POSTs the payment status there)",
+    );
+    assertEqual(
+      requestBody.redirect_url,
+      "https://candc.ch/booking/confirmation/?reference=PARK-0001",
+      "redirect_url keeps returning the customer's browser to the shop",
+    );
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+}
+
 async function main() {
   runValidationTests();
   runGuestContactValidationTests();
@@ -1313,6 +1679,9 @@ async function main() {
   runAdminResendPolicyTests();
   await runReservationHistoryTests();
   await runReservationTimelineTests();
+  await runPaymentReconciliationTests();
+  await runSumupCheckoutRequestTests();
+  await runReleaseSkipTests();
   console.log("Booking logic tests passed.");
 }
 

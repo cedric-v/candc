@@ -2,6 +2,7 @@ import { hasValidInternalToken } from "../../../_lib/auth.js";
 import { badRequest, json, serverError, unauthorized } from "../../../_lib/http.js";
 import { runArrivalEmails, runBookingIcsSync, runDepartureEmails, runEmailDeliveryCheck, runFunnelHealthCheck, runReviewRequestEmails, runSensitiveDataRetention, validateCalendarSources } from "../../../_lib/jobs.js";
 import { runPendingPaymentHoldMaintenance } from "../../../_lib/booking-ops.js";
+import { reconcileSumupPayments } from "../../../_lib/payment-reconciliation.js";
 
 export async function onRequest(context) {
   try {
@@ -34,6 +35,17 @@ export async function onRequest(context) {
 
     if (action === "hold_maintenance") {
       return json(await runPendingPaymentHoldMaintenance(context.env));
+    }
+
+    // Réconciliation SumUp seule (relit chez SumUp les checkouts restés
+    // « en attente » en base : webhook perdu, réparation d'un paiement encaissé
+    // mais non confirmé).
+    if (action === "reconcile_payments") {
+      return json(
+        await reconcileSumupPayments(context.env, {
+          reservationId: payload.reservationId || null,
+        }),
+      );
     }
 
     if (action === "departure_emails") {

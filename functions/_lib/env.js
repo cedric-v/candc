@@ -47,6 +47,11 @@ export function getConfig(env) {
     // réservations dont le hold expire bientôt sont rappelées (défaut 20 min,
     // aligné sur la cadence de maintenance de ~20 min).
     pendingPaymentReminderWindowMinutes: getNumberEnv(env, "PENDING_PAYMENT_REMINDER_WINDOW_MINUTES", 20),
+    // Fenêtre (en heures) pendant laquelle la réconciliation relit chez SumUp
+    // les checkouts restés « en attente » en base, webhook perdu compris. Un
+    // hold payé mais jamais confirmé est ainsi rattrapé (y compris après
+    // expiration) ; au-delà, seule une action admin peut le réparer.
+    paymentReconcileWindowHours: getNumberEnv(env, "PAYMENT_RECONCILE_WINDOW_HOURS", 72),
     // Durée (en mois) de conservation des données sensibles du voyageur
     // (n° de pièce d'identité, nationalité, date de naissance) après la fin
     // du séjour ; au-delà, elles sont anonymisées (NULL) par le job

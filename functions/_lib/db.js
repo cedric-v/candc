@@ -1008,6 +1008,73 @@ export async function markReservationPaymentSetupFailed(env, reservationId, reas
   ]);
 }
 
+// Paiements SumUp encore « en attente » côté base alors que le client a pu
+// payer : base de la réconciliation (`_lib/payment-reconciliation.js`).
+//
+// Le webhook est la voie nominale, mais il peut ne jamais arriver (incident
+// 24.11.2026 : paiement encaissé à 18:08, hold expiré à 18:40, client et hôte
+// notifiés à tort). On relit donc le statut réel chez SumUp pour :
+//   - les holds encore actifs (`pending_payment`),
+//   - les compléments de modification (`pending_adjustment_payment`),
+//   - les réservations déjà libérées (`payment_expired`) qu'un paiement tardif
+//     doit pouvoir ressusciter — toujours avec revérification des dates.
+// `reservationId` cible une seule réservation (réparation manuelle en admin) et
+// ignore alors la fenêtre de temps.
+export async function listSumupPaymentsAwaitingConfirmation(env, options = {}) {
+  const db = requireDb(env);
+  const reservationId = options.reservationId || null;
+  const windowHours = Math.max(1, Number(options.windowHours || 72));
+  const limit = Math.min(200, Math.max(1, Number(options.limit || 50)));
+  const conditions = [
+    "payments.provider = 'sumup'",
+    "payments.provider_checkout_id IS NOT NULL",
+    // `failed` inclus : un checkout peut repasser en PAID si le client réessaie
+    // avec une autre carte DANS LA MÊME session SumUp. Les statuts
+    // `cancelled`/`expired`, eux, sont définitifs et ne sont plus relus.
+    "payments.status IN ('pending', 'unknown', 'failed')",
+    "payments.type IN ('initial', 'adjustment')",
+    "reservations.status IN ('pending_payment', 'pending_adjustment_payment', 'payment_expired')",
+  ];
+  const binds = [];
+
+  if (reservationId) {
+    conditions.push("reservations.id = ?");
+    binds.push(reservationId);
+  } else {
+    conditions.push("payments.created_at >= ?");
+    binds.push(new Date(Date.now() - windowHours * 60 * 60 * 1000).toISOString());
+  }
+
+  const { results } = await db
+    .prepare(
+      `
+        SELECT
+          payments.id AS payment_id,
+          payments.provider_checkout_id,
+          payments.type AS payment_type,
+          payments.status AS payment_status,
+          payments.amount,
+          payments.currency,
+          payments.created_at AS payment_created_at,
+          reservations.id AS reservation_id,
+          reservations.public_reference,
+          reservations.status AS reservation_status,
+          reservations.unit_id,
+          reservations.unit_code,
+          reservations.guest_email
+        FROM payments
+        INNER JOIN reservations ON reservations.id = payments.reservation_id
+        WHERE ${conditions.join(" AND ")}
+        ORDER BY payments.created_at DESC
+        LIMIT ?
+      `,
+    )
+    .bind(...binds, limit)
+    .all();
+
+  return results || [];
+}
+
 export async function getReservationByCheckoutId(env, checkoutId) {
   const db = requireDb(env);
   return db
@@ -1417,10 +1484,16 @@ export async function cancelReservation(env, reservationId) {
   ]);
 }
 
-export async function releaseExpiredPendingPayments(env) {
+// `skipReservationIds` : réservations dont le hold doit être prolongé d'un
+// cycle au lieu d'être libéré. Utilisé par la maintenance des holds quand le
+// statut réel du checkout n'a pas pu être vérifié chez SumUp (panne API) :
+// libérer des dates peut-être payées coûte une réservation, attendre 20 min
+// de plus ne coûte rien.
+export async function releaseExpiredPendingPayments(env, options = {}) {
   const db = requireDb(env);
   const nowIso = new Date().toISOString();
   const cutoff = new Date(Date.now() - pendingHoldMinutes(env) * 60 * 1000).toISOString();
+  const skipReservationIds = Array.from(new Set((options.skipReservationIds || []).filter(Boolean)));
 
   // Identifie d'abord les réservations affectées pour pouvoir notifier
   // ensuite (emails / logs) depuis l'appelant.
@@ -1441,7 +1514,9 @@ export async function releaseExpiredPendingPayments(env) {
     .bind(cutoff)
     .all();
 
-  const rows = resultsOrEmpty(affected);
+  const rows = resultsOrEmpty(affected).filter(
+    (row) => !skipReservationIds.includes(row.reservation_id),
+  );
   const expiredInitial = rows
     .filter((row) => row.reservation_status === "pending_payment")
     .map((row) => row.reservation_id);

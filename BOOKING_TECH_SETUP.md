@@ -320,6 +320,8 @@ Le scaffold couvre :
 - observabilite du controle live (`reportLiveOtaCheck`) : `ota_live_conflict` quand la relecture live bloque ce que la DB laissait passer (la classe exacte de l incident), `ota_live_check_degraded` quand aucune source n a pu etre verifiee (vente faite sur donnees DB seules)
 - controle post-insertion dans `reservations.js` : la disponibilite est revue APRES la creation du hold (en excluant son propre bloc) et la perdante est annulee — ferme la course entre deux reservations directes simultanees (aucune contrainte DB ne la couvre)
 - dates : les valeurs `DATE-TIME` d un flux ICS sont ramenees a la date locale du site (`TIMEZONE`) ; une fermeture a 22:30Z ne decale plus tout le bloc d une nuit
+- reconciliation des paiements SumUp (`_lib/payment-reconciliation.js`) : le statut reel des checkouts restes `pending` en base est relu chez SumUp (webhook perdu), avant la liberation des holds, a l'ouverture de la page de gestion et avant toute reprise de paiement — un client encaisse n'est plus jamais declare expire ni invite a payer une seconde fois
+- `return_url` d'un Hosted Checkout = URL du WEBHOOK, imposee par `createHostedCheckout` (SumUp y POSTe `CHECKOUT_STATUS_CHANGED`) ; `redirect_url` = retour du navigateur client
 - reprise de paiement (`resume_payment`) avec re-verification de la disponibilite et renouvellement de la fenetre de hold
 - expiration automatique des holds : statut `payment_expired`, e-mails de rappel et d'expiration, revert des ajustements non payes
 - import Booking.com ICS par endpoint interne authentifie
@@ -722,6 +724,57 @@ Cas d'usage du bouton « New link » :
 Pour un simple besoin de « renvoyer le lien » sans casser le lien du client :
 utiliser le lien deja connu (e-mail, historique) — la regeneration revoque les
 liens precedents, c'est le seul point d'attention.
+
+## Webhook SumUp : `return_url` et reconciliation des paiements
+
+Semantique SumUp (API Checkouts) — a ne jamais inverser :
+
+- `return_url` : URL de **webhook** (« backend callback URL for checkout status
+  notifications »). SumUp y POSTe `{"event_type":"CHECKOUT_STATUS_CHANGED","id":"<checkout id>"}` ;
+  c'est le seul mecanisme d'abonnement aux evenements d'un checkout. En cas de
+  reponse non-2xx, SumUp retente a 1 min, 5 min, 20 min puis 2 h.
+- `redirect_url` : page ou le **navigateur** du client revient apres le paiement
+  (3-D Secure / hosted checkout).
+
+`createHostedCheckout` impose desormais `return_url` (`sumupWebhookUrl(config)`,
+soit `${PUBLIC_BASE_URL}/api/booking/sumup/webhook`) : aucun appelant ne doit le
+fournir, et `scripts/booking-logic-tests.mjs` verrouille cette valeur.
+
+Incident 26.10 -> 24.11.2026 : le commit « fix SumUp return_url » avait remplace
+`return_url` par la page de confirmation (en croyant qu'il s'agissait du retour
+navigateur). Plus aucun webhook n'a donc ete delivre. Le 24.11 a 18:08,
+`PARK-20270127-19C5ABBA` est payee (57.40 CHF encaisses a 18:08:27), le hold
+expire a 18:40, le client recoit « reservation expiree » et son lien de gestion
+lui propose de payer a nouveau. Aucune trace cote application : le POST de SumUp
+partait vers une page GET (405/404), donc invisible dans `sync_logs`.
+
+Garde-fous en place :
+
+- **reconciliation** (`reconcileSumupPayments`, `_lib/payment-reconciliation.js`) :
+  relit `GET /v0.1/checkouts/{id}` pour les paiements SumUp restes
+  `pending`/`unknown` dont la reservation est `pending_payment`,
+  `pending_adjustment_payment` ou `payment_expired` (fenetre
+  `PAYMENT_RECONCILE_WINDOW_HOURS`, defaut 72 h). Le traitement applique est
+  exactement celui du webhook (`applySumupCheckoutStatus`,
+  `_lib/payment-confirmation.js`) : re-verification de la disponibilite, remboursement
+  en cas de conflit, e-mails, ntfy, Google Calendar.
+- la maintenance des holds reconcile **avant** de liberer : un client encaisse
+  n'est plus expire. Si SumUp est injoignable, la liberation de CE hold est
+  reportee d'un cycle (`skipReservationIds`) au lieu d'etre faite a l'aveugle.
+- paiement encaisse apres liberation du hold : la reservation repasse
+  `confirmed` et le client recoit l'e-mail `payment_received` (7 langues), qui
+  lui dit explicitement d'ignorer l'e-mail d'expiration — sans cela il paierait
+  une seconde fois via son lien.
+- `resume_payment` et la page de gestion relisent le statut reel avant de
+  proposer « payer maintenant » (retour `settled` / rechargement cote client) ;
+  la page de confirmation le fait aussi, uniquement si le visiteur detient le
+  cookie de gestion de CETTE reservation.
+- une reconciliation qui rattrape un paiement declare expire envoie une alerte
+  admin dedupliquee `sumup_payment_reconciled` (webhook perdu = a verifier dans
+  le tableau de bord SumUp).
+- action admin `reconcile_payments` (`/admin/booking` / `POST /api/admin/booking`)
+  et action interne `reconcile_payments` pour une reparation manuelle, avec
+  `reservationId` pour ignorer la fenetre de temps.
 
 ## Jobs internes
 
