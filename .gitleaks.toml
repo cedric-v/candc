@@ -1,0 +1,34 @@
+# Configuration Gitleaks — s'appuie sur les règles par défaut + allowlists ciblées.
+#
+# Le workflow scanne TOUT l'historique (`gitleaks git --log-opts="--all"`) :
+# une valeur supprimée du dépôt reste détectée, et doit donc être déclarée ici
+# avec sa justification.
+title = "candc — gitleaks"
+
+[extend]
+useDefault = true
+
+# Placeholders de documentation : les exemples `curl` de DEPLOYMENT.md et
+# BOOKING_TECH_SETUP.md utilisent `Bearer TON_TOKEN` (valeur d'exemple, pas un
+# secret). On filtre le motif plutôt que la valeur pour rester stable.
+[[allowlists]]
+description = "Placeholders de documentation (Bearer TON_TOKEN)"
+regexTarget = "match"
+regexes = [
+  '''Bearer\s+TON_[A-Z_]+''',
+]
+
+# `google_sites_dump.html` est un export brut Google Sites, ajouté le 2026-02-06
+# (commit 0567f2bf) puis supprimé du dépôt (commit ad2e3c8). Il contenait une clé
+# Google API (AIza…). Le dépôt étant PUBLIC, cette clé a été exposée : elle est
+# présumée compromise et doit être révoquée/restreinte dans Google Cloud Console
+# (APIs & Services → Identifiants, puis restrictions par référent et par API).
+#
+# On exclut le fichier par son CHEMIN et non par la valeur de la clé : cela évite
+# de recopier un secret dans ce fichier de configuration, et le fichier n'existe
+# plus dans l'arbre de travail — l'exclusion ne concerne que l'historique.
+[[allowlists]]
+description = "Export Google Sites historique contenant une clé à révoquer"
+paths = [
+  '''google_sites_dump\.html''',
+]
