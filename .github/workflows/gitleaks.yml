@@ -28,7 +28,11 @@ concurrency:
 
 jobs:
   scan:
-    name: Historique + arbre de travail
+    # ATTENTION : ce nom de job est le *status check context* exigé par la
+    # protection de branche de `main` (Settings → Branches → required checks).
+    # Le renommer rend les PR impossibles à merger (« 1 of 2 required status
+    # checks expected »), d'autant plus avec l'auto-merge armé.
+    name: gitleaks
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
